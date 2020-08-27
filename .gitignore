@@ -6,6 +6,7 @@ target/
 .mvn/**
 mvnw
 mvnw.cmd
+nbactions.xml
 
 ### STS ###
 .apt_generated
