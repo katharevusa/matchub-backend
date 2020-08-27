@@ -54,15 +54,12 @@ public class ChatEntity {
     private List<ProfileEntity> chatMembers = new ArrayList<>();
 
     @OneToMany
-//        (mappedBy = "chat")
     private List<ChannelEntity> channels = new ArrayList<>();
 
-    public ChatEntity(String chatTitle, String chatDescription, Long projectId, List<ProfileEntity> chatMembers, List<ChannelEntity> channels) {
+    public ChatEntity(String chatTitle, String chatDescription, Long projectId) {
         this.chatTitle = chatTitle;
         this.chatDescription = chatDescription;
         this.projectId = projectId;
-        this.chatMembers = chatMembers;
-        this.channels = channels;
     }
 
 }

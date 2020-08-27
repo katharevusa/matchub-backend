@@ -94,7 +94,6 @@ public class ProjectEntity {
     private List<BadgeEntity> badges = new ArrayList<>();
 
     @OneToMany
-//    (mappedBy = "project")
     private List<ScheduleEntity> meetings = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -103,21 +102,19 @@ public class ProjectEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<SDGEntity> sdgs = new ArrayList<>();
 
-   @OneToMany
-//    (mappedBy = "project")
+    @OneToMany
     private List<KPIEntity> kpis = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
     private KanbanBoardEntity kanbanBoard;
 
-    public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate, ProjectStatusEnum status, KanbanBoardEntity kanbanBoard) {
+    public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate, ProjectStatusEnum status) {
         this.projectTitle = projectTitle;
         this.projectDescription = projectDescription;
         this.country = country;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
-        this.kanbanBoard = kanbanBoard;
     }
 
 }

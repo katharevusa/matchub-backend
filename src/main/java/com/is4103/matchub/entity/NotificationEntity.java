@@ -56,10 +56,9 @@ public class NotificationEntity {
     @Column(nullable = true)
     private Long projectId;
 
-    public NotificationEntity(String content, LocalDateTime timestamp, ProfileEntity profile, Long projectId) {
+    public NotificationEntity(String content, LocalDateTime timestamp, Long projectId) {
         this.content = content;
         this.timestamp = timestamp;
-        this.profile = profile;
         this.projectId = projectId;
     }
 

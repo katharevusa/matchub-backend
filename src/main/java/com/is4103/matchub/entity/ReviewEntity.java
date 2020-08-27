@@ -51,11 +51,9 @@ public class ReviewEntity {
     @JoinColumn(nullable = false)
     private ProfileEntity reviewer;
 
-    public ReviewEntity(String content, BigDecimal rating, ProjectEntity project, ProfileEntity reviewer) {
+    public ReviewEntity(String content, BigDecimal rating) {
         this.content = content;
         this.rating = rating;
-        this.project = project;
-        this.reviewer = reviewer;
     }
 
 }

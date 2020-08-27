@@ -42,11 +42,10 @@ public class ResourceCategoryEntity {
     @Column(nullable = false)
     @NotNull
     private String resourceCategoryDescription;
-    
+
     @OneToMany
-//        (mappedBy = "resourceCategory")
     private List<ResourceEntity> resources = new ArrayList<>();
-    
+
     public ResourceCategoryEntity(String resourceCategoryName, String resourceCategoryDescription) {
         this.resourceCategoryName = resourceCategoryName;
         this.resourceCategoryDescription = resourceCategoryDescription;

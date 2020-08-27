@@ -43,7 +43,6 @@ public class StakeholderEntity extends ProfileEntity {
     private List<ProjectEntity> projects = new ArrayList<>();
 
     @OneToMany
-//        (mappedBy = "stakeholder")
     private List<IndividualEntity> kah = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.EAGER)
@@ -54,12 +53,11 @@ public class StakeholderEntity extends ProfileEntity {
         this.organizationName = organizationName;
     }
 
-    public StakeholderEntity(String username, String password, String email, String organizationName, String organizationDescription, String address, IndividualEntity admin) {
+    public StakeholderEntity(String username, String password, String email, String organizationName, String organizationDescription, String address) {
         super(username, password, email);
         this.organizationName = organizationName;
         this.organizationDescription = organizationDescription;
         this.address = address;
-        this.admin = admin;
     }
 
 }

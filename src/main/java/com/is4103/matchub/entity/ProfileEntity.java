@@ -64,8 +64,4 @@ public abstract class ProfileEntity extends AccountEntity {
         super(username, password, email);
     }
 
-    public ProfileEntity(String username, String password, String email, List<SDGEntity> sdgs) {
-        super(username, password, email);
-        this.sdgs = sdgs;
-    }
 }

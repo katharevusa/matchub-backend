@@ -61,11 +61,9 @@ public class PageEntity {
     @JoinColumn(nullable = false)
     private ProjectEntity project;
 
-    public PageEntity(LocalDateTime timeCreated, String content, Long pageCreator, ProjectEntity project) {
+    public PageEntity(LocalDateTime timeCreated, Long pageCreator) {
         this.timeCreated = timeCreated;
-        this.content = content;
         this.pageCreator = pageCreator;
-        this.project = project;
     }
 
 }

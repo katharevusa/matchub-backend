@@ -51,11 +51,9 @@ public class KanbanBoardEntity {
     @OneToOne(fetch = FetchType.LAZY)
     private ProjectEntity project;
 
-    public KanbanBoardEntity(String kanbanBoardTitle, String kanbanBoardDescription, List<MilestoneEntity> milestones, ProjectEntity project) {
+    public KanbanBoardEntity(String kanbanBoardTitle, String kanbanBoardDescription) {
         this.kanbanBoardTitle = kanbanBoardTitle;
         this.kanbanBoardDescription = kanbanBoardDescription;
-        this.milestones = milestones;
-        this.project = project;
     }
 
 }

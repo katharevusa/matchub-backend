@@ -46,13 +46,11 @@ public class ChannelEntity {
     private String channelDescription;
 
     @OneToMany
-//        (mappedBy = "channel")
     private List<MessageEntity> messages = new ArrayList<>();
 
-    public ChannelEntity(String channelTitle, String channelDescription, List<MessageEntity> messages) {
+    public ChannelEntity(String channelTitle, String channelDescription) {
         this.channelTitle = channelTitle;
         this.channelDescription = channelDescription;
-        this.messages = messages;
     }
 
 }

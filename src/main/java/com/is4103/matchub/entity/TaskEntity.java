@@ -63,13 +63,11 @@ public class TaskEntity {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<ProfileEntity> profiles = new ArrayList<>();
 
-    public TaskEntity(String taskTitle, String taskDescription, LocalDateTime expectedStartTime, LocalDateTime expectedEndTime, MilestoneEntity milestone, List<ProfileEntity> profiles) {
+    public TaskEntity(String taskTitle, String taskDescription, LocalDateTime expectedStartTime, LocalDateTime expectedEndTime) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.expectedStartTime = expectedStartTime;
         this.expectedEndTime = expectedEndTime;
-        this.milestone = milestone;
-        this.profiles = profiles;
     }
 
 }

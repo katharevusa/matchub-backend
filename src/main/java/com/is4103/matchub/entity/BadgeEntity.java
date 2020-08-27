@@ -58,12 +58,10 @@ public class BadgeEntity {
     @JoinColumn(nullable = true)
     private ProjectEntity project;
 
-    public BadgeEntity(BadgeTypeEnum badgeType, String badgeTitle, String icon, List<ProfileEntity> profiles, ProjectEntity project) {
+    public BadgeEntity(BadgeTypeEnum badgeType, String badgeTitle, String icon) {
         this.badgeType = badgeType;
         this.badgeTitle = badgeTitle;
         this.icon = icon;
-        this.profiles = profiles;
-        this.project = project;
     }
 
 }

@@ -48,11 +48,4 @@ public class IndividualEntity extends ProfileEntity {
         this.genderEnum = genderEnum;
     }
 
-    public IndividualEntity(String username, String password, String email, String firstName, String lastName, GenderEnum genderEnum, List<ProjectEntity> projects) {
-        super(username, password, email);
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.genderEnum = genderEnum;
-        this.projects = projects;
-    }
 }

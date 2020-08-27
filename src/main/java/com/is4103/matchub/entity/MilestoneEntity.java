@@ -52,11 +52,9 @@ public class MilestoneEntity {
     @JoinColumn(nullable = false)
     private KanbanBoardEntity kanbanBoard;
 
-    public MilestoneEntity(String title, String description, List<TaskEntity> tasks, KanbanBoardEntity kanbanBoard) {
+    public MilestoneEntity(String title, String description) {
         this.title = title;
         this.description = description;
-        this.tasks = tasks;
-        this.kanbanBoard = kanbanBoard;
     }
 
 }
