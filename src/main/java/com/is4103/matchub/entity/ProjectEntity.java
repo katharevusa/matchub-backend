@@ -82,7 +82,7 @@ public class ProjectEntity {
     private Set<String> photos = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<StakeholderEntity> stakeholders = new ArrayList<>();
+    private List<OrganisationEntity> stakeholders = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<IndividualEntity> teamMembers = new ArrayList<>();

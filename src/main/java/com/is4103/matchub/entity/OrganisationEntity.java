@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StakeholderEntity extends ProfileEntity {
+public class OrganisationEntity extends ProfileEntity {
 
     @Column(nullable = false)
     @NotNull
@@ -48,12 +48,12 @@ public class StakeholderEntity extends ProfileEntity {
     @OneToOne(fetch = FetchType.EAGER)
     private IndividualEntity admin;
 
-    public StakeholderEntity(String username, String password, String email, String organizationName) {
+    public OrganisationEntity(String username, String password, String email, String organizationName) {
         super(username, password, email);
         this.organizationName = organizationName;
     }
 
-    public StakeholderEntity(String username, String password, String email, String organizationName, String organizationDescription, String address) {
+    public OrganisationEntity(String username, String password, String email, String organizationName, String organizationDescription, String address) {
         super(username, password, email);
         this.organizationName = organizationName;
         this.organizationDescription = organizationDescription;
