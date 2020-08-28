@@ -18,7 +18,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
@@ -86,6 +88,10 @@ public class ProjectEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<IndividualEntity> teamMembers = new ArrayList<>();
+
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private IndividualEntity projAdmin;
 
     @OneToMany(mappedBy = "project")
     private List<ReviewEntity> reviews = new ArrayList<>();
