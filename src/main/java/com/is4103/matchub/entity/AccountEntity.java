@@ -37,7 +37,7 @@ public class AccountEntity {
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long accountId;
+    private Long accountId;
 
     @Column(nullable = false, unique = true)
     @NotNull
@@ -66,7 +66,7 @@ public class AccountEntity {
 
     @Column(nullable = false)
     @NotNull
-    private Boolean disabled = false;
+    private Boolean disabled = true;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();

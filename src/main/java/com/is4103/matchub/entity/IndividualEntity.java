@@ -2,11 +2,13 @@ package com.is4103.matchub.entity;
 
 import com.is4103.matchub.enumeration.GenderEnum;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,11 +32,14 @@ public class IndividualEntity extends ProfileEntity {
     @NotNull
     private GenderEnum genderEnum;
 
-    @Column
+    @Column(nullable = true)
     private String profileDescription;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> projectFollowing = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<ProjectEntity> projects;
 
     public IndividualEntity(String username, String password, String email, String firstName, String lastName, GenderEnum genderEnum) {
         super(username, password, email);
@@ -42,4 +47,5 @@ public class IndividualEntity extends ProfileEntity {
         this.lastName = lastName;
         this.genderEnum = genderEnum;
     }
+
 }
