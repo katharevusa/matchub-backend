@@ -5,18 +5,15 @@
  */
 package com.is4103.matchub.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.is4103.matchub.enumeration.FundStatusEnum;
+import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,40 +29,37 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChannelEntity {
+public class FundPledgeEntity {
 
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long channelId;
+    private Long fundPledgeId;
 
     @Column(nullable = false)
     @NotNull
-    private String channelTitle;
+    private BigDecimal donatedAmount;
 
     @Column(nullable = false)
     @NotNull
-    private String channelDescription;
+    private String wellWishes;
 
-    @OneToMany
-    private List<MessageEntity> messages = new ArrayList<>();
-    
-    @ManyToMany
-    private List<ProfileEntity> channelMembers = new ArrayList<>();
-    
-    @ManyToMany
-    private List<ProfileEntity> channelAdmins = new ArrayList<>();
-    
-    @OneToOne
-    private KanbanBoardEntity kanbanBoard;
-    
+    @Column(nullable = false)
+    @NotNull
+    private FundStatusEnum fundStatus;
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    private ProjectEntity project;
+    private ProfileEntity profile;
 
-    public ChannelEntity(String channelTitle, String channelDescription) {
-        this.channelTitle = channelTitle;
-        this.channelDescription = channelDescription;
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private FundsCampaignEntity fundCampaign;
+
+    public FundPledgeEntity(BigDecimal donatedAmount, String wellWishes, FundStatusEnum fundStatus) {
+        this.donatedAmount = donatedAmount;
+        this.wellWishes = wellWishes;
+        this.fundStatus = fundStatus;
     }
 
 }

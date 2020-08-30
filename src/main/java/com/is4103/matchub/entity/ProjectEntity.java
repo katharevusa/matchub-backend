@@ -54,9 +54,6 @@ public class ProjectEntity {
     @NotNull
     private String projectDescription;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> keywords = new HashSet<>();
-
     @Column(nullable = false)
     @NotNull
     private String country;
@@ -74,30 +71,33 @@ public class ProjectEntity {
 
     @Column(nullable = false)
     @NotNull
-    private ProjectStatusEnum status;
+    private ProjectStatusEnum projStatus;
 
     @Column(nullable = false)
     @NotNull
-    private Integer votes = 0;
+    private Integer upvotes = 0;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> photos = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<OrganisationEntity> stakeholders = new ArrayList<>();
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> relatedResources = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<IndividualEntity> teamMembers = new ArrayList<>();
+    @Column(nullable = false)
+    @NotNull
+    private Long projCreatorId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private IndividualEntity projAdmin;
-
+    //will uncomment when there is the JoinRequestEntity in the merged copy
+//    @OneToMany
+//    private List<JoinRequestEntity> joinRequests = new ArrayList<>();
     @OneToMany(mappedBy = "project")
     private List<ReviewEntity> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "project")
     private List<BadgeEntity> badges = new ArrayList<>();
+
+    @OneToMany(mappedBy = "project")
+    private List<FundsCampaignEntity> fundsCampaign = new ArrayList<>();
 
     @OneToMany
     private List<ScheduleEntity> meetings = new ArrayList<>();
@@ -105,22 +105,31 @@ public class ProjectEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ResourceEntity> resources = new ArrayList<>();
 
+    //will uncomment when there is the ResourceRequestEntity in the merged copy
+//    @OneToMany
+//    private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
     @ManyToMany(fetch = FetchType.LAZY)
     private List<SDGEntity> sdgs = new ArrayList<>();
 
     @OneToMany
     private List<KPIEntity> kpis = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    private KanbanBoardEntity kanbanBoard;
+    @ManyToMany
+    private List<ProfileEntity> projAdmins = new ArrayList<>();
 
-    public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate, ProjectStatusEnum status) {
+    @ManyToMany
+    private List<ProfileEntity> teamMembers = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "project")
+    private List<ChannelEntity> channels = new ArrayList<>();
+
+    public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate, ProjectStatusEnum projStatus) {
         this.projectTitle = projectTitle;
         this.projectDescription = projectDescription;
         this.country = country;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.status = status;
+        this.projStatus = projStatus;
     }
 
 }

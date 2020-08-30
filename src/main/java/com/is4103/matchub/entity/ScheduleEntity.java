@@ -17,6 +17,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -51,14 +52,18 @@ public class ScheduleEntity {
     @NotNull
     private LocalDateTime endTime;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Long> attendeesId = new HashSet<>();
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @NotNull
+    private String location;
 
-    public ScheduleEntity(String scheduleName, LocalDateTime startTime, LocalDateTime endTime, Set<Long> attendeesId) {
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<ProfileEntity> attendees = new ArrayList<>();
+
+    public ScheduleEntity(String scheduleName, LocalDateTime startTime, LocalDateTime endTime, String location) {
         this.scheduleName = scheduleName;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.attendeesId = attendeesId;
+        this.location = location;
     }
 
 }

@@ -5,6 +5,8 @@
  */
 package com.is4103.matchub.entity;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -13,10 +15,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,40 +32,46 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChannelEntity {
+public class FundsCampaignEntity {
 
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long channelId;
+    private Long fundsCampaignId;
 
     @Column(nullable = false)
     @NotNull
-    private String channelTitle;
+    private BigDecimal campaignTarget;
+
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @NotNull
+    private LocalDateTime startDate;
+
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @NotNull
+    private LocalDateTime endDate;
 
     @Column(nullable = false)
     @NotNull
-    private String channelDescription;
+    private String campaignDescription;
 
-    @OneToMany
-    private List<MessageEntity> messages = new ArrayList<>();
-    
-    @ManyToMany
-    private List<ProfileEntity> channelMembers = new ArrayList<>();
-    
-    @ManyToMany
-    private List<ProfileEntity> channelAdmins = new ArrayList<>();
-    
-    @OneToOne
-    private KanbanBoardEntity kanbanBoard;
-    
+    @Column(nullable = false)
+    @NotNull
+    private BigDecimal currentAmountRaised;
+
+    @OneToMany(mappedBy = "fundCampaign")
+    private List<FundPledgeEntity> fundPledges = new ArrayList<>();
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private ProjectEntity project;
 
-    public ChannelEntity(String channelTitle, String channelDescription) {
-        this.channelTitle = channelTitle;
-        this.channelDescription = channelDescription;
+    public FundsCampaignEntity(BigDecimal campaignTarget, LocalDateTime startDate, LocalDateTime endDate, String campaignDescription, BigDecimal currentAmountRaised) {
+        this.campaignTarget = campaignTarget;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.campaignDescription = campaignDescription;
+        this.currentAmountRaised = currentAmountRaised;
     }
 
 }
