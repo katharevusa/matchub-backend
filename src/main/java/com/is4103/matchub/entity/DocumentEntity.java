@@ -5,16 +5,11 @@
  */
 package com.is4103.matchub.entity;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,27 +25,24 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KanbanBoardEntity {
+public class DocumentEntity {
 
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long kanbanBoardId;
+    private Long documentId;
 
     @Column(nullable = false)
     @NotNull
-    private String kanbanBoardTitle;
+    private String documentTitle;
 
     @Column(nullable = false)
     @NotNull
-    private String kanbanBoardDescription;
+    private String uploadedFile;
 
-    @OneToMany(mappedBy = "kanbanBoard")
-    private List<MilestoneEntity> milestones = new ArrayList<>();
-
-    public KanbanBoardEntity(String kanbanBoardTitle, String kanbanBoardDescription) {
-        this.kanbanBoardTitle = kanbanBoardTitle;
-        this.kanbanBoardDescription = kanbanBoardDescription;
+    public DocumentEntity(String documentTitle, String uploadedFile) {
+        this.documentTitle = documentTitle;
+        this.uploadedFile = uploadedFile;
     }
 
 }

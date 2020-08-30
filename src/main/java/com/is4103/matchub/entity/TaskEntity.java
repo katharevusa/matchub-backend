@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.is4103.matchub.enumeration.TaskStatusEnum;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -56,18 +58,26 @@ public class TaskEntity {
     @NotNull
     private LocalDateTime expectedEndTime;
 
+    @Column(nullable = false)
+    @NotNull
+    private TaskStatusEnum statusEnum;
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private MilestoneEntity milestone;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<ProfileEntity> profiles = new ArrayList<>();
 
-    public TaskEntity(String taskTitle, String taskDescription, LocalDateTime expectedStartTime, LocalDateTime expectedEndTime) {
+    @OneToMany
+    private List<DocumentEntity> documents = new ArrayList<>();
+
+    public TaskEntity(String taskTitle, String taskDescription, LocalDateTime expectedStartTime, LocalDateTime expectedEndTime, TaskStatusEnum statusEnum) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
         this.expectedStartTime = expectedStartTime;
         this.expectedEndTime = expectedEndTime;
+        this.statusEnum = statusEnum;
     }
 
 }
