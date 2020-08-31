@@ -1,10 +1,13 @@
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.exception.UsernameConflictException;
+import com.is4103.matchub.vo.IndividualCreateVO;
 import com.is4103.matchub.vo.UserVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UserService {
+    UserVO create(IndividualCreateVO vo);
 
     UserVO get(Long id);
 
