@@ -59,8 +59,8 @@ public class ChannelEntity {
     @OneToOne
     private KanbanBoardEntity kanbanBoard;
     
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
+    @ManyToOne(optional = true)
+    @JoinColumn(nullable = true)
     private ProjectEntity project;
 
     public ChannelEntity(String channelTitle, String channelDescription) {

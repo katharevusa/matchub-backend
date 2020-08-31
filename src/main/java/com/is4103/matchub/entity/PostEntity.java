@@ -1,0 +1,100 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.is4103.matchub.entity;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+/**
+ *
+ * @author longluqian
+ */
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class PostEntity {
+    @Id
+    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long postId;
+    
+    @Column(nullable= false)
+    @NotNull
+    private String content;
+    
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @NotNull
+    private LocalDateTime timeCreated;
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> photos = new HashSet<String>();
+    
+    @Column(nullable = true)
+    private Long originalPostId; 
+    
+    @Column(nullable = true)
+    private Long previousPostId;
+    
+    @NotNull
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    private ProfileEntity postCreator;
+
+    public PostEntity(String content, LocalDateTime timeCreated, Set<String> photos, Long originalPostId, Long previousPostId, ProfileEntity postCreator) {
+        this.content = content;
+        this.timeCreated = timeCreated;
+        this.photos = photos;
+        this.originalPostId = originalPostId;
+        this.previousPostId = previousPostId;
+        this.postCreator = postCreator;
+    }
+    
+    
+   
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+
+    
+
+
+
+
+
+}
+
+

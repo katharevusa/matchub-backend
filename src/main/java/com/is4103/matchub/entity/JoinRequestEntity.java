@@ -5,14 +5,14 @@
  */
 package com.is4103.matchub.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.is4103.matchub.enumeration.JoinRequestStatusEnum;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,34 +21,43 @@ import lombok.NoArgsConstructor;
 
 /**
  *
- * @author ngjin
+ * @author longluqian
  */
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ResourceCategoryEntity {
-
+public class JoinRequestEntity {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long resourceCategoryId;
-
+    private Long joinRequestId;
+    
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @NotNull
+    private LocalDateTime requestCreationTime;
+    
     @Column(nullable = false)
     @NotNull
-    private String resourceCategoryName;
-
-    @Column(nullable = false)
+    private JoinRequestStatusEnum status;
+    
+    @ManyToOne
     @NotNull
-    private String resourceCategoryDescription;
+    private ProfileEntity requestor;
+    
+    @ManyToOne
+    @NotNull
+    private ProjectEntity project;
 
-    @OneToMany(mappedBy = "resourceCategory")
-    private List<ResourceEntity> resources = new ArrayList<>();
-
-    public ResourceCategoryEntity(String resourceCategoryName, String resourceCategoryDescription) {
-        this.resourceCategoryName = resourceCategoryName;
-        this.resourceCategoryDescription = resourceCategoryDescription;
+    public JoinRequestEntity(LocalDateTime requestCreationTime, JoinRequestStatusEnum status) {
+        this.requestCreationTime = requestCreationTime;
+        this.status = status;
     }
-
+    
+    
+    
+    
+    
+    
 }

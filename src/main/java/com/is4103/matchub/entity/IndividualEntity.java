@@ -1,6 +1,7 @@
 package com.is4103.matchub.entity;
 
 import com.is4103.matchub.enumeration.GenderEnum;
+import com.is4103.matchub.enumeration.RoleEnum;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,12 +38,14 @@ public class IndividualEntity extends ProfileEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> projectFollowing = new HashSet<>();
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> skillSet = new HashSet<>();
+    
+    
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<ProjectEntity> projects;
-
-    public IndividualEntity(String username, String password, String email, String firstName, String lastName, GenderEnum genderEnum) {
-        super(username, password, email);
+    public IndividualEntity(String password, String email, String firstName, String lastName, GenderEnum genderEnum, RoleEnum role) {
+        super(password, email, role);
         this.firstName = firstName;
         this.lastName = lastName;
         this.genderEnum = genderEnum;

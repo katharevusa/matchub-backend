@@ -12,9 +12,8 @@ public class UserVO {
 
     private Long accountId;
     private UUID uuid;
-    private String username;
     private String email;
-    private Set<String> roles = new HashSet<>();
+//    private Set<String> roles = new HashSet<>();
     private Boolean accountLocked;
     private Boolean accountExpired;
     private Boolean disabled;
@@ -23,9 +22,8 @@ public class UserVO {
         UserVO vo = new UserVO();
         vo.accountId = account.getAccountId();
         vo.uuid = account.getUuid();
-        vo.username = account.getUsername();
         vo.email = account.getEmail();
-        vo.roles.addAll(account.getRoles());
+//        vo.role = account.getRole();
         vo.accountLocked = account.getAccountLocked();
         vo.accountExpired = account.getAccountExpired();
         vo.disabled = account.getDisabled();

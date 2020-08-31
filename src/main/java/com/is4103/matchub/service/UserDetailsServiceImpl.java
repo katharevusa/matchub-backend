@@ -16,19 +16,19 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     AccountEntityRepository accountEntityRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        Optional<AccountEntity> optionalAccount = accountEntityRepository.findByUsername(username);
+        Optional<AccountEntity> optionalAccount = accountEntityRepository.findByEmail(email);
         User.UserBuilder builder = null;
         if (optionalAccount.isPresent()) {
             AccountEntity account = optionalAccount.get();
-            builder = User.withUsername(username);
+            builder = User.withUsername(email);
             builder.password(account.getPassword());
             builder.accountLocked(account.getAccountLocked());
             builder.accountExpired(account.getAccountExpired());
             builder.disabled(account.getDisabled());
-            String[] roles = account.getRoles().toArray(new String[account.getRoles().size()]);
-            builder.roles(roles);
+//            builder.role(account.getRole());
+            
         } else {
             throw new UsernameNotFoundException("User not found.");
         }
