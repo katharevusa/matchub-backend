@@ -24,9 +24,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserVO get(String username) {
-        AccountEntity account = accountEntityRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+    public UserVO get(String email) {
+        AccountEntity account = accountEntityRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
         return UserVO.of(account);
     }
 

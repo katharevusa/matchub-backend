@@ -87,9 +87,9 @@ public class ProjectEntity {
     @NotNull
     private Long projCreatorId;
 
-    //will uncomment when there is the JoinRequestEntity in the merged copy
-//    @OneToMany
-//    private List<JoinRequestEntity> joinRequests = new ArrayList<>();
+
+    @OneToMany
+    private List<JoinRequestEntity> joinRequests = new ArrayList<>();
     @OneToMany(mappedBy = "project")
     private List<ReviewEntity> reviews = new ArrayList<>();
 
@@ -102,12 +102,10 @@ public class ProjectEntity {
     @OneToMany
     private List<ScheduleEntity> meetings = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<ResourceEntity> resources = new ArrayList<>();
-
-    //will uncomment when there is the ResourceRequestEntity in the merged copy
-//    @OneToMany
-//    private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
+   
+    @OneToMany
+    private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
+    
     @ManyToMany(fetch = FetchType.LAZY)
     private List<SDGEntity> sdgs = new ArrayList<>();
 
@@ -122,6 +120,9 @@ public class ProjectEntity {
     
     @OneToMany(mappedBy = "project")
     private List<ChannelEntity> channels = new ArrayList<>();
+    
+    @ManyToOne
+    private ProfileEntity projectOwner;
 
     public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate, ProjectStatusEnum projStatus) {
         this.projectTitle = projectTitle;

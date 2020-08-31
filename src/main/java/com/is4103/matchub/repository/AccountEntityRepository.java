@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface AccountEntityRepository extends JpaRepository<AccountEntity, Long> {
 
-    Optional<AccountEntity> findByUsername(String username);
+    Optional<AccountEntity> findByEmail(String email);
 
-    @Query(value = "SELECT ae FROM AccountEntity ae WHERE ae.username LIKE %?1% OR ae.email LIKE %?1%",
-            countQuery = "SELECT COUNT(ae) FROM AccountEntity ae WHERE ae.username LIKE %?1% OR ae.email LIKE %?1%")
+    @Query(value = "SELECT ae FROM AccountEntity ae WHERE ae.email LIKE %?1%",
+            countQuery = "SELECT COUNT(ae) FROM AccountEntity ae WHERE ae.email LIKE %?1%")
     Page<AccountEntity> search(String search, Pageable pageable);
 }

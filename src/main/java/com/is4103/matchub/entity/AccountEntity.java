@@ -1,6 +1,7 @@
 package com.is4103.matchub.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.is4103.matchub.enumeration.RoleEnum;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -29,10 +30,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-public class AccountEntity { 
-
-    public static final String ROLE_ADMIN = "ADMIN";
-    public static final String ROLE_USER = "USER";
+public class AccountEntity {
 
     @Id
     @Column
@@ -42,10 +40,6 @@ public class AccountEntity {
     @Column(nullable = false, unique = true)
     @NotNull
     private UUID uuid;
-
-    @Column(unique = true)
-    @NotNull
-    private String username;
 
     @Column(nullable = false)
     @NotNull
@@ -67,14 +61,21 @@ public class AccountEntity {
     @Column(nullable = false)
     @NotNull
     private Boolean disabled = true;
+    
+    @Column(nullable = false)
+    @NotNull
+    private RoleEnum role;
+    
+    @Column(nullable = false)
+    @NotNull
+    private Boolean isVerified = false;
+    
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> roles = new HashSet<>();
-
-    public AccountEntity(String username, String password, String email) {
+  
+    public AccountEntity(String password, String email, RoleEnum role) {
         this.uuid = UUID.randomUUID();
-        this.username = username;
         this.password = password;
         this.email = email;
+        this.role = role;
     }
 }
