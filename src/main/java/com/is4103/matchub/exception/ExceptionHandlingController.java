@@ -22,4 +22,16 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.CONFLICT);
     }
+    
+    
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ExceptionResponse> invalidInput(MethodArgumentNotValidException ex) {
+        BindingResult result = ex.getBindingResult();
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Validation Error");
+        response.setErrorMessage("Invalid inputs.");
+        response.setErrors(ValidationUtil.fromBindingErrors(result));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 }

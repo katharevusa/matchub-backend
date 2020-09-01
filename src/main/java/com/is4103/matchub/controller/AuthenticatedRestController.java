@@ -27,10 +27,4 @@ public class AuthenticatedRestController {
         return userService.get(principal.getName());
     }
     
-    
-    @RequestMapping(method = RequestMethod.POST, value = "/uploadFile")
-    public String uploadFile(@RequestParam(value = "file") MultipartFile files,
-            @RequestParam(value = "directory", required = false) String directory) {
-        return attachmentService.upload(files, directory);
-    }
 }

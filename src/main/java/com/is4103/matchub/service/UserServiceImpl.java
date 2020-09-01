@@ -33,7 +33,6 @@ public class UserServiceImpl implements UserService {
         }
         AccountEntity account = new AccountEntity();
         vo.updateAccount(account, passwordEncoder);
-        account.setUuid(UUID.randomUUID());
         account = accountEntityRepository.save(account);
         return UserVO.of(account);
     }

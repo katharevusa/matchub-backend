@@ -66,7 +66,7 @@ public class AccountEntity {
 
     @Column(nullable = false)
     @NotNull
-    private Boolean disabled = true;
+    private Boolean disabled = false;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> roles = new HashSet<>();

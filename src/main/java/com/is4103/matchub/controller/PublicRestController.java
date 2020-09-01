@@ -1,5 +1,6 @@
 package com.is4103.matchub.controller;
 
+import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.UserService;
 import com.is4103.matchub.vo.IndividualCreateVO;
 import com.is4103.matchub.vo.UserVO;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import javax.validation.Valid;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @RestController
@@ -19,8 +21,18 @@ public class PublicRestController {
     @Autowired
     UserService userService;
 
-    @RequestMapping(method = RequestMethod.POST)
+    @Autowired
+    AttachmentService attachmentService;
+    
+    @RequestMapping(method = RequestMethod.POST, value="/createUser")
     UserVO create(@Valid @RequestBody IndividualCreateVO createVO) {
         return userService.create(createVO);
+    }
+    
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/uploadFile")
+    public String uploadFile(@RequestParam(value = "file") MultipartFile file,
+            @RequestParam(value = "directory", required = false) String directory) {
+        return attachmentService.upload(file, directory);
     }
 }

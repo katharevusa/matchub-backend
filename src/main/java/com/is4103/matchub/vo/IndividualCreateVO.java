@@ -18,7 +18,6 @@ import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.Enumerated;
 
-
 @Data
 public class IndividualCreateVO {
 
@@ -26,18 +25,17 @@ public class IndividualCreateVO {
     @NotBlank(message = "first name can not be blank.")
     private String firstName;
 
-
     @NotNull(message = "last name can not be null.")
     @NotBlank(message = "last name can not be blank.")
     private String lastName;
 
     @ValueOfEnum(enumClass = GenderEnum.class)
     @NotNull(message = "gender can not be null.")
-    private GenderEnum genderEnum;
+    private String genderEnum;
 
     @Column(nullable = true)
     private String profileDescription;
-    
+
     @NotNull(message = "username can not be null.")
     @NotBlank(message = "username can not be blank.")
     private String username;
@@ -60,6 +58,7 @@ public class IndividualCreateVO {
         account.setUsername(this.username.trim());
         account.setPassword(passwordEncoder.encode(this.password));
         account.setEmail(this.email);
+        account.setUuid(UUID.randomUUID());
         account.getRoles().clear();
         account.getRoles().addAll(Arrays.asList(this.roles));
     }
