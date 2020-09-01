@@ -27,8 +27,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             builder.accountLocked(account.getAccountLocked());
             builder.accountExpired(account.getAccountExpired());
             builder.disabled(account.getDisabled());
-//            builder.role(account.getRole());
-            
+            String[] roles = account.getRoles().toArray(new String[account.getRoles().size()]);
+            builder.roles(roles);
+//            builder.isVerified = account.getIsVerified();
+//            builder.joinDate = account.getJoinDate();
+
         } else {
             throw new UsernameNotFoundException("User not found.");
         }

@@ -1,6 +1,5 @@
 package com.is4103.matchub.entity;
 
-import com.is4103.matchub.enumeration.RoleEnum;
 import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +27,7 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @Column(nullable = true)
     private String country;
-    
+
     @Column(nullable = true)
     private String city;
 
@@ -48,46 +47,46 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> savedResourceIds = new HashSet<>();
-    
+
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> upvotedProjectIds = new HashSet<>();
-    
+
     @OneToMany(mappedBy = "postCreator")
     private List<PostEntity> posts = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "notifiedUser")
     private List<NotificationEntity> notifications = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "resourceOwner")
     private List<ResourceEntity> hostedResources = new ArrayList<>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     private List<SDGEntity> sdgs = new ArrayList<>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ScheduleEntity> meetings = new ArrayList<>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ProjectEntity> projectsJoined = new ArrayList<>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ProjectEntity> projectsInCharge = new ArrayList<>();
-    
-     @OneToMany(mappedBy = "projectOwner")
+
+    @OneToMany(mappedBy = "projectOwner")
     private List<ProjectEntity> projectsOwned = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "requestor")
     private List<JoinRequestEntity> joinRequests = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "reviewer")
     private List<ReviewEntity> reviews = new ArrayList<>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     private List<BadgeEntity> badges = new ArrayList<>();
-    
-//    @OneToMany(mappedBy = "reviewer")
-//    private List<FundPledgeEntity> fundPladges = new ArrayList<>();
 
+    @OneToMany(mappedBy = "profile")
+    private List<FundPledgeEntity> fundPladges = new ArrayList<>();
+    
     @ManyToMany(fetch = FetchType.LAZY)
     private List<TaskEntity> tasks = new ArrayList<>();
 
@@ -97,12 +96,8 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ChannelEntity> joinedChannel = new ArrayList<>();
 
-    
-
-    public ProfileEntity(String password, String email, RoleEnum role) {
-        super(password, email, role);
+    public ProfileEntity(String email, String password) {
+        super(email, password);
     }
-    
-    
 
 }

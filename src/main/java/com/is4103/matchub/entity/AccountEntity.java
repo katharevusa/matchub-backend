@@ -1,7 +1,7 @@
 package com.is4103.matchub.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.is4103.matchub.enumeration.RoleEnum;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -32,6 +32,10 @@ import lombok.NoArgsConstructor;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class AccountEntity {
 
+    public static final String ROLE_SUPERUSER = "SUPERUSER";
+    public static final String ROLE_SYSADMIN = "SYSADMIN";
+    public static final String ROLE_USER = "USER";
+
     @Id
     @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,14 +45,14 @@ public class AccountEntity {
     @NotNull
     private UUID uuid;
 
+    @Column(nullable = false, unique = true)
+    @NotNull
+    private String email;
+
     @Column(nullable = false)
     @NotNull
     @JsonIgnore
     private String password;
-
-    @Column(nullable = false, unique = true)
-    @NotNull
-    private String email;
 
     @Column(nullable = false)
     @NotNull
@@ -61,21 +65,22 @@ public class AccountEntity {
     @Column(nullable = false)
     @NotNull
     private Boolean disabled = true;
-    
-    @Column(nullable = false)
-    @NotNull
-    private RoleEnum role;
-    
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<String> roles = new HashSet<>();
+
     @Column(nullable = false)
     @NotNull
     private Boolean isVerified = false;
-    
 
-  
-    public AccountEntity(String password, String email, RoleEnum role) {
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    private LocalDateTime joinDate;
+
+    public AccountEntity(String email, String password) {
         this.uuid = UUID.randomUUID();
-        this.password = password;
         this.email = email;
-        this.role = role;
+        this.password = password;
+        this.joinDate = LocalDateTime.now();
     }
+
 }
