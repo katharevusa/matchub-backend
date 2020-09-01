@@ -1,6 +1,5 @@
 package com.is4103.matchub.entity;
 
-import com.is4103.matchub.enumeration.RoleEnum;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -36,18 +35,15 @@ public class OrganisationEntity extends ProfileEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> employees = new HashSet<>();
-    
-     @ElementCollection(fetch = FetchType.EAGER)
+
+    @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> kahs = new HashSet<>();
-     
+
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> areasOfExpertise = new HashSet<>();
 
-
-
-
-    public OrganisationEntity(String password, String email, String organizationName, String organizationDescription, String address, RoleEnum role) {
-        super(password, email, role);
+    public OrganisationEntity(String email, String password, String organizationName, String organizationDescription, String address) {
+        super(email, password);
         this.organizationName = organizationName;
         this.organizationDescription = organizationDescription;
         this.address = address;

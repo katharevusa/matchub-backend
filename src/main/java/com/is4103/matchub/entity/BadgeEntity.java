@@ -17,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -54,8 +55,7 @@ public class BadgeEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ProfileEntity> profiles = new ArrayList<>();
 
-    @ManyToOne(optional = true)
-    @JoinColumn(nullable = true)
+    @OneToOne(optional = true)
     private ProjectEntity project;
 
     public BadgeEntity(BadgeTypeEnum badgeType, String badgeTitle, String icon) {

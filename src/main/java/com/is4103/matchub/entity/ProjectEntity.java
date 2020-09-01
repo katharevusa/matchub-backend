@@ -87,14 +87,14 @@ public class ProjectEntity {
     @NotNull
     private Long projCreatorId;
 
-
     @OneToMany
     private List<JoinRequestEntity> joinRequests = new ArrayList<>();
+
     @OneToMany(mappedBy = "project")
     private List<ReviewEntity> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "project")
-    private List<BadgeEntity> badges = new ArrayList<>();
+    @OneToOne(optional = false)
+    private BadgeEntity projectBadge;
 
     @OneToMany(mappedBy = "project")
     private List<FundsCampaignEntity> fundsCampaign = new ArrayList<>();
@@ -102,10 +102,9 @@ public class ProjectEntity {
     @OneToMany
     private List<ScheduleEntity> meetings = new ArrayList<>();
 
-   
     @OneToMany
     private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     private List<SDGEntity> sdgs = new ArrayList<>();
 
@@ -117,10 +116,10 @@ public class ProjectEntity {
 
     @ManyToMany
     private List<ProfileEntity> teamMembers = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "project")
     private List<ChannelEntity> channels = new ArrayList<>();
-    
+
     @ManyToOne
     private ProfileEntity projectOwner;
 
