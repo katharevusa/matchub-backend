@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 /**
  *
@@ -28,9 +29,11 @@ public class OrganisationEntity extends ProfileEntity {
     private String organizationName;
 
     @Column(nullable = true)
+    @Nullable
     private String organizationDescription;
 
-    @Column
+    @Column(nullable = true)
+    @Nullable
     private String address;
 
     @ElementCollection(fetch = FetchType.EAGER)

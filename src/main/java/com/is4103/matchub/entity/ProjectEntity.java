@@ -86,6 +86,14 @@ public class ProjectEntity {
     @Column(nullable = false)
     @NotNull
     private Long projCreatorId;
+    
+    @Column(nullable = false)
+    @NotNull
+    private Boolean spotlight = false;
+    
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
+    @Nullable
+    private LocalDateTime spotlightEndTime;
 
     @OneToMany
     private List<JoinRequestEntity> joinRequests = new ArrayList<>();
@@ -112,16 +120,13 @@ public class ProjectEntity {
     private List<KPIEntity> kpis = new ArrayList<>();
 
     @ManyToMany
-    private List<ProfileEntity> projAdmins = new ArrayList<>();
-
-    @ManyToMany
     private List<ProfileEntity> teamMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "project")
     private List<ChannelEntity> channels = new ArrayList<>();
 
-    @ManyToOne
-    private ProfileEntity projectOwner;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private List<ProfileEntity> projectOwners = new ArrayList<>();
 
     public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate, ProjectStatusEnum projStatus) {
         this.projectTitle = projectTitle;
