@@ -112,10 +112,12 @@ public class OAuth2ServerConfig extends AuthorizationServerConfigurerAdapter {
                     .antMatchers("/authenticated/**").hasAnyRole("USER", "SYSADMIN", "SUPERUSER")
                     .antMatchers("/auth/token").permitAll()
                     .antMatchers("/public/**").permitAll()
+                    .antMatchers("/sendActivationEmail").permitAll()
                     .and()
                     .csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         }
 
+//        /sendActivationEmail controller is for testing only
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
             resources.resourceId("matchub").tokenServices(tokenService);

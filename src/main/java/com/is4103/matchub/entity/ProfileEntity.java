@@ -22,7 +22,7 @@ import lombok.NoArgsConstructor;
 public abstract class ProfileEntity extends AccountEntity {
 
     @Column(unique = true)
-    @NotNull
+//    @NotNull
     private String phoneNumber;
 
     @Column(nullable = true)
@@ -51,6 +51,11 @@ public abstract class ProfileEntity extends AccountEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> upvotedProjectIds = new HashSet<>();
 
+    @Column(nullable = false)
+    @NotNull
+    @PositiveOrZero
+    private Integer spotlightChances = 0;
+
     @OneToMany(mappedBy = "postCreator")
     private List<PostEntity> posts = new ArrayList<>();
 
@@ -70,9 +75,6 @@ public abstract class ProfileEntity extends AccountEntity {
     private List<ProjectEntity> projectsJoined = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<ProjectEntity> projectsInCharge = new ArrayList<>();
-
-    @OneToMany(mappedBy = "projectOwner")
     private List<ProjectEntity> projectsOwned = new ArrayList<>();
 
     @OneToMany(mappedBy = "requestor")
@@ -86,7 +88,7 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @OneToMany(mappedBy = "profile")
     private List<FundPledgeEntity> fundPladges = new ArrayList<>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
     private List<TaskEntity> tasks = new ArrayList<>();
 

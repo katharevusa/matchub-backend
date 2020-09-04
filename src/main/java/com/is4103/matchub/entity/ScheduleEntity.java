@@ -44,6 +44,10 @@ public class ScheduleEntity {
     @NotNull
     private String scheduleName;
 
+    @Column(nullable = false)
+    @NotNull
+    private String description;
+
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @NotNull
     private LocalDateTime startTime;
