@@ -43,13 +43,17 @@ public class ReviewEntity {
     @NotNull
     private BigDecimal rating;
 
+    @Column(nullable = false)
+    @NotNull
+    private Long reviewerId;
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private ProjectEntity project;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    private ProfileEntity reviewer;
+    private ProfileEntity reviewReceiver;
 
     public ReviewEntity(String content, BigDecimal rating) {
         this.content = content;

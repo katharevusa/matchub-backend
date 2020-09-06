@@ -44,24 +44,26 @@ public class NotificationEntity {
     @NotNull
     private LocalDateTime timestamp;
 
+    @Column(nullable = false)
+    @NotNull
+    private String title;
+
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
     private ProfileEntity notifiedUser;
 
     @Column(nullable = true)
     private Long projectId;
-    
-    @Column (nullable = true)
+
+    @Column(nullable = true)
     private Long taskId;
-    
-    @Column (nullable = true)
+
+    @Column(nullable = true)
     private Long postId;
-    
+
     @Column(nullable = false)
     @NotNull
     private NotificationTypeEnum type;
-    
-    
 
     public NotificationEntity(String content, LocalDateTime timestamp, Long projectId) {
         this.content = content;

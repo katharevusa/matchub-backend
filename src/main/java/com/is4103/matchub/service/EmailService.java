@@ -14,5 +14,5 @@ import javax.mail.MessagingException;
  */
 public interface EmailService {
 
-    public void sendActivationEmail(String to) throws MessagingException, IOException;
+    public void sendVerificationEmail(String to) throws MessagingException, IOException;
 }

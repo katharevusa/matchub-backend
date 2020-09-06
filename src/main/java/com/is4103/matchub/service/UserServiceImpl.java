@@ -3,6 +3,7 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
+import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.exception.EmailExistException;
 import com.is4103.matchub.vo.UserVO;
@@ -12,10 +13,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.repository.SDGEntityRepository;
+import com.is4103.matchub.repository.TaskEntityRepository;
 import com.is4103.matchub.vo.IndividualCreateVO;
+import com.is4103.matchub.vo.IndividualSetupVO;
 import com.is4103.matchub.vo.OrganisationCreateVO;
+import com.is4103.matchub.vo.OrganisationSetupVO;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import javax.mail.MessagingException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import com.is4103.matchub.repository.ResourceEntityRepository;
+import com.is4103.matchub.repository.ReviewEntityRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -26,54 +38,252 @@ public class UserServiceImpl implements UserService {
     @Autowired
     PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private SDGEntityRepository sdgEntityRepository;
+
+    @Autowired
+    private TaskEntityRepository taskEntityRepository;
+
+    @Autowired
+    private ResourceEntityRepository resourceEntityRepository;
+
+    @Autowired
+    private ReviewEntityRepository reviewEntityRepository;
+
     @Transactional
     @Override
-    public UserVO createIndividual(IndividualCreateVO vo) {
+    public UserVO createIndividual(IndividualCreateVO vo) throws MessagingException, IOException {
         Optional<AccountEntity> oldAccount = accountEntityRepository.findByEmail(vo.getEmail());
         if (oldAccount.isPresent()) {
             throw new EmailExistException(vo.getEmail());
         }
-//        AccountEntity account = new AccountEntity();
-//        vo.updateAccount(account, passwordEncoder);
-//        account = accountEntityRepository.save(account);
-//        return UserVO.of(account);
 
         IndividualEntity newIndividual = new IndividualEntity();
         vo.updateIndividualAccount(newIndividual, passwordEncoder);
         //typecast the individual account into a generic account to persist it in DB
         AccountEntity newAccount = (AccountEntity) newIndividual;
         newAccount = accountEntityRepository.save(newAccount);
+
+        //auto trigger the sendVerificationEmail method
+        emailService.sendVerificationEmail(newAccount.getEmail());
+
+        return UserVO.of(newAccount);
+
+    }
+
+    @Transactional
+    @Override
+    public UserVO createOrganisation(OrganisationCreateVO vo) throws MessagingException, IOException {
+        Optional<AccountEntity> oldAccount = accountEntityRepository.findByEmail(vo.getEmail());
+        if (oldAccount.isPresent()) {
+            throw new EmailExistException(vo.getEmail());
+        }
+
+        OrganisationEntity newOrganisation = new OrganisationEntity();
+        vo.updateOrganisationAccount(newOrganisation, passwordEncoder);
+        //typecast the organisation account into a generic account to persist it in DB
+        AccountEntity newAccount = (AccountEntity) newOrganisation;
+        newAccount = accountEntityRepository.save(newAccount);
+
+        //auto trigger the sendVerificationEmail method
+        emailService.sendVerificationEmail(newAccount.getEmail());
+
         return UserVO.of(newAccount);
     }
 
     @Transactional
     @Override
-    public UserVO createOrganisation(OrganisationCreateVO vo) {
-        Optional<AccountEntity> oldAccount = accountEntityRepository.findByEmail(vo.getEmail());
-        if (oldAccount.isPresent()) {
-            throw new EmailExistException(vo.getEmail());
+    public UserVO setupIndividualProfile(UUID uuid, IndividualSetupVO vo) {
+        Optional<AccountEntity> currentAccount = accountEntityRepository.findByUuid(uuid);
+
+        if (!currentAccount.isPresent()) {
+            throw new UserNotFoundException(uuid);
         }
-        
-        OrganisationEntity newOrganisation = new OrganisationEntity();
-        vo.updateOrganisationAccount(newOrganisation, passwordEncoder);
-        //typecast the individual account into a generic account to persist it in DB
-        AccountEntity newAccount = (AccountEntity) newOrganisation;
-        newAccount = accountEntityRepository.save(newAccount);
-        return UserVO.of(newAccount);
+
+        //type cast into individual entity first 
+        IndividualEntity individual = (IndividualEntity) currentAccount.get();
+        vo.setupIndividualAccount(individual);
+
+        //find the SDG and associate with individual 
+        individual.getSdgs().clear();
+        for (int i = 0; i < vo.getSdgIds().length; i++) {
+            SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
+            individual.getSdgs().add(sdg);
+        }
+
+        individual.setDisabled(Boolean.FALSE);
+        individual.setIsVerified(Boolean.TRUE);
+
+        AccountEntity updatedAccount = (AccountEntity) individual;
+        updatedAccount = accountEntityRepository.save(updatedAccount);
+
+        return UserVO.of(updatedAccount);
     }
 
+    @Transactional
     @Override
-    public UserVO get(Long accountId) {
+    public UserVO setupOrganisationProfile(UUID uuid, OrganisationSetupVO vo) {
+        Optional<AccountEntity> currentAccount = accountEntityRepository.findByUuid(uuid);
+
+        if (!currentAccount.isPresent()) {
+            throw new UserNotFoundException(uuid);
+        }
+
+        //type cast into organisation entity first 
+        OrganisationEntity organisation = (OrganisationEntity) currentAccount.get();
+        vo.setupOrganisationAccount(organisation);
+
+        //find the SDG and associate with organisation 
+        organisation.getSdgs().clear();
+        for (int i = 0; i < vo.getSdgIds().length; i++) {
+            SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
+            organisation.getSdgs().add(sdg);
+        }
+
+        organisation.setDisabled(Boolean.FALSE);
+        organisation.setIsVerified(Boolean.TRUE);
+
+        AccountEntity updatedAccount = (AccountEntity) organisation;
+        updatedAccount = accountEntityRepository.save(updatedAccount);
+
+        return UserVO.of(updatedAccount);
+    }
+
+    public void setProfilePic(UUID uuid, String directory) {
+        Optional<AccountEntity> currentAccount = accountEntityRepository.findByUuid(uuid);
+
+        if (!currentAccount.isPresent()) {
+            throw new UserNotFoundException(uuid);
+        }
+
+        if (currentAccount.get() instanceof IndividualEntity) {
+            IndividualEntity individual = (IndividualEntity) currentAccount.get();
+            individual.setProfilePhoto(directory);
+
+            AccountEntity updatedAccount = (AccountEntity) individual;
+            updatedAccount = accountEntityRepository.save(updatedAccount);
+        } else {// must be organisation
+            OrganisationEntity organisation = (OrganisationEntity) currentAccount.get();
+            organisation.setProfilePhoto(directory);
+
+            AccountEntity updatedAccount = (AccountEntity) organisation;
+            updatedAccount = accountEntityRepository.save(updatedAccount);
+        }
+    }
+
+//    @Override
+//    public UserVO getAccount(Long accountId) {
+//        AccountEntity account = accountEntityRepository.findById(accountId)
+//                .orElseThrow(() -> new UserNotFoundException(accountId));
+//        return UserVO.of(account);
+//    }
+//
+//    @Override
+//    public UserVO getAccount(String email) {
+//        AccountEntity account = accountEntityRepository.findByEmail(email)
+//                .orElseThrow(() -> new UserNotFoundException(email));
+//        return UserVO.of(account);
+//    }
+    @Override
+    public AccountEntity getAccount(Long accountId) {
         AccountEntity account = accountEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
-        return UserVO.of(account);
+        return account;
     }
 
     @Override
-    public UserVO get(String email) {
+    public AccountEntity getAccount(String email) {
         AccountEntity account = accountEntityRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
-        return UserVO.of(account);
+        return account;
+    }
+
+    @Override
+    public AccountEntity getAccount(UUID uuid) {
+        AccountEntity account = accountEntityRepository.findByUuid(uuid)
+                .orElseThrow(() -> new UserNotFoundException(uuid));
+        return account;
+    }
+
+    @Override
+    public List<AccountEntity> getAllAccounts() {
+        return accountEntityRepository.findAll();
+    }
+
+    @Override
+    public List<AccountEntity> getAllActiveAccounts() {
+        return accountEntityRepository.findAllActiveAccounts();
+    }
+
+    @Override
+    public List<AccountEntity> getAllFollowingAccounts(Long id) {
+        AccountEntity account = accountEntityRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        //type cast into individual or organisation
+        if (account instanceof IndividualEntity) {
+            IndividualEntity i = (IndividualEntity) account;
+
+            //convert set to List
+            List<Long> followingIds = new ArrayList<>(i.getFollowing());
+            List<AccountEntity> following = new ArrayList<>();
+
+            for (int j = 0; j < followingIds.size(); j++) {
+                AccountEntity a = accountEntityRepository.findById(followingIds.get(j)).get();
+                following.add(a);
+            }
+            return following;
+        } else { //must be organisation
+            OrganisationEntity o = (OrganisationEntity) account;
+
+            //convert set to List
+            List<Long> followingIds = new ArrayList<>(o.getFollowing());
+            List<AccountEntity> following = new ArrayList<>();
+
+            for (int j = 0; j < followingIds.size(); j++) {
+                AccountEntity a = accountEntityRepository.findById(followingIds.get(j)).get();
+                following.add(a);
+            }
+            return following;
+        }
+
+    }
+
+    @Override
+    public List<AccountEntity> getAllFollowerAccounts(Long id) {
+        AccountEntity account = accountEntityRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+
+        //type cast into individual or organisation
+        if (account instanceof IndividualEntity) {
+            IndividualEntity i = (IndividualEntity) account;
+
+            //convert set to List
+            List<Long> followerIds = new ArrayList<>(i.getFollowers());
+            List<AccountEntity> followers = new ArrayList<>();
+
+            for (int j = 0; j < followerIds.size(); j++) {
+                AccountEntity a = accountEntityRepository.findById(followerIds.get(j)).get();
+                followers.add(a);
+            }
+            return followers;
+        } else { //must be organisation
+            OrganisationEntity o = (OrganisationEntity) account;
+
+            //convert set to List
+            List<Long> followerIds = new ArrayList<>(o.getFollowers());
+            List<AccountEntity> followers = new ArrayList<>();
+
+            for (int j = 0; j < followerIds.size(); j++) {
+                AccountEntity a = accountEntityRepository.findById(followerIds.get(j)).get();
+                followers.add(a);
+            }
+            return followers;
+        }
+
     }
 
     @Transactional
@@ -81,11 +291,37 @@ public class UserServiceImpl implements UserService {
     public void delete(Long accountId) {
         AccountEntity account = accountEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
-        accountEntityRepository.delete(account);
+
+        Boolean deleteAccount = true;
+
+        if (account instanceof IndividualEntity) {
+            IndividualEntity i = (IndividualEntity) account;
+
+            //account cannot be deleted if it has incomplete tasks, reviews given
+            if (taskEntityRepository.getIncompleteTasksOfAccount(accountId).size() > 0
+                    || reviewEntityRepository.getAllReviewsByAccount(accountId).size() > 0) {
+                deleteAccount = false;
+            }
+        } else {
+            OrganisationEntity o = (OrganisationEntity) account;
+
+            //account cannot be deleted if it has incomplete tasks, reviews given
+            if (taskEntityRepository.getIncompleteTasksOfAccount(accountId).size() > 0
+                    || reviewEntityRepository.getAllReviewsByAccount(accountId).size() > 0) {
+                deleteAccount = false;
+            }
+        }
+
+        if (deleteAccount) {
+            accountEntityRepository.delete(account);
+        } else { // account cannot be deleted
+            account.setDisabled(Boolean.TRUE);
+        }
     }
 
     @Override
-    public Page<UserVO> search(String search, Pageable pageable) {
+    public Page<UserVO> search(String search, Pageable pageable
+    ) {
         Page<AccountEntity> accountPage;
         if (search.isEmpty()) {
             accountPage = accountEntityRepository.findAll(pageable);
