@@ -5,6 +5,8 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,16 +20,15 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.lang.Nullable;
 
 /**
@@ -36,7 +37,7 @@ import org.springframework.lang.Nullable;
  */
 @Entity
 @Data
-@Builder
+  
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProjectEntity {
@@ -60,10 +61,14 @@ public class ProjectEntity {
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime startDate;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @NotNull
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm", iso = ISO.DATE_TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endDate;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -71,7 +76,7 @@ public class ProjectEntity {
 
     @Column(nullable = false)
     @NotNull
-    private ProjectStatusEnum projStatus;
+    private ProjectStatusEnum projStatus = ProjectStatusEnum.ON_HOLD;
 
     @Column(nullable = false)
     @NotNull
@@ -101,7 +106,7 @@ public class ProjectEntity {
     @OneToMany(mappedBy = "project")
     private List<ReviewEntity> reviews = new ArrayList<>();
 
-    @OneToOne(optional = false)
+    @OneToOne(optional = true)//need to change to false later cos every project needs to have one badge
     private BadgeEntity projectBadge;
 
     @OneToMany(mappedBy = "project")
@@ -126,15 +131,16 @@ public class ProjectEntity {
     private List<ChannelEntity> channels = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("projectsOwned")
     private List<ProfileEntity> projectOwners = new ArrayList<>();
 
-    public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate, ProjectStatusEnum projStatus) {
+    public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate) {
         this.projectTitle = projectTitle;
         this.projectDescription = projectDescription;
         this.country = country;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.projStatus = projStatus;
+       
     }
 
 }
