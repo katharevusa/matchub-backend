@@ -80,8 +80,8 @@ public abstract class ProfileEntity extends AccountEntity {
     @OneToMany(mappedBy = "requestor")
     private List<JoinRequestEntity> joinRequests = new ArrayList<>();
 
-    @OneToMany(mappedBy = "reviewer")
-    private List<ReviewEntity> reviews = new ArrayList<>();
+    @OneToMany(mappedBy = "reviewReceiver")
+    private List<ReviewEntity> reviewsReceived = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<BadgeEntity> badges = new ArrayList<>();
@@ -97,6 +97,9 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ChannelEntity> joinedChannel = new ArrayList<>();
+    
+    @OneToMany
+    private List<PostEntity> likedPosts = new ArrayList<>();
 
     public ProfileEntity(String email, String password) {
         super(email, password);

@@ -36,13 +36,6 @@ public class IndividualCreateVO {
     @NotBlank(message = "last name can not be blank.")
     private String lastName;
 
-    @ValueOfEnum(enumClass = GenderEnum.class)
-    @NotNull(message = "gender can not be null.")
-    private String genderEnum;
-
-    @Column(nullable = true)
-    private String profileDescription;
-
     @NotNull(message = "email can not be null.")
     @NotBlank(message = "email can not be blank.")
     @Email(message = "email must be valid.")
@@ -67,8 +60,6 @@ public class IndividualCreateVO {
 
         newIndividual.setFirstName(this.firstName);
         newIndividual.setLastName(this.lastName);
-        newIndividual.setGenderEnum(GenderEnum.valueOf(this.genderEnum));
-        newIndividual.setProfileDescription(this.profileDescription);
     }
 
 }

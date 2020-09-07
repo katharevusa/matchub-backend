@@ -32,12 +32,6 @@ public class OrganisationCreateVO {
     @NotBlank(message = "Organisation name can not be blank.")
     private String organisationName;
 
-    @Column(nullable = true)
-    private String organizationDescription;
-
-    @Column(nullable = true)
-    private String address;
-
     @NotNull(message = "email can not be null.")
     @NotBlank(message = "email can not be blank.")
     @Email(message = "email must be valid.")
@@ -61,7 +55,5 @@ public class OrganisationCreateVO {
         newOrg.getRoles().addAll(Arrays.asList(this.roles));
 
         newOrg.setOrganizationName(this.organisationName);
-        newOrg.setAddress(this.address);
-        newOrg.setOrganizationDescription(this.organizationDescription);
     }
 }
