@@ -1,10 +1,14 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.IndividualEntity;
+import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.vo.IndividualCreateVO;
 import com.is4103.matchub.vo.IndividualSetupVO;
+import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
+import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
 import java.util.List;
@@ -23,7 +27,7 @@ public interface UserService {
 
     UserVO setupOrganisationProfile(UUID uuid, OrganisationSetupVO vo);
 
-    void setProfilePic(UUID uuid, String directory);
+    AccountEntity setProfilePic(UUID uuid, String directory);
 
 //    UserVO getAccount(Long id);
 //    UserVO getAccount(String username);
@@ -40,6 +44,10 @@ public interface UserService {
     List<AccountEntity> getAllFollowingAccounts(Long id);
 
     List<AccountEntity> getAllFollowerAccounts(Long id);
+
+    IndividualEntity updateIndividual(IndividualUpdateVO vo);
+
+    OrganisationEntity updateOrganisation(OrganisationUpdateVO vo);
 
     void delete(Long id);
 

@@ -1,3 +1,8 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
@@ -6,6 +11,7 @@ import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.exception.EmailExistException;
+import com.is4103.matchub.exception.UpdateProfileException;
 import com.is4103.matchub.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +34,13 @@ import javax.mail.MessagingException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
+import com.is4103.matchub.vo.IndividualUpdateVO;
+import com.is4103.matchub.vo.OrganisationUpdateVO;
 
+/**
+ *
+ * @author ngjin
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -152,7 +164,8 @@ public class UserServiceImpl implements UserService {
         return UserVO.of(updatedAccount);
     }
 
-    public void setProfilePic(UUID uuid, String directory) {
+    @Override
+    public AccountEntity setProfilePic(UUID uuid, String directory) {
         Optional<AccountEntity> currentAccount = accountEntityRepository.findByUuid(uuid);
 
         if (!currentAccount.isPresent()) {
@@ -165,12 +178,14 @@ public class UserServiceImpl implements UserService {
 
             AccountEntity updatedAccount = (AccountEntity) individual;
             updatedAccount = accountEntityRepository.save(updatedAccount);
+            return updatedAccount;
         } else {// must be organisation
             OrganisationEntity organisation = (OrganisationEntity) currentAccount.get();
             organisation.setProfilePhoto(directory);
 
             AccountEntity updatedAccount = (AccountEntity) organisation;
             updatedAccount = accountEntityRepository.save(updatedAccount);
+            return updatedAccount;
         }
     }
 
@@ -284,6 +299,39 @@ public class UserServiceImpl implements UserService {
             return followers;
         }
 
+    }
+
+    @Transactional
+    @Override
+    public IndividualEntity updateIndividual(IndividualUpdateVO vo) {
+        AccountEntity account = accountEntityRepository.findById(vo.getId())
+                .orElseThrow(() -> new UserNotFoundException(vo.getId()));
+        System.out.println("account is found");
+
+        if (account instanceof IndividualEntity) {
+            IndividualEntity individual = (IndividualEntity) account;
+            System.out.println("typecasted to individual");
+
+            vo.updateIndividualAccount(individual, passwordEncoder);
+            accountEntityRepository.save(individual);
+            return individual;
+        } else {
+            throw new UpdateProfileException();
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public OrganisationEntity updateOrganisation(OrganisationUpdateVO vo) {
+        AccountEntity account = accountEntityRepository.findById(vo.getId())
+                .orElseThrow(() -> new UserNotFoundException(vo.getId()));
+
+        OrganisationEntity organisation = (OrganisationEntity) account;
+
+        vo.updateOrganisationAccount(organisation, passwordEncoder);
+        accountEntityRepository.save(organisation);
+        return organisation;
     }
 
     @Transactional
