@@ -31,10 +31,10 @@ public class EmailServiceImpl implements EmailService {
     private AccountEntityRepository accountEntityRepository;
 
     @Override
-    public void sendActivationEmail(String to) throws MessagingException, IOException {
+    public void sendVerificationEmail(String to) throws MessagingException, IOException {
         SimpleMailMessage message = new SimpleMailMessage();
 
-        //find the user uuid
+        //find the new account created (uuid/name)
         AccountEntity newRegisteredAccount = accountEntityRepository.findByEmail(to).get();
 
         String name = "";

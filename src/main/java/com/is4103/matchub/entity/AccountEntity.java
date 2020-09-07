@@ -41,7 +41,8 @@ public class AccountEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
 
-    @Column(nullable = false, unique = true)
+//    @Column(nullable = false, unique = true)
+    @Column(name = "apiKey", updatable = false, nullable = false, unique = true, columnDefinition = "BINARY(16)")
     @NotNull
     private UUID uuid;
 

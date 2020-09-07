@@ -28,8 +28,8 @@ public class IndividualEntity extends ProfileEntity {
     @NotNull
     private String lastName;
 
-    @Column(nullable = false)
-    @NotNull
+    @Column(nullable = true)
+//    @NotNull
     private GenderEnum genderEnum;
 
     @Column(nullable = true)
