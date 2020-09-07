@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.controller;
 
+import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.UserService;
 import com.is4103.matchub.vo.IndividualCreateVO;
@@ -62,18 +63,20 @@ public class PublicRestController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/setupIndividualProfile/uploadProfilePic/{uuid}")
-    public String uploadIndividualFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
+    public AccountEntity uploadIndividualFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
 //        return attachmentService.upload(file, directory);
         String filePath = attachmentService.upload(file);
-        userService.setProfilePic(uuid, filePath);
-        return "uploaded file successfully: relative pathImage is " + filePath;
+        
+        System.out.println("uploaded file successfully: relative pathImage is " + filePath);
+        return userService.setProfilePic(uuid, filePath);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/setupOrganisationProfile/uploadProfilePic/{uuid}")
-    public String uploadOrganisationFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
+    public AccountEntity uploadOrganisationFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
 //        return attachmentService.upload(file, directory);
         String filePath = attachmentService.upload(file);
-        userService.setProfilePic(uuid, filePath);
-        return "uploaded file successfully: relative pathImage is " + filePath;
+
+        System.out.println("uploaded file successfully: relative pathImage is " + filePath);
+        return userService.setProfilePic(uuid, filePath);
     }
 }
