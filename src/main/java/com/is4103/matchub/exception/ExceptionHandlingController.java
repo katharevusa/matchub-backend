@@ -62,4 +62,13 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(value = DeleteProfilePictureException.class)
+    public ResponseEntity<ExceptionResponse> unableToDeleteProfilePicture(DeleteProfilePictureException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to deleete profile picture");
+        response.setErrorMessage(ex.getMessage());
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 }

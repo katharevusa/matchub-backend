@@ -52,6 +52,8 @@ public interface UserService {
 
     void delete(Long id);
 
+    void deleteProfilePic(Long accountId);
+
     void resetPassword(UUID uuid, ResetPasswordVO vo);
 
     Page<UserVO> search(String search, Pageable pageable);

@@ -59,6 +59,11 @@ public class AuthenticatedRestController {
     void deleteAccount(@PathVariable Long id) {
         userService.delete(id);
     }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProfilePict/{id}")
+    void deleteProfilePic(@PathVariable Long id) {
+        userService.deleteProfilePic(id);
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateIndividual")
     IndividualEntity updateIndividual(@Valid @RequestBody IndividualUpdateVO updateVO) {
