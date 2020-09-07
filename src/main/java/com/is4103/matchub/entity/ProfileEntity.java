@@ -1,5 +1,6 @@
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -75,6 +76,7 @@ public abstract class ProfileEntity extends AccountEntity {
     private List<ProjectEntity> projectsJoined = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("projectOwners")
     private List<ProjectEntity> projectsOwned = new ArrayList<>();
 
     @OneToMany(mappedBy = "requestor")
