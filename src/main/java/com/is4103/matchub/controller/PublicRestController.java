@@ -7,11 +7,13 @@ package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.service.AttachmentService;
+import com.is4103.matchub.service.EmailService;
 import com.is4103.matchub.service.UserService;
 import com.is4103.matchub.vo.IndividualCreateVO;
 import com.is4103.matchub.vo.IndividualSetupVO;
 import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
+import com.is4103.matchub.vo.ResetPasswordVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
 import java.util.UUID;
@@ -40,6 +42,9 @@ public class PublicRestController {
     @Autowired
     AttachmentService attachmentService;
 
+    @Autowired
+    EmailService emailService;
+
     @RequestMapping(method = RequestMethod.POST, value = "/createNewIndividual")
     UserVO createNewIndividual(@Valid @RequestBody IndividualCreateVO createVO) throws MessagingException, IOException {
         return userService.createIndividual(createVO);
@@ -66,7 +71,7 @@ public class PublicRestController {
     public AccountEntity uploadIndividualFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
 //        return attachmentService.upload(file, directory);
         String filePath = attachmentService.upload(file);
-        
+
         System.out.println("uploaded file successfully: relative pathImage is " + filePath);
         return userService.setProfilePic(uuid, filePath);
     }
@@ -79,4 +84,15 @@ public class PublicRestController {
         System.out.println("uploaded file successfully: relative pathImage is " + filePath);
         return userService.setProfilePic(uuid, filePath);
     }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/forgotPassword")
+    public void sendResetPasswordEmail(@RequestParam String email) throws MessagingException, IOException {
+        emailService.sendResetPasswordEmail(email);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/resetPassword/{uuid}")
+    public void resetPassword(@PathVariable("uuid") UUID uuid, @Valid @RequestBody ResetPasswordVO resetVO) {
+        userService.resetPassword(uuid, resetVO);
+    }
+
 }

@@ -14,5 +14,7 @@ import javax.mail.MessagingException;
  */
 public interface EmailService {
 
-    public void sendVerificationEmail(String to) throws MessagingException, IOException;
+    void sendVerificationEmail(String to) throws MessagingException, IOException;
+
+    void sendResetPasswordEmail(String to) throws MessagingException, IOException;
 }

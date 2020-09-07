@@ -8,6 +8,7 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.AccountEntityRepository;
 import java.io.IOException;
 import java.util.Optional;
@@ -58,6 +59,41 @@ public class EmailServiceImpl implements EmailService {
             body += "http://localhost:3000/setupOrganisationProfile/" + newRegisteredAccount.getUuid();
         }
         
+        body += "\n\nThank you!\n\nRegards,\nMatcHub";
+
+        message.setFrom("matchubcommunity@gmail.com");
+        message.setTo(to);
+        message.setSubject(subject);
+        message.setText(body);
+        emailSender.send(message);
+    }
+    
+    @Override
+    public void sendResetPasswordEmail(String to) throws MessagingException, IOException {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        //find account (uuid/name)
+        
+        AccountEntity account = accountEntityRepository.findByEmail(to)
+                .orElseThrow(() -> new UserNotFoundException(to));
+
+        String name = "";
+
+        if (account instanceof IndividualEntity) {
+            IndividualEntity i = (IndividualEntity) account;
+            name = i.getFirstName() + " " + i.getLastName();
+        } else if (account instanceof OrganisationEntity) {
+            OrganisationEntity o = (OrganisationEntity) account;
+            name = o.getOrganizationName();
+        }
+
+        String subject = "Reset Your MatcHub Password";
+
+        String body = "Dear " + name + ", " + "\n\nYou requested to reset your password for your "
+                + "MatcHub account. \nClick on the link to reset it: ";
+        
+        body += "http://localhost:3000/resetPassword/" + account.getUuid();
+ 
         body += "\n\nThank you!\n\nRegards,\nMatcHub";
 
         message.setFrom("matchubcommunity@gmail.com");

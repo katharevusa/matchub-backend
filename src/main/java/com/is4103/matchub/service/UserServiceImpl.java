@@ -36,6 +36,7 @@ import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
+import com.is4103.matchub.vo.ResetPasswordVO;
 
 /**
  *
@@ -365,6 +366,17 @@ public class UserServiceImpl implements UserService {
         } else { // account cannot be deleted
             account.setDisabled(Boolean.TRUE);
         }
+    }
+
+    @Transactional
+    @Override
+    public void resetPassword(UUID uuid, ResetPasswordVO vo) {
+        AccountEntity account = accountEntityRepository.findByUuid(uuid)
+                .orElseThrow(() -> new UserNotFoundException(uuid));
+
+        vo.resetPassword(account, passwordEncoder);
+
+        accountEntityRepository.save(account);
     }
 
     @Override

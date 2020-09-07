@@ -31,7 +31,7 @@ public class AuthenticatedRestController {
 
     @Autowired
     UserService userService;
-    
+
     @Autowired
     AttachmentService attachmentService;
 
@@ -59,17 +59,19 @@ public class AuthenticatedRestController {
     void deleteAccount(@PathVariable Long id) {
         userService.delete(id);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/updateIndividual")
     IndividualEntity updateIndividual(@Valid @RequestBody IndividualUpdateVO updateVO) {
+        //does not include update profile pic
         return userService.updateIndividual(updateVO);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/updateOrganisation")
     OrganisationEntity updateOrganisation(@Valid @RequestBody OrganisationUpdateVO updateVO) {
+        //does not include update profile pic
         return userService.updateOrganisation(updateVO);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/updateIndividual/updateProfilePic/{uuid}")
     public AccountEntity updateIndividualFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
 //        return attachmentService.upload(file, directory);
@@ -78,7 +80,7 @@ public class AuthenticatedRestController {
         System.out.println("uploaded file successfully: relative pathImage is " + filePath);
         return userService.setProfilePic(uuid, filePath);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/updateOrganisation/updateProfilePic/{uuid}")
     public AccountEntity updateOrganisationFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
 //        return attachmentService.upload(file, directory);
