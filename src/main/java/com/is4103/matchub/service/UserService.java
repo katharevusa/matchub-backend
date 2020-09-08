@@ -9,6 +9,7 @@ import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
+import com.is4103.matchub.vo.ResetPasswordVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
 import java.util.List;
@@ -50,6 +51,10 @@ public interface UserService {
     OrganisationEntity updateOrganisation(OrganisationUpdateVO vo);
 
     void delete(Long id);
+
+    void deleteProfilePic(Long accountId);
+
+    void resetPassword(UUID uuid, ResetPasswordVO vo);
 
     Page<UserVO> search(String search, Pageable pageable);
 

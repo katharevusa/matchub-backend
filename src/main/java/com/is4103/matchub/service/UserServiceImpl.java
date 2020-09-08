@@ -8,7 +8,9 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.exception.DeleteProfilePictureException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.exception.EmailExistException;
 import com.is4103.matchub.exception.UpdateProfileException;
@@ -36,6 +38,7 @@ import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
+import com.is4103.matchub.vo.ResetPasswordVO;
 
 /**
  *
@@ -364,7 +367,34 @@ public class UserServiceImpl implements UserService {
             accountEntityRepository.delete(account);
         } else { // account cannot be deleted
             account.setDisabled(Boolean.TRUE);
+            accountEntityRepository.save(account);
         }
+    }
+
+    @Transactional
+    @Override
+    public void deleteProfilePic(Long accountId) {
+        AccountEntity account = accountEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        if (account instanceof ProfileEntity) {
+            ProfileEntity p = (ProfileEntity) account;
+            p.setProfilePhoto(null);
+            accountEntityRepository.save(p);
+        } else {
+            throw new DeleteProfilePictureException("Unable to delete profile picture");
+        }
+    }
+
+    @Transactional
+    @Override
+    public void resetPassword(UUID uuid, ResetPasswordVO vo) {
+        AccountEntity account = accountEntityRepository.findByUuid(uuid)
+                .orElseThrow(() -> new UserNotFoundException(uuid));
+
+        vo.resetPassword(account, passwordEncoder);
+
+        accountEntityRepository.save(account);
     }
 
     @Override
