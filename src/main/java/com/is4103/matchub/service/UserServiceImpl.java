@@ -370,13 +370,13 @@ public class UserServiceImpl implements UserService {
             accountEntityRepository.save(account);
         }
     }
-    
+
     @Transactional
     @Override
     public void deleteProfilePic(Long accountId) {
         AccountEntity account = accountEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
-        
+
         if (account instanceof ProfileEntity) {
             ProfileEntity p = (ProfileEntity) account;
             p.setProfilePhoto(null);

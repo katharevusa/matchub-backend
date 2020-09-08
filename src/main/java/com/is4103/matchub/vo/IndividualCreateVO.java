@@ -7,11 +7,8 @@ package com.is4103.matchub.vo;
 
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
-import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.validation.StringArrayEnum;
-import com.is4103.matchub.validation.ValueOfEnum;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

@@ -9,20 +9,24 @@ import com.is4103.matchub.entity.AccountEntity;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.Data;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  *
  * @author ngjin
  */
+@Data
 public class ResetPasswordVO {
-
-    @NotNull(message = "password can not be null.")
-    @NotBlank(message = "password can not be blank.")
+    
+    @NotBlank(message = "Password cannot be blank.")
+    @NotNull(message = "Password cannot be null.")
     @Size(min = 8)
     private String password;
-
+    
     public void resetPassword(AccountEntity account, PasswordEncoder passwordEncoder) {
-        account.setPassword(passwordEncoder.encode(this.password));
+        if (!this.password.isEmpty()) {
+            account.setPassword(passwordEncoder.encode(this.password));
+        }
     }
 }
