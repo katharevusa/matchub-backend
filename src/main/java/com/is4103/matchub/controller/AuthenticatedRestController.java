@@ -52,7 +52,7 @@ public class AuthenticatedRestController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/getAllFollowerAccounts/{id}")
     List<AccountEntity> getAllFollowerAccounts(@PathVariable Long id) {
-        return userService.getAllFollowingAccounts(id);
+        return userService.getAllFollowerAccounts(id);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteAccount/{id}")
