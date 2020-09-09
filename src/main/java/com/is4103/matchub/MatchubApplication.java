@@ -5,9 +5,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.AsyncConfigurerSupport;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @SpringBootApplication
-public class MatchubApplication {
+@EnableAsync
+public class MatchubApplication extends AsyncConfigurerSupport {
 
     public static void main(String[] args) {
         SpringApplication.run(MatchubApplication.class, args);

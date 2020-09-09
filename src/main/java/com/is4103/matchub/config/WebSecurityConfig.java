@@ -14,9 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.is4103.matchub.service.UserDetailsServiceImpl;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import com.is4103.matchub.repository.AccountEntityRepository;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration
 @EnableWebSecurity
+@EnableAsync
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 
 /**
  *
@@ -31,6 +32,7 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private AccountEntityRepository accountEntityRepository;
 
+    @Async
     @Override
     public void sendVerificationEmail(String to) throws MessagingException, IOException {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -52,13 +54,13 @@ public class EmailServiceImpl implements EmailService {
 
         String body = "Dear " + name + ", " + "\n\nWelcome to MatcHub! \nYou have successfully registered for a new account with us.\n"
                 + "Please click on this unique activation link to activate and set up your profile: ";
-        
+
         if (newRegisteredAccount instanceof IndividualEntity) {
             body += "http://localhost:3000/setupIndividualProfile/" + newRegisteredAccount.getUuid();
         } else { //must be an organisation
             body += "http://localhost:3000/setupOrganisationProfile/" + newRegisteredAccount.getUuid();
         }
-        
+
         body += "\n\nThank you!\n\nRegards,\nMatcHub";
 
         message.setFrom("matchubcommunity@gmail.com");
@@ -67,13 +69,13 @@ public class EmailServiceImpl implements EmailService {
         message.setText(body);
         emailSender.send(message);
     }
-    
+
+    @Async
     @Override
     public void sendResetPasswordEmail(String to) throws MessagingException, IOException {
         SimpleMailMessage message = new SimpleMailMessage();
 
         //find account (uuid/name)
-        
         AccountEntity account = accountEntityRepository.findByEmail(to)
                 .orElseThrow(() -> new UserNotFoundException(to));
 
@@ -91,9 +93,9 @@ public class EmailServiceImpl implements EmailService {
 
         String body = "Dear " + name + ", " + "\n\nYou requested to reset your password for your "
                 + "MatcHub account. \nClick on the link to reset it: ";
-        
+
         body += "http://localhost:3000/resetPassword/" + account.getUuid();
- 
+
         body += "\n\nThank you!\n\nRegards,\nMatcHub";
 
         message.setFrom("matchubcommunity@gmail.com");
