@@ -316,10 +316,20 @@ public class UserServiceImpl implements UserService {
             System.out.println("typecasted to individual");
 
             vo.updateIndividualAccount(individual, passwordEncoder);
+
+            if (vo.getSdgIds().length != 0) {
+                //find the updated SDG and associate with individual 
+                individual.getSdgs().clear();
+                for (int i = 0; i < vo.getSdgIds().length; i++) {
+                    SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
+                    individual.getSdgs().add(sdg);
+                }
+            }
+
             accountEntityRepository.save(individual);
             return individual;
         } else {
-            throw new UpdateProfileException();
+            throw new UpdateProfileException("Unable to update individual");
         }
 
     }
@@ -330,11 +340,26 @@ public class UserServiceImpl implements UserService {
         AccountEntity account = accountEntityRepository.findById(vo.getId())
                 .orElseThrow(() -> new UserNotFoundException(vo.getId()));
 
-        OrganisationEntity organisation = (OrganisationEntity) account;
+        if (account instanceof OrganisationEntity) {
+            OrganisationEntity organisation = (OrganisationEntity) account;
+            System.out.println("typecasted to organisation");
 
-        vo.updateOrganisationAccount(organisation, passwordEncoder);
-        accountEntityRepository.save(organisation);
-        return organisation;
+            vo.updateOrganisationAccount(organisation, passwordEncoder);
+
+            if (vo.getSdgIds().length != 0) {
+                //find the updated SDG and associate with individual 
+                organisation.getSdgs().clear();
+                for (int i = 0; i < vo.getSdgIds().length; i++) {
+                    SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
+                    organisation.getSdgs().add(sdg);
+                }
+            }
+
+            accountEntityRepository.save(organisation);
+            return organisation;
+        } else {
+            throw new UpdateProfileException("Unable to update organsation");
+        }
     }
 
     @Transactional
@@ -382,7 +407,7 @@ public class UserServiceImpl implements UserService {
             p.setProfilePhoto(null);
             accountEntityRepository.save(p);
         } else {
-            throw new DeleteProfilePictureException("Unable to delete profile picture");
+            throw new DeleteProfilePictureException("Unable to delete profile picture of accountId: " + accountId);
         }
     }
 
