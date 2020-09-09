@@ -25,6 +25,7 @@ public class IndividualUpdateVO {
     @NotNull(message = "id can not be null.")
     private Long id;
 
+    @Size(min = 8, message = "Password entered must have minimum length of 8.")
     private String password;
 
     private String phoneNumber;
@@ -40,6 +41,8 @@ public class IndividualUpdateVO {
     private String profileDescription;
 
     private Set<String> skillSet = new HashSet<>();
+
+    private Long[] sdgIds;
 
     public void updateIndividualAccount(IndividualEntity individual, PasswordEncoder passwordEncoder) {
         if (!this.password.isEmpty() && this.password.length() >= 8) {
@@ -75,6 +78,8 @@ public class IndividualUpdateVO {
             individual.getSkillSet().clear();
             individual.setSkillSet(this.skillSet);
         }
+
+        //do not associate udpatedSdg here, associate in user service class
     }
 
 }

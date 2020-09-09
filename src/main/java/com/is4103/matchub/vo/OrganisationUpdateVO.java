@@ -24,6 +24,7 @@ public class OrganisationUpdateVO {
     @NotNull(message = "id can not be null.")
     private Long id;
 
+    @Size(min = 8, message = "Password entered must have minimum length of 8.")
     private String password;
 
     private String phoneNumber;
@@ -40,39 +41,43 @@ public class OrganisationUpdateVO {
 
     private Set<String> areasOfExpertise = new HashSet<>();
 
+    private Long[] sdgIds;
+
     public void updateOrganisationAccount(OrganisationEntity organisation, PasswordEncoder passwordEncoder) {
         if (!this.password.isEmpty() && this.password.length() >= 8) {
             organisation.setPassword(passwordEncoder.encode(this.password));
         }
-        
+
         if (!this.phoneNumber.isEmpty()) {
             organisation.setPhoneNumber(this.phoneNumber);
         }
-        
+
         if (!this.country.isEmpty()) {
             organisation.setCountry(this.country);
         }
-        
+
         if (!this.city.isEmpty()) {
             organisation.setCity(this.city);
         }
-        
+
         if (!this.organizationName.isEmpty()) {
             organisation.setOrganizationName(this.organizationName);
         }
-        
+
         if (!this.organizationDescription.isEmpty()) {
             organisation.setOrganizationDescription(this.organizationDescription);
         }
-        
+
         if (!this.address.isEmpty()) {
             organisation.setAddress(this.address);
         }
-        
+
         if (!this.areasOfExpertise.isEmpty()) {
             //clear all the previous areas of expertise first
             organisation.getAreasOfExpertise().clear();
             organisation.setAreasOfExpertise(this.areasOfExpertise);
         }
+
+        //do not associate udpatedSdg here, associate in user service class
     }
 }
