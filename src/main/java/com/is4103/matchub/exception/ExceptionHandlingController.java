@@ -30,6 +30,7 @@ public class ExceptionHandlingController {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Email exists");
         response.setErrorMessage(ex.getMessage());
+        response.getErrors().add(response.getErrorCode());
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.CONFLICT);
     }
@@ -50,6 +51,7 @@ public class ExceptionHandlingController {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Failure sending email");
         response.setErrorMessage(ex.getMessage());
+        response.getErrors().add(response.getErrorCode());
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_GATEWAY);
     }
@@ -68,15 +70,17 @@ public class ExceptionHandlingController {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to delete profile picture");
         response.setErrorMessage(ex.getMessage());
+        response.getErrors().add(response.getErrorCode());
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = UpdateProfileException.class)
     public ResponseEntity<ExceptionResponse> unableToUpdateProfile(UpdateProfileException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to Update Profile");
         response.setErrorMessage(ex.getMessage());
+        response.getErrors().add(response.getErrorCode());
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
