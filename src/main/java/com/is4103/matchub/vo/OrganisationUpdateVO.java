@@ -24,6 +24,7 @@ public class OrganisationUpdateVO {
     @NotNull(message = "id can not be null.")
     private Long id;
 
+    @Size(min = 8, message = "Password entered must have minimum length of 8.")
     private String password;
 
     private String phoneNumber;

@@ -66,7 +66,16 @@ public class ExceptionHandlingController {
     @ExceptionHandler(value = DeleteProfilePictureException.class)
     public ResponseEntity<ExceptionResponse> unableToDeleteProfilePicture(DeleteProfilePictureException ex) {
         ExceptionResponse response = new ExceptionResponse();
-        response.setErrorCode("Unable to deleete profile picture");
+        response.setErrorCode("Unable to delete profile picture");
+        response.setErrorMessage(ex.getMessage());
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = UpdateProfileException.class)
+    public ResponseEntity<ExceptionResponse> unableToUpdateProfile(UpdateProfileException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to Update Profile");
         response.setErrorMessage(ex.getMessage());
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);

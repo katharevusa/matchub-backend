@@ -39,7 +39,7 @@ public class OrganisationCreateVO {
 
     @NotNull(message = "password can not be null.")
     @NotBlank(message = "password can not be blank.")
-    @Size(min = 8)
+    @Size(min = 8, message = "Password entered must have minimum length of 8.")
     private String password;
 
     @NotNull(message = "role can not be null.")
