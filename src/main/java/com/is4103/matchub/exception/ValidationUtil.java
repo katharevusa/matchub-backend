@@ -16,4 +16,11 @@ public class ValidationUtil {
         return validErrors;
     }
 
+    public static List<String> fromError(String errorMessage) {
+        List<String> validErrors = new ArrayList<String>();
+
+        validErrors.add(errorMessage);
+        return validErrors;
+    }
+
 }
