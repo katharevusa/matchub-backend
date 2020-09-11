@@ -34,6 +34,8 @@ public interface UserService {
 
     AccountEntity unfollowProfile(Long accountId, Long unfollowId);
 
+    AccountEntity removeFollower(Long accountId, Long removeFollowerId);
+
 //    UserVO getAccount(Long id);
 //    UserVO getAccount(String username);
     AccountEntity getAccount(Long id);

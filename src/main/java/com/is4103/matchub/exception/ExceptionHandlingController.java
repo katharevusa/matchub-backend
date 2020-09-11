@@ -88,7 +88,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(value = UnableToFollowProfileException.class)
-    public ResponseEntity<ExceptionResponse> updateToFollowProfile(UnableToFollowProfileException ex) {
+    public ResponseEntity<ExceptionResponse> unableToFollowProfile(UnableToFollowProfileException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to Follow Profile");
         response.setErrorMessage(ex.getMessage());
@@ -98,9 +98,19 @@ public class ExceptionHandlingController {
     }
     
     @ExceptionHandler(value = UnableToUnfollowProfileException.class)
-    public ResponseEntity<ExceptionResponse> updateToUnfollowProfile(UnableToUnfollowProfileException ex) {
+    public ResponseEntity<ExceptionResponse> unableToUnfollowProfile(UnableToUnfollowProfileException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to Unfollow Profile");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = UnableToRemoveFollowerException.class)
+    public ResponseEntity<ExceptionResponse> unableToRemoveFollower(UnableToRemoveFollowerException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to Remove Follower");
         response.setErrorMessage(ex.getMessage());
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 

@@ -88,6 +88,11 @@ public class AuthenticatedRestController {
         return userService.unfollowProfile(accountId, unfollowId);
     }
     
+    @RequestMapping(method = RequestMethod.POST, value = "/removeFollower")
+    AccountEntity removeFollower(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "removeFollowerId") Long removeFollowerId) {
+        return userService.removeFollower(accountId, removeFollowerId);
+    }
+    
     @RequestMapping(method = RequestMethod.POST, value = "/updateIndividual/updateProfilePic/{uuid}")
     public AccountEntity updateIndividualFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
 //        return attachmentService.upload(file, directory);
