@@ -6,14 +6,10 @@
 package com.is4103.matchub.vo;
 
 import com.is4103.matchub.entity.IndividualEntity;
-import com.is4103.matchub.enumeration.GenderEnum;
-import com.is4103.matchub.validation.ValueOfEnum;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import lombok.Data;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  *
@@ -24,9 +20,6 @@ public class IndividualUpdateVO {
 
     @NotNull(message = "id can not be null.")
     private Long id;
-
-    @Size(min = 8, message = "Password entered must have minimum length of 8.")
-    private String password;
 
     private String phoneNumber;
 
@@ -44,10 +37,7 @@ public class IndividualUpdateVO {
 
     private Long[] sdgIds;
 
-    public void updateIndividualAccount(IndividualEntity individual, PasswordEncoder passwordEncoder) {
-        if (!this.password.isEmpty() && this.password.length() >= 8) {
-            individual.setPassword(passwordEncoder.encode(this.password));
-        }
+    public void updateIndividualAccount(IndividualEntity individual) {
 
         if (!this.phoneNumber.isEmpty()) {
             individual.setPhoneNumber(this.phoneNumber);

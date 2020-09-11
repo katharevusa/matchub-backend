@@ -13,7 +13,7 @@ import com.is4103.matchub.vo.IndividualCreateVO;
 import com.is4103.matchub.vo.IndividualSetupVO;
 import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
-import com.is4103.matchub.vo.ResetPasswordVO;
+import com.is4103.matchub.vo.ChangePasswordVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
 import java.util.UUID;
@@ -91,8 +91,8 @@ public class PublicRestController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/resetPassword/{uuid}")
-    public void resetPassword(@PathVariable("uuid") UUID uuid, @Valid @RequestBody ResetPasswordVO resetVO) {
-        userService.resetPassword(uuid, resetVO);
+    public void resetPassword(@PathVariable("uuid") UUID uuid, @Valid @RequestBody ChangePasswordVO vo) {
+        userService.changePassword(uuid, vo);
     }
 
 }

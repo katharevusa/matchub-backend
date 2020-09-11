@@ -13,6 +13,7 @@ import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.exception.DeleteProfilePictureException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.exception.EmailExistException;
+import com.is4103.matchub.exception.UnableToFollowProfileException;
 import com.is4103.matchub.exception.UpdateProfileException;
 import com.is4103.matchub.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.repository.TaskEntityRepository;
 import com.is4103.matchub.vo.IndividualCreateVO;
@@ -38,7 +40,7 @@ import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
-import com.is4103.matchub.vo.ResetPasswordVO;
+import com.is4103.matchub.vo.ChangePasswordVO;
 
 /**
  *
@@ -67,6 +69,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ReviewEntityRepository reviewEntityRepository;
+
+    @Autowired
+    private ProfileEntityRepository profileEntityRepository;
 
     @Transactional
     @Override
@@ -189,6 +194,32 @@ public class UserServiceImpl implements UserService {
             AccountEntity updatedAccount = (AccountEntity) organisation;
             updatedAccount = accountEntityRepository.save(updatedAccount);
             return updatedAccount;
+        }
+    }
+
+    @Transactional
+    @Override
+    public AccountEntity followProfile(Long accountId, Long followId) {
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        ProfileEntity toFollowProfile = profileEntityRepository.findById(followId)
+                .orElseThrow(() -> new UnableToFollowProfileException("accountId: " + followId + " does not exist and cannot be followed"));
+
+        if (!profile.getFollowing().contains(followId)) {
+            //update account following
+            profile.getFollowing().add(followId);
+            profileEntityRepository.save(profile);
+
+            //update toFollowProfile followers
+            toFollowProfile.getFollowers().add(accountId);
+            profileEntityRepository.save(toFollowProfile);
+
+            return profile;
+        } else {
+            throw new UnableToFollowProfileException("Your account (accountId: "
+                    + accountId + ") is unable to follow accountId: " + followId
+                    + " because it is already in your following");
         }
     }
 
@@ -315,7 +346,7 @@ public class UserServiceImpl implements UserService {
             IndividualEntity individual = (IndividualEntity) account;
             System.out.println("typecasted to individual");
 
-            vo.updateIndividualAccount(individual, passwordEncoder);
+            vo.updateIndividualAccount(individual);
 
             if (vo.getSdgIds().length != 0) {
                 //find the updated SDG and associate with individual 
@@ -344,7 +375,7 @@ public class UserServiceImpl implements UserService {
             OrganisationEntity organisation = (OrganisationEntity) account;
             System.out.println("typecasted to organisation");
 
-            vo.updateOrganisationAccount(organisation, passwordEncoder);
+            vo.updateOrganisationAccount(organisation);
 
             if (vo.getSdgIds().length != 0) {
                 //find the updated SDG and associate with individual 
@@ -413,13 +444,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void resetPassword(UUID uuid, ResetPasswordVO vo) {
+    public AccountEntity changePassword(UUID uuid, ChangePasswordVO vo) {
         AccountEntity account = accountEntityRepository.findByUuid(uuid)
                 .orElseThrow(() -> new UserNotFoundException(uuid));
 
-        vo.resetPassword(account, passwordEncoder);
+        vo.changePassword(account, passwordEncoder);
 
         accountEntityRepository.save(account);
+
+        return account;
     }
 
     @Override
