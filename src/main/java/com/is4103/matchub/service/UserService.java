@@ -29,8 +29,10 @@ public interface UserService {
     UserVO setupOrganisationProfile(UUID uuid, OrganisationSetupVO vo);
 
     AccountEntity setProfilePic(UUID uuid, String directory);
-    
+
     AccountEntity followProfile(Long accountId, Long followId);
+
+    AccountEntity unfollowProfile(Long accountId, Long unfollowId);
 
 //    UserVO getAccount(Long id);
 //    UserVO getAccount(String username);

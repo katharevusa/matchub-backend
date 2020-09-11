@@ -82,7 +82,12 @@ public class AuthenticatedRestController {
     AccountEntity followProfile(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "followId") Long followId) {
         return userService.followProfile(accountId, followId);
     }
-
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/unfollowProfile")
+    AccountEntity unfollowProfile(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "unfollowId") Long unfollowId) {
+        return userService.unfollowProfile(accountId, unfollowId);
+    }
+    
     @RequestMapping(method = RequestMethod.POST, value = "/updateIndividual/updateProfilePic/{uuid}")
     public AccountEntity updateIndividualFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
 //        return attachmentService.upload(file, directory);

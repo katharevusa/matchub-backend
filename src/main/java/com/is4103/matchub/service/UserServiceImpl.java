@@ -14,6 +14,7 @@ import com.is4103.matchub.exception.DeleteProfilePictureException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.exception.EmailExistException;
 import com.is4103.matchub.exception.UnableToFollowProfileException;
+import com.is4103.matchub.exception.UnableToUnfollowProfileException;
 import com.is4103.matchub.exception.UpdateProfileException;
 import com.is4103.matchub.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -219,7 +220,34 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new UnableToFollowProfileException("Your account (accountId: "
                     + accountId + ") is unable to follow accountId: " + followId
-                    + " because it is already in your following");
+                    + " because it is already in your following list");
+        }
+    }
+    
+    @Transactional
+    @Override
+    public AccountEntity unfollowProfile(Long accountId, Long unfollowId) {
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+        
+        ProfileEntity toUnfollowProfile = profileEntityRepository.findById(unfollowId)
+                .orElseThrow(() -> new UnableToUnfollowProfileException("accountId: " + unfollowId + " does not exist and cannot be unfollowed"));
+        
+        if (profile.getFollowing().contains(unfollowId)) {
+            //can unfollow 
+            //remove unfollowId from profile following list
+            profile.getFollowing().remove(unfollowId);
+            profileEntityRepository.save(profile);
+            
+            //update toUnfollowProfile followers
+            toUnfollowProfile.getFollowers().remove(accountId);
+            profileEntityRepository.save(toUnfollowProfile);
+            
+            return profile;
+        } else {
+            throw new UnableToUnfollowProfileException("Your account (accountId: "
+                    + accountId + ") is unable to unfollow accountId: " + unfollowId
+                    + " because it is not in your following list");
         }
     }
 
