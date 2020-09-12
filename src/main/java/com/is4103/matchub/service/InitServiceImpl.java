@@ -33,14 +33,14 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     ProjectService projectService;
-    
+
     @Autowired
     SDGEntityRepository sdgEntityRepository;
 
     @Transactional
     public void init() {
-        initUsers();
         initSDG();
+        initUsers();
     }
 
     private void initUsers() {
@@ -75,8 +75,53 @@ public class InitServiceImpl implements InitService {
     private void initSDG() {
         SDGEntity noPoverty = new SDGEntity("No Poverty", "End poverty in all its forms everywhere");
         sdgEntityRepository.save(noPoverty);
-        
+
         SDGEntity zeroHunger = new SDGEntity("Zero Hunger", "End hunger, achieve food security and improved nutrition and promote sustainable agriculture");
         sdgEntityRepository.save(zeroHunger);
+
+        SDGEntity goodHealth = new SDGEntity("Good Health and Well-being", "Ensure healthy lives and promote well-being for all at all ages");
+        sdgEntityRepository.save(goodHealth);
+
+        SDGEntity qualityEducation = new SDGEntity("Quality Education", "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all");
+        sdgEntityRepository.save(qualityEducation);
+
+        SDGEntity genderEquality = new SDGEntity("Gender Equality", "Achieve gender equality and empower all women and girls");
+        sdgEntityRepository.save(genderEquality);
+
+        SDGEntity cleanWater = new SDGEntity("Clean Water and Sanitation", "Ensure availability and sustainable management of water and sanitation for all");
+        sdgEntityRepository.save(cleanWater);
+
+        SDGEntity cleanEnergy = new SDGEntity("Affordable and Clean Energy", "Ensure access to affordable, reliable, sustainable and modern energy for all");
+        sdgEntityRepository.save(cleanEnergy);
+
+        SDGEntity economicGrowth = new SDGEntity("Decent Work and Economic Growth", "Promote sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all");
+        sdgEntityRepository.save(economicGrowth);
+
+        SDGEntity industryInnovationInfrastructure = new SDGEntity("Industry, Innovation and Infrastructure", "Build resilient infrastructure, promote inclusive and sustainable industrialization and foster innovation");
+        sdgEntityRepository.save(industryInnovationInfrastructure);
+
+        SDGEntity reduceInequalities = new SDGEntity("Reduce Inequalities", "Reduce inequality within and among countries");
+        sdgEntityRepository.save(reduceInequalities);
+
+        SDGEntity sustainableCities = new SDGEntity("Sustainable Cities and Communities", "Make cities and human settlements inclusive, safe, resilient and sustainable");
+        sdgEntityRepository.save(sustainableCities);
+
+        SDGEntity responsibleConsumption = new SDGEntity("Responsible Consumption and Production", "Ensure sustainable consumption and production patterns");
+        sdgEntityRepository.save(responsibleConsumption);
+
+        SDGEntity climateAction = new SDGEntity("Climate Action", "Take urgent action to combat climate change and its impacts");
+        sdgEntityRepository.save(climateAction);
+
+        SDGEntity lifeBelowWater = new SDGEntity("Life Below Water", "Conserve and sustainably use the oceans, seas and marine resources for sustainable development");
+        sdgEntityRepository.save(lifeBelowWater);
+
+        SDGEntity lifeOnLand = new SDGEntity("Life On Land", "Protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss");
+        sdgEntityRepository.save(lifeOnLand);
+
+        SDGEntity peaceJustice = new SDGEntity("Peace, Justice and Strong Institutions", "Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels");
+        sdgEntityRepository.save(peaceJustice);
+
+        SDGEntity partnerships = new SDGEntity("Partnerships for the Goals", "Strengthen the means of implementation and revitalize the global partnership for sustainable development");
+        sdgEntityRepository.save(partnerships);
     }
 }
