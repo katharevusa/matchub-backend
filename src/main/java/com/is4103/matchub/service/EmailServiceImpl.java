@@ -8,10 +8,7 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
-import com.is4103.matchub.exception.UserNotFoundException;
-import com.is4103.matchub.repository.AccountEntityRepository;
 import java.io.IOException;
-import java.util.Optional;
 import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,16 +26,10 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private JavaMailSender emailSender;
 
-    @Autowired
-    private AccountEntityRepository accountEntityRepository;
-
     @Async
     @Override
-    public void sendVerificationEmail(String to) throws MessagingException, IOException {
+    public void sendVerificationEmail(AccountEntity newRegisteredAccount) throws MessagingException, IOException {
         SimpleMailMessage message = new SimpleMailMessage();
-
-        //find the new account created (uuid/name)
-        AccountEntity newRegisteredAccount = accountEntityRepository.findByEmail(to).get();
 
         String name = "";
 
@@ -64,7 +55,7 @@ public class EmailServiceImpl implements EmailService {
         body += "\n\nThank you!\n\nRegards,\nMatcHub";
 
         message.setFrom("matchubcommunity@gmail.com");
-        message.setTo(to);
+        message.setTo(newRegisteredAccount.getEmail());
         message.setSubject(subject);
         message.setText(body);
         emailSender.send(message);
@@ -72,12 +63,8 @@ public class EmailServiceImpl implements EmailService {
 
     @Async
     @Override
-    public void sendResetPasswordEmail(String to) throws MessagingException, IOException {
+    public void sendResetPasswordEmail(AccountEntity account) throws MessagingException, IOException {
         SimpleMailMessage message = new SimpleMailMessage();
-
-        //find account (uuid/name)
-        AccountEntity account = accountEntityRepository.findByEmail(to)
-                .orElseThrow(() -> new UserNotFoundException(to));
 
         String name = "";
 
@@ -99,7 +86,7 @@ public class EmailServiceImpl implements EmailService {
         body += "\n\nThank you!\n\nRegards,\nMatcHub";
 
         message.setFrom("matchubcommunity@gmail.com");
-        message.setTo(to);
+        message.setTo(account.getEmail());
         message.setSubject(subject);
         message.setText(body);
         emailSender.send(message);
