@@ -13,6 +13,9 @@ import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.exception.DeleteProfilePictureException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.exception.EmailExistException;
+import com.is4103.matchub.exception.UnableToFollowProfileException;
+import com.is4103.matchub.exception.UnableToRemoveFollowerException;
+import com.is4103.matchub.exception.UnableToUnfollowProfileException;
 import com.is4103.matchub.exception.UpdateProfileException;
 import com.is4103.matchub.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.repository.TaskEntityRepository;
 import com.is4103.matchub.vo.IndividualCreateVO;
@@ -38,7 +42,7 @@ import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
-import com.is4103.matchub.vo.ResetPasswordVO;
+import com.is4103.matchub.vo.ChangePasswordVO;
 
 /**
  *
@@ -67,6 +71,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ReviewEntityRepository reviewEntityRepository;
+
+    @Autowired
+    private ProfileEntityRepository profileEntityRepository;
 
     @Transactional
     @Override
@@ -189,6 +196,86 @@ public class UserServiceImpl implements UserService {
             AccountEntity updatedAccount = (AccountEntity) organisation;
             updatedAccount = accountEntityRepository.save(updatedAccount);
             return updatedAccount;
+        }
+    }
+
+    @Transactional
+    @Override
+    public AccountEntity followProfile(Long accountId, Long followId) {
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        ProfileEntity toFollowProfile = profileEntityRepository.findById(followId)
+                .orElseThrow(() -> new UnableToFollowProfileException("accountId: " + followId + " does not exist and cannot be followed"));
+
+        if (!profile.getFollowing().contains(followId)) {
+            //update account following
+            profile.getFollowing().add(followId);
+            profileEntityRepository.save(profile);
+
+            //update toFollowProfile followers
+            toFollowProfile.getFollowers().add(accountId);
+            profileEntityRepository.save(toFollowProfile);
+
+            return profile;
+        } else {
+            throw new UnableToFollowProfileException("Your account (accountId: "
+                    + accountId + ") is unable to follow accountId: " + followId
+                    + " because it is already in your following list");
+        }
+    }
+
+    @Transactional
+    @Override
+    public AccountEntity unfollowProfile(Long accountId, Long unfollowId) {
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        ProfileEntity toUnfollowProfile = profileEntityRepository.findById(unfollowId)
+                .orElseThrow(() -> new UnableToUnfollowProfileException("accountId: " + unfollowId + " does not exist and cannot be unfollowed"));
+
+        if (profile.getFollowing().contains(unfollowId)) {
+            //can unfollow 
+            //remove unfollowId from profile following list
+            profile.getFollowing().remove(unfollowId);
+            profileEntityRepository.save(profile);
+
+            //update toUnfollowProfile followers
+            toUnfollowProfile.getFollowers().remove(accountId);
+            profileEntityRepository.save(toUnfollowProfile);
+
+            return profile;
+        } else {
+            throw new UnableToUnfollowProfileException("Your account (accountId: "
+                    + accountId + ") is unable to unfollow accountId: " + unfollowId
+                    + " because it is not in your following list");
+        }
+    }
+
+    @Transactional
+    @Override
+    public AccountEntity removeFollower(Long accountId, Long removeFollowerId) {
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        ProfileEntity toRemoveFollowerProfile = profileEntityRepository.findById(removeFollowerId)
+                .orElseThrow(() -> new UnableToRemoveFollowerException("accountId: " + removeFollowerId + " does not exist and cannot be removed from your followers list"));
+
+        if (profile.getFollowers().contains(removeFollowerId)) {
+            //can remove follower
+            //remove follower from profile followers
+            profile.getFollowers().remove(removeFollowerId);
+            profileEntityRepository.save(profile);
+
+            //remove profile from toRemoveFollowerProfile following
+            toRemoveFollowerProfile.getFollowing().remove(accountId);
+            profileEntityRepository.save(toRemoveFollowerProfile);
+
+            return profile;
+        } else {
+            throw new UnableToRemoveFollowerException("Your account (accountId: "
+                    + accountId + ") is unable to remove follower with accountId: " + removeFollowerId
+                    + " because it is not in your followers list");
         }
     }
 
@@ -315,7 +402,7 @@ public class UserServiceImpl implements UserService {
             IndividualEntity individual = (IndividualEntity) account;
             System.out.println("typecasted to individual");
 
-            vo.updateIndividualAccount(individual, passwordEncoder);
+            vo.updateIndividualAccount(individual);
 
             if (vo.getSdgIds().length != 0) {
                 //find the updated SDG and associate with individual 
@@ -344,7 +431,7 @@ public class UserServiceImpl implements UserService {
             OrganisationEntity organisation = (OrganisationEntity) account;
             System.out.println("typecasted to organisation");
 
-            vo.updateOrganisationAccount(organisation, passwordEncoder);
+            vo.updateOrganisationAccount(organisation);
 
             if (vo.getSdgIds().length != 0) {
                 //find the updated SDG and associate with individual 
@@ -413,13 +500,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void resetPassword(UUID uuid, ResetPasswordVO vo) {
+    public AccountEntity changePassword(UUID uuid, ChangePasswordVO vo) {
         AccountEntity account = accountEntityRepository.findByUuid(uuid)
                 .orElseThrow(() -> new UserNotFoundException(uuid));
 
-        vo.resetPassword(account, passwordEncoder);
+        vo.changePassword(account, passwordEncoder);
 
         accountEntityRepository.save(account);
+
+        return account;
     }
 
     @Override

@@ -5,14 +5,11 @@
  */
 package com.is4103.matchub.vo;
 
-import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import java.util.HashSet;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import lombok.Data;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
  *
@@ -23,9 +20,6 @@ public class OrganisationUpdateVO {
 
     @NotNull(message = "id can not be null.")
     private Long id;
-
-    @Size(min = 8, message = "Password entered must have minimum length of 8.")
-    private String password;
 
     private String phoneNumber;
 
@@ -43,10 +37,7 @@ public class OrganisationUpdateVO {
 
     private Long[] sdgIds;
 
-    public void updateOrganisationAccount(OrganisationEntity organisation, PasswordEncoder passwordEncoder) {
-        if (!this.password.isEmpty() && this.password.length() >= 8) {
-            organisation.setPassword(passwordEncoder.encode(this.password));
-        }
+    public void updateOrganisationAccount(OrganisationEntity organisation) {
 
         if (!this.phoneNumber.isEmpty()) {
             organisation.setPhoneNumber(this.phoneNumber);

@@ -5,16 +5,12 @@ import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.UserService;
-import com.is4103.matchub.vo.IndividualCreateVO;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
-import com.is4103.matchub.vo.UserVO;
-import java.io.IOException;
+import com.is4103.matchub.vo.ChangePasswordVO;
 import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
-import javax.annotation.security.RolesAllowed;
-import javax.mail.MessagingException;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -59,7 +55,7 @@ public class AuthenticatedRestController {
     void deleteAccount(@PathVariable Long id) {
         userService.delete(id);
     }
-    
+
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProfilePict/{id}")
     void deleteProfilePic(@PathVariable Long id) {
         userService.deleteProfilePic(id);
@@ -77,6 +73,26 @@ public class AuthenticatedRestController {
         return userService.updateOrganisation(updateVO);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/changePassword/{uuid}")
+    AccountEntity changePassword(@PathVariable("uuid") UUID uuid, @Valid @RequestBody ChangePasswordVO vo) {
+        return userService.changePassword(uuid, vo);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/followProfile")
+    AccountEntity followProfile(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "followId") Long followId) {
+        return userService.followProfile(accountId, followId);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/unfollowProfile")
+    AccountEntity unfollowProfile(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "unfollowId") Long unfollowId) {
+        return userService.unfollowProfile(accountId, unfollowId);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/removeFollower")
+    AccountEntity removeFollower(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "removeFollowerId") Long removeFollowerId) {
+        return userService.removeFollower(accountId, removeFollowerId);
+    }
+    
     @RequestMapping(method = RequestMethod.POST, value = "/updateIndividual/updateProfilePic/{uuid}")
     public AccountEntity updateIndividualFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
 //        return attachmentService.upload(file, directory);

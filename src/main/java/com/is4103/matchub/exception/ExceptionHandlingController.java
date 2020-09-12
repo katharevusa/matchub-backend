@@ -6,6 +6,7 @@
 package com.is4103.matchub.exception;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ public class ExceptionHandlingController {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Email exists");
         response.setErrorMessage(ex.getMessage());
-        response.getErrors().add(response.getErrorCode());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.CONFLICT);
     }
@@ -51,7 +52,7 @@ public class ExceptionHandlingController {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Failure sending email");
         response.setErrorMessage(ex.getMessage());
-        response.getErrors().add(response.getErrorCode());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_GATEWAY);
     }
@@ -61,6 +62,7 @@ public class ExceptionHandlingController {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Failed to upload file: Invalid File Extension");
         response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -70,7 +72,7 @@ public class ExceptionHandlingController {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to delete profile picture");
         response.setErrorMessage(ex.getMessage());
-        response.getErrors().add(response.getErrorCode());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
@@ -80,7 +82,37 @@ public class ExceptionHandlingController {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to Update Profile");
         response.setErrorMessage(ex.getMessage());
-        response.getErrors().add(response.getErrorCode());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnableToFollowProfileException.class)
+    public ResponseEntity<ExceptionResponse> unableToFollowProfile(UnableToFollowProfileException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to Follow Profile");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = UnableToUnfollowProfileException.class)
+    public ResponseEntity<ExceptionResponse> unableToUnfollowProfile(UnableToUnfollowProfileException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to Unfollow Profile");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = UnableToRemoveFollowerException.class)
+    public ResponseEntity<ExceptionResponse> unableToRemoveFollower(UnableToRemoveFollowerException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to Remove Follower");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
