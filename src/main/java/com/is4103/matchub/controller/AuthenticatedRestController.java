@@ -40,6 +40,16 @@ public class AuthenticatedRestController {
     AccountEntity getAccount(@PathVariable Long id) {
         return userService.getAccount(id);
     }
+    
+//    @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{uuid}")
+//    AccountEntity getAccount(@PathVariable UUID uuid) {
+//        return userService.getAccount(uuid);
+//    }
+//    
+//    @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{email}")
+//    AccountEntity getAccount(@PathVariable String email) {
+//        return userService.getAccount(email);
+//    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getAllFollowingAccounts/{id}")
     List<AccountEntity> getAllFollowingAccounts(@PathVariable Long id) {
