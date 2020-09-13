@@ -116,4 +116,47 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(value = ProjectNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> ProjectNotFound(ProjectNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Project Not Found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    
+            
+    @ExceptionHandler(value = UpdateProjectException.class)
+    public ResponseEntity<ExceptionResponse> UnableToUpdateProject(UpdateProjectException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to update project");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = DeleteProjectException.class)
+    public ResponseEntity<ExceptionResponse> UnableToDeleteProject(DeleteProjectException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to delete project");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = TerminateProjectException.class)
+    public ResponseEntity<ExceptionResponse> TerminateProject(TerminateProjectException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to terminate project");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
 }
