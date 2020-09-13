@@ -47,10 +47,20 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = {MessagingException.class, IOException.class})
+    @ExceptionHandler(value = MessagingException.class)
     public ResponseEntity<ExceptionResponse> sendEmailFailure(MessagingException ex) {
         ExceptionResponse response = new ExceptionResponse();
-        response.setErrorCode("Failure sending email");
+        response.setErrorCode("Failure sending email: MessagingException");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_GATEWAY);
+    }
+
+    @ExceptionHandler(value = IOException.class)
+    public ResponseEntity<ExceptionResponse> sendEmailFailure(IOException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Failure sending email: IOException");
         response.setErrorMessage(ex.getMessage());
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
@@ -96,7 +106,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = UnableToUnfollowProfileException.class)
     public ResponseEntity<ExceptionResponse> unableToUnfollowProfile(UnableToUnfollowProfileException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -106,7 +116,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = UnableToRemoveFollowerException.class)
     public ResponseEntity<ExceptionResponse> unableToRemoveFollower(UnableToRemoveFollowerException ex) {
         ExceptionResponse response = new ExceptionResponse();

@@ -87,7 +87,7 @@ public class PublicRestController {
 
     @RequestMapping(method = RequestMethod.POST, value = "/forgotPassword")
     public void sendResetPasswordEmail(@RequestParam(value = "email") String email) throws MessagingException, IOException {
-        emailService.sendResetPasswordEmail(email);
+        userService.triggerResetPasswordEmail(email);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/resetPassword/{uuid}")

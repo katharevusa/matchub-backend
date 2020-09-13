@@ -51,6 +51,9 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> upvotedProjectIds = new HashSet<>();
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Long> downvotedProjectIds = new HashSet<>();
 
     @Column(nullable = false)
     @NotNull

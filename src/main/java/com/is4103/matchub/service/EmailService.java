@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.AccountEntity;
 import java.io.IOException;
 import javax.mail.MessagingException;
 
@@ -14,7 +15,7 @@ import javax.mail.MessagingException;
  */
 public interface EmailService {
 
-    void sendVerificationEmail(String to) throws MessagingException, IOException;
+    void sendVerificationEmail(AccountEntity newRegisteredAccount) throws MessagingException, IOException;
 
-    void sendResetPasswordEmail(String to) throws MessagingException, IOException;
+    void sendResetPasswordEmail(AccountEntity account) throws MessagingException, IOException;
 }

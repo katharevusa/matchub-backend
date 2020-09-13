@@ -60,6 +60,8 @@ public interface UserService {
 
     void deleteProfilePic(Long accountId);
 
+    void triggerResetPasswordEmail(String email) throws MessagingException, IOException;
+
     AccountEntity changePassword(UUID uuid, ChangePasswordVO vo);
 
     Page<UserVO> search(String search, Pageable pageable);
