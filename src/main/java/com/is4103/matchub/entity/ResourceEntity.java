@@ -21,6 +21,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -55,14 +56,12 @@ public class ResourceEntity {
     private Set<String> uploadedFiles = new HashSet<>();
     
     @NotNull
-    private boolean available;
+    private boolean available = Boolean.TRUE;
     
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    @NotNull
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime startTime;
     
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    @NotNull
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime endTime;
     
     @OneToMany(mappedBy = "resource")
@@ -76,17 +75,49 @@ public class ResourceEntity {
     @JoinColumn(nullable = false)
     private ProfileEntity resourceOwner;
     
+    @NotNull
+    @Column(nullable = false)
+    private Integer units;
     
+    @OrderColumn
+    @Column(nullable = true)
+    @ElementCollection(fetch = FetchType.LAZY, targetClass = String.class)
+    private List<String> photos = new ArrayList<>();
+    
+    @Column(nullable = false)
+    private Boolean spotlight = Boolean.FALSE;
+    
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
+    private LocalDateTime spotlightEndTime;
 
-    public ResourceEntity(String resourceName, String resourceDescription, boolean available, LocalDateTime startTime, LocalDateTime endTime, ResourceCategoryEntity resourceCategory, ProfileEntity ResourceOwner) {
+    public ResourceEntity(String resourceName, String resourceDescription, ResourceCategoryEntity resourceCategory, ProfileEntity resourceOwner, Integer units) {
         this.resourceName = resourceName;
         this.resourceDescription = resourceDescription;
-        this.available = available;
+        this.resourceCategory = resourceCategory;
+        this.resourceOwner = resourceOwner;
+        this.units = units;
+    }
+    
+    public ResourceEntity(String resourceName, String resourceDescription, Integer units) {
+        this.resourceName = resourceName;
+        this.resourceDescription = resourceDescription;
+        this.units = units;
+    }
+
+    public ResourceEntity(String resourceName, String resourceDescription, LocalDateTime startTime, LocalDateTime endTime, Integer units) {
+        this.resourceName = resourceName;
+        this.resourceDescription = resourceDescription;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.resourceCategory = resourceCategory;
-        this.resourceOwner = ResourceOwner;
+        this.units = units;
     }
+    
+    
+    
+
+    
+
+    
     
 
   

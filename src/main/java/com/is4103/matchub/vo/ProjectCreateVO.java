@@ -52,7 +52,7 @@ public class ProjectCreateVO {
     @NotNull
     private Long projCreatorId;
     
-    private Set<String> photos = new HashSet<>();
+    private List<String> photos = new ArrayList<>();
     
     private List<SDGEntity> sdgs = new ArrayList<>();
     

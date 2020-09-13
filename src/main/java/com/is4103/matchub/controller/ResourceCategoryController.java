@@ -11,9 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  *
  * @author longluqian
+ * 
  */
 @RestController
-@RequestMapping("/sysadministrator")
+@RequestMapping("/authenticated")
 public class ResourceCategoryController {
+    
+    //Retrieve resource category
     
 }

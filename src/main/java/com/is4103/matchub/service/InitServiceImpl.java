@@ -2,21 +2,26 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
-import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.entity.ResourceCategoryEntity;
+import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.GenderEnum;
-import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
+import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
+import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,11 +44,28 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     SDGEntityRepository sdgEntityRepository;
+    
+    @Autowired
+    ResourceCategoryService resourceCategoryService;
+    
+    @Autowired
+    ResourceService resourceService;
+    
+    @Autowired 
+    ResourceEntityRepository resourceEntityRepository;
+    
+    @Autowired
+    ProfileEntityRepository profileEntityRepository;
+    
+    @Autowired
+    ResourceCategoryEntityRepository resourceCategoryEntityRepository;
 
     @Transactional
     public void init() {
         initSDG();
         initUsers();
+        initResourceCategories();
+        initResources();
     }
 
     private void initUsers() {
@@ -259,4 +281,61 @@ public class InitServiceImpl implements InitService {
         SDGEntity partnerships = new SDGEntity("Partnerships for the Goals", "Strengthen the means of implementation and revitalize the global partnership for sustainable development");
         sdgEntityRepository.save(partnerships);
     }
+    
+    
+   public void initResourceCategories(){
+       ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food","All Food-related Resources", 1,5);
+       resourceCategoryService.createResourceCategory(foodCategory);
+
+       
+       ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Space","All Sapce-related Resources",1 ,5);
+       resourceCategoryService.createResourceCategory(spaceCategory);
+       
+       
+       ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural","All Natural Resources",1 ,5);
+       resourceCategoryService.createResourceCategory(naturalResourceCategory);
+       
+       
+       ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Device","All Device-related Resources",1 ,10);
+       resourceCategoryService.createResourceCategory(deviceCategory);
+      
+       
+       ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation","All Transportation Resources",1 ,1);
+       resourceCategoryService.createResourceCategory(transportationCategory);
+
+       
+       ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Eductaion","All Education Resources",1 ,5);
+       resourceCategoryService.createResourceCategory(educationCategory);
+      
+   }
+   
+   public void initResources(){
+
+        ResourceEntity bread = new ResourceEntity("Bread", "Free Bread", 10);
+        resourceService.createResource(bread, 1L, 2L);// category id, profileId
+        
+       
+        ResourceEntity classroom = new ResourceEntity("Classroom", "Free classroom",LocalDateTime.parse("2021-06-05T11:50:55"),LocalDateTime.parse("2021-07-05T11:50:55"), 10);
+        resourceService.createResource(classroom, 2L, 2L); 
+        
+        
+        ResourceEntity water = new ResourceEntity("Water", "10 Free Bottle Water", 10);
+        resourceService.createResource(water, 3L, 3L);
+        
+         
+        ResourceEntity laptop = new ResourceEntity("Laptop", "10 Laptop for free rent", 10);
+        resourceService.createResource(laptop, 4L, 4L);
+        
+        
+        ResourceEntity bus = new ResourceEntity("Bus", "1 BUS free for rent for 1 day ",LocalDateTime.parse("2021-09-20T11:50:55"),LocalDateTime.parse("2021-09-21T11:50:55"), 10);
+        resourceService.createResource(bus, 5L, 5L);
+        
+         
+      
+  
+
+      
+   } 
+   
+   
 }

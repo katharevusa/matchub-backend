@@ -34,5 +34,7 @@ public class SysadminRestController {
     List<AccountEntity> getAllActiveAccounts() {
         return userService.getAllActiveAccounts();
     }
+    
+    //Resource Category Management
 
 }

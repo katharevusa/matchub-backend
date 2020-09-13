@@ -35,7 +35,7 @@ public interface ProjectService {
      
     public List<ProjectEntity> getJoinedProjects(Long profileId) throws UserNotFoundException;
      
-     public List<ProjectEntity> getCreatedProjects(Long profileId) throws UserNotFoundException;
+    public List<ProjectEntity> getCreatedProjects(Long profileId) throws UserNotFoundException;
     
      public void terminateProject(Long projectId, Long profileId) throws TerminateProjectException;
      

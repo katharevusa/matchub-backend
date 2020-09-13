@@ -23,6 +23,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -82,8 +83,9 @@ public class ProjectEntity {
     @NotNull
     private Integer upvotes = 0;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> photos = new HashSet<>();
+    @ElementCollection(fetch = FetchType.LAZY)
+    @OrderColumn()
+    private List<String> photos = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> relatedResources = new ArrayList<>();
