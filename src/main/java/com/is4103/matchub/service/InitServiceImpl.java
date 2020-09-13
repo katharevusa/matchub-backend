@@ -7,7 +7,6 @@ import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.GenderEnum;
-import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,7 +16,11 @@ import com.is4103.matchub.repository.AccountEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Service
 public class InitServiceImpl implements InitService {
@@ -33,14 +36,14 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     ProjectService projectService;
-    
+
     @Autowired
     SDGEntityRepository sdgEntityRepository;
 
     @Transactional
     public void init() {
-        initUsers();
         initSDG();
+        initUsers();
     }
 
     private void initUsers() {
@@ -70,13 +73,190 @@ public class InitServiceImpl implements InitService {
                     }
                     accountEntityRepository.save(account);
                 });
+
+        /* INIT 3 INDIVIDUALS */
+        IndividualEntity alexLow = new IndividualEntity("alexlow@gmail.com", passwordEncoder.encode("password"), "Alex", "Low", GenderEnum.MALE);
+        //account attributes
+        alexLow.setUuid(UUID.randomUUID());
+        alexLow.setDisabled(Boolean.FALSE);
+        alexLow.setIsVerified(Boolean.TRUE);
+        alexLow.getRoles().add(ProfileEntity.ROLE_USER);
+        alexLow.setJoinDate(LocalDateTime.now());
+        //profile & individual attributes
+        alexLow.setProfileDescription("Highly Passionate Individual with a love for contributing back to the society!");
+        Set<String> skillsets = new HashSet<>(Arrays.asList("Good Communication Skills", "Leadership Skills", "Project Management Skills", "Professional Painter"));
+        alexLow.setSkillSet(skillsets);
+
+        alexLow.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(1))));
+
+        alexLow.setPhoneNumber("91234567");
+        alexLow.setCountry("Singapore");
+        alexLow.setCity("Singapore");
+        alexLow.setProfilePhoto(null);
+        alexLow.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(3))));
+        List<SDGEntity> sdgs = new ArrayList<>();
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
+        alexLow.setSdgs(sdgs);
+        accountEntityRepository.save(alexLow);
+
+        //2nd individual
+        IndividualEntity ikjun = new IndividualEntity("ikjun@gmail.com", passwordEncoder.encode("password"), "Ik Jun", "Lee", GenderEnum.MALE);
+        //account attributes
+        ikjun.setUuid(UUID.randomUUID());
+        ikjun.setDisabled(Boolean.FALSE);
+        ikjun.setIsVerified(Boolean.TRUE);
+        ikjun.getRoles().add(ProfileEntity.ROLE_USER);
+        ikjun.setJoinDate(LocalDateTime.now());
+        //profile & individual attributes
+        ikjun.setProfileDescription("Highly Passionate Individual with a love for contributing back to the society!");
+        skillsets = new HashSet<>(Arrays.asList("Singing", "Playing the Guitar", "Trilingual", "General Surgery (GS)", "Verified First Aider"));
+        ikjun.setSkillSet(skillsets);
+
+        ikjun.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(1))));
+
+        ikjun.setPhoneNumber("+82 011-465-9876");
+        ikjun.setCountry("South Korea");
+        ikjun.setCity("Seoul");
+        ikjun.setProfilePhoto(null);
+        ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3))));
+        sdgs = new ArrayList<>();
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(4)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
+        ikjun.setSdgs(sdgs);
+        accountEntityRepository.save(ikjun);
+
+        //3rd individual
+        IndividualEntity sophia = new IndividualEntity("sophiasmith@gmail.com", passwordEncoder.encode("password"), "Sophia", "Smith", GenderEnum.FEMALE);
+        //account attributes
+        sophia.setUuid(UUID.randomUUID());
+        sophia.setDisabled(Boolean.FALSE);
+        sophia.setIsVerified(Boolean.TRUE);
+        sophia.getRoles().add(ProfileEntity.ROLE_USER);
+        sophia.setJoinDate(LocalDateTime.now());
+        //profile & individual attributes
+        sophia.setProfileDescription("Highly Passionate Individual with a love for contributing back to the society!");
+        skillsets = new HashSet<>(Arrays.asList("Social Worker for Gender Equality"));
+        sophia.setSkillSet(skillsets);
+
+        sophia.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2))));
+
+        sophia.setPhoneNumber("+1 604 598 5235");
+        sophia.setCountry("Canada");
+        sophia.setCity("Quebec");
+        sophia.setProfilePhoto(null);
+        sophia.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3))));
+        sdgs = new ArrayList<>();
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
+        sophia.setSdgs(sdgs);
+        accountEntityRepository.save(sophia);
+
+        /* INIT 2 ORGANISATIONS */
+        String description = "GENC is a national network of over 150 diverse women leaders from across Canada.";
+        OrganisationEntity genc = new OrganisationEntity("genc@gmail.com", passwordEncoder.encode("password"), "Gender Equality Network Canada (GENC)", description, "1920 Yonge St., Suite 302, Toronto, Ontario M4S 3E2");
+        //account attributes
+        genc.setUuid(UUID.randomUUID());
+        genc.setDisabled(Boolean.FALSE);
+        genc.setIsVerified(Boolean.TRUE);
+        genc.getRoles().add(ProfileEntity.ROLE_USER);
+        genc.setJoinDate(LocalDateTime.now());
+        //profile & organisation attributes
+        Set<String> areasOfExpertise = new HashSet<>(Arrays.asList("Work together to advocate for policy changes", "Inclusive Intersectional Leadership", "Collective Action to Advance Gender Equality"));
+        genc.setAreasOfExpertise(areasOfExpertise);
+        genc.setEmployees(new HashSet<>(Arrays.asList(sophia.getAccountId())));
+        genc.setPhoneNumber("1-866-293-4483");
+        genc.setCountry("Canada");
+        genc.setCity("Toronto");
+        genc.setProfilePhoto(null);
+        genc.setFollowing(new HashSet<>(Arrays.asList(sophia.getAccountId())));
+        sdgs = new ArrayList<>();
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
+        genc.setSdgs(sdgs);
+        accountEntityRepository.saveAndFlush(genc);
+
+        //2nd organisation
+        description = "Network for Good is a hybrid organization—a nonprofit-owned for-profit.";
+        OrganisationEntity networkForGood = new OrganisationEntity("networkforgood@gmail.com", passwordEncoder.encode("password"), "Network For Good", description, "1140 Connecticut Ave NW #700, Washington, DC 20036, United States");
+        //account attributes
+        networkForGood.setUuid(UUID.randomUUID());
+        networkForGood.setDisabled(Boolean.FALSE);
+        networkForGood.setIsVerified(Boolean.TRUE);
+        networkForGood.getRoles().add(ProfileEntity.ROLE_USER);
+        networkForGood.setJoinDate(LocalDateTime.now());
+        //profile & organisation attributes
+        areasOfExpertise = new HashSet<>(Arrays.asList("Fundraising Platform", "All-In-One Donor Management System", "Fundraising Software)"));
+        networkForGood.setAreasOfExpertise(areasOfExpertise);
+        networkForGood.setEmployees(new HashSet<>(Arrays.asList(alexLow.getAccountId())));
+        networkForGood.setPhoneNumber("+1 888-284-7978");
+        networkForGood.setCountry("United States");
+        networkForGood.setCity("Washington");
+        networkForGood.setProfilePhoto(null);
+        networkForGood.setFollowing(new HashSet<>(Arrays.asList(alexLow.getAccountId(), ikjun.getAccountId())));
+        sdgs = new ArrayList<>();
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(2)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(4)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(8)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(10)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
+        networkForGood.setSdgs(sdgs);
+        accountEntityRepository.save(networkForGood);
     }
 
     private void initSDG() {
         SDGEntity noPoverty = new SDGEntity("No Poverty", "End poverty in all its forms everywhere");
         sdgEntityRepository.save(noPoverty);
-        
+
         SDGEntity zeroHunger = new SDGEntity("Zero Hunger", "End hunger, achieve food security and improved nutrition and promote sustainable agriculture");
         sdgEntityRepository.save(zeroHunger);
+
+        SDGEntity goodHealth = new SDGEntity("Good Health and Well-being", "Ensure healthy lives and promote well-being for all at all ages");
+        sdgEntityRepository.save(goodHealth);
+
+        SDGEntity qualityEducation = new SDGEntity("Quality Education", "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all");
+        sdgEntityRepository.save(qualityEducation);
+
+        SDGEntity genderEquality = new SDGEntity("Gender Equality", "Achieve gender equality and empower all women and girls");
+        sdgEntityRepository.save(genderEquality);
+
+        SDGEntity cleanWater = new SDGEntity("Clean Water and Sanitation", "Ensure availability and sustainable management of water and sanitation for all");
+        sdgEntityRepository.save(cleanWater);
+
+        SDGEntity cleanEnergy = new SDGEntity("Affordable and Clean Energy", "Ensure access to affordable, reliable, sustainable and modern energy for all");
+        sdgEntityRepository.save(cleanEnergy);
+
+        SDGEntity economicGrowth = new SDGEntity("Decent Work and Economic Growth", "Promote sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all");
+        sdgEntityRepository.save(economicGrowth);
+
+        SDGEntity industryInnovationInfrastructure = new SDGEntity("Industry, Innovation and Infrastructure", "Build resilient infrastructure, promote inclusive and sustainable industrialization and foster innovation");
+        sdgEntityRepository.save(industryInnovationInfrastructure);
+
+        SDGEntity reduceInequalities = new SDGEntity("Reduce Inequalities", "Reduce inequality within and among countries");
+        sdgEntityRepository.save(reduceInequalities);
+
+        SDGEntity sustainableCities = new SDGEntity("Sustainable Cities and Communities", "Make cities and human settlements inclusive, safe, resilient and sustainable");
+        sdgEntityRepository.save(sustainableCities);
+
+        SDGEntity responsibleConsumption = new SDGEntity("Responsible Consumption and Production", "Ensure sustainable consumption and production patterns");
+        sdgEntityRepository.save(responsibleConsumption);
+
+        SDGEntity climateAction = new SDGEntity("Climate Action", "Take urgent action to combat climate change and its impacts");
+        sdgEntityRepository.save(climateAction);
+
+        SDGEntity lifeBelowWater = new SDGEntity("Life Below Water", "Conserve and sustainably use the oceans, seas and marine resources for sustainable development");
+        sdgEntityRepository.save(lifeBelowWater);
+
+        SDGEntity lifeOnLand = new SDGEntity("Life On Land", "Protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss");
+        sdgEntityRepository.save(lifeOnLand);
+
+        SDGEntity peaceJustice = new SDGEntity("Peace, Justice and Strong Institutions", "Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels");
+        sdgEntityRepository.save(peaceJustice);
+
+        SDGEntity partnerships = new SDGEntity("Partnerships for the Goals", "Strengthen the means of implementation and revitalize the global partnership for sustainable development");
+        sdgEntityRepository.save(partnerships);
     }
 }

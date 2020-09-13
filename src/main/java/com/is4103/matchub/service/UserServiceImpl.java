@@ -90,7 +90,7 @@ public class UserServiceImpl implements UserService {
         newAccount = accountEntityRepository.save(newAccount);
 
         //auto trigger the sendVerificationEmail method
-        emailService.sendVerificationEmail(newAccount.getEmail());
+        emailService.sendVerificationEmail(newAccount);
 
         return UserVO.of(newAccount);
 
@@ -111,7 +111,7 @@ public class UserServiceImpl implements UserService {
         newAccount = accountEntityRepository.save(newAccount);
 
         //auto trigger the sendVerificationEmail method
-        emailService.sendVerificationEmail(newAccount.getEmail());
+        emailService.sendVerificationEmail(newAccount);
 
         return UserVO.of(newAccount);
     }
@@ -496,6 +496,15 @@ public class UserServiceImpl implements UserService {
         } else {
             throw new DeleteProfilePictureException("Unable to delete profile picture of accountId: " + accountId);
         }
+    }
+
+    @Transactional
+    @Override
+    public void triggerResetPasswordEmail(String email) throws MessagingException, IOException {
+        AccountEntity account = accountEntityRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+
+        emailService.sendResetPasswordEmail(account);
     }
 
     @Transactional
