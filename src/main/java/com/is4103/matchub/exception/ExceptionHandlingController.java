@@ -35,6 +35,16 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.CONFLICT);
     }
+    
+    @ExceptionHandler(value = UserNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> resourceNotFound(UserNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("User not found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> invalidInput(MethodArgumentNotValidException ex) {
