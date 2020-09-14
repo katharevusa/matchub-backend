@@ -31,4 +31,9 @@ public class ResourceController {
        return resourceService.getAllAvailableResources(pageable);
     }
     
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllResources")
+    Page<ResourceEntity> getAllResources(Pageable pageable) {
+       return resourceService.getAllResources(pageable);
+    }
+    
 }

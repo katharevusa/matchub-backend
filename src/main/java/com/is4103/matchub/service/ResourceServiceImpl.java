@@ -46,8 +46,14 @@ public class ResourceServiceImpl implements ResourceService{
         return resourceEntity;
     }
     
+    @Override
     public Page<ResourceEntity> getAllAvailableResources(Pageable pageble){
         return resourceEntityRepository.getAllAvailableResources(pageble);
+    }
+    
+    @Override
+    public Page<ResourceEntity> getAllResources(Pageable pageble){
+        return resourceEntityRepository.findAll(pageble);
     }
     
 }

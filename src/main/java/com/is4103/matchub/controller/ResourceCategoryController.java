@@ -5,7 +5,13 @@
  */
 package com.is4103.matchub.controller;
 
+import com.is4103.matchub.entity.ResourceCategoryEntity;
+import com.is4103.matchub.service.ResourceCategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -17,6 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/authenticated")
 public class ResourceCategoryController {
     
-    //Retrieve resource category
+    @Autowired 
+    ResourceCategoryService resourceCategoryService;
     
+@RequestMapping(method = RequestMethod.GET, value = "/getAllResourceCategories")
+    Page<ResourceCategoryEntity> getAllResources(Pageable pageable) {
+       return resourceCategoryService.getAllResourceCategories(pageable);
+    }
 }

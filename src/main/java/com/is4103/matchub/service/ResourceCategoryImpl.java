@@ -8,6 +8,8 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,5 +30,10 @@ public class ResourceCategoryImpl implements ResourceCategoryService{
      return resourceCategoryEntityRepository.findById(id).get();
         
     }
+    public Page<ResourceCategoryEntity> getAllResourceCategories(Pageable page){
+     return resourceCategoryEntityRepository.findAll(page);
+        
+    }
+    
     
 }
