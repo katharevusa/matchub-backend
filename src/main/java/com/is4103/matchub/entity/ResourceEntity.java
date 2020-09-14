@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -69,10 +70,12 @@ public class ResourceEntity {
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
+    @JsonIgnore
     private ResourceCategoryEntity resourceCategory;
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
+    @JsonIgnore
     private ProfileEntity resourceOwner;
     
     @NotNull

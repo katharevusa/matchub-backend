@@ -39,6 +39,10 @@ public class IndividualSetupVO {
     @ValueOfEnum(enumClass = GenderEnum.class)
     @NotNull(message = "gender can not be null.")
     private String genderEnum;
+    
+    @NotNull(message = "Country Code can not be null.")
+    @NotBlank(message = "Country Code can not be blank.")
+    private String countryCode;
 
     @NotNull(message = "Phone number can not be null.")
     @NotBlank(message = "Phone number can not be blank.")
@@ -71,6 +75,7 @@ public class IndividualSetupVO {
         
         individual.setGenderEnum(GenderEnum.valueOf(this.genderEnum));
 
+        individual.setCountryCode(this.countryCode);
         individual.setPhoneNumber(this.phoneNumber);
         individual.setCountry(this.country);
         individual.setCity(this.city);

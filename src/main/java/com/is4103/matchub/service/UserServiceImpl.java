@@ -43,6 +43,7 @@ import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
+import java.util.Set;
 
 /**
  *
@@ -313,84 +314,108 @@ public class UserServiceImpl implements UserService {
         return account;
     }
 
+//    @Override
+//    public List<AccountEntity> getAllAccounts() {
+//        return accountEntityRepository.findAll();
+//    }
     @Override
-    public List<AccountEntity> getAllAccounts() {
-        return accountEntityRepository.findAll();
+    public Page<AccountEntity> getAllAccounts(Pageable pageable) {
+        return accountEntityRepository.findAll(pageable);
+    }
+
+//    @Override
+//    public List<AccountEntity> getAllActiveAccounts() {
+//        return accountEntityRepository.findAllActiveAccounts();
+//    }
+    @Override
+    public Page<AccountEntity> getAllActiveAccounts(Pageable pageable) {
+        return accountEntityRepository.findAllActiveAccounts(pageable);
     }
 
     @Override
-    public List<AccountEntity> getAllActiveAccounts() {
-        return accountEntityRepository.findAllActiveAccounts();
+    public Page<ProfileEntity> getFollowers(Long accountId, Pageable pageable) {
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        Set<Long> followerIds = profile.getFollowers();
+        return profileEntityRepository.getFollowers(followerIds, pageable);
     }
 
     @Override
-    public List<AccountEntity> getAllFollowingAccounts(Long id) {
-        AccountEntity account = accountEntityRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
+    public Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable) {
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
 
-        //type cast into individual or organisation
-        if (account instanceof IndividualEntity) {
-            IndividualEntity i = (IndividualEntity) account;
-
-            //convert set to List
-            List<Long> followingIds = new ArrayList<>(i.getFollowing());
-            List<AccountEntity> following = new ArrayList<>();
-
-            for (int j = 0; j < followingIds.size(); j++) {
-                AccountEntity a = accountEntityRepository.findById(followingIds.get(j)).get();
-                following.add(a);
-            }
-            return following;
-        } else { //must be organisation
-            OrganisationEntity o = (OrganisationEntity) account;
-
-            //convert set to List
-            List<Long> followingIds = new ArrayList<>(o.getFollowing());
-            List<AccountEntity> following = new ArrayList<>();
-
-            for (int j = 0; j < followingIds.size(); j++) {
-                AccountEntity a = accountEntityRepository.findById(followingIds.get(j)).get();
-                following.add(a);
-            }
-            return following;
-        }
-
+        Set<Long> followingIds = profile.getFollowing();
+        return profileEntityRepository.getFollowing(followingIds, pageable);
     }
 
-    @Override
-    public List<AccountEntity> getAllFollowerAccounts(Long id) {
-        AccountEntity account = accountEntityRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(id));
-
-        //type cast into individual or organisation
-        if (account instanceof IndividualEntity) {
-            IndividualEntity i = (IndividualEntity) account;
-
-            //convert set to List
-            List<Long> followerIds = new ArrayList<>(i.getFollowers());
-            List<AccountEntity> followers = new ArrayList<>();
-
-            for (int j = 0; j < followerIds.size(); j++) {
-                AccountEntity a = accountEntityRepository.findById(followerIds.get(j)).get();
-                followers.add(a);
-            }
-            return followers;
-        } else { //must be organisation
-            OrganisationEntity o = (OrganisationEntity) account;
-
-            //convert set to List
-            List<Long> followerIds = new ArrayList<>(o.getFollowers());
-            List<AccountEntity> followers = new ArrayList<>();
-
-            for (int j = 0; j < followerIds.size(); j++) {
-                AccountEntity a = accountEntityRepository.findById(followerIds.get(j)).get();
-                followers.add(a);
-            }
-            return followers;
-        }
-
-    }
-
+//    @Override
+//    public List<AccountEntity> getAllFollowingAccounts(Long id) {
+//        AccountEntity account = accountEntityRepository.findById(id)
+//                .orElseThrow(() -> new UserNotFoundException(id));
+//
+//        //type cast into individual or organisation
+//        if (account instanceof IndividualEntity) {
+//            IndividualEntity i = (IndividualEntity) account;
+//
+//            //convert set to List
+//            List<Long> followingIds = new ArrayList<>(i.getFollowing());
+//            List<AccountEntity> following = new ArrayList<>();
+//
+//            for (int j = 0; j < followingIds.size(); j++) {
+//                AccountEntity a = accountEntityRepository.findById(followingIds.get(j)).get();
+//                following.add(a);
+//            }
+//            return following;
+//        } else { //must be organisation
+//            OrganisationEntity o = (OrganisationEntity) account;
+//
+//            //convert set to List
+//            List<Long> followingIds = new ArrayList<>(o.getFollowing());
+//            List<AccountEntity> following = new ArrayList<>();
+//
+//            for (int j = 0; j < followingIds.size(); j++) {
+//                AccountEntity a = accountEntityRepository.findById(followingIds.get(j)).get();
+//                following.add(a);
+//            }
+//            return following;
+//        }
+//
+//    }
+//    @Override
+//    public List<AccountEntity> getAllFollowerAccounts(Long id) {
+//        AccountEntity account = accountEntityRepository.findById(id)
+//                .orElseThrow(() -> new UserNotFoundException(id));
+//
+//        //type cast into individual or organisation
+//        if (account instanceof IndividualEntity) {
+//            IndividualEntity i = (IndividualEntity) account;
+//
+//            //convert set to List
+//            List<Long> followerIds = new ArrayList<>(i.getFollowers());
+//            List<AccountEntity> followers = new ArrayList<>();
+//
+//            for (int j = 0; j < followerIds.size(); j++) {
+//                AccountEntity a = accountEntityRepository.findById(followerIds.get(j)).get();
+//                followers.add(a);
+//            }
+//            return followers;
+//        } else { //must be organisation
+//            OrganisationEntity o = (OrganisationEntity) account;
+//
+//            //convert set to List
+//            List<Long> followerIds = new ArrayList<>(o.getFollowers());
+//            List<AccountEntity> followers = new ArrayList<>();
+//
+//            for (int j = 0; j < followerIds.size(); j++) {
+//                AccountEntity a = accountEntityRepository.findById(followerIds.get(j)).get();
+//                followers.add(a);
+//            }
+//            return followers;
+//        }
+//
+//    }
     @Transactional
     @Override
     public IndividualEntity updateIndividual(IndividualUpdateVO vo) {
@@ -521,8 +546,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<UserVO> search(String search, Pageable pageable
-    ) {
+    public Page<UserVO> search(String search, Pageable pageable) {
         Page<AccountEntity> accountPage;
         if (search.isEmpty()) {
             accountPage = accountEntityRepository.findAll(pageable);

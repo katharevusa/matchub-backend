@@ -3,6 +3,7 @@ package com.is4103.matchub.controller;
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.UserService;
 import com.is4103.matchub.vo.IndividualUpdateVO;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,7 +43,7 @@ public class AuthenticatedRestController {
     AccountEntity getAccount(@PathVariable Long id) {
         return userService.getAccount(id);
     }
-    
+
 //    @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{uuid}")
 //    AccountEntity getAccount(@PathVariable UUID uuid) {
 //        return userService.getAccount(uuid);
@@ -50,15 +53,14 @@ public class AuthenticatedRestController {
 //    AccountEntity getAccount(@PathVariable String email) {
 //        return userService.getAccount(email);
 //    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/getAllFollowingAccounts/{id}")
-    List<AccountEntity> getAllFollowingAccounts(@PathVariable Long id) {
-        return userService.getAllFollowingAccounts(id);
+    @RequestMapping(method = RequestMethod.GET, value = "/getFollowing/{id}")
+    Page<ProfileEntity> getFollowing(@PathVariable Long id, Pageable pageable) {
+        return userService.getFollowing(id, pageable);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getAllFollowerAccounts/{id}")
-    List<AccountEntity> getAllFollowerAccounts(@PathVariable Long id) {
-        return userService.getAllFollowerAccounts(id);
+    @RequestMapping(method = RequestMethod.GET, value = "/getFollowers/{id}")
+    Page<ProfileEntity> getFollowers(@PathVariable Long id, Pageable pageable) {
+        return userService.getFollowers(id, pageable);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteAccount/{id}")
@@ -87,22 +89,22 @@ public class AuthenticatedRestController {
     AccountEntity changePassword(@PathVariable("uuid") UUID uuid, @Valid @RequestBody ChangePasswordVO vo) {
         return userService.changePassword(uuid, vo);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/followProfile")
     AccountEntity followProfile(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "followId") Long followId) {
         return userService.followProfile(accountId, followId);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/unfollowProfile")
     AccountEntity unfollowProfile(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "unfollowId") Long unfollowId) {
         return userService.unfollowProfile(accountId, unfollowId);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/removeFollower")
     AccountEntity removeFollower(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "removeFollowerId") Long removeFollowerId) {
         return userService.removeFollower(accountId, removeFollowerId);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/updateIndividual/updateProfilePic/{uuid}")
     public AccountEntity updateIndividualFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
 //        return attachmentService.upload(file, directory);

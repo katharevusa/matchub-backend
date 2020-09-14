@@ -21,6 +21,8 @@ public class OrganisationUpdateVO {
     @NotNull(message = "id can not be null.")
     private Long id;
 
+    private String countryCode;
+
     private String phoneNumber;
 
     private String country;
@@ -38,6 +40,10 @@ public class OrganisationUpdateVO {
     private Long[] sdgIds;
 
     public void updateOrganisationAccount(OrganisationEntity organisation) {
+
+        if (!this.countryCode.isEmpty()) {
+            organisation.setCountryCode(this.countryCode);
+        }
 
         if (!this.phoneNumber.isEmpty()) {
             organisation.setPhoneNumber(this.phoneNumber);

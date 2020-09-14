@@ -36,6 +36,10 @@ public class OrganisationSetupVO {
     private Long[] kahs;
 
     private String[] areasOfExpertise;
+    
+    @NotNull(message = "Country Code can not be null.")
+    @NotBlank(message = "Country Code can not be blank.")
+    private String countryCode;
 
     @NotNull(message = "Phone number can not be null.")
     @NotBlank(message = "Phone number can not be blank.")
@@ -72,6 +76,7 @@ public class OrganisationSetupVO {
         organisation.getAreasOfExpertise().clear();
         organisation.setAreasOfExpertise(stringSet);
         
+        organisation.setCountryCode(this.countryCode);
         organisation.setPhoneNumber(this.phoneNumber);
         organisation.setCountry(this.country);
         organisation.setCity(this.city);

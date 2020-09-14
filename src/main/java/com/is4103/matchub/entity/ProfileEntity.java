@@ -9,11 +9,11 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Data
@@ -22,8 +22,11 @@ import lombok.NoArgsConstructor;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class ProfileEntity extends AccountEntity {
 
+    @Column(nullable = true)
+    @Nullable
+    private String countryCode;
+
     @Column(unique = true)
-//    @NotNull
     private String phoneNumber;
 
     @Column(nullable = true)
@@ -51,7 +54,7 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> upvotedProjectIds = new HashSet<>();
-    
+
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> downvotedProjectIds = new HashSet<>();
 
@@ -102,7 +105,7 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ChannelEntity> joinedChannel = new ArrayList<>();
-    
+
     @OneToMany
     private List<PostEntity> likedPosts = new ArrayList<>();
 

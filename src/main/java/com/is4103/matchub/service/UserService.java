@@ -3,6 +3,7 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.vo.IndividualCreateVO;
 import com.is4103.matchub.vo.IndividualSetupVO;
 import com.is4103.matchub.vo.IndividualUpdateVO;
@@ -44,13 +45,17 @@ public interface UserService {
 
     AccountEntity getAccount(UUID uuid);
 
-    List<AccountEntity> getAllAccounts();
+//    List<AccountEntity> getAllAccounts();
+//    List<AccountEntity> getAllActiveAccounts();
+    Page<AccountEntity> getAllAccounts(Pageable pageable);
 
-    List<AccountEntity> getAllActiveAccounts();
+    Page<AccountEntity> getAllActiveAccounts(Pageable pageable);
 
-    List<AccountEntity> getAllFollowingAccounts(Long id);
+//    List<AccountEntity> getAllFollowingAccounts(Long id);
+    Page<ProfileEntity> getFollowers(Long accountId, Pageable pageable);
 
-    List<AccountEntity> getAllFollowerAccounts(Long id);
+//    List<AccountEntity> getAllFollowerAccounts(Long id);
+    Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable);
 
     IndividualEntity updateIndividual(IndividualUpdateVO vo);
 
