@@ -5,7 +5,9 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -19,7 +21,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
@@ -38,6 +39,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="resourceId")
 public class ResourceEntity {
 
     @Id
@@ -70,7 +72,7 @@ public class ResourceEntity {
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    @JsonIgnore
+
     private ResourceCategoryEntity resourceCategory;
     
     @ManyToOne(optional = false)
