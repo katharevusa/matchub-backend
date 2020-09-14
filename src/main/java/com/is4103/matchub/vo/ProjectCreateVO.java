@@ -7,6 +7,7 @@ package com.is4103.matchub.vo;
 
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.entity.SDGEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -51,7 +52,11 @@ public class ProjectCreateVO {
     @NotNull
     private Long projCreatorId;
     
-    private Set<String> photos = new HashSet<>();
+    private List<String> photos = new ArrayList<>();
+    
+    private List<SDGEntity> sdgs = new ArrayList<>();
+    
+    private List<String> relatedResources = new ArrayList<>();
     
     public void updateProject(ProjectEntity newProject){
         newProject.setProjectTitle(this.projectTitle);
@@ -61,6 +66,8 @@ public class ProjectCreateVO {
         newProject.setEndDate(this.endDate);
         newProject.setPhotos(this.photos);
         newProject.setProjCreatorId(projCreatorId);
+        newProject.setSdgs(sdgs);
+        newProject.setRelatedResources(relatedResources);
         System.out.println("com.is4103.matchub.vo.ProjectCreateVO.updateProject(): "+newProject.getCountry());
         System.out.println("com.is4103.matchub.vo.ProjectCreateVO.updateProject(): "+this.country);
     }

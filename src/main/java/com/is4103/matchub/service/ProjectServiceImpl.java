@@ -5,21 +5,26 @@
  */
 package com.is4103.matchub.service;
 
-import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UpdateProjectException;
-import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.vo.ProjectCreateVO;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -64,7 +69,7 @@ public class ProjectServiceImpl implements ProjectService{
         if(optionalProjectEntity.isPresent()){
             return optionalProjectEntity.get();
         }else{
-            throw new ProjectNotFoundException("Project with id "+id+"does not exist");
+            throw new ProjectNotFoundException("Project with id "+id+" does not exist");
         } 
     }
     
@@ -101,6 +106,7 @@ public class ProjectServiceImpl implements ProjectService{
     }
     
     
+    @Override
     public void deleteProject(Long projectId, Long accountId)throws DeleteProjectException{
         Optional<ProjectEntity> optionalProjectEntity = projectEntityRepository.findById(projectId);
         if(optionalProjectEntity.isPresent() ){
@@ -120,11 +126,58 @@ public class ProjectServiceImpl implements ProjectService{
             }else{
                throw new DeleteProjectException("Delete project exception: Only project creator can delete project");
             }      
-        }    
- 
-        
-        
-        
+        }      
     }
     
+    @Override
+    public List<ProjectEntity> getJoinedProjects(Long profileId) throws UserNotFoundException{
+        Optional<ProfileEntity> profile = profileEntityRepository.findById(profileId);
+        if(profile.isPresent()){
+           return profile.get().getProjectsJoined();
+                  
+        }else{
+            throw new UserNotFoundException(profileId);
+        }
+    }
+    
+    @Override
+     public List<ProjectEntity> getCreatedProjects(Long profileId) throws UserNotFoundException{
+        Optional<ProfileEntity> profile = profileEntityRepository.findById(profileId);
+        if(profile.isPresent()){
+           return projectEntityRepository.getCreatedProjectByProfileId(profileId);
+        }else{
+            throw new UserNotFoundException(profileId);
+        }
+    }
+     
+     //only project creator can terminate project
+    public void terminateProject(Long projectId, Long profileId) throws TerminateProjectException{
+        Optional<ProfileEntity> profileOptional = profileEntityRepository.findById(profileId);
+        if(!profileOptional.isPresent()){
+          throw new TerminateProjectException("Fail to terminate project: User is not found");
+        }
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if(!projectOptional.isPresent()){
+           throw new TerminateProjectException("Fail to terminate project: Project is not found");
+        }
+        ProjectEntity project = projectOptional.get();
+        if(project.getProjCreatorId()!= profileId){
+            throw new TerminateProjectException("Only project creator can terminate project");
+        }
+        
+        project.setEndDate(LocalDateTime.now());
+        project.setProjStatus(ProjectStatusEnum.COMPLETED);
+        // Incomplete: timer to start the point allocation and reviewa
+       
+    }
+    
+    public Page<ProjectEntity> searchProjectByKeywords(String keyword, Pageable pageable){
+     return projectEntityRepository.searchByKeywords(keyword, pageable); 
+    }
+    
+    public Page<ProjectEntity> getLaunchedProjects(Pageable pageble){
+        return projectEntityRepository.getLaunchedProjects(pageble);
+    }
+    
+  
 }

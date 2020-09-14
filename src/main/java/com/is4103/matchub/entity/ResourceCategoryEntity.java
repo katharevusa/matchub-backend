@@ -45,10 +45,21 @@ public class ResourceCategoryEntity {
 
     @OneToMany(mappedBy = "resourceCategory")
     private List<ResourceEntity> resources = new ArrayList<>();
+    
+    @NotNull
+    private Integer communityPointsGuideline;
+    
+    @NotNull
+    private Integer perUnit;
 
-    public ResourceCategoryEntity(String resourceCategoryName, String resourceCategoryDescription) {
+    public ResourceCategoryEntity(String resourceCategoryName, String resourceCategoryDescription, Integer communityPointsGuideline, Integer perUnit) {
         this.resourceCategoryName = resourceCategoryName;
         this.resourceCategoryDescription = resourceCategoryDescription;
+        this.communityPointsGuideline = communityPointsGuideline;
+        this.perUnit = perUnit;
     }
+    
+
+   
 
 }

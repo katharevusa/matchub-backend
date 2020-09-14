@@ -8,8 +8,13 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UpdateProjectException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.vo.ProjectCreateVO;
+import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,5 +33,13 @@ public interface ProjectService {
     
     public ProjectEntity createProject(ProjectEntity newProject, Long creatorId);
      
+    public List<ProjectEntity> getJoinedProjects(Long profileId) throws UserNotFoundException;
+     
+    public List<ProjectEntity> getCreatedProjects(Long profileId) throws UserNotFoundException;
     
+     public void terminateProject(Long projectId, Long profileId) throws TerminateProjectException;
+     
+     public Page<ProjectEntity> searchProjectByKeywords(String keyword, Pageable pageable);
+     
+     public Page<ProjectEntity> getLaunchedProjects(Pageable pageble);
 }
