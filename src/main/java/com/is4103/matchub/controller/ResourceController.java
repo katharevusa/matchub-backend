@@ -5,7 +5,13 @@
  */
 package com.is4103.matchub.controller;
 
+import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.service.ResourceService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -13,7 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
  * @author longluqian
  */
 @RestController
-@RequestMapping("/public")
+@RequestMapping("/authenticated")
 public class ResourceController {
+    @Autowired
+    ResourceService resourceService;
+    
+    
+  
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllAvailableResources")
+    Page<ResourceEntity> getAllAvailableResources(Pageable pageable) {
+       return resourceService.getAllAvailableResources(pageable);
+    }
     
 }

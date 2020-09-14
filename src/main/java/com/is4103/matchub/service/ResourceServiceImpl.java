@@ -11,6 +11,8 @@ import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 /**
@@ -42,6 +44,10 @@ public class ResourceServiceImpl implements ResourceService{
         profileEntity.getHostedResources().add(resourceEntity);
         
         return resourceEntity;
+    }
+    
+    public Page<ResourceEntity> getAllAvailableResources(Pageable pageble){
+        return resourceEntityRepository.getAllAvailableResources(pageble);
     }
     
 }
