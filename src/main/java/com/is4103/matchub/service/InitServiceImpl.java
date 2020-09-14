@@ -86,12 +86,18 @@ public class InitServiceImpl implements InitService {
                         ProjectEntity projectEntity = new ProjectEntity("Project 1 title", "Project 1 description", "Singapore", LocalDateTime.now(), LocalDateTime.parse("2018-05-05T11:50:55"));
                         projectService.createProject(projectEntity, account.getAccountId());
 
+                        //update the followers list 
+                        IndividualEntity user1 = (IndividualEntity)account;
+                        user1.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4))));
                     } else {
                         account = accountEntityRepository.save(new OrganisationEntity(a + "@gmail.com", passwordEncoder.encode("password"), "NUS", "description", "address"));
                         account.getRoles().add(ProfileEntity.ROLE_USER);
                         ProjectEntity projectEntity = new ProjectEntity("Project 2 title", "Project 2 description", "China", LocalDateTime.now(), LocalDateTime.parse("2019-06-05T11:50:55"));
                         projectService.createProject(projectEntity, account.getAccountId());
-
+                        
+                        //update the followers list 
+                        OrganisationEntity user2 = (OrganisationEntity)account;
+                        user2.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(6))));
                     }
                     accountEntityRepository.save(account);
                 });
@@ -117,6 +123,7 @@ public class InitServiceImpl implements InitService {
         alexLow.setCity("Singapore");
         alexLow.setProfilePhoto(null);
         alexLow.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(3))));
+        alexLow.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8))));
         List<SDGEntity> sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
@@ -145,6 +152,8 @@ public class InitServiceImpl implements InitService {
         ikjun.setCity("Seoul");
         ikjun.setProfilePhoto(null);
         ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3))));
+        ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8))));
+        
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(4)));
@@ -175,6 +184,7 @@ public class InitServiceImpl implements InitService {
         sophia.setCity("Quebec");
         sophia.setProfilePhoto(null);
         sophia.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3))));
+        sophia.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(7))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         sophia.setSdgs(sdgs);
