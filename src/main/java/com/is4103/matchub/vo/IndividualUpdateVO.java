@@ -21,6 +21,8 @@ public class IndividualUpdateVO {
     @NotNull(message = "id can not be null.")
     private Long id;
 
+    private String countryCode;
+    
     private String phoneNumber;
 
     private String country;
@@ -39,6 +41,10 @@ public class IndividualUpdateVO {
 
     public void updateIndividualAccount(IndividualEntity individual) {
 
+        if (!this.countryCode.isEmpty()) {
+            individual.setCountryCode(this.countryCode);
+        }
+        
         if (!this.phoneNumber.isEmpty()) {
             individual.setPhoneNumber(this.phoneNumber);
         }

@@ -44,19 +44,19 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     SDGEntityRepository sdgEntityRepository;
-    
+
     @Autowired
     ResourceCategoryService resourceCategoryService;
-    
+
     @Autowired
     ResourceService resourceService;
-    
-    @Autowired 
+
+    @Autowired
     ResourceEntityRepository resourceEntityRepository;
-    
+
     @Autowired
     ProfileEntityRepository profileEntityRepository;
-    
+
     @Autowired
     ResourceCategoryEntityRepository resourceCategoryEntityRepository;
 
@@ -111,6 +111,7 @@ public class InitServiceImpl implements InitService {
 
         alexLow.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(1))));
 
+        alexLow.setCountryCode("+65");
         alexLow.setPhoneNumber("91234567");
         alexLow.setCountry("Singapore");
         alexLow.setCity("Singapore");
@@ -138,7 +139,8 @@ public class InitServiceImpl implements InitService {
 
         ikjun.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(1))));
 
-        ikjun.setPhoneNumber("+82 011-465-9876");
+        ikjun.setCountryCode("+82");
+        ikjun.setPhoneNumber("011-465-9876");
         ikjun.setCountry("South Korea");
         ikjun.setCity("Seoul");
         ikjun.setProfilePhoto(null);
@@ -167,7 +169,8 @@ public class InitServiceImpl implements InitService {
 
         sophia.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2))));
 
-        sophia.setPhoneNumber("+1 604 598 5235");
+        sophia.setCountryCode("+1");
+        sophia.setPhoneNumber("604 598 5235");
         sophia.setCountry("Canada");
         sophia.setCity("Quebec");
         sophia.setProfilePhoto(null);
@@ -190,7 +193,8 @@ public class InitServiceImpl implements InitService {
         Set<String> areasOfExpertise = new HashSet<>(Arrays.asList("Work together to advocate for policy changes", "Inclusive Intersectional Leadership", "Collective Action to Advance Gender Equality"));
         genc.setAreasOfExpertise(areasOfExpertise);
         genc.setEmployees(new HashSet<>(Arrays.asList(sophia.getAccountId())));
-        genc.setPhoneNumber("1-866-293-4483");
+        genc.setCountryCode("+1");
+        genc.setPhoneNumber("866 293 4483");
         genc.setCountry("Canada");
         genc.setCity("Toronto");
         genc.setProfilePhoto(null);
@@ -213,7 +217,8 @@ public class InitServiceImpl implements InitService {
         areasOfExpertise = new HashSet<>(Arrays.asList("Fundraising Platform", "All-In-One Donor Management System", "Fundraising Software)"));
         networkForGood.setAreasOfExpertise(areasOfExpertise);
         networkForGood.setEmployees(new HashSet<>(Arrays.asList(alexLow.getAccountId())));
-        networkForGood.setPhoneNumber("+1 888-284-7978");
+        networkForGood.setCountryCode("+1");
+        networkForGood.setPhoneNumber("888 284 7978");
         networkForGood.setCountry("United States");
         networkForGood.setCity("Washington");
         networkForGood.setProfilePhoto(null);
@@ -281,61 +286,45 @@ public class InitServiceImpl implements InitService {
         SDGEntity partnerships = new SDGEntity("Partnerships for the Goals", "Strengthen the means of implementation and revitalize the global partnership for sustainable development");
         sdgEntityRepository.save(partnerships);
     }
-    
-    
-   public void initResourceCategories(){
-       ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food","All Food-related Resources", 1,5);
-       resourceCategoryService.createResourceCategory(foodCategory);
 
-       
-       ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Space","All Sapce-related Resources",1 ,5);
-       resourceCategoryService.createResourceCategory(spaceCategory);
-       
-       
-       ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural","All Natural Resources",1 ,5);
-       resourceCategoryService.createResourceCategory(naturalResourceCategory);
-       
-       
-       ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Device","All Device-related Resources",1 ,10);
-       resourceCategoryService.createResourceCategory(deviceCategory);
-      
-       
-       ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation","All Transportation Resources",1 ,1);
-       resourceCategoryService.createResourceCategory(transportationCategory);
+    public void initResourceCategories() {
+        ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food", "All Food-related Resources", 1, 5);
+        resourceCategoryService.createResourceCategory(foodCategory);
 
-       
-       ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Eductaion","All Education Resources",1 ,5);
-       resourceCategoryService.createResourceCategory(educationCategory);
-      
-   }
-   
-   public void initResources(){
+        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Space", "All Sapce-related Resources", 1, 5);
+        resourceCategoryService.createResourceCategory(spaceCategory);
+
+        ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural", "All Natural Resources", 1, 5);
+        resourceCategoryService.createResourceCategory(naturalResourceCategory);
+
+        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Device", "All Device-related Resources", 1, 10);
+        resourceCategoryService.createResourceCategory(deviceCategory);
+
+        ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation", "All Transportation Resources", 1, 1);
+        resourceCategoryService.createResourceCategory(transportationCategory);
+
+        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Eductaion", "All Education Resources", 1, 5);
+        resourceCategoryService.createResourceCategory(educationCategory);
+
+    }
+
+    public void initResources() {
 
         ResourceEntity bread = new ResourceEntity("Bread", "Free Bread", 10);
         resourceService.createResource(bread, 1L, 2L);// category id, profileId
-        
-       
-        ResourceEntity classroom = new ResourceEntity("Classroom", "Free classroom",LocalDateTime.parse("2021-06-05T11:50:55"),LocalDateTime.parse("2021-07-05T11:50:55"), 10);
-        resourceService.createResource(classroom, 2L, 2L); 
-        
-        
+
+        ResourceEntity classroom = new ResourceEntity("Classroom", "Free classroom", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
+        resourceService.createResource(classroom, 2L, 2L);
+
         ResourceEntity water = new ResourceEntity("Water", "10 Free Bottle Water", 10);
         resourceService.createResource(water, 3L, 3L);
-        
-         
+
         ResourceEntity laptop = new ResourceEntity("Laptop", "10 Laptop for free rent", 10);
         resourceService.createResource(laptop, 4L, 4L);
-        
-        
-        ResourceEntity bus = new ResourceEntity("Bus", "1 BUS free for rent for 1 day ",LocalDateTime.parse("2021-09-20T11:50:55"),LocalDateTime.parse("2021-09-21T11:50:55"), 10);
-        resourceService.createResource(bus, 5L, 5L);
-        
-         
-      
-  
 
-      
-   } 
-   
-   
+        ResourceEntity bus = new ResourceEntity("Bus", "1 BUS free for rent for 1 day ", LocalDateTime.parse("2021-09-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
+        resourceService.createResource(bus, 5L, 5L);
+
+    }
+
 }
