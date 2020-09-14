@@ -92,6 +92,9 @@ public class ResourceEntity {
     
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime spotlightEndTime;
+    
+    @Column(nullable = true)
+    private Long matchedProjectId;
 
     public ResourceEntity(String resourceName, String resourceDescription, ResourceCategoryEntity resourceCategory, ProfileEntity resourceOwner, Integer units) {
         this.resourceName = resourceName;

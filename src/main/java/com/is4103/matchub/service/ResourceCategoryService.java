@@ -6,6 +6,8 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ResourceCategoryEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  *
@@ -15,5 +17,7 @@ public interface ResourceCategoryService {
     public ResourceCategoryEntity createResourceCategory(ResourceCategoryEntity resourceCategoryEntity);
     
     public ResourceCategoryEntity getResourceCategoryById(Long id);
+    
+    public Page<ResourceCategoryEntity> getAllResourceCategories(Pageable page);
     
 }

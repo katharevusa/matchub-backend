@@ -16,4 +16,5 @@ import org.springframework.data.domain.Pageable;
 public interface ResourceService {
    public ResourceEntity createResource(ResourceEntity resourceEntity, Long categoryId, Long profileId);
    public Page<ResourceEntity> getAllAvailableResources(Pageable pageble);
+   public Page<ResourceEntity> getAllResources(Pageable pageble);
 }
