@@ -77,7 +77,6 @@ public class ResourceEntity {
     
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    @JsonIgnore
     private ProfileEntity resourceOwner;
     
     @NotNull
