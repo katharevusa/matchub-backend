@@ -318,7 +318,6 @@ public class UserServiceImpl implements UserService {
 //    public List<AccountEntity> getAllAccounts() {
 //        return accountEntityRepository.findAll();
 //    }
-    
     @Override
     public Page<AccountEntity> getAllAccounts(Pageable pageable) {
         return accountEntityRepository.findAll(pageable);
@@ -328,21 +327,26 @@ public class UserServiceImpl implements UserService {
 //    public List<AccountEntity> getAllActiveAccounts() {
 //        return accountEntityRepository.findAllActiveAccounts();
 //    }
-    
     @Override
     public Page<AccountEntity> getAllActiveAccounts(Pageable pageable) {
         return accountEntityRepository.findAllActiveAccounts(pageable);
     }
-    
+
     @Override
     public Page<ProfileEntity> getFollowers(Long accountId, Pageable pageable) {
-        Set<Long> followerIds = profileEntityRepository.findById(accountId).get().getFollowers();
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        Set<Long> followerIds = profile.getFollowers();
         return profileEntityRepository.getFollowers(followerIds, pageable);
     }
-    
+
     @Override
     public Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable) {
-        Set<Long> followingIds = profileEntityRepository.findById(accountId).get().getFollowing();
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        Set<Long> followingIds = profile.getFollowing();
         return profileEntityRepository.getFollowing(followingIds, pageable);
     }
 
@@ -379,7 +383,6 @@ public class UserServiceImpl implements UserService {
 //        }
 //
 //    }
-
 //    @Override
 //    public List<AccountEntity> getAllFollowerAccounts(Long id) {
 //        AccountEntity account = accountEntityRepository.findById(id)
@@ -413,7 +416,6 @@ public class UserServiceImpl implements UserService {
 //        }
 //
 //    }
-
     @Transactional
     @Override
     public IndividualEntity updateIndividual(IndividualUpdateVO vo) {
