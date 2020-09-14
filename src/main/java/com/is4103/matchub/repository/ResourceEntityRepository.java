@@ -5,10 +5,10 @@
  */
 package com.is4103.matchub.repository;
 
-import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ResourceEntity;
-import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -22,4 +22,10 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
     
 //    @Query("SELECT r FROM ResourceEntity r WHERE r.available = TRUE AND r.resourceOwner = :profile")
 //    List<ResourceEntity> getAvailableResourcesOfAccount(ProfileEntity profile);
+    
+   @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true ",
+            countQuery = "SELECT r FROM ResourceEntity r WHERE r.available = true")
+    Page<ResourceEntity> getAllAvailableResources(Pageable pageable);
+    
+    
 }
