@@ -30,7 +30,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="resourceCategoryId")
 public class ResourceCategoryEntity {
 
     @Id
@@ -46,7 +45,7 @@ public class ResourceCategoryEntity {
     @NotNull
     private String resourceCategoryDescription;
 
-    @OneToMany(mappedBy = "resourceCategory")
+    @OneToMany
     private List<ResourceEntity> resources = new ArrayList<>();
     
     @NotNull

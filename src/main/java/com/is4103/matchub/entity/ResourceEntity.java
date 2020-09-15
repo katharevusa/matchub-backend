@@ -39,7 +39,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="resourceId")
 public class ResourceEntity {
 
     @Id
@@ -70,14 +69,14 @@ public class ResourceEntity {
     @OneToMany(mappedBy = "resource")
     private List<ResourceRequestEntity> listOfRequests;
     
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-
-    private ResourceCategoryEntity resourceCategory;
     
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private ProfileEntity resourceOwner;
+    @Column(nullable = false)
+    @NotNull
+    private Long resourceCategoryId;
+    
+    @Column(nullable = false)
+    @NotNull
+    private Long resourceOwnerId;
     
     @NotNull
     @Column(nullable = false)
@@ -97,11 +96,11 @@ public class ResourceEntity {
     @Column(nullable = true)
     private Long matchedProjectId;
 
-    public ResourceEntity(String resourceName, String resourceDescription, ResourceCategoryEntity resourceCategory, ProfileEntity resourceOwner, Integer units) {
+    public ResourceEntity(String resourceName, String resourceDescription, Long resourceCategoryId, Long resourceOwnerId, Integer units) {
         this.resourceName = resourceName;
         this.resourceDescription = resourceDescription;
-        this.resourceCategory = resourceCategory;
-        this.resourceOwner = resourceOwner;
+        this.resourceCategoryId = resourceCategoryId;
+        this.resourceOwnerId = resourceOwnerId;
         this.units = units;
     }
     

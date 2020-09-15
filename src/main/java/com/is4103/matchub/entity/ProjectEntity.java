@@ -26,6 +26,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -38,7 +39,7 @@ import org.springframework.lang.Nullable;
  */
 @Entity
 @Data
-  
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProjectEntity {
@@ -52,7 +53,7 @@ public class ProjectEntity {
     @NotNull
     private String projectTitle;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     @NotNull
     private String projectDescription;
 

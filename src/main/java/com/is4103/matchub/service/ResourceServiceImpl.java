@@ -35,8 +35,8 @@ public class ResourceServiceImpl implements ResourceService{
         ResourceCategoryEntity category = resourceCategoryService.getResourceCategoryById(categoryId);
         ProfileEntity profileEntity = profileEntityRepository.findById(profileId).get();
         
-        resourceEntity.setResourceOwner(profileEntity);
-        resourceEntity.setResourceCategory(category);
+        resourceEntity.setResourceOwnerId(profileId);
+        resourceEntity.setResourceCategoryId(categoryId);
         
         resourceEntity = resourceEntityRepository.saveAndFlush(resourceEntity);
         
