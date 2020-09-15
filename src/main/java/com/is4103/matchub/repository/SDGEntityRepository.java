@@ -15,5 +15,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface SDGEntityRepository extends JpaRepository<SDGEntity, Long> {
     
     SDGEntity findBySdgId(Long sdgId);
+    
+    SDGEntity findBySdgName(String name);
 
 }

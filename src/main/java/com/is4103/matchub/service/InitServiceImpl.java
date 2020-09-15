@@ -66,6 +66,7 @@ public class InitServiceImpl implements InitService {
         initUsers();
         initResourceCategories();
         initResources();
+        initProjects();
     }
 
     private void initUsers() {
@@ -83,20 +84,16 @@ public class InitServiceImpl implements InitService {
                     } else if (a.equalsIgnoreCase("user1")) {
                         account = accountEntityRepository.save(new IndividualEntity(a + "@gmail.com", passwordEncoder.encode("password"), "Phil", "Lim", GenderEnum.MALE));
                         account.getRoles().add(ProfileEntity.ROLE_USER);
-                        ProjectEntity projectEntity = new ProjectEntity("Project 1 title", "Project 1 description", "Singapore", LocalDateTime.now(), LocalDateTime.parse("2018-05-05T11:50:55"));
-                        projectService.createProject(projectEntity, account.getAccountId());
 
                         //update the followers list 
-                        IndividualEntity user1 = (IndividualEntity)account;
+                        IndividualEntity user1 = (IndividualEntity) account;
                         user1.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4))));
                     } else {
                         account = accountEntityRepository.save(new OrganisationEntity(a + "@gmail.com", passwordEncoder.encode("password"), "NUS", "description", "address"));
                         account.getRoles().add(ProfileEntity.ROLE_USER);
-                        ProjectEntity projectEntity = new ProjectEntity("Project 2 title", "Project 2 description", "China", LocalDateTime.now(), LocalDateTime.parse("2019-06-05T11:50:55"));
-                        projectService.createProject(projectEntity, account.getAccountId());
-                        
+
                         //update the followers list 
-                        OrganisationEntity user2 = (OrganisationEntity)account;
+                        OrganisationEntity user2 = (OrganisationEntity) account;
                         user2.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(6))));
                     }
                     accountEntityRepository.save(account);
@@ -153,7 +150,7 @@ public class InitServiceImpl implements InitService {
         ikjun.setProfilePhoto(null);
         ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3))));
         ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8))));
-        
+
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(4)));
@@ -334,6 +331,65 @@ public class InitServiceImpl implements InitService {
 
         ResourceEntity bus = new ResourceEntity("Bus", "1 BUS free for rent for 1 day ", LocalDateTime.parse("2021-09-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
         resourceService.createResource(bus, 5L, 5L);
+
+    }
+
+    public void initProjects() {
+
+        SDGEntity poverty = sdgEntityRepository.findBySdgName("No Poverty");
+        SDGEntity zeroHunger = sdgEntityRepository.findBySdgName("Zero Hunger");
+        SDGEntity goodHealth = sdgEntityRepository.findBySdgName("Good Health and Well-being");
+        SDGEntity qualityEducation = sdgEntityRepository.findBySdgName("Quality Education");
+        SDGEntity genderEquality = sdgEntityRepository.findBySdgName("Gender Equality");
+        SDGEntity cleanWater = sdgEntityRepository.findBySdgName("Clean Water and Sanitation");
+
+        SDGEntity sustainableCities = sdgEntityRepository.findBySdgName("Sustainable Cities and Communities");
+        SDGEntity responsibleConsumption = sdgEntityRepository.findBySdgName("Responsible Consumption and Production");
+        SDGEntity climateAction = sdgEntityRepository.findBySdgName("Climate Action");
+        System.out.println("com.is4103.matchub.service.InitServiceImpl.initProjects()"+climateAction);
+
+        ProjectEntity projectEntity1 = new ProjectEntity("Empowering Communities in Bangladesh", "To strengthen community resilience to prepare and respond to the risks associated with disasters and climate change by fostering economic empowerment, inclusive leadership and disaster preparedness.", "Bangladesh", LocalDateTime.now(), LocalDateTime.parse("2021-05-05T11:50:55"));
+        projectEntity1.getSdgs().add(poverty);
+        projectEntity1.getSdgs().add(zeroHunger);
+        projectService.createProject(projectEntity1, 2L);
+
+        ProjectEntity projectEntity2 = new ProjectEntity("Women's financial literacy, Malawi", "CARE will work with 20,000 women from 1,000 village savings and loans groups in Lilongwe, Dowa and Kasungu Districts, to overcome chronic hunger by expanding their farms or micro-businesses.", "Malawi", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
+        projectEntity2.getSdgs().add(genderEquality);
+        projectEntity2.getSdgs().add(qualityEducation);
+        projectService.createProject(projectEntity2, 2L);
+
+        ProjectEntity projectEntity3 = new ProjectEntity("Supporting rural families, Cambodia", "To support rural family.", "Cambodia", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
+        projectEntity3.getSdgs().add(sustainableCities);
+        projectEntity3.getSdgs().add(cleanWater);
+        projectService.createProject(projectEntity3, 2L);
+
+//        ProjectEntity projectEntity4 = new ProjectEntity("Building housing in Phnom Penh, Cambodia", "As an alternative to Schoolies, 18 Mosman High year 12 students are travelling to Cambodia to build houses for local Cambodians living in poverty.", "Cambodia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
+//        projectEntity4.getSdgs().add(genderEquality);
+//        projectEntity4.getSdgs().add(qualityEducation);
+//        projectEntity4.getSdgs().add(goodHealth);
+//        projectService.createProject(projectEntity4, 3L);
+
+//        ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Papua New Guinea", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Cambodia", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
+//        projectEntity5.getSdgs().add(cleanWater);
+//        projectEntity5.getSdgs().add(goodHealth);
+//        projectService.createProject(projectEntity5, 4L);
+//
+//        ProjectEntity projectEntity6 = new ProjectEntity("Save endangered sea turtles in Panama", "This project will launch a sea turtle research and conservation program to protect endangered leatherback and hawksbill turtles that were found at Bocas del Drago, Panama.", "Panama", LocalDateTime.parse("2021-01-05T11:50:55"), LocalDateTime.parse("2025-06-05T11:50:55"));
+//        projectEntity6.getSdgs().add(climateAction);
+//        projectEntity6.getSdgs().add(sustainableCities);
+//        projectService.createProject(projectEntity6, 5L);
+
+//        ProjectEntity projectEntity7 = new ProjectEntity("Protect reefs through sustainable tourism in Indonesia", "To protect threatened coral reefs in Indonesia by uniting governments, NGOs and the diving and snorkelling industry to establish international environmental standards for marine tourism.", "Indonesia", LocalDateTime.now(), LocalDateTime.parse("2019-06-05T11:50:55"));
+//       projectEntity7.getSdgs().add(climateAction);
+//        projectEntity7.getSdgs().add(sustainableCities);
+//        projectEntity7.getSdgs().add(responsibleConsumption);
+//        projectService.createProject(projectEntity7, 6L);
+//
+//        ProjectEntity projectEntity8 = new ProjectEntity("Solar lamps for remote villages in the Peruvian Andes", "To supply a number of households in remote villages in the Andes with solar lamps and solar panels (that charge effectively with cloud cover).", "Peru", LocalDateTime.parse("2022-06-05T11:50:55"), LocalDateTime.parse("2030-06-05T11:50:55"));
+//        projectEntity8.getSdgs().add(genderEquality);
+//        projectEntity8.getSdgs().add(qualityEducation);
+//        projectEntity8.getSdgs().add(goodHealth);
+//        projectService.createProject(projectEntity8, 6L);
 
     }
 

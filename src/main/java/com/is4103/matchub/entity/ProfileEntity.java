@@ -22,7 +22,6 @@ import org.springframework.lang.Nullable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="accountId")
 public abstract class ProfileEntity extends AccountEntity {
 
     @Column(nullable = true)
@@ -72,7 +71,7 @@ public abstract class ProfileEntity extends AccountEntity {
     @OneToMany(mappedBy = "notifiedUser")
     private List<NotificationEntity> notifications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "resourceOwner")
+    @OneToMany
     private List<ResourceEntity> hostedResources = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
