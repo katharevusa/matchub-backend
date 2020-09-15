@@ -42,4 +42,6 @@ public interface ProjectService {
      public Page<ProjectEntity> searchProjectByKeywords(String keyword, Pageable pageable);
      
      public Page<ProjectEntity> getLaunchedProjects(Pageable pageble);
+     
+     public Page<ProjectEntity> getAllProjects(Pageable pageble);
 }
