@@ -43,11 +43,20 @@ public class ProjectServiceImpl implements ProjectService{
     public ProjectEntity createProject(ProjectCreateVO vo) {
         ProjectEntity newProject = new ProjectEntity();
         vo.updateProject(newProject);
-//        newProject = projectEntityRepository.save(newProject);
+        // associate with profile
         Optional<ProfileEntity> profile = profileEntityRepository.findById(newProject.getProjCreatorId());
         profile.get().getProjectsOwned().add(newProject);
         newProject.getProjectOwners().add(profile.get());
+        
+        //associate with SDGs
+        List<SDGEntity> sdgs = newProject.getSdgs();
+        
+        for(SDGEntity s: sdgs){
+            s.getProjects().add(newProject);
+        }
+   
         newProject = projectEntityRepository.save(newProject);
+        
         return newProject;
         
     }
@@ -58,6 +67,12 @@ public class ProjectServiceImpl implements ProjectService{
         Optional<ProfileEntity> profile = profileEntityRepository.findById(creatorId);
         profile.get().getProjectsOwned().add(newProject);
         newProject.getProjectOwners().add(profile.get());
+        List<SDGEntity> sdgs = newProject.getSdgs();
+        
+        for(SDGEntity s: sdgs){
+            s.getProjects().add(newProject);
+        }
+        
         newProject = projectEntityRepository.save(newProject);
         return newProject;
         
@@ -171,12 +186,18 @@ public class ProjectServiceImpl implements ProjectService{
        
     }
     
+    @Override
     public Page<ProjectEntity> searchProjectByKeywords(String keyword, Pageable pageable){
      return projectEntityRepository.searchByKeywords(keyword, pageable); 
     }
     
+    @Override
     public Page<ProjectEntity> getLaunchedProjects(Pageable pageble){
         return projectEntityRepository.getLaunchedProjects(pageble);
+    }
+    
+    public Page<ProjectEntity> getAllProjects(Pageable pageble){
+        return projectEntityRepository.findAll(pageble);
     }
     
   

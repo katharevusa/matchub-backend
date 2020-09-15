@@ -1,6 +1,8 @@
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +22,7 @@ import org.springframework.lang.Nullable;
 @NoArgsConstructor
 @AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="accountId")
 public abstract class ProfileEntity extends AccountEntity {
 
     @Column(nullable = true)
