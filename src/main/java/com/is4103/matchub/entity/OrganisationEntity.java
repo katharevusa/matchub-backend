@@ -35,6 +35,10 @@ public class OrganisationEntity extends ProfileEntity {
     @Column(nullable = true)
     @Nullable
     private String address;
+    
+    @Column(nullable = true)
+    @Nullable
+    private String verificationDoc;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> employees = new HashSet<>();
