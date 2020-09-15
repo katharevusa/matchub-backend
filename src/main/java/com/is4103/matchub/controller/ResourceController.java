@@ -24,7 +24,15 @@ public class ResourceController {
     @Autowired
     ResourceService resourceService;
     
+    //create Resources
     
+    //get list of hosted resources
+    
+    //update resources
+    
+    //Download/Upload supporting documents for resource item
+    
+    //Terminate One Resource
   
     @RequestMapping(method = RequestMethod.GET, value = "/getAllAvailableResources")
     Page<ResourceEntity> getAllAvailableResources(Pageable pageable) {

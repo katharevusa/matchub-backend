@@ -62,6 +62,10 @@ public class ProjectController {
        return projectService.getCreatedProjects(profileId);
     }
     
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllProjects")
+    Page<ProjectEntity> getAllProjects(Pageable pageable) {
+       return projectService.getAllProjects(pageable);
+    }
     
     
     //terminate a project ( project id, terminator id)
