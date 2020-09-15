@@ -86,6 +86,16 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    
+    @ExceptionHandler(value = UploadOrganisationVerificationDocException.class)
+    public ResponseEntity<ExceptionResponse> uploadOrgVerificationDocFailure(UploadOrganisationVerificationDocException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Failed to upload organisation verification file");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @ExceptionHandler(value = DeleteProfilePictureException.class)
     public ResponseEntity<ExceptionResponse> unableToDeleteProfilePicture(DeleteProfilePictureException ex) {
