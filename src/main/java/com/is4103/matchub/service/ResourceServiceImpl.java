@@ -59,11 +59,13 @@ public class ResourceServiceImpl implements ResourceService {
         }else{
             throw new UserNotFoundException("Unable to find user");
         }
+        category.getResources().add(newResource);
+        profile.getHostedResources().add(newResource);
+        
         
         newResource = resourceEntityRepository.saveAndFlush(newResource);
 
-        category.getResources().add(newResource);
-        profile.getHostedResources().add(newResource);
+        
 
         return newResource;
         
@@ -78,13 +80,19 @@ public class ResourceServiceImpl implements ResourceService {
         resourceEntity.setResourceOwnerId(profileId);
         resourceEntity.setResourceCategoryId(categoryId);
 
-        resourceEntity = resourceEntityRepository.saveAndFlush(resourceEntity);
-
         category.getResources().add(resourceEntity);
         profileEntity.getHostedResources().add(resourceEntity);
+        resourceEntity = resourceEntityRepository.saveAndFlush(resourceEntity);
 
         return resourceEntity;
     }
+    
+//    
+//    public ResourceEntity updateResource(ResourceEntity updatedResource){
+//        ResourceEntity oldResource = resourceEntityRepository.findById(updatedResource.getResourceId()).get();
+//        oldResource.
+//        
+//    }
 
     @Override
     public Page<ResourceEntity> getAllAvailableResources(Pageable pageable) {
