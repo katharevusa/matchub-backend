@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
         AccountEntity account = accountEntityRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException(email));
 
-        account.setValid2fa(valid2fa);
+        account.setHasSetup2fa(valid2fa);
         accountEntityRepository.save(account);
     }
 
