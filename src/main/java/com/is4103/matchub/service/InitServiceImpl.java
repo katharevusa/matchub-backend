@@ -363,33 +363,33 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getSdgs().add(cleanWater);
         projectService.createProject(projectEntity3, 2L);
 
-//        ProjectEntity projectEntity4 = new ProjectEntity("Building housing in Phnom Penh, Cambodia", "As an alternative to Schoolies, 18 Mosman High year 12 students are travelling to Cambodia to build houses for local Cambodians living in poverty.", "Cambodia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
-//        projectEntity4.getSdgs().add(genderEquality);
-//        projectEntity4.getSdgs().add(qualityEducation);
-//        projectEntity4.getSdgs().add(goodHealth);
-//        projectService.createProject(projectEntity4, 3L);
+        ProjectEntity projectEntity4 = new ProjectEntity("Building housing in Phnom Penh, Cambodia", "As an alternative to Schoolies, 18 Mosman High year 12 students are travelling to Cambodia to build houses for local Cambodians living in poverty.", "Cambodia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
+        projectEntity4.getSdgs().add(genderEquality);
+        projectEntity4.getSdgs().add(qualityEducation);
+        projectEntity4.getSdgs().add(goodHealth);
+        projectService.createProject(projectEntity4, 3L);
 
-//        ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Papua New Guinea", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Cambodia", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
-//        projectEntity5.getSdgs().add(cleanWater);
-//        projectEntity5.getSdgs().add(goodHealth);
-//        projectService.createProject(projectEntity5, 4L);
-//
-//        ProjectEntity projectEntity6 = new ProjectEntity("Save endangered sea turtles in Panama", "This project will launch a sea turtle research and conservation program to protect endangered leatherback and hawksbill turtles that were found at Bocas del Drago, Panama.", "Panama", LocalDateTime.parse("2021-01-05T11:50:55"), LocalDateTime.parse("2025-06-05T11:50:55"));
-//        projectEntity6.getSdgs().add(climateAction);
-//        projectEntity6.getSdgs().add(sustainableCities);
-//        projectService.createProject(projectEntity6, 5L);
+        ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Papua New Guinea", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Cambodia", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
+        projectEntity5.getSdgs().add(cleanWater);
+        projectEntity5.getSdgs().add(goodHealth);
+        projectService.createProject(projectEntity5, 4L);
 
-//        ProjectEntity projectEntity7 = new ProjectEntity("Protect reefs through sustainable tourism in Indonesia", "To protect threatened coral reefs in Indonesia by uniting governments, NGOs and the diving and snorkelling industry to establish international environmental standards for marine tourism.", "Indonesia", LocalDateTime.now(), LocalDateTime.parse("2019-06-05T11:50:55"));
-//       projectEntity7.getSdgs().add(climateAction);
-//        projectEntity7.getSdgs().add(sustainableCities);
-//        projectEntity7.getSdgs().add(responsibleConsumption);
-//        projectService.createProject(projectEntity7, 6L);
-//
-//        ProjectEntity projectEntity8 = new ProjectEntity("Solar lamps for remote villages in the Peruvian Andes", "To supply a number of households in remote villages in the Andes with solar lamps and solar panels (that charge effectively with cloud cover).", "Peru", LocalDateTime.parse("2022-06-05T11:50:55"), LocalDateTime.parse("2030-06-05T11:50:55"));
-//        projectEntity8.getSdgs().add(genderEquality);
-//        projectEntity8.getSdgs().add(qualityEducation);
-//        projectEntity8.getSdgs().add(goodHealth);
-//        projectService.createProject(projectEntity8, 6L);
+        ProjectEntity projectEntity6 = new ProjectEntity("Save endangered sea turtles in Panama", "This project will launch a sea turtle research and conservation program to protect endangered leatherback and hawksbill turtles that were found at Bocas del Drago, Panama.", "Panama", LocalDateTime.parse("2021-01-05T11:50:55"), LocalDateTime.parse("2025-06-05T11:50:55"));
+        projectEntity6.getSdgs().add(climateAction);
+        projectEntity6.getSdgs().add(sustainableCities);
+        projectService.createProject(projectEntity6, 5L);
+
+        ProjectEntity projectEntity7 = new ProjectEntity("Protect reefs through sustainable tourism in Indonesia", "To protect threatened coral reefs in Indonesia by uniting governments, NGOs and the diving and snorkelling industry to establish international environmental standards for marine tourism.", "Indonesia", LocalDateTime.now(), LocalDateTime.parse("2019-06-05T11:50:55"));
+        projectEntity7.getSdgs().add(climateAction);
+        projectEntity7.getSdgs().add(sustainableCities);
+        projectEntity7.getSdgs().add(responsibleConsumption);
+        projectService.createProject(projectEntity7, 6L);
+
+        ProjectEntity projectEntity8 = new ProjectEntity("Solar lamps for remote villages in the Peruvian Andes", "To supply a number of households in remote villages in the Andes with solar lamps and solar panels (that charge effectively with cloud cover).", "Peru", LocalDateTime.parse("2022-06-05T11:50:55"), LocalDateTime.parse("2030-06-05T11:50:55"));
+        projectEntity8.getSdgs().add(genderEquality);
+        projectEntity8.getSdgs().add(qualityEducation);
+        projectEntity8.getSdgs().add(goodHealth);
+        projectService.createProject(projectEntity8, 6L);
 
     }
 

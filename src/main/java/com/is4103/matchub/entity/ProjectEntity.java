@@ -122,6 +122,7 @@ public class ProjectEntity {
     private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"projects"})
     private List<SDGEntity> sdgs = new ArrayList<>();
 
     @OneToMany
@@ -134,7 +135,7 @@ public class ProjectEntity {
     private List<ChannelEntity> channels = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("projectsOwned")
+    @JsonIgnoreProperties({"projectsOwned"})
     private List<ProfileEntity> projectOwners = new ArrayList<>();
 
     public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate) {
