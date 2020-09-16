@@ -54,7 +54,8 @@ public class ResourceVO {
   
     private List<String> photos = new ArrayList<>();
     
-    public void updateResource(ResourceEntity newResource){
+    
+    public void createResource(ResourceEntity newResource){
         newResource.setResourceName(this.resourceName);
         newResource.setResourceDescription(this.resourceDescription);
         newResource.setUploadedFiles(this.uploadedFiles);
@@ -64,6 +65,16 @@ public class ResourceVO {
         newResource.setResourceOwnerId(this.resourceOwnerId);
         newResource.setUnits(this.units);
         newResource.setPhotos(this.photos);
+    }
+    
+    public void updateResource(ResourceEntity newResource){
+        newResource.setResourceName(this.resourceName);
+        newResource.setResourceDescription(this.resourceDescription);
+        newResource.setStartTime(this.startTime);
+        newResource.setEndTime(this.endTime);
+        newResource.setResourceCategoryId(this.resourceCategoryId);
+        newResource.setUnits(this.units);
+        
     }
    
     

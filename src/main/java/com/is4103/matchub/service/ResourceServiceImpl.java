@@ -42,7 +42,7 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public ResourceEntity createResource(ResourceVO vo) throws ResourceCategoryNotFoundException, UserNotFoundException {
         ResourceEntity newResource = new ResourceEntity();
-        vo.updateResource(newResource);
+        vo.createResource(newResource);
         Optional<ResourceCategoryEntity> categoryOptional = resourceCategoryEntityRepository.findById(newResource.getResourceCategoryId());
 
         // resource category association
