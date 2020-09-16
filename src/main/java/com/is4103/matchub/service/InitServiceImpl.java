@@ -295,22 +295,22 @@ public class InitServiceImpl implements InitService {
     }
 
     public void initResourceCategories() {
-        ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food", "All Food-related Resources", 1, 5);
+        ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food", "All Food-related Resources", 1, 5, "kg");
         resourceCategoryService.createResourceCategory(foodCategory);
 
-        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Space", "All Sapce-related Resources", 1, 5);
+        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Space", "All Sapce-related Resources", 1, 5, "hour");
         resourceCategoryService.createResourceCategory(spaceCategory);
 
-        ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural", "All Natural Resources", 1, 5);
+        ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural", "All Natural Resources", 1, 5, "kg");
         resourceCategoryService.createResourceCategory(naturalResourceCategory);
 
-        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Device", "All Device-related Resources", 1, 10);
+        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Device", "All Device-related Resources", 1, 10, "set");
         resourceCategoryService.createResourceCategory(deviceCategory);
 
-        ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation", "All Transportation Resources", 1, 1);
+        ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation", "All Transportation Resources", 1, 1, "hour");
         resourceCategoryService.createResourceCategory(transportationCategory);
 
-        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Eductaion", "All Education Resources", 1, 5);
+        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Eductaion", "All Education Resources", 1, 5, "set");
         resourceCategoryService.createResourceCategory(educationCategory);
 
     }

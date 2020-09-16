@@ -54,8 +54,10 @@ public class ResourceEntity {
     @NotNull
     private String resourceDescription;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<String> uploadedFiles = new HashSet<>();
+    @OrderColumn
+    @Column(nullable = true)
+    @ElementCollection(fetch = FetchType.LAZY, targetClass = String.class)
+    private List<String> uploadedFiles = new ArrayList<>();
     
     @NotNull
     private boolean available = Boolean.TRUE;
