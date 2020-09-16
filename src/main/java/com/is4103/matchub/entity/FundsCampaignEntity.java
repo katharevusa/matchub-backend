@@ -62,9 +62,9 @@ public class FundsCampaignEntity {
     @OneToMany(mappedBy = "fundCampaign")
     private List<FundPledgeEntity> fundPledges = new ArrayList<>();
 
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private ProjectEntity project;
+    @Column(nullable = false)
+    @NotNull
+    private Long projectId;
 
     public FundsCampaignEntity(BigDecimal campaignTarget, LocalDateTime startDate, LocalDateTime endDate, String campaignDescription, BigDecimal currentAmountRaised) {
         this.campaignTarget = campaignTarget;

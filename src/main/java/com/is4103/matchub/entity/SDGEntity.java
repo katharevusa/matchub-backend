@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -46,6 +47,7 @@ public class SDGEntity {
     private String sdgDescription;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"sdgs", "projectOwners","joinRequests","reviews", "projectBadge", "fundsCampaign", "meetings", "listOfRequests","kpis", "teamMembers", "channels"})
     private List<ProjectEntity> projects = new ArrayList<>();
 
     public SDGEntity(String sdgName, String sdgDescription) {
