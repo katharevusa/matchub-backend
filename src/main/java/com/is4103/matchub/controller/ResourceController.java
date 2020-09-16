@@ -6,12 +6,22 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
+import com.is4103.matchub.exception.ResourceNotFoundException;
+import com.is4103.matchub.exception.UpdateProjectException;
+import com.is4103.matchub.exception.UpdateResourceException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.ResourceService;
+import com.is4103.matchub.vo.ResourceVO;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -25,15 +35,28 @@ public class ResourceController {
     ResourceService resourceService;
     
     //create Resources
+     @RequestMapping(method = RequestMethod.POST, value = "/createNewResource")
+    ResourceEntity createNewResource(@Valid @RequestBody ResourceVO vo) throws UserNotFoundException, ResourceCategoryNotFoundException{
+       return resourceService.createResource(vo);           
+    }
     
-    //get list of hosted resources
+    
+    
     
     //update resources
+    @RequestMapping(method = RequestMethod.PUT, value = "/updateResource")
+    ResourceEntity updateResourceById(@Valid @RequestBody ResourceVO vo,
+            @RequestParam(value = "updaterId", defaultValue = "") Long updaterId, @RequestParam(value = "resourceId", defaultValue = "") Long resourceId) throws UpdateResourceException, ResourceNotFoundException {
+        return resourceService.updateResource(vo, updaterId, resourceId);
+
+    }
     
     //Download/Upload supporting documents for resource item
     
     //Terminate One Resource
   
+    
+    
     @RequestMapping(method = RequestMethod.GET, value = "/getAllAvailableResources")
     Page<ResourceEntity> getAllAvailableResources(Pageable pageable) {
        return resourceService.getAllAvailableResources(pageable);
@@ -42,6 +65,17 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET, value = "/getAllResources")
     Page<ResourceEntity> getAllResources(Pageable pageable) {
        return resourceService.getAllResources(pageable);
+    }
+    
+     @RequestMapping(method = RequestMethod.GET, value = "/getResourceById")
+     ResourceEntity getResourceById(Long resourceId) throws ResourceNotFoundException{
+       return resourceService.getResourceById(resourceId);
+    }
+    
+    //get list of hosted resources
+    @RequestMapping(method = RequestMethod.GET, value = "/getHostedResources")
+    Page<ResourceEntity> getHostedResources(Pageable pageable, Long profileId) {
+       return resourceService.getHostedResources(profileId,pageable);
     }
     
 }

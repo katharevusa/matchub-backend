@@ -41,7 +41,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.requestMatchers()
+        http.requiresChannel()
+                .anyRequest()
+                .requiresSecure()
+                .and()
+                .requestMatchers()
                 .antMatchers("/**")
                 .and()
                 .authorizeRequests()

@@ -26,8 +26,13 @@ public class ResourceCategoryController {
     @Autowired 
     ResourceCategoryService resourceCategoryService;
     
-@RequestMapping(method = RequestMethod.GET, value = "/getAllResourceCategories")
-    Page<ResourceCategoryEntity> getAllResources(Pageable pageable) {
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllResourceCategories")
+    Page<ResourceCategoryEntity> getAllResourceCategories(Pageable pageable) {
        return resourceCategoryService.getAllResourceCategories(pageable);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getResourceCategoryById")
+    ResourceCategoryEntity getResourceCategoryById(Long resourceCategoryId) {
+       return resourceCategoryService.getResourceCategoryById(resourceCategoryId);
     }
 }

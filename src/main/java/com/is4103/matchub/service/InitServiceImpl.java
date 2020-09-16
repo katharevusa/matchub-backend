@@ -295,22 +295,22 @@ public class InitServiceImpl implements InitService {
     }
 
     public void initResourceCategories() {
-        ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food", "All Food-related Resources", 1, 5);
+        ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food", "All Food-related Resources", 1, 5, "kg");
         resourceCategoryService.createResourceCategory(foodCategory);
 
-        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Space", "All Sapce-related Resources", 1, 5);
+        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Space", "All Sapce-related Resources", 1, 5, "hour");
         resourceCategoryService.createResourceCategory(spaceCategory);
 
-        ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural", "All Natural Resources", 1, 5);
+        ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural", "All Natural Resources", 1, 5, "kg");
         resourceCategoryService.createResourceCategory(naturalResourceCategory);
 
-        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Device", "All Device-related Resources", 1, 10);
+        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Device", "All Device-related Resources", 1, 10, "set");
         resourceCategoryService.createResourceCategory(deviceCategory);
 
-        ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation", "All Transportation Resources", 1, 1);
+        ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation", "All Transportation Resources", 1, 1, "hour");
         resourceCategoryService.createResourceCategory(transportationCategory);
 
-        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Eductaion", "All Education Resources", 1, 5);
+        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Eductaion", "All Education Resources", 1, 5, "set");
         resourceCategoryService.createResourceCategory(educationCategory);
 
     }
@@ -359,8 +359,8 @@ public class InitServiceImpl implements InitService {
         projectService.createProject(projectEntity2, 2L);
 
         ProjectEntity projectEntity3 = new ProjectEntity("Supporting rural families, Cambodia", "To support rural family.", "Cambodia", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
-        projectEntity3.getSdgs().add(sustainableCities);
-        projectEntity3.getSdgs().add(cleanWater);
+        projectEntity3.getSdgs().add(poverty);
+        projectEntity3.getSdgs().add(zeroHunger);
         projectService.createProject(projectEntity3, 2L);
 
         ProjectEntity projectEntity4 = new ProjectEntity("Building housing in Phnom Penh, Cambodia", "As an alternative to Schoolies, 18 Mosman High year 12 students are travelling to Cambodia to build houses for local Cambodians living in poverty.", "Cambodia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));

@@ -53,12 +53,15 @@ public class ResourceCategoryEntity {
     
     @NotNull
     private Integer perUnit;
+    
+    private String unitName;
 
-    public ResourceCategoryEntity(String resourceCategoryName, String resourceCategoryDescription, Integer communityPointsGuideline, Integer perUnit) {
+    public ResourceCategoryEntity(String resourceCategoryName, String resourceCategoryDescription, Integer communityPointsGuideline, Integer perUnit, String unitName) {
         this.resourceCategoryName = resourceCategoryName;
         this.resourceCategoryDescription = resourceCategoryDescription;
         this.communityPointsGuideline = communityPointsGuideline;
         this.perUnit = perUnit;
+        this.unitName = unitName;
     }
     
 

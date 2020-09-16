@@ -35,7 +35,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.CONFLICT);
     }
-    
+
     @ExceptionHandler(value = UserNotFoundException.class)
     public ResponseEntity<ExceptionResponse> resourceNotFound(UserNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -86,7 +86,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    
+
     @ExceptionHandler(value = UploadOrganisationVerificationDocException.class)
     public ResponseEntity<ExceptionResponse> uploadOrgVerificationDocFailure(UploadOrganisationVerificationDocException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -146,7 +146,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = ProjectNotFoundException.class)
     public ResponseEntity<ExceptionResponse> ProjectNotFound(ProjectNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -156,9 +156,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-    
-            
+
     @ExceptionHandler(value = UpdateProjectException.class)
     public ResponseEntity<ExceptionResponse> UnableToUpdateProject(UpdateProjectException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -168,7 +166,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = DeleteProjectException.class)
     public ResponseEntity<ExceptionResponse> UnableToDeleteProject(DeleteProjectException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -178,9 +176,9 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = TerminateProjectException.class)
-    public ResponseEntity<ExceptionResponse> TerminateProject(TerminateProjectException ex) {
+    public ResponseEntity<ExceptionResponse> TerminateProjectError(TerminateProjectException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to terminate project");
         response.setErrorMessage(ex.getMessage());
@@ -188,5 +186,35 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
+    @ExceptionHandler(value = ResourceNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> ResourceNotFound(ResourceNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Resource not found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = ResourceCategoryNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> ResourceCategoryNotFound(ResourceCategoryNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Resource category not found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UpdateResourceException.class)
+    public ResponseEntity<ExceptionResponse> UpdateResourceException(UpdateResourceException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to update resource");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
 }
