@@ -74,15 +74,10 @@ public class ProjectServiceImpl implements ProjectService {
         Optional<ProfileEntity> profile = profileEntityRepository.findById(creatorId);
         profile.get().getProjectsOwned().add(newProject);
         newProject.getProjectOwners().add(profile.get());
-        List<SDGEntity> sdgs = newProject.getSdgs();
-        System.err.println("sdgs: " + sdgs);
 
-        // clearing to add in persisted context SDGs later
-        newProject.getSdgs().clear();
-        for (SDGEntity s : sdgs) {
+        for (SDGEntity s : newProject.getSdgs()) {
             SDGEntity sDGEntity = sDGEntityRepository.findBySdgId(s.getSdgId());
             sDGEntity.getProjects().add(newProject);
-            newProject.getSdgs().add(sDGEntity);
         }
 
         newProject = projectEntityRepository.save(newProject);

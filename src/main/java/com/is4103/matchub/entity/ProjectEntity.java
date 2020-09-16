@@ -94,11 +94,11 @@ public class ProjectEntity {
     @Column(nullable = false)
     @NotNull
     private Long projCreatorId;
-    
+
     @Column(nullable = false)
     @NotNull
     private Boolean spotlight = false;
-    
+
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     @Nullable
     private LocalDateTime spotlightEndTime;
@@ -135,7 +135,7 @@ public class ProjectEntity {
     private List<ChannelEntity> channels = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"projectsOwned"})
+    @JsonIgnoreProperties({"projectsOwned", "sdgs", "meetings", "projectsJoined", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> projectOwners = new ArrayList<>();
 
     public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate) {
@@ -144,7 +144,7 @@ public class ProjectEntity {
         this.country = country;
         this.startDate = startDate;
         this.endDate = endDate;
-       
+
     }
 
 }
