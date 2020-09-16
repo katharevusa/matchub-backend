@@ -47,7 +47,7 @@ public class SDGEntity {
     private String sdgDescription;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"sdgs"})
+    @JsonIgnoreProperties({"sdgs", "projectOwners", "joinRequests", "reviews", "projectBadge", "fundsCampaign", "meetings", "listOfRequests", "kpis", "teamMembers", "channels"})
     private List<ProjectEntity> projects = new ArrayList<>();
 
     public SDGEntity(String sdgName, String sdgDescription) {
