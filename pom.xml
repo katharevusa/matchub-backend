@@ -96,7 +96,6 @@
       
 
         
-        <!--2fa, 2nd link-->
         <dependency>
             <groupId>com.warrenstrange</groupId>
             <artifactId>googleauth</artifactId>
