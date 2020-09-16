@@ -8,6 +8,7 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
+import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.vo.ResourceVO;
 import org.springframework.data.domain.Page;
@@ -24,4 +25,6 @@ public interface ResourceService {
    public ResourceEntity getResourceById(Long id) throws ResourceNotFoundException;
    public Page<ResourceEntity> getHostedResources(Long profileId,Pageable pageable);
    public ResourceEntity createResource(ResourceVO vo)throws ResourceCategoryNotFoundException, UserNotFoundException;
+   public ResourceEntity updateResource(ResourceVO vo, Long updaterId, Long resourceId) throws ResourceNotFoundException, UpdateResourceException;
+
 }
