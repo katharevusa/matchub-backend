@@ -8,9 +8,13 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
+import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
+import com.is4103.matchub.vo.ResourceVO;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,7 +34,42 @@ public class ResourceServiceImpl implements ResourceService {
     ResourceCategoryService resourceCategoryService;
     @Autowired
     ProfileEntityRepository profileEntityRepository;
+    
+    @Autowired
+    ResourceCategoryEntityRepository resourceCategoryEntityRepository;
 
+    
+    @Override
+    public ResourceEntity createResource(ResourceVO vo)throws ResourceCategoryNotFoundException, UserNotFoundException{
+        ResourceEntity newResource = new ResourceEntity();
+        vo.updateResource(newResource);
+        Optional<ResourceCategoryEntity> categoryOptional = resourceCategoryEntityRepository.findById(newResource.getResourceCategoryId());
+        
+        ResourceCategoryEntity category;
+        if(categoryOptional.isPresent()){
+             category = categoryOptional.get();
+        }else {
+            throw new ResourceCategoryNotFoundException("Unable to find resource category");
+        }
+        
+        ProfileEntity profile;
+        Optional<ProfileEntity> profileOptional = profileEntityRepository.findById(newResource.getResourceOwnerId());
+        if(profileOptional.isPresent()){
+           profile = profileOptional.get();
+        }else{
+            throw new UserNotFoundException("Unable to find user");
+        }
+        
+        newResource = resourceEntityRepository.saveAndFlush(newResource);
+
+        category.getResources().add(newResource);
+        profile.getHostedResources().add(newResource);
+
+        return newResource;
+        
+    }
+    
+    //This creation method is only for current data init
     @Override
     public ResourceEntity createResource(ResourceEntity resourceEntity, Long categoryId, Long profileId) {
         ResourceCategoryEntity category = resourceCategoryService.getResourceCategoryById(categoryId);
@@ -48,8 +87,8 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public Page<ResourceEntity> getAllAvailableResources(Pageable pageble) {
-        return resourceEntityRepository.getAllAvailableResources(pageble);
+    public Page<ResourceEntity> getAllAvailableResources(Pageable pageable) {
+        return resourceEntityRepository.getAllAvailableResources(pageable);
     }
 
     @Override
@@ -66,6 +105,11 @@ public class ResourceServiceImpl implements ResourceService {
             throw new ResourceNotFoundException("Resource is not found");
         }
 
+    }
+    
+    @Override
+    public Page<ResourceEntity> getHostedResources(Long profileId,Pageable pageable){
+        return resourceEntityRepository.getHostedResources(profileId, pageable);
     }
 
 }

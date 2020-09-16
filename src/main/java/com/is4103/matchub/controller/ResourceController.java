@@ -6,12 +6,16 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.ResourceService;
+import com.is4103.matchub.vo.ResourceVO;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,10 +31,13 @@ public class ResourceController {
     ResourceService resourceService;
     
     //create Resources
+     @RequestMapping(method = RequestMethod.POST, value = "/createNewResource")
+    ResourceEntity createNewProject(@Valid @RequestBody ResourceVO vo) throws UserNotFoundException, ResourceCategoryNotFoundException{
+       return resourceService.createResource(vo);           
+    }
     
     
     
-    //get list of hosted resources
     
     //update resources
     
@@ -38,6 +45,8 @@ public class ResourceController {
     
     //Terminate One Resource
   
+    
+    
     @RequestMapping(method = RequestMethod.GET, value = "/getAllAvailableResources")
     Page<ResourceEntity> getAllAvailableResources(Pageable pageable) {
        return resourceService.getAllAvailableResources(pageable);
@@ -53,5 +62,10 @@ public class ResourceController {
        return resourceService.getResourceById(resourceId);
     }
     
+    //get list of hosted resources
+    @RequestMapping(method = RequestMethod.GET, value = "/getHostedResources")
+    Page<ResourceEntity> getHostedResources(Pageable pageable, Long profileId) {
+       return resourceService.getHostedResources(profileId,pageable);
+    }
     
 }

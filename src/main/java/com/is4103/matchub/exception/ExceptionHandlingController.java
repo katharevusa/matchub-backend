@@ -180,7 +180,7 @@ public class ExceptionHandlingController {
     }
     
     @ExceptionHandler(value = TerminateProjectException.class)
-    public ResponseEntity<ExceptionResponse> TerminateProject(TerminateProjectException ex) {
+    public ResponseEntity<ExceptionResponse> TerminateProjectError(TerminateProjectException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to terminate project");
         response.setErrorMessage(ex.getMessage());
@@ -190,7 +190,7 @@ public class ExceptionHandlingController {
     }
     
      @ExceptionHandler(value = ResourceNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> TerminateProject(ResourceNotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> ResourceNotFound(ResourceNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Resource not found");
         response.setErrorMessage(ex.getMessage());
@@ -198,6 +198,14 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+     @ExceptionHandler(value = ResourceCategoryNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> ResourceCategoryNotFound(ResourceCategoryNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Resource category not found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
     
 }
