@@ -17,6 +17,7 @@ import com.is4103.matchub.exception.UnableToFollowProfileException;
 import com.is4103.matchub.exception.UnableToRemoveFollowerException;
 import com.is4103.matchub.exception.UnableToUnfollowProfileException;
 import com.is4103.matchub.exception.UpdateProfileException;
+import com.is4103.matchub.exception.UploadOrganisationVerificationDocException;
 import com.is4103.matchub.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -175,6 +176,7 @@ public class UserServiceImpl implements UserService {
         return UserVO.of(updatedAccount);
     }
 
+    @Transactional
     @Override
     public AccountEntity setProfilePic(UUID uuid, String directory) {
         Optional<AccountEntity> currentAccount = accountEntityRepository.findByUuid(uuid);
@@ -197,6 +199,27 @@ public class UserServiceImpl implements UserService {
             AccountEntity updatedAccount = (AccountEntity) organisation;
             updatedAccount = accountEntityRepository.save(updatedAccount);
             return updatedAccount;
+        }
+    }
+    
+    @Transactional
+    @Override
+    public AccountEntity setOrganisationVerificationDoc(UUID uuid, String directory) {
+        Optional<AccountEntity> currentAccount = accountEntityRepository.findByUuid(uuid);
+
+        if (!currentAccount.isPresent()) {
+            throw new UserNotFoundException(uuid);
+        }
+        
+        if (currentAccount.get() instanceof OrganisationEntity) {
+            OrganisationEntity organisation = (OrganisationEntity) currentAccount.get();
+            organisation.setVerificationDoc(directory);
+
+            AccountEntity updatedAccount = (AccountEntity) organisation;
+            updatedAccount = accountEntityRepository.save(updatedAccount);
+            return updatedAccount;
+        } else {// throw exception 
+            throw new UploadOrganisationVerificationDocException("Unable to upload verification document.");
         }
     }
 

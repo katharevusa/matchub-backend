@@ -31,6 +31,8 @@ public interface UserService {
 
     AccountEntity setProfilePic(UUID uuid, String directory);
 
+    AccountEntity setOrganisationVerificationDoc(UUID uuid, String directory);
+
     AccountEntity followProfile(Long accountId, Long followId);
 
     AccountEntity unfollowProfile(Long accountId, Long unfollowId);

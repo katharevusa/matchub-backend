@@ -84,6 +84,15 @@ public class PublicRestController {
         System.out.println("uploaded file successfully: relative pathImage is " + filePath);
         return userService.setProfilePic(uuid, filePath);
     }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/setupOrganisationProfile/uploadDocument/{uuid}")
+    public AccountEntity uploadOrganisationDocument(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
+//        return attachmentService.upload(file, directory);
+        String filePath = attachmentService.upload(file);
+
+        System.out.println("uploaded verification doc successfully: relative path is " + filePath);
+        return userService.setOrganisationVerificationDoc(uuid, filePath);
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = "/forgotPassword")
     public void sendResetPasswordEmail(@RequestParam(value = "email") String email) throws MessagingException, IOException {

@@ -35,6 +35,16 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.CONFLICT);
     }
+    
+    @ExceptionHandler(value = UserNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> resourceNotFound(UserNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("User not found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> invalidInput(MethodArgumentNotValidException ex) {
@@ -71,6 +81,16 @@ public class ExceptionHandlingController {
     public ResponseEntity<ExceptionResponse> invalidFileExtension(InvalidRequestException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Failed to upload file: Invalid File Extension");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    
+    @ExceptionHandler(value = UploadOrganisationVerificationDocException.class)
+    public ResponseEntity<ExceptionResponse> uploadOrgVerificationDocFailure(UploadOrganisationVerificationDocException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Failed to upload organisation verification file");
         response.setErrorMessage(ex.getMessage());
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
