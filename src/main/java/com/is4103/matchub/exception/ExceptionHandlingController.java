@@ -189,4 +189,15 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
     
+     @ExceptionHandler(value = ResourceNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> TerminateProject(ResourceNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Resource not found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    
 }

@@ -6,10 +6,12 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +27,8 @@ public class ResourceController {
     ResourceService resourceService;
     
     //create Resources
+    
+    
     
     //get list of hosted resources
     
@@ -43,5 +47,11 @@ public class ResourceController {
     Page<ResourceEntity> getAllResources(Pageable pageable) {
        return resourceService.getAllResources(pageable);
     }
+    
+     @RequestMapping(method = RequestMethod.GET, value = "/getResourceById")
+     ResourceEntity getResourceById(Long resourceId) throws ResourceNotFoundException{
+       return resourceService.getResourceById(resourceId);
+    }
+    
     
 }
