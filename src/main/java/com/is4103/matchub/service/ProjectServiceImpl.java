@@ -53,11 +53,13 @@ public class ProjectServiceImpl implements ProjectService {
         profile.get().getProjectsOwned().add(newProject);
         newProject.getProjectOwners().add(profile.get());
 
-        //associate with SDGs
-        List<SDGEntity> sdgs = newProject.getSdgs();
-
-        for (SDGEntity s : sdgs) {
-            s.getProjects().add(newProject);
+        // associate with SDGs
+        // need not do newProject.clear() as it is empty since newly instantiated
+        // passing in array of SDG ids
+        for (Long sdgId : vo.getSdgs()) {
+            SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdgId);
+            sdgToAssociateWith.getProjects().add(newProject);
+            newProject.getSdgs().add(sdgToAssociateWith);
         }
 
         newProject = projectEntityRepository.save(newProject);
@@ -72,11 +74,8 @@ public class ProjectServiceImpl implements ProjectService {
         Optional<ProfileEntity> profile = profileEntityRepository.findById(creatorId);
         profile.get().getProjectsOwned().add(newProject);
         newProject.getProjectOwners().add(profile.get());
-        List<SDGEntity> sdgs = newProject.getSdgs();
-        System.err.println("sdgs: " + sdgs);
 
-        for (SDGEntity s : sdgs) {
-
+        for (SDGEntity s : newProject.getSdgs()) {
             SDGEntity sDGEntity = sDGEntityRepository.findBySdgId(s.getSdgId());
             sDGEntity.getProjects().add(newProject);
         }

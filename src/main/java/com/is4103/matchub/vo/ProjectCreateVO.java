@@ -54,7 +54,8 @@ public class ProjectCreateVO {
     
     private List<String> photos = new ArrayList<>();
     
-    private List<SDGEntity> sdgs = new ArrayList<>();
+    // setting in project service impl
+    private List<Long> sdgs = new ArrayList<>();
     
     private List<String> relatedResources = new ArrayList<>();
     
@@ -66,7 +67,6 @@ public class ProjectCreateVO {
         newProject.setEndDate(this.endDate);
         newProject.setPhotos(this.photos);
         newProject.setProjCreatorId(projCreatorId);
-        newProject.setSdgs(sdgs);
         newProject.setRelatedResources(relatedResources);
         System.out.println("com.is4103.matchub.vo.ProjectCreateVO.updateProject(): "+newProject.getCountry());
         System.out.println("com.is4103.matchub.vo.ProjectCreateVO.updateProject(): "+this.country);
