@@ -102,6 +102,9 @@ public class ProjectEntity {
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     @Nullable
     private LocalDateTime spotlightEndTime;
+    
+    
+    //*********************Associations Below******************
 
     @OneToMany
     private List<JoinRequestEntity> joinRequests = new ArrayList<>();
@@ -112,7 +115,7 @@ public class ProjectEntity {
     @OneToOne(optional = true)//need to change to false later cos every project needs to have one badge
     private BadgeEntity projectBadge;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany
     private List<FundsCampaignEntity> fundsCampaign = new ArrayList<>();
 
     @OneToMany
@@ -135,7 +138,9 @@ public class ProjectEntity {
     private List<ChannelEntity> channels = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
+
     @JsonIgnoreProperties({"projectsOwned", "sdgs", "meetings", "projectsJoined", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
+
     private List<ProfileEntity> projectOwners = new ArrayList<>();
 
     public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate) {

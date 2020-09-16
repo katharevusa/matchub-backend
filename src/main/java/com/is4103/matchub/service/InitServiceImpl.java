@@ -359,8 +359,8 @@ public class InitServiceImpl implements InitService {
         projectService.createProject(projectEntity2, 2L);
 
         ProjectEntity projectEntity3 = new ProjectEntity("Supporting rural families, Cambodia", "To support rural family.", "Cambodia", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
-        projectEntity3.getSdgs().add(sustainableCities);
-        projectEntity3.getSdgs().add(cleanWater);
+        projectEntity3.getSdgs().add(poverty);
+        projectEntity3.getSdgs().add(zeroHunger);
         projectService.createProject(projectEntity3, 2L);
 
         ProjectEntity projectEntity4 = new ProjectEntity("Building housing in Phnom Penh, Cambodia", "As an alternative to Schoolies, 18 Mosman High year 12 students are travelling to Cambodia to build houses for local Cambodians living in poverty.", "Cambodia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));

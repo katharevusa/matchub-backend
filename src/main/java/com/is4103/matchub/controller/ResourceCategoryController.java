@@ -27,7 +27,7 @@ public class ResourceCategoryController {
     ResourceCategoryService resourceCategoryService;
     
 @RequestMapping(method = RequestMethod.GET, value = "/getAllResourceCategories")
-    Page<ResourceCategoryEntity> getAllResources(Pageable pageable) {
+    Page<ResourceCategoryEntity> getAllResourceCategories(Pageable pageable) {
        return resourceCategoryService.getAllResourceCategories(pageable);
     }
 }
