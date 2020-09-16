@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.is4103.matchub.service.UserDetailsServiceImpl;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import com.is4103.matchub.repository.AccountEntityRepository;
 import org.springframework.scheduling.annotation.EnableAsync;
 

@@ -41,7 +41,6 @@ public class AccountEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long accountId;
 
-//    @Column(nullable = false, unique = true)
     @Column(name = "apiKey", updatable = false, nullable = false, unique = true, columnDefinition = "BINARY(16)")
     @NotNull
     private UUID uuid;
@@ -76,6 +75,10 @@ public class AccountEntity {
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime joinDate;
+
+    @Column(nullable = false)
+    @NotNull
+    private Boolean hasSetup2fa = false;
 
     public AccountEntity(String email, String password) {
         this.uuid = UUID.randomUUID();

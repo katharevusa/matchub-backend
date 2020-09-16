@@ -33,8 +33,6 @@ import com.is4103.matchub.vo.IndividualSetupVO;
 import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.mail.MessagingException;
@@ -76,6 +74,16 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ProfileEntityRepository profileEntityRepository;
+
+    @Transactional
+    @Override
+    public void set2FAValidity(String email, Boolean valid2fa) {
+        AccountEntity account = accountEntityRepository.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException(email));
+
+        account.setValid2fa(valid2fa);
+        accountEntityRepository.save(account);
+    }
 
     @Transactional
     @Override
@@ -201,7 +209,7 @@ public class UserServiceImpl implements UserService {
             return updatedAccount;
         }
     }
-    
+
     @Transactional
     @Override
     public AccountEntity setOrganisationVerificationDoc(UUID uuid, String directory) {
@@ -210,7 +218,7 @@ public class UserServiceImpl implements UserService {
         if (!currentAccount.isPresent()) {
             throw new UserNotFoundException(uuid);
         }
-        
+
         if (currentAccount.get() instanceof OrganisationEntity) {
             OrganisationEntity organisation = (OrganisationEntity) currentAccount.get();
             organisation.setVerificationDoc(directory);

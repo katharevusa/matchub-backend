@@ -13,13 +13,14 @@ import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UserService {
+
+    void set2FAValidity(String email, Boolean valid2fa);
 
     UserVO createIndividual(IndividualCreateVO vo) throws MessagingException, IOException;
 
