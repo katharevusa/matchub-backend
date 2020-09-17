@@ -114,7 +114,7 @@ public class ProjectServiceImpl implements ProjectService {
                         oldProject.setProjectDescription(vo.getProjectDescription());
                         oldProject.setCountry(vo.getCountry());
                         oldProject.setStartDate(vo.getStartDate());
-                        oldProject.setEndDate(vo.getStartDate());
+                        oldProject.setEndDate(vo.getEndDate());
                         
                         
                         //remove the old association： remove project from sdgs
