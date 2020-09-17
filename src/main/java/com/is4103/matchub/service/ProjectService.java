@@ -16,6 +16,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -46,4 +47,6 @@ public interface ProjectService {
      public Page<ProjectEntity> getAllProjects(Pageable pageble);
      
      public ProjectEntity setProjectProfilePic(Long projectId, String path)throws ProjectNotFoundException;
+     
+     public ProjectEntity uploadPhotos(Long projectId, MultipartFile[] photos)throws ProjectNotFoundException;
 }

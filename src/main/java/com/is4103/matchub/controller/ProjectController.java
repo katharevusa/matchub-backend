@@ -104,15 +104,23 @@ public class ProjectController {
         return projectService.searchProjectByKeywords(keyword, pageable);
     }
 
-    //upload projectProfilePhoto 
+    //upload projectProfilePic
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/updateProjectProfilePic")
     public ProjectEntity updateProjectProfilePic(@RequestParam(value = "file") MultipartFile file, Long projectId) throws ProjectNotFoundException{
-//        return attachmentService.upload(file, directory);
+
         String filePath = attachmentService.upload(file);
 
-        System.out.println("uploaded file successfully: relative pathImage is " + filePath);
+       
         return projectService.setProjectProfilePic(projectId,filePath);
     }
+    //upload list of photos
+    @RequestMapping(method = RequestMethod.POST, value = "/updateProject/uploadPhotos")
+    public ProjectEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, Long projectId) throws ProjectNotFoundException{  
+        
+        return projectService.uploadPhotos(projectId, photos);
+    }
+    
+    
     //delete projectProfilePhoto
     //upload 
     //upload document

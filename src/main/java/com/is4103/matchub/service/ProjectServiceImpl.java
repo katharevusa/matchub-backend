@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -43,6 +44,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private SDGEntityRepository sDGEntityRepository;
+    
+    @Autowired
+    private AttachmentService attachmentService;
 
     @Override
     public ProjectEntity createProject(ProjectCreateVO vo) {
@@ -215,5 +219,24 @@ public class ProjectServiceImpl implements ProjectService {
         
         return project;
     }
+    
+    @Override
+    public ProjectEntity uploadPhotos(Long projectId, MultipartFile[] photos) throws ProjectNotFoundException{ 
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if(!projectOptional.isPresent()){
+            throw new ProjectNotFoundException();
+        }
+        ProjectEntity project = projectOptional.get();
+        System.err.println("com.is4103.matchub.service.ProjectServiceImpl.uploadPhotos(): photos: "+photos.length);
+        
+        for (MultipartFile photo : photos) {
+            String path = attachmentService.upload(photo);
+            project.getPhotos().add(path);
+            System.out.println("com.is4103.matchub.service.ProjectServiceImpl.uploadPhotos(): "+project.getPhotos());
+        }   
+        return project;
+    }
+    
+  
 
 }
