@@ -6,12 +6,11 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ProfileEntity;
-import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
-import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
+import com.is4103.matchub.exception.TerminateResourceException;
 import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
@@ -191,6 +190,27 @@ public class ResourceServiceImpl implements ResourceService {
 
         }
         return resource;
+    }
+    
+    @Override
+    public ResourceEntity terminateResource(Long resourceId, Long terminatorId)throws  ResourceNotFoundException, TerminateResourceException{
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException("Resource not exist");
+        }
+        ResourceEntity resource = resourceOptional.get();
+        
+        if (!resource.getResourceOwnerId().equals(terminatorId)){
+            throw new TerminateResourceException("Only resource owner can terminate this resource");
+        }
+        
+        if(resource.getMatchedProjectId()!= null){
+            throw new TerminateResourceException("This resource is already matched with another project hence can not be terminated");
+        }
+        
+        resource.setAvailable(Boolean.FALSE);
+        return resourceEntityRepository.saveAndFlush(resource);
+        
     }
 
 }

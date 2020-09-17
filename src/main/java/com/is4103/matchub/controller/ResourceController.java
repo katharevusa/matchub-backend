@@ -8,6 +8,7 @@ package com.is4103.matchub.controller;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
+import com.is4103.matchub.exception.TerminateResourceException;
 import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.ResourceService;
@@ -30,18 +31,16 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/authenticated")
 public class ResourceController {
+
     @Autowired
     ResourceService resourceService;
-    
+
     //create Resources
-     @RequestMapping(method = RequestMethod.POST, value = "/createNewResource")
-    ResourceEntity createNewResource(@Valid @RequestBody ResourceVO vo) throws UserNotFoundException, ResourceCategoryNotFoundException{
-       return resourceService.createResource(vo);           
+    @RequestMapping(method = RequestMethod.POST, value = "/createNewResource")
+    ResourceEntity createNewResource(@Valid @RequestBody ResourceVO vo) throws UserNotFoundException, ResourceCategoryNotFoundException {
+        return resourceService.createResource(vo);
     }
-    
-    
-    
-    
+
     //update resources
     @RequestMapping(method = RequestMethod.PUT, value = "/updateResource")
     ResourceEntity updateResourceById(@Valid @RequestBody ResourceVO vo,
@@ -49,38 +48,28 @@ public class ResourceController {
         return resourceService.updateResource(vo, updaterId, resourceId);
 
     }
-    
-   
-   
-    //upload document
-    //delete document
-    
-    
-    //Terminate One Resource
-  
-    
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/getAllAvailableResources")
     Page<ResourceEntity> getAllAvailableResources(Pageable pageable) {
-       return resourceService.getAllAvailableResources(pageable);
+        return resourceService.getAllAvailableResources(pageable);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/getAllResources")
     Page<ResourceEntity> getAllResources(Pageable pageable) {
-       return resourceService.getAllResources(pageable);
+        return resourceService.getAllResources(pageable);
     }
-    
-     @RequestMapping(method = RequestMethod.GET, value = "/getResourceById")
-     ResourceEntity getResourceById(Long resourceId) throws ResourceNotFoundException{
-       return resourceService.getResourceById(resourceId);
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getResourceById")
+    ResourceEntity getResourceById(Long resourceId) throws ResourceNotFoundException {
+        return resourceService.getResourceById(resourceId);
     }
-    
+
     //get list of hosted resources
     @RequestMapping(method = RequestMethod.GET, value = "/getHostedResources")
     Page<ResourceEntity> getHostedResources(Pageable pageable, Long profileId) {
-       return resourceService.getHostedResources(profileId,pageable);
+        return resourceService.getHostedResources(profileId, pageable);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/updateResource/updateResourceProfilePic")
     public ResourceEntity updateResourceProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, Long resourceId) throws ResourceNotFoundException {
         return resourceService.setResourceProfilePic(resourceId, profilePic);
@@ -91,12 +80,18 @@ public class ResourceController {
     public ResourceEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, Long resourceId) throws ResourceNotFoundException {
         return resourceService.uploadPhotos(resourceId, photos);
     }
-    
-     @RequestMapping(method = RequestMethod.POST, value = "/updateResource/uploadDocuments")
-    public ResourceEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, Long resourceId) throws ResourceNotFoundException {
+
+    @RequestMapping(method = RequestMethod.POST, value = "/updateResource/uploadDocuments")
+    public ResourceEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, @RequestParam(value = "resourceId") Long resourceId) throws ResourceNotFoundException {
         return resourceService.uploadDocuments(resourceId, documents);
     }
 
-    
-    
+    @RequestMapping(method = RequestMethod.POST, value = "/terminateResource")
+    public ResourceEntity terminateResource(@RequestParam(value = "resourceId") Long resourceId, @RequestParam(value = "terminatorId") Long terminatorId) throws ResourceNotFoundException, TerminateResourceException {
+        return resourceService.terminateResource(resourceId, terminatorId);
+    }
+
+    //upload document
+    //delete document
+    //Terminate One Resource
 }
