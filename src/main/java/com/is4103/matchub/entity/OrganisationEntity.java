@@ -1,8 +1,8 @@
 package com.is4103.matchub.entity;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -35,10 +35,14 @@ public class OrganisationEntity extends ProfileEntity {
     @Column(nullable = true)
     @Nullable
     private String address;
+
+//    @Column(nullable = true)
+//    @Nullable
+//    private String verificationDoc;
     
-    @Column(nullable = true)
-    @Nullable
-    private String verificationDoc;
+    //Key: filename, Value = docPath
+    @ElementCollection
+    private Map<String, String> verificationDocHashMap = new HashMap<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> employees = new HashSet<>();
