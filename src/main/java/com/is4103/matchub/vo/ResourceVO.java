@@ -33,7 +33,7 @@ public class ResourceVO {
     private String resourceDescription;
 
     
-    private List<String> uploadedFiles = new ArrayList<>();
+//    private List<String> uploadedFiles = new ArrayList<>();
     
 
     private LocalDateTime startTime;
@@ -50,21 +50,17 @@ public class ResourceVO {
     
     @NotNull(message = "Units can not be null ")
     private Integer units;
-    
-  
-    private List<String> photos = new ArrayList<>();
+   
     
     
     public void createResource(ResourceEntity newResource){
         newResource.setResourceName(this.resourceName);
         newResource.setResourceDescription(this.resourceDescription);
-        newResource.setUploadedFiles(this.uploadedFiles);
         newResource.setStartTime(this.startTime);
         newResource.setEndTime(this.endTime);
         newResource.setResourceCategoryId(this.resourceCategoryId);
         newResource.setResourceOwnerId(this.resourceOwnerId);
         newResource.setUnits(this.units);
-        newResource.setPhotos(this.photos);
     }
     
     public void updateResource(ResourceEntity newResource){

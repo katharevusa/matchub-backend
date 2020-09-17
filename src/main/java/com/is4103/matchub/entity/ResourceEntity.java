@@ -10,8 +10,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -83,11 +85,18 @@ public class ResourceEntity {
     @NotNull
     @Column(nullable = false)
     private Integer units;
+      
+    private String resourceProfilePic;
     
     @OrderColumn
     @Column(nullable = true)
     @ElementCollection(fetch = FetchType.LAZY, targetClass = String.class)
     private List<String> photos = new ArrayList<>();
+    
+    //Key: filename, Value = docPath
+    @ElementCollection
+    private Map<String, String> documents = new HashMap<>();
+    
     
     @Column(nullable = false)
     private Boolean spotlight = Boolean.FALSE;
@@ -97,6 +106,7 @@ public class ResourceEntity {
     
     @Column(nullable = true)
     private Long matchedProjectId;
+    
 
     public ResourceEntity(String resourceName, String resourceDescription, Long resourceCategoryId, Long resourceOwnerId, Integer units) {
         this.resourceName = resourceName;

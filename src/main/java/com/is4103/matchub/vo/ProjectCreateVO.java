@@ -52,7 +52,6 @@ public class ProjectCreateVO {
     @NotNull
     private Long projCreatorId;
     
-    private List<String> photos = new ArrayList<>();
     
     // setting in project service impl
     private List<Long> sdgs = new ArrayList<>();
@@ -65,7 +64,6 @@ public class ProjectCreateVO {
         newProject.setCountry(this.country);
         newProject.setStartDate(this.startDate);
         newProject.setEndDate(this.endDate);
-        newProject.setPhotos(this.photos);
         newProject.setProjCreatorId(projCreatorId);
         newProject.setRelatedResources(relatedResources);
         System.out.println("com.is4103.matchub.vo.ProjectCreateVO.updateProject(): "+newProject.getCountry());

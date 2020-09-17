@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
+import com.is4103.matchub.exception.TerminateResourceException;
 import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -38,6 +40,9 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Autowired
     ResourceCategoryEntityRepository resourceCategoryEntityRepository;
+
+    @Autowired
+    AttachmentService attachmentService;
 
     @Override
     public ResourceEntity createResource(ResourceVO vo) throws ResourceCategoryNotFoundException, UserNotFoundException {
@@ -138,6 +143,74 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public Page<ResourceEntity> getHostedResources(Long profileId, Pageable pageable) {
         return resourceEntityRepository.getHostedResources(profileId, pageable);
+    }
+
+    @Override
+    public ResourceEntity setResourceProfilePic(Long resourceId, MultipartFile pic) throws ResourceNotFoundException {
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException();
+        }
+        ResourceEntity resource = resourceOptional.get();
+        String path = attachmentService.upload(pic);
+        resource.setResourceProfilePic(path);
+
+        return resourceEntityRepository.saveAndFlush(resource);
+    }
+
+    @Override
+    public ResourceEntity uploadPhotos(Long resourceId, MultipartFile[] photos) throws ResourceNotFoundException {
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException();
+        }
+        ResourceEntity resource = resourceOptional.get();
+
+        for (MultipartFile photo : photos) {
+            String path = attachmentService.upload(photo);
+            resource.getPhotos().add(path);
+
+        }
+        return resourceEntityRepository.saveAndFlush(resource);
+    }
+
+    @Override
+    public ResourceEntity uploadDocuments(Long resourceId, MultipartFile[] documents) throws ResourceNotFoundException {
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException("Resource not exist");
+        }
+        ResourceEntity resource = resourceOptional.get();
+
+        for (MultipartFile photo : documents) {
+            String path = attachmentService.upload(photo);
+            String name = photo.getOriginalFilename();
+            System.err.println("name: " + name);
+            resource.getDocuments().put(name, path);
+
+        }
+        return resourceEntityRepository.saveAndFlush(resource);
+    }
+    
+    @Override
+    public ResourceEntity terminateResource(Long resourceId, Long terminatorId)throws  ResourceNotFoundException, TerminateResourceException{
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException("Resource not exist");
+        }
+        ResourceEntity resource = resourceOptional.get();
+        
+        if (!resource.getResourceOwnerId().equals(terminatorId)){
+            throw new TerminateResourceException("Only resource owner can terminate this resource");
+        }
+        
+        if(resource.getMatchedProjectId()!= null){
+            throw new TerminateResourceException("This resource is already matched with another project hence can not be terminated");
+        }
+        
+        resource.setAvailable(Boolean.FALSE);
+        return resourceEntityRepository.saveAndFlush(resource);
+        
     }
 
 }

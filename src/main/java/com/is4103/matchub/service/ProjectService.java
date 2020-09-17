@@ -7,6 +7,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.exception.DeleteProjectException;
+import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UpdateProjectException;
@@ -16,6 +17,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -44,4 +46,14 @@ public interface ProjectService {
      public Page<ProjectEntity> getLaunchedProjects(Pageable pageble);
      
      public Page<ProjectEntity> getAllProjects(Pageable pageble);
+     
+     public ProjectEntity setProjectProfilePic(Long projectId, String path)throws ProjectNotFoundException;
+     
+     public ProjectEntity uploadPhotos(Long projectId, MultipartFile[] photos)throws ProjectNotFoundException;
+     
+     public ProjectEntity uploadDocuments(Long projectId, MultipartFile[] documents) throws ProjectNotFoundException;
+     
+     public ProjectEntity downvoteProject(Long projectId) throws ProjectNotFoundException, DownvoteProjectException;
+     
+     public ProjectEntity upvoteProject(Long projectId) throws ProjectNotFoundException;
 }
