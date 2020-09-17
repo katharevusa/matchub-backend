@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -38,6 +39,9 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Autowired
     ResourceCategoryEntityRepository resourceCategoryEntityRepository;
+
+    @Autowired
+    AttachmentService attachmentService;
 
     @Override
     public ResourceEntity createResource(ResourceVO vo) throws ResourceCategoryNotFoundException, UserNotFoundException {
@@ -138,6 +142,35 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public Page<ResourceEntity> getHostedResources(Long profileId, Pageable pageable) {
         return resourceEntityRepository.getHostedResources(profileId, pageable);
+    }
+
+    @Override
+    public ResourceEntity setResourceProfilePic(Long resourceId, MultipartFile pic) throws ResourceNotFoundException {
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException();
+        }
+        ResourceEntity resource = resourceOptional.get();
+        String path = attachmentService.upload(pic);
+        resource.setResourceProfilePic(path);
+
+        return resource;
+    }
+
+    @Override
+    public ResourceEntity uploadPhotos(Long resourceId, MultipartFile[] photos) throws ResourceNotFoundException {
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException();
+        }
+        ResourceEntity resource = resourceOptional.get();
+
+        for (MultipartFile photo : photos) {
+            String path = attachmentService.upload(photo);
+            resource.getPhotos().add(path);
+
+        }
+        return resource;
     }
 
 }

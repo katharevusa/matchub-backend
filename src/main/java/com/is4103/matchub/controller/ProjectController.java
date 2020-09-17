@@ -106,9 +106,9 @@ public class ProjectController {
 
     //upload projectProfilePic
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/updateProjectProfilePic")
-    public ProjectEntity updateProjectProfilePic(@RequestParam(value = "file") MultipartFile file, Long projectId) throws ProjectNotFoundException {
+    public ProjectEntity updateProjectProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, Long projectId) throws ProjectNotFoundException {
 
-        String filePath = attachmentService.upload(file);
+        String filePath = attachmentService.upload(profilePic);
 
         return projectService.setProjectProfilePic(projectId, filePath);
     }

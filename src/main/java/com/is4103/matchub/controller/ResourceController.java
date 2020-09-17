@@ -6,10 +6,8 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ResourceEntity;
-import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
-import com.is4103.matchub.exception.UpdateProjectException;
 import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.ResourceService;
@@ -23,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -51,8 +50,8 @@ public class ResourceController {
 
     }
     
-    //upload project photo
-    //delete project photo
+   
+   
     //upload document
     //delete document
     
@@ -81,5 +80,18 @@ public class ResourceController {
     Page<ResourceEntity> getHostedResources(Pageable pageable, Long profileId) {
        return resourceService.getHostedResources(profileId,pageable);
     }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/updateResource/updateResourceProfilePic")
+    public ResourceEntity updateResourceProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, Long resourceId) throws ResourceNotFoundException {
+        return resourceService.setResourceProfilePic(resourceId, profilePic);
+    }
+
+    //upload list of photos
+    @RequestMapping(method = RequestMethod.POST, value = "/updateResource/uploadPhotos")
+    public ResourceEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, Long resourceId) throws ResourceNotFoundException {
+        return resourceService.uploadPhotos(resourceId, photos);
+    }
+
+    
     
 }

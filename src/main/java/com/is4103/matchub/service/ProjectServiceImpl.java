@@ -247,7 +247,7 @@ public class ProjectServiceImpl implements ProjectService {
         for (MultipartFile photo : documents) {
             String path = attachmentService.upload(photo);
             String name = photo.getOriginalFilename();
-            System.err.println("name: "+ name);
+            System.err.println("name: " + name);
             project.getDocuments().put(name, path);
 
         }
