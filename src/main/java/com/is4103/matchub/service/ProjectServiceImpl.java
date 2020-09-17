@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.exception.DeleteProjectException;
+import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UpdateProjectException;
@@ -173,6 +174,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     //only project creator can terminate project
+    @Override
     public void terminateProject(Long projectId, Long profileId) throws TerminateProjectException {
         Optional<ProfileEntity> profileOptional = profileEntityRepository.findById(profileId);
         if (!profileOptional.isPresent()) {
@@ -212,10 +214,12 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectEntity setProjectProfilePic(Long projectId, String path) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
-            throw new ProjectNotFoundException();
+            throw new ProjectNotFoundException("Project not exist");
         }
         ProjectEntity project = projectOptional.get();
         project.setProjectProfilePic(path);
+
+        project = projectEntityRepository.saveAndFlush(project);
 
         return project;
     }
@@ -224,7 +228,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectEntity uploadPhotos(Long projectId, MultipartFile[] photos) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
-            throw new ProjectNotFoundException();
+            throw new ProjectNotFoundException("Project not exist");
         }
         ProjectEntity project = projectOptional.get();
 
@@ -233,6 +237,7 @@ public class ProjectServiceImpl implements ProjectService {
             project.getPhotos().add(path);
 
         }
+        project = projectEntityRepository.saveAndFlush(project);
         return project;
     }
 
@@ -240,7 +245,7 @@ public class ProjectServiceImpl implements ProjectService {
     public ProjectEntity uploadDocuments(Long projectId, MultipartFile[] documents) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
-            throw new ProjectNotFoundException();
+            throw new ProjectNotFoundException("Project not exist");
         }
         ProjectEntity project = projectOptional.get();
 
@@ -251,7 +256,44 @@ public class ProjectServiceImpl implements ProjectService {
             project.getDocuments().put(name, path);
 
         }
+        project = projectEntityRepository.saveAndFlush(project);
         return project;
+    }
+
+    @Override
+    public ProjectEntity upvoteProject(Long projectId) throws ProjectNotFoundException {
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Project not exist");
+        }
+        ProjectEntity project = projectOptional.get();
+        Integer upvote = project.getUpvotes() + 1;
+        project.setUpvotes(upvote);
+        if (project.getUpvotes() >= 20) {
+            project.setProjStatus(ProjectStatusEnum.ACTIVE);
+        }
+        project = projectEntityRepository.saveAndFlush(project);
+        System.err.println("upvote: " + project.getUpvotes());
+        return project;
+
+    }
+
+    @Override
+    public ProjectEntity downvoteProject(Long projectId) throws ProjectNotFoundException, DownvoteProjectException {
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Project not exist");
+        }
+        ProjectEntity project = projectOptional.get();
+        if (project.getUpvotes() == 0) {
+            throw new DownvoteProjectException("Unable to downvote project: minimum 0 upvotes");
+        } else {
+            project.setUpvotes(project.getUpvotes() - 1);
+        }
+        project = projectEntityRepository.saveAndFlush(project);
+
+        return project;
+
     }
 
 }

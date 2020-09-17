@@ -7,6 +7,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.exception.DeleteProjectException;
+import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UpdateProjectException;
@@ -51,4 +52,8 @@ public interface ProjectService {
      public ProjectEntity uploadPhotos(Long projectId, MultipartFile[] photos)throws ProjectNotFoundException;
      
      public ProjectEntity uploadDocuments(Long projectId, MultipartFile[] documents) throws ProjectNotFoundException;
+     
+     public ProjectEntity downvoteProject(Long projectId) throws ProjectNotFoundException, DownvoteProjectException;
+     
+     public ProjectEntity upvoteProject(Long projectId) throws ProjectNotFoundException;
 }

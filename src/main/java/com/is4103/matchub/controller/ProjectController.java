@@ -7,6 +7,7 @@ package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.exception.DeleteProjectException;
+import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UpdateProjectException;
@@ -123,20 +124,26 @@ public class ProjectController {
     public ProjectEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, Long projectId) throws ProjectNotFoundException {
         return projectService.uploadDocuments(projectId, documents);
     }
-
-    //delete projectProfilePhoto
-    //upload 
-    //upload document
-    //delete document
-    //get a list of projects based on SDGs: Filter projects based on SDGs
+    
+    
+    //upvote a project
+    @RequestMapping(method = RequestMethod.POST, value = "/upvoteProject")
+    public ProjectEntity upvoteProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException{
+        return projectService.upvoteProject(projectId);
+        
+    }
+    @RequestMapping(method = RequestMethod.POST, value = "/downvoteProject")
+    public ProjectEntity downvoteProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId)throws ProjectNotFoundException,DownvoteProjectException{
+       return projectService.downvoteProject(projectId);
+        
+    }
+    
+    
+        //get a list of projects based on SDGs: Filter projects based on SDGs
 //    @RequestMapping(method = RequestMethod.GET, value = "/searchProjectBySDGs")
 //    List<ProjectEntity> searchProjectBySDGs(@RequestParam (value = "SDGs", defaultValue = "")List<Long> sdgIds){
 //        return projectService.searchProjectBySDGs(sdgIds);
 //    }
 //    
     // make a request to join project (project id, profile id)
-//    @RequestMapping(method = RequestMethod.POST, value = "/upvoteProject")
-//    void upvoteProject(RequestParam(value = "projectId", defaultValue = "") Long projectId){
-//        
-//    }
 }

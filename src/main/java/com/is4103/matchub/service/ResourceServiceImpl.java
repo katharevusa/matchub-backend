@@ -6,8 +6,10 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.UpdateResourceException;
@@ -168,6 +170,24 @@ public class ResourceServiceImpl implements ResourceService {
         for (MultipartFile photo : photos) {
             String path = attachmentService.upload(photo);
             resource.getPhotos().add(path);
+
+        }
+        return resource;
+    }
+
+    @Override
+    public ResourceEntity uploadDocuments(Long resourceId, MultipartFile[] documents) throws ResourceNotFoundException {
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException("Resource not exist");
+        }
+        ResourceEntity resource = resourceOptional.get();
+
+        for (MultipartFile photo : documents) {
+            String path = attachmentService.upload(photo);
+            String name = photo.getOriginalFilename();
+            System.err.println("name: " + name);
+            resource.getDocuments().put(name, path);
 
         }
         return resource;

@@ -91,6 +91,11 @@ public class ResourceController {
     public ResourceEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, Long resourceId) throws ResourceNotFoundException {
         return resourceService.uploadPhotos(resourceId, photos);
     }
+    
+     @RequestMapping(method = RequestMethod.POST, value = "/updateResource/uploadDocuments")
+    public ResourceEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, Long resourceId) throws ResourceNotFoundException {
+        return resourceService.uploadDocuments(resourceId, documents);
+    }
 
     
     
