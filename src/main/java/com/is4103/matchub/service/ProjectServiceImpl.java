@@ -115,22 +115,24 @@ public class ProjectServiceImpl implements ProjectService {
                         oldProject.setCountry(vo.getCountry());
                         oldProject.setStartDate(vo.getStartDate());
                         oldProject.setEndDate(vo.getStartDate());
-                        oldProject = projectEntityRepository.saveAndFlush(oldProject);
                         
                         
-//                        for (SDGEntity sdg : oldProject.getSdgs()) {
-//                            SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdg.getSdgId());
-//                            sdgToAssociateWith.getProjects().remove(oldProject);
-//                            oldProject.getSdgs().add(sdgToAssociateWith);
-//                        }
+                        //remove the old association： remove project from sdgs
+                        for (SDGEntity sdg : oldProject.getSdgs()) {
+                            SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdg.getSdgId());
+                            sdgToAssociateWith.getProjects().remove(oldProject);                        
+                        }
                         
-
+                      
+                        oldProject.setSdgs(new ArrayList<>() );
+                        //new association
                         for (Long sdgId : vo.getSdgs()) {
                             SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdgId);
                             sdgToAssociateWith.getProjects().add(oldProject);
                             oldProject.getSdgs().add(sdgToAssociateWith);
                         }
 
+                        oldProject = projectEntityRepository.saveAndFlush(oldProject);
                         return oldProject;
                     }
                 }
