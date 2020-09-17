@@ -66,7 +66,8 @@ public class AttachmentServiceImpl implements AttachmentService {
             throw new RuntimeException(e);
         }
 //        return fileName.getName();
-        return imageDirectory + "/" + fileName.getName();
+//        return imageDirectory + "/" + fileName.getName();
+        return "https://localhost:8443/api/v1/files/" + fileName.getName();
     }
 
     String getFileExtension(String fileName) {
