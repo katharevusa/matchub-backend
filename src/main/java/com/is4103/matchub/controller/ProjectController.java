@@ -6,12 +6,13 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ProjectEntity;
-import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.exception.DeleteProjectException;
+import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UpdateProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
+import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.ProjectService;
 import com.is4103.matchub.vo.ProjectCreateVO;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -36,9 +38,22 @@ public class ProjectController {
     @Autowired
     ProjectService projectService;
 
+    @Autowired
+    AttachmentService attachmentService;
+
+    //Create new project does not contain the photos upload, call separate photo upload method
     @RequestMapping(method = RequestMethod.POST, value = "/createNewProject")
     ProjectEntity createNewProject(@Valid @RequestBody ProjectCreateVO vo) {
         return projectService.createProject(vo);
+    }
+
+    //Update project does not contain the photos upload, call separate photo upload method
+    @RequestMapping(method = RequestMethod.PUT, value = "/updateProject")
+    ProjectEntity updateProjectById(@Valid @RequestBody ProjectCreateVO vo,
+            @RequestParam(value = "updaterId", defaultValue = "") Long updaterId, @RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException, UpdateProjectException {
+
+        return projectService.updateProject(vo, updaterId, projectId);
+
     }
 
     //Get a project based on the projectId
@@ -76,14 +91,6 @@ public class ProjectController {
         return projectService.getLaunchedProjects(pageable);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/updateProject")
-    ProjectEntity updateProjectById(@Valid @RequestBody ProjectCreateVO vo,
-            @RequestParam(value = "updaterId", defaultValue = "") Long updaterId, @RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException, UpdateProjectException {
-
-        return projectService.updateProject(vo, updaterId, projectId);
-
-    }
-
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProject")
     void deleteProject(
             @RequestParam(value = "projectId", defaultValue = "") Long projectId,
@@ -91,19 +98,52 @@ public class ProjectController {
         projectService.deleteProject(projectId, updaterId);
 
     }
-    //Search a list of Projects based on Keywords (keywords)
 
+    //Search a list of Projects based on Keywords (keywords)
     @RequestMapping(method = RequestMethod.GET, value = "/searchProjectByKeywords")
     Page<ProjectEntity> searchProjectByKeywords(@RequestParam(value = "keyword", defaultValue = "") String keyword, Pageable pageable) {
         return projectService.searchProjectByKeywords(keyword, pageable);
     }
 
-    //get a list of projects based on SDGs: Filter projects based on SDGs
+    //upload projectProfilePic
+    @RequestMapping(method = RequestMethod.POST, value = "/updateProject/updateProjectProfilePic")
+    public ProjectEntity updateProjectProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, Long projectId) throws ProjectNotFoundException {
+
+        String filePath = attachmentService.upload(profilePic);
+
+        return projectService.setProjectProfilePic(projectId, filePath);
+    }
+
+    //upload list of photos
+    @RequestMapping(method = RequestMethod.POST, value = "/updateProject/uploadPhotos")
+    public ProjectEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, Long projectId) throws ProjectNotFoundException {
+        return projectService.uploadPhotos(projectId, photos);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/updateProject/uploadDocuments")
+    public ProjectEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, Long projectId) throws ProjectNotFoundException {
+        return projectService.uploadDocuments(projectId, documents);
+    }
+    
+    
+    //upvote a project
+    @RequestMapping(method = RequestMethod.POST, value = "/upvoteProject")
+    public ProjectEntity upvoteProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException{
+        return projectService.upvoteProject(projectId);
+        
+    }
+    @RequestMapping(method = RequestMethod.POST, value = "/downvoteProject")
+    public ProjectEntity downvoteProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId)throws ProjectNotFoundException,DownvoteProjectException{
+       return projectService.downvoteProject(projectId);
+        
+    }
+    
+    
+        //get a list of projects based on SDGs: Filter projects based on SDGs
 //    @RequestMapping(method = RequestMethod.GET, value = "/searchProjectBySDGs")
 //    List<ProjectEntity> searchProjectBySDGs(@RequestParam (value = "SDGs", defaultValue = "")List<Long> sdgIds){
 //        return projectService.searchProjectBySDGs(sdgIds);
 //    }
 //    
     // make a request to join project (project id, profile id)
-    // upvote project (project id, profile id)
 }

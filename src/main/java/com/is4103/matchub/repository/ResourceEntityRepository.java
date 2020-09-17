@@ -27,8 +27,8 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
             countQuery = "SELECT r FROM ResourceEntity r WHERE r.available = true")
     Page<ResourceEntity> getAllAvailableResources(Pageable pageable);
     
-    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceOwnerId = profileId ",
-            countQuery = "SELECT r FROM ResourceEntity r WHERE r.resourceOwnerId = profileId")
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceOwnerId = :profileId ",
+            countQuery = "SELECT r FROM ResourceEntity r WHERE r.resourceOwnerId = :profileId")
     Page<ResourceEntity> getHostedResources( Long profileId, Pageable pageable);
     
     

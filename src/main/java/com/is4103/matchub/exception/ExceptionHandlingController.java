@@ -217,4 +217,25 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = DownvoteProjectException.class)
+    public ResponseEntity<ExceptionResponse> downvoteProjectException(DownvoteProjectException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to downvote project");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = TerminateResourceException.class)
+    public ResponseEntity<ExceptionResponse> terminateResourceException(TerminateResourceException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to terminate resource");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    
 }
