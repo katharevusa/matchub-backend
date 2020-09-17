@@ -44,7 +44,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private SDGEntityRepository sDGEntityRepository;
-    
+
     @Autowired
     private AttachmentService attachmentService;
 
@@ -114,7 +114,7 @@ public class ProjectServiceImpl implements ProjectService {
                         oldProject.setCountry(vo.getCountry());
                         oldProject.setStartDate(vo.getStartDate());
                         oldProject.setEndDate(vo.getStartDate());
-                    
+
                         return oldProject;
                     }
                 }
@@ -207,36 +207,51 @@ public class ProjectServiceImpl implements ProjectService {
     public Page<ProjectEntity> getAllProjects(Pageable pageble) {
         return projectEntityRepository.findAll(pageble);
     }
-    
+
     @Override
-    public ProjectEntity setProjectProfilePic(Long projectId, String path)throws ProjectNotFoundException{
+    public ProjectEntity setProjectProfilePic(Long projectId, String path) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
-        if(!projectOptional.isPresent()){
+        if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException();
         }
         ProjectEntity project = projectOptional.get();
         project.setProjectProfilePic(path);
-        
+
         return project;
     }
-    
+
     @Override
-    public ProjectEntity uploadPhotos(Long projectId, MultipartFile[] photos) throws ProjectNotFoundException{ 
+    public ProjectEntity uploadPhotos(Long projectId, MultipartFile[] photos) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
-        if(!projectOptional.isPresent()){
+        if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException();
         }
         ProjectEntity project = projectOptional.get();
-        System.err.println("com.is4103.matchub.service.ProjectServiceImpl.uploadPhotos(): photos: "+photos.length);
-        
+
         for (MultipartFile photo : photos) {
             String path = attachmentService.upload(photo);
             project.getPhotos().add(path);
-            System.out.println("com.is4103.matchub.service.ProjectServiceImpl.uploadPhotos(): "+project.getPhotos());
-        }   
+
+        }
         return project;
     }
-    
-  
+
+    @Override
+    public ProjectEntity uploadDocuments(Long projectId, MultipartFile[] documents) throws ProjectNotFoundException {
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException();
+        }
+        ProjectEntity project = projectOptional.get();
+
+        for (MultipartFile photo : documents) {
+            String path = attachmentService.upload(photo);
+            String name = photo.getOriginalFilename();
+            System.err.println("name: "+ name);
+            project.getDocuments().put(name, path);
+
+        }
+        return project;
+    }
 
 }

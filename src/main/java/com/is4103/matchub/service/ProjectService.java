@@ -49,4 +49,6 @@ public interface ProjectService {
      public ProjectEntity setProjectProfilePic(Long projectId, String path)throws ProjectNotFoundException;
      
      public ProjectEntity uploadPhotos(Long projectId, MultipartFile[] photos)throws ProjectNotFoundException;
+     
+     public ProjectEntity uploadDocuments(Long projectId, MultipartFile[] documents) throws ProjectNotFoundException;
 }

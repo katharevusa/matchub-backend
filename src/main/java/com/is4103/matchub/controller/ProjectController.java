@@ -36,8 +36,8 @@ public class ProjectController {
 
     @Autowired
     ProjectService projectService;
-    
-    @Autowired 
+
+    @Autowired
     AttachmentService attachmentService;
 
     //Create new project does not contain the photos upload, call separate photo upload method
@@ -106,26 +106,28 @@ public class ProjectController {
 
     //upload projectProfilePic
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/updateProjectProfilePic")
-    public ProjectEntity updateProjectProfilePic(@RequestParam(value = "file") MultipartFile file, Long projectId) throws ProjectNotFoundException{
+    public ProjectEntity updateProjectProfilePic(@RequestParam(value = "file") MultipartFile file, Long projectId) throws ProjectNotFoundException {
 
         String filePath = attachmentService.upload(file);
 
-       
-        return projectService.setProjectProfilePic(projectId,filePath);
+        return projectService.setProjectProfilePic(projectId, filePath);
     }
+
     //upload list of photos
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/uploadPhotos")
-    public ProjectEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, Long projectId) throws ProjectNotFoundException{  
-        
+    public ProjectEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, Long projectId) throws ProjectNotFoundException {
         return projectService.uploadPhotos(projectId, photos);
     }
-    
-    
+
+    @RequestMapping(method = RequestMethod.POST, value = "/updateProject/uploadDocuments")
+    public ProjectEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, Long projectId) throws ProjectNotFoundException {
+        return projectService.uploadDocuments(projectId, documents);
+    }
+
     //delete projectProfilePhoto
     //upload 
     //upload document
     //delete document
-
     //get a list of projects based on SDGs: Filter projects based on SDGs
 //    @RequestMapping(method = RequestMethod.GET, value = "/searchProjectBySDGs")
 //    List<ProjectEntity> searchProjectBySDGs(@RequestParam (value = "SDGs", defaultValue = "")List<Long> sdgIds){
