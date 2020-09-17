@@ -118,7 +118,7 @@ public class InitServiceImpl implements InitService {
         alexLow.setPhoneNumber("91234567");
         alexLow.setCountry("Singapore");
         alexLow.setCity("Singapore");
-        alexLow.setProfilePhoto(null);
+        alexLow.setProfilePhoto("https://localhost:8443/api/v1/files/init/alexlow.jpg");
         alexLow.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(3))));
         alexLow.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8))));
         List<SDGEntity> sdgs = new ArrayList<>();
@@ -147,7 +147,7 @@ public class InitServiceImpl implements InitService {
         ikjun.setPhoneNumber("011-465-9876");
         ikjun.setCountry("South Korea");
         ikjun.setCity("Seoul");
-        ikjun.setProfilePhoto(null);
+        ikjun.setProfilePhoto("https://localhost:8443/api/v1/files/init/ikjun.jpeg");
         ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3))));
         ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8))));
 
@@ -179,7 +179,7 @@ public class InitServiceImpl implements InitService {
         sophia.setPhoneNumber("604 598 5235");
         sophia.setCountry("Canada");
         sophia.setCity("Quebec");
-        sophia.setProfilePhoto(null);
+        sophia.setProfilePhoto("https://localhost:8443/api/v1/files/init/sophia.jpg");
         sophia.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3))));
         sophia.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(7))));
         sdgs = new ArrayList<>();
@@ -204,7 +204,7 @@ public class InitServiceImpl implements InitService {
         genc.setPhoneNumber("866 293 4483");
         genc.setCountry("Canada");
         genc.setCity("Toronto");
-        genc.setProfilePhoto(null);
+        genc.setProfilePhoto("https://localhost:8443/api/v1/files/init/genc.jpg");
         genc.setFollowing(new HashSet<>(Arrays.asList(sophia.getAccountId())));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
@@ -228,7 +228,7 @@ public class InitServiceImpl implements InitService {
         networkForGood.setPhoneNumber("888 284 7978");
         networkForGood.setCountry("United States");
         networkForGood.setCity("Washington");
-        networkForGood.setProfilePhoto(null);
+        networkForGood.setProfilePhoto("https://localhost:8443/api/v1/files/init/networkforgood.png");
         networkForGood.setFollowing(new HashSet<>(Arrays.asList(alexLow.getAccountId(), ikjun.getAccountId())));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
