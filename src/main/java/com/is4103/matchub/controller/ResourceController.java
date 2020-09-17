@@ -71,13 +71,13 @@ public class ResourceController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateResource/updateResourceProfilePic")
-    public ResourceEntity updateResourceProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, Long resourceId) throws ResourceNotFoundException {
+    public ResourceEntity updateResourceProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, @RequestParam("resourceId") Long resourceId) throws ResourceNotFoundException {
         return resourceService.setResourceProfilePic(resourceId, profilePic);
     }
 
     //upload list of photos
     @RequestMapping(method = RequestMethod.POST, value = "/updateResource/uploadPhotos")
-    public ResourceEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, Long resourceId) throws ResourceNotFoundException {
+    public ResourceEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, @RequestParam("resourceId") Long resourceId) throws ResourceNotFoundException {
         return resourceService.uploadPhotos(resourceId, photos);
     }
 
