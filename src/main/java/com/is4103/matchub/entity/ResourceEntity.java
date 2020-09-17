@@ -83,6 +83,8 @@ public class ResourceEntity {
     @NotNull
     @Column(nullable = false)
     private Integer units;
+      
+    private String resourceProfilePic;
     
     @OrderColumn
     @Column(nullable = true)

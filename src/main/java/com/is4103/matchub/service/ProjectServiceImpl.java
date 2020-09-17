@@ -110,7 +110,7 @@ public class ProjectServiceImpl implements ProjectService {
                         oldProject.setCountry(vo.getCountry());
                         oldProject.setStartDate(vo.getStartDate());
                         oldProject.setEndDate(vo.getStartDate());
-                        oldProject.setPhotos(vo.getPhotos());
+                    
                         return oldProject;
                     }
                 }
@@ -199,8 +199,21 @@ public class ProjectServiceImpl implements ProjectService {
         return projectEntityRepository.getLaunchedProjects(pageble);
     }
 
+    @Override
     public Page<ProjectEntity> getAllProjects(Pageable pageble) {
         return projectEntityRepository.findAll(pageble);
+    }
+    
+    @Override
+    public ProjectEntity setProjectProfilePic(Long projectId, String path)throws ProjectNotFoundException{
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if(!projectOptional.isPresent()){
+            throw new ProjectNotFoundException();
+        }
+        ProjectEntity project = projectOptional.get();
+        project.setProjectProfilePic(path);
+        
+        return project;
     }
 
 }

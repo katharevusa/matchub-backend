@@ -51,7 +51,11 @@ public class ResourceController {
 
     }
     
-    //Download/Upload supporting documents for resource item
+    //upload project photo
+    //delete project photo
+    //upload document
+    //delete document
+    
     
     //Terminate One Resource
   

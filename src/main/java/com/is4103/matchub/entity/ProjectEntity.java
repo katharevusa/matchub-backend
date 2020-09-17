@@ -10,8 +10,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -84,9 +86,6 @@ public class ProjectEntity {
     @NotNull
     private Integer upvotes = 0;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @OrderColumn()
-    private List<String> photos = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> relatedResources = new ArrayList<>();
@@ -102,6 +101,16 @@ public class ProjectEntity {
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     @Nullable
     private LocalDateTime spotlightEndTime;
+    
+    private String projectProfilePic;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @OrderColumn()
+    private List<String> photos = new ArrayList<>();
+    
+    //Key: filename, Value = docPath
+    @ElementCollection
+    private Map<String, String> documents = new HashMap<>();
     
     
     //*********************Associations Below******************

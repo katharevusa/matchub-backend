@@ -44,4 +44,6 @@ public interface ProjectService {
      public Page<ProjectEntity> getLaunchedProjects(Pageable pageble);
      
      public Page<ProjectEntity> getAllProjects(Pageable pageble);
+     
+     public ProjectEntity setProjectProfilePic(Long projectId, String path)throws ProjectNotFoundException;
 }
