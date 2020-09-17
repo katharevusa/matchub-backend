@@ -204,7 +204,7 @@ public class UserServiceImpl implements UserService {
     
     @Transactional
     @Override
-    public AccountEntity setOrganisationVerificationDoc(UUID uuid, String directory) {
+    public AccountEntity setOrganisationVerificationDoc(UUID uuid, String directory, String filename) {
         Optional<AccountEntity> currentAccount = accountEntityRepository.findByUuid(uuid);
 
         if (!currentAccount.isPresent()) {
@@ -213,7 +213,8 @@ public class UserServiceImpl implements UserService {
         
         if (currentAccount.get() instanceof OrganisationEntity) {
             OrganisationEntity organisation = (OrganisationEntity) currentAccount.get();
-            organisation.setVerificationDoc(directory);
+            //Key: filename, Value: directory
+            organisation.getVerificationDocHashMap().put(filename, directory);
 
             AccountEntity updatedAccount = (AccountEntity) organisation;
             updatedAccount = accountEntityRepository.save(updatedAccount);
