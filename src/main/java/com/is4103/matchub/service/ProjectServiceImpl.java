@@ -67,7 +67,7 @@ public class ProjectServiceImpl implements ProjectService {
             newProject.getSdgs().add(sdgToAssociateWith);
         }
 
-        newProject = projectEntityRepository.save(newProject);
+        newProject = projectEntityRepository.saveAndFlush(newProject);
 
         return newProject;
 
@@ -85,7 +85,7 @@ public class ProjectServiceImpl implements ProjectService {
             sDGEntity.getProjects().add(newProject);
         }
 
-        newProject = projectEntityRepository.save(newProject);
+        newProject = projectEntityRepository.saveAndFlush(newProject);
         return newProject;
 
     }
@@ -115,6 +115,21 @@ public class ProjectServiceImpl implements ProjectService {
                         oldProject.setCountry(vo.getCountry());
                         oldProject.setStartDate(vo.getStartDate());
                         oldProject.setEndDate(vo.getStartDate());
+                        oldProject = projectEntityRepository.saveAndFlush(oldProject);
+                        
+                        
+//                        for (SDGEntity sdg : oldProject.getSdgs()) {
+//                            SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdg.getSdgId());
+//                            sdgToAssociateWith.getProjects().remove(oldProject);
+//                            oldProject.getSdgs().add(sdgToAssociateWith);
+//                        }
+                        
+
+                        for (Long sdgId : vo.getSdgs()) {
+                            SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdgId);
+                            sdgToAssociateWith.getProjects().add(oldProject);
+                            oldProject.getSdgs().add(sdgToAssociateWith);
+                        }
 
                         return oldProject;
                     }
@@ -191,6 +206,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.COMPLETED);
+        projectEntityRepository.saveAndFlush(project);
         // Incomplete: timer to start the point allocation and reviewa
 
     }

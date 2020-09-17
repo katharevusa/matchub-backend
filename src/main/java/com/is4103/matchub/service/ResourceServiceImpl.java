@@ -155,7 +155,7 @@ public class ResourceServiceImpl implements ResourceService {
         String path = attachmentService.upload(pic);
         resource.setResourceProfilePic(path);
 
-        return resource;
+        return resourceEntityRepository.saveAndFlush(resource);
     }
 
     @Override
@@ -171,7 +171,7 @@ public class ResourceServiceImpl implements ResourceService {
             resource.getPhotos().add(path);
 
         }
-        return resource;
+        return resourceEntityRepository.saveAndFlush(resource);
     }
 
     @Override
@@ -189,7 +189,7 @@ public class ResourceServiceImpl implements ResourceService {
             resource.getDocuments().put(name, path);
 
         }
-        return resource;
+        return resourceEntityRepository.saveAndFlush(resource);
     }
     
     @Override
