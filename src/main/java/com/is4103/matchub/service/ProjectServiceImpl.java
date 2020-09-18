@@ -12,8 +12,11 @@ import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.RevokeDownvoteException;
+import com.is4103.matchub.exception.RevokeUpvoteException;
 import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UpdateProjectException;
+import com.is4103.matchub.exception.UpvoteProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
@@ -115,16 +118,14 @@ public class ProjectServiceImpl implements ProjectService {
                         oldProject.setCountry(vo.getCountry());
                         oldProject.setStartDate(vo.getStartDate());
                         oldProject.setEndDate(vo.getEndDate());
-                        
-                        
+
                         //remove the old association： remove project from sdgs
                         for (SDGEntity sdg : oldProject.getSdgs()) {
                             SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdg.getSdgId());
-                            sdgToAssociateWith.getProjects().remove(oldProject);                        
+                            sdgToAssociateWith.getProjects().remove(oldProject);
                         }
-                        
-                      
-                        oldProject.setSdgs(new ArrayList<>() );
+
+                        oldProject.setSdgs(new ArrayList<>());
                         //new association
                         for (Long sdgId : vo.getSdgs()) {
                             SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdgId);
@@ -279,17 +280,36 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectEntity upvoteProject(Long projectId) throws ProjectNotFoundException {
+    public ProjectEntity upvoteProject(Long projectId, Long profileId) throws ProjectNotFoundException, UpvoteProjectException, UserNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
         if (!projectOptional.isPresent()) {
-            throw new ProjectNotFoundException("Project not exist");
+            throw new ProjectNotFoundException("Upable to upvote project: Project not exist");
         }
+        if (!profOptional.isPresent()) {
+            throw new UserNotFoundException("Upable to upvote project: User not found");
+        }
+        //one user can only upvote one project
+        ProfileEntity profile = profOptional.get();
+        if (profile.getUpvotedProjectIds().contains(projectId)) {
+            throw new UpvoteProjectException("Upable to upvote project: You have already upvoted this project");
+        }
+        
+        if (profile.getDownvotedProjectIds().contains(projectId)) {
+            throw new UpvoteProjectException("Upable to upvote project: Please revoke downvote before upvote the project");
+        }
+
+        //associate profile and project
+        profile.getUpvotedProjectIds().add(projectId);
         ProjectEntity project = projectOptional.get();
         Integer upvote = project.getUpvotes() + 1;
         project.setUpvotes(upvote);
+
+        //activate project once reaches 20
         if (project.getUpvotes() >= 20) {
             project.setProjStatus(ProjectStatusEnum.ACTIVE);
         }
+
         project = projectEntityRepository.saveAndFlush(project);
         System.err.println("upvote: " + project.getUpvotes());
         return project;
@@ -297,17 +317,96 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectEntity downvoteProject(Long projectId) throws ProjectNotFoundException, DownvoteProjectException {
+    public ProjectEntity downvoteProject(Long projectId, Long profileId) throws ProjectNotFoundException, DownvoteProjectException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
+
         if (!projectOptional.isPresent()) {
-            throw new ProjectNotFoundException("Project not exist");
+            throw new ProjectNotFoundException("Upable to downvote project: Project not exist");
         }
+
+        if (!profOptional.isPresent()) {
+            throw new UserNotFoundException("Upable to downvote project: User not found");
+        }
+
         ProjectEntity project = projectOptional.get();
-        if (project.getUpvotes() == 0) {
-            throw new DownvoteProjectException("Unable to downvote project: minimum 0 upvotes");
-        } else {
-            project.setUpvotes(project.getUpvotes() - 1);
+        ProfileEntity profile = profOptional.get();
+        if (profile.getDownvotedProjectIds().contains(projectId)) {
+            throw new DownvoteProjectException("Upable to downvote project: You have already downvoted this project");
         }
+        
+        if (profile.getUpvotedProjectIds().contains(projectId)) {
+            throw new DownvoteProjectException("Upable to downvote project: Please revoke upvote before downvote the project");
+        }
+
+        if (project.getUpvotes() == 0) {
+            throw new DownvoteProjectException("Unable to downvote project: Minimum 0 upvotes");
+        }
+        
+        project.setUpvotes(project.getUpvotes() - 1);
+        profile.getDownvotedProjectIds().add(projectId);
+        project = projectEntityRepository.saveAndFlush(project);
+
+        return project;
+
+    }
+     @Override
+    public ProjectEntity revokeUpvote(Long projectId, Long profileId) throws ProjectNotFoundException, UserNotFoundException, RevokeUpvoteException{
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
+
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Unable to revoke upvote: Project not exist");
+        }
+
+        if (!profOptional.isPresent()) {
+            throw new UserNotFoundException("Unable to revoke upvote: User not found");
+        }
+
+        ProjectEntity project = projectOptional.get();
+        ProfileEntity profile = profOptional.get();
+        
+        if(!profile.getUpvotedProjectIds().contains(projectId)){
+            throw new RevokeUpvoteException("Unable to revoke upvote: You have never upvoted this project");
+        }
+        
+        if(profile.getDownvotedProjectIds().contains(projectId)){
+            throw new RevokeUpvoteException("Unable to revoke upvote: Please revoke downvote before you upvote the project ");
+        }
+        project.setUpvotes(project.getUpvotes() - 1);
+        profile.getUpvotedProjectIds().remove(projectId);
+        project = projectEntityRepository.saveAndFlush(project);
+
+        return project;
+
+    }
+    
+     @Override
+    public ProjectEntity revokeDownvote(Long projectId, Long profileId) throws ProjectNotFoundException, UserNotFoundException, RevokeDownvoteException{
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
+
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Unable to revoke downvote: Project not exist");
+        }
+
+        if (!profOptional.isPresent()) {
+            throw new UserNotFoundException("Unable to revoke downvote: User not found");
+        }
+        
+        ProjectEntity project = projectOptional.get();
+        ProfileEntity profile = profOptional.get();
+        
+        if(!profile.getDownvotedProjectIds().contains(projectId)){
+            throw new RevokeDownvoteException("Unable to revoke downvote: You have never downvoted this project");
+        }
+
+        if(profile.getUpvotedProjectIds().contains(projectId)){
+            throw new RevokeDownvoteException("Unable to revoke downvote: Please revoke upvote before you downvote the project ");
+        }
+        
+        project.setUpvotes(project.getUpvotes() + 1);
+        profile.getDownvotedProjectIds().remove(projectId);
         project = projectEntityRepository.saveAndFlush(project);
 
         return project;
