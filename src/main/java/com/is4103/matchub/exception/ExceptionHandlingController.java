@@ -6,7 +6,6 @@
 package com.is4103.matchub.exception;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +36,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(value = UserNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> resourceNotFound(UserNotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> userNotFoundException(UserNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("User not found");
         response.setErrorMessage(ex.getMessage());
@@ -148,7 +147,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(value = ProjectNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> ProjectNotFound(ProjectNotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> projectNotFound(ProjectNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Project Not Found");
         response.setErrorMessage(ex.getMessage());
@@ -168,7 +167,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(value = DeleteProjectException.class)
-    public ResponseEntity<ExceptionResponse> UnableToDeleteProject(DeleteProjectException ex) {
+    public ResponseEntity<ExceptionResponse> unableToDeleteProject(DeleteProjectException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to delete project");
         response.setErrorMessage(ex.getMessage());
@@ -178,7 +177,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(value = TerminateProjectException.class)
-    public ResponseEntity<ExceptionResponse> TerminateProjectError(TerminateProjectException ex) {
+    public ResponseEntity<ExceptionResponse> terminateProjectError(TerminateProjectException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to terminate project");
         response.setErrorMessage(ex.getMessage());
@@ -188,7 +187,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(value = ResourceNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> ResourceNotFound(ResourceNotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> resourceNotFound(ResourceNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Resource not found");
         response.setErrorMessage(ex.getMessage());
@@ -198,7 +197,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(value = ResourceCategoryNotFoundException.class)
-    public ResponseEntity<ExceptionResponse> ResourceCategoryNotFound(ResourceCategoryNotFoundException ex) {
+    public ResponseEntity<ExceptionResponse> resourceCategoryNotFound(ResourceCategoryNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Resource category not found");
         response.setErrorMessage(ex.getMessage());
@@ -208,7 +207,7 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(value = UpdateResourceException.class)
-    public ResponseEntity<ExceptionResponse> UpdateResourceException(UpdateResourceException ex) {
+    public ResponseEntity<ExceptionResponse> updateResourceException(UpdateResourceException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to update resource");
         response.setErrorMessage(ex.getMessage());
@@ -237,5 +236,34 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = UpvoteProjectException.class)
+    public ResponseEntity<ExceptionResponse> upvoteProjectException(UpvoteProjectException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to upvote project");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
     
+    @ExceptionHandler(value = RevokeDownvoteException.class)
+    public ResponseEntity<ExceptionResponse> revokeDownvoteException(RevokeDownvoteException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to revoke downvote for this project ");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+     @ExceptionHandler(value = RevokeUpvoteException.class)
+    public ResponseEntity<ExceptionResponse> revokeUpvoteException(RevokeUpvoteException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to revoke upvote for this project");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
 }

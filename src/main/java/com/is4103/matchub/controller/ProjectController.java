@@ -125,18 +125,6 @@ public class ProjectController {
         return projectService.uploadDocuments(projectId, documents);
     }
 
-    //upvote a project
-    @RequestMapping(method = RequestMethod.POST, value = "/upvoteProject")
-    public ProjectEntity upvoteProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException {
-        return projectService.upvoteProject(projectId);
-
-    }
-
-    @RequestMapping(method = RequestMethod.POST, value = "/downvoteProject")
-    public ProjectEntity downvoteProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException, DownvoteProjectException {
-        return projectService.downvoteProject(projectId);
-
-    }
 
     //get a list of projects based on SDGs: Filter projects based on SDGs
 //    @RequestMapping(method = RequestMethod.GET, value = "/searchProjectBySDGs")
