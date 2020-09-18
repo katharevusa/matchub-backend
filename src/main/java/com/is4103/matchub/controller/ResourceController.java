@@ -91,7 +91,6 @@ public class ResourceController {
         return resourceService.terminateResource(resourceId, terminatorId);
     }
 
-    //upload document
-    //delete document
-    //Terminate One Resource
+    
+ 
 }
