@@ -364,7 +364,7 @@ public class InitServiceImpl implements InitService {
         ProjectEntity projectEntity2 = new ProjectEntity("Women's financial literacy, Malawi", "CARE will work with 20,000 women from 1,000 village savings and loans groups in Lilongwe, Dowa and Kasungu Districts, to overcome chronic hunger by expanding their farms or micro-businesses.", "Malawi", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
         projectEntity2.getSdgs().add(genderEquality);
         projectEntity2.getSdgs().add(qualityEducation);
-        projectEntity2.setUpvotes(20);
+        projectEntity2.setUpvotes(19);
         projectEntity2.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity2.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project2.jpg");
         projectService.createProject(projectEntity2, 2L);
@@ -372,6 +372,7 @@ public class InitServiceImpl implements InitService {
         ProjectEntity projectEntity3 = new ProjectEntity("Supporting rural families, Cambodia", "To support rural family.", "Cambodia", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
         projectEntity3.getSdgs().add(poverty);
         projectEntity3.getSdgs().add(zeroHunger);
+        projectEntity3.setUpvotes(19);
         projectEntity3.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project3.jpg");
         projectService.createProject(projectEntity3, 2L);
 
@@ -379,7 +380,7 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getSdgs().add(genderEquality);
         projectEntity4.getSdgs().add(qualityEducation);
         projectEntity4.getSdgs().add(goodHealth);
-        projectEntity2.setUpvotes(34);
+        projectEntity4.setUpvotes(19);
         projectEntity4.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity4.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project4.jpg");
         projectService.createProject(projectEntity4, 3L);
@@ -387,18 +388,21 @@ public class InitServiceImpl implements InitService {
         ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Papua New Guinea", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Cambodia", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
         projectEntity5.getSdgs().add(cleanWater);
         projectEntity5.getSdgs().add(goodHealth);
+        projectEntity5.setUpvotes(19);
         projectEntity5.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project5.png");
         projectService.createProject(projectEntity5, 4L);
 
         ProjectEntity projectEntity6 = new ProjectEntity("Save endangered sea turtles in Panama", "This project will launch a sea turtle research and conservation program to protect endangered leatherback and hawksbill turtles that were found at Bocas del Drago, Panama.", "Panama", LocalDateTime.parse("2021-01-05T11:50:55"), LocalDateTime.parse("2025-06-05T11:50:55"));
         projectEntity6.getSdgs().add(climateAction);
         projectEntity6.getSdgs().add(sustainableCities);
+        projectEntity6.setUpvotes(19);
         projectEntity6.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project6.jpg");
         projectService.createProject(projectEntity6, 5L);
 
         ProjectEntity projectEntity7 = new ProjectEntity("Protect reefs through sustainable tourism in Indonesia", "To protect threatened coral reefs in Indonesia by uniting governments, NGOs and the diving and snorkelling industry to establish international environmental standards for marine tourism.", "Indonesia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
         projectEntity7.getSdgs().add(climateAction);
         projectEntity7.getSdgs().add(sustainableCities);
+        projectEntity7.setUpvotes(19);
         projectEntity7.getSdgs().add(responsibleConsumption);
         projectEntity7.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project7.jpg");
         projectService.createProject(projectEntity7, 6L);
@@ -407,6 +411,7 @@ public class InitServiceImpl implements InitService {
         projectEntity8.getSdgs().add(genderEquality);
         projectEntity8.getSdgs().add(qualityEducation);
         projectEntity8.getSdgs().add(goodHealth);
+        projectEntity8.setUpvotes(19);
         projectEntity8.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project8.jpg");
         projectService.createProject(projectEntity8, 6L);
 
