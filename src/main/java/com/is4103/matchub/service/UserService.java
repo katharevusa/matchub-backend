@@ -18,6 +18,7 @@ import java.util.UUID;
 import javax.mail.MessagingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
@@ -31,7 +32,8 @@ public interface UserService {
 
     AccountEntity setProfilePic(UUID uuid, String directory);
 
-    AccountEntity setOrganisationVerificationDoc(UUID uuid, String directory, String filename);
+//    AccountEntity setOrganisationVerificationDoc(UUID uuid, String directory, String filename);
+    AccountEntity uploadOrganisationDocuments(UUID uuid, MultipartFile[] files);
 
     AccountEntity followProfile(Long accountId, Long followId);
 

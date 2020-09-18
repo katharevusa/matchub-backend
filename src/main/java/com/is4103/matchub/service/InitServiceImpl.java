@@ -346,7 +346,6 @@ public class InitServiceImpl implements InitService {
         SDGEntity sustainableCities = sdgEntityRepository.findBySdgName("Sustainable Cities and Communities");
         SDGEntity responsibleConsumption = sdgEntityRepository.findBySdgName("Responsible Consumption and Production");
         SDGEntity climateAction = sdgEntityRepository.findBySdgName("Climate Action");
-        System.out.println("com.is4103.matchub.service.InitServiceImpl.initProjects()"+climateAction);
 
         ProjectEntity projectEntity1 = new ProjectEntity("Empowering Communities in Bangladesh", "To strengthen community resilience to prepare and respond to the risks associated with disasters and climate change by fostering economic empowerment, inclusive leadership and disaster preparedness.", "Bangladesh", LocalDateTime.now(), LocalDateTime.parse("2021-05-05T11:50:55"));
         projectEntity1.getSdgs().add(poverty);
