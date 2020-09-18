@@ -365,7 +365,7 @@ public class InitServiceImpl implements InitService {
         projectEntity2.getSdgs().add(genderEquality);
         projectEntity2.getSdgs().add(qualityEducation);
         projectEntity2.setUpvotes(19);
-        projectEntity2.setProjStatus(ProjectStatusEnum.ACTIVE);
+        projectEntity2.setProjStatus(ProjectStatusEnum.ON_HOLD);
         projectEntity2.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project2.jpg");
         projectService.createProject(projectEntity2, 2L);
 
@@ -381,7 +381,7 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getSdgs().add(qualityEducation);
         projectEntity4.getSdgs().add(goodHealth);
         projectEntity4.setUpvotes(19);
-        projectEntity4.setProjStatus(ProjectStatusEnum.ACTIVE);
+        projectEntity4.setProjStatus(ProjectStatusEnum.ON_HOLD);
         projectEntity4.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project4.jpg");
         projectService.createProject(projectEntity4, 3L);
 
