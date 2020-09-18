@@ -52,7 +52,7 @@ public class ResourceEntity {
     @NotNull
     private String resourceName;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     @NotNull
     private String resourceDescription;
 
