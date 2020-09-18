@@ -32,7 +32,7 @@ public class IndividualEntity extends ProfileEntity {
 //    @NotNull
     private GenderEnum genderEnum;
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 1000)
     private String profileDescription;
 
     @ElementCollection(fetch = FetchType.EAGER)
