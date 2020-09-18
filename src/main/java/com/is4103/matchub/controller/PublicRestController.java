@@ -85,14 +85,19 @@ public class PublicRestController {
         return userService.setProfilePic(uuid, filePath);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/setupOrganisationProfile/uploadDocument/{uuid}")
-    public AccountEntity uploadOrganisationDocument(@RequestParam(value = "file") MultipartFile file,
-            @RequestParam(value = "filename") String filename, @PathVariable("uuid") UUID uuid) {
-//        return attachmentService.upload(file, directory);
-        String filePath = attachmentService.upload(file);
-
-        System.out.println("uploaded verification doc successfully: saved path is " + filePath);
-        return userService.setOrganisationVerificationDoc(uuid, filePath, filename);
+//    @RequestMapping(method = RequestMethod.POST, value = "/setupOrganisationProfile/uploadDocument/{uuid}")
+//    public AccountEntity uploadOrganisationDocument(@RequestParam(value = "file") MultipartFile file,
+//            @RequestParam(value = "filename") String filename, @PathVariable("uuid") UUID uuid) {
+//
+//        String filePath = attachmentService.upload(file);
+//
+//        System.out.println("uploaded verification doc successfully: saved path is " + filePath);
+//        return userService.setOrganisationVerificationDoc(uuid, filePath, filename);
+//    }
+//    
+    @RequestMapping(method = RequestMethod.POST, value = "/setupOrganisationProfile/uploadDocuments/{uuid}")
+    public AccountEntity uploadOrganisationDocuments(@RequestParam(value = "files") MultipartFile[] files, @PathVariable("uuid") UUID uuid) {
+        return userService.uploadOrganisationDocuments(uuid, files);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/forgotPassword")
