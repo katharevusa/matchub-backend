@@ -33,8 +33,6 @@ import com.is4103.matchub.vo.IndividualSetupVO;
 import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import javax.mail.MessagingException;
@@ -45,6 +43,8 @@ import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import java.util.Set;
+import static org.bouncycastle.asn1.iana.IANAObjectIdentifiers.directory;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -61,6 +61,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private AttachmentService attachmentService;
 
     @Autowired
     private SDGEntityRepository sdgEntityRepository;
@@ -201,29 +204,56 @@ public class UserServiceImpl implements UserService {
             return updatedAccount;
         }
     }
-    
+
     @Transactional
     @Override
-    public AccountEntity setOrganisationVerificationDoc(UUID uuid, String directory, String filename) {
+    public AccountEntity uploadOrganisationDocuments(UUID uuid, MultipartFile[] files) {
         Optional<AccountEntity> currentAccount = accountEntityRepository.findByUuid(uuid);
 
         if (!currentAccount.isPresent()) {
             throw new UserNotFoundException(uuid);
         }
-        
+
         if (currentAccount.get() instanceof OrganisationEntity) {
             OrganisationEntity organisation = (OrganisationEntity) currentAccount.get();
-            //Key: filename, Value: directory
-            organisation.getVerificationDocHashMap().put(filename, directory);
+
+            for (MultipartFile file : files) {
+                String filename = file.getOriginalFilename();
+                String savedPath = attachmentService.upload(file);
+
+                //Key: filename, Value: directory
+                organisation.getVerificationDocHashMap().put(filename, savedPath);
+            }
 
             AccountEntity updatedAccount = (AccountEntity) organisation;
             updatedAccount = accountEntityRepository.save(updatedAccount);
             return updatedAccount;
         } else {// throw exception 
-            throw new UploadOrganisationVerificationDocException("Unable to upload verification document.");
+            throw new UploadOrganisationVerificationDocException("Unable to upload verification documents.");
         }
     }
 
+//    @Transactional
+//    @Override
+//    public AccountEntity setOrganisationVerificationDoc(UUID uuid, String directory, String filename) {
+//        Optional<AccountEntity> currentAccount = accountEntityRepository.findByUuid(uuid);
+//
+//        if (!currentAccount.isPresent()) {
+//            throw new UserNotFoundException(uuid);
+//        }
+//        
+//        if (currentAccount.get() instanceof OrganisationEntity) {
+//            OrganisationEntity organisation = (OrganisationEntity) currentAccount.get();
+//            //Key: filename, Value: directory
+//            organisation.getVerificationDocHashMap().put(filename, directory);
+//
+//            AccountEntity updatedAccount = (AccountEntity) organisation;
+//            updatedAccount = accountEntityRepository.save(updatedAccount);
+//            return updatedAccount;
+//        } else {// throw exception 
+//            throw new UploadOrganisationVerificationDocException("Unable to upload verification document.");
+//        }
+//    }
     @Transactional
     @Override
     public AccountEntity followProfile(Long accountId, Long followId) {
