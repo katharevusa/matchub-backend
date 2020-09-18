@@ -107,7 +107,7 @@ public class ProjectController {
 
     //upload projectProfilePic
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/updateProjectProfilePic")
-    public ProjectEntity updateProjectProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, Long projectId) throws ProjectNotFoundException {
+    public ProjectEntity updateProjectProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, @RequestParam("projectId") Long projectId) throws ProjectNotFoundException {
 
         String filePath = attachmentService.upload(profilePic);
 
@@ -116,30 +116,29 @@ public class ProjectController {
 
     //upload list of photos
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/uploadPhotos")
-    public ProjectEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, Long projectId) throws ProjectNotFoundException {
+    public ProjectEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, @RequestParam("projectId") Long projectId) throws ProjectNotFoundException {
         return projectService.uploadPhotos(projectId, photos);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/uploadDocuments")
-    public ProjectEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, Long projectId) throws ProjectNotFoundException {
+    public ProjectEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, @RequestParam("projectId") Long projectId) throws ProjectNotFoundException {
         return projectService.uploadDocuments(projectId, documents);
     }
-    
-    
+
     //upvote a project
     @RequestMapping(method = RequestMethod.POST, value = "/upvoteProject")
-    public ProjectEntity upvoteProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException{
+    public ProjectEntity upvoteProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException {
         return projectService.upvoteProject(projectId);
-        
+
     }
+
     @RequestMapping(method = RequestMethod.POST, value = "/downvoteProject")
-    public ProjectEntity downvoteProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId)throws ProjectNotFoundException,DownvoteProjectException{
-       return projectService.downvoteProject(projectId);
-        
+    public ProjectEntity downvoteProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException, DownvoteProjectException {
+        return projectService.downvoteProject(projectId);
+
     }
-    
-    
-        //get a list of projects based on SDGs: Filter projects based on SDGs
+
+    //get a list of projects based on SDGs: Filter projects based on SDGs
 //    @RequestMapping(method = RequestMethod.GET, value = "/searchProjectBySDGs")
 //    List<ProjectEntity> searchProjectBySDGs(@RequestParam (value = "SDGs", defaultValue = "")List<Long> sdgIds){
 //        return projectService.searchProjectBySDGs(sdgIds);
