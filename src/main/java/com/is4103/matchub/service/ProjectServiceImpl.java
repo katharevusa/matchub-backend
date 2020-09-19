@@ -374,6 +374,10 @@ public class ProjectServiceImpl implements ProjectService {
             throw new RevokeUpvoteException("Unable to revoke upvote: Please revoke downvote before you upvote the project ");
         }
         project.setUpvotes(project.getUpvotes() - 1);
+        
+        if (project.getUpvotes() < 20) {
+            project.setProjStatus(ProjectStatusEnum.ON_HOLD);
+        }
         profile.getUpvotedProjectIds().remove(projectId);
         project = projectEntityRepository.saveAndFlush(project);
 
