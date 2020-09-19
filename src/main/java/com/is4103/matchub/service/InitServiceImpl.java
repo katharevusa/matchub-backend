@@ -320,22 +320,33 @@ public class InitServiceImpl implements InitService {
 
         ResourceEntity bread = new ResourceEntity("Bread", "Free Bread", 10);
         bread.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_bread.jpg");
+        bread.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_bread.jpg");
+        bread.getPhotos().add("https://localhost:8443/api/v1/files/init/bread2.jpg");
         resourceService.createResource(bread, 1L, 2L);// category id, profileId
 
         ResourceEntity classroom = new ResourceEntity("Classroom", "Free classroom", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
         classroom.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_classroom.jpg");
+        classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_classroom.jpg");
+        classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/classroom.jpg");
+        
         resourceService.createResource(classroom, 2L, 2L);
 
         ResourceEntity water = new ResourceEntity("Water", "10 Free Bottle Water", 10);
         water.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_water.jpg");
+        water.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_water.jpg");
+        water.getPhotos().add("https://localhost:8443/api/v1/files/init/water1.jpg");
         resourceService.createResource(water, 3L, 3L);
 
         ResourceEntity laptop = new ResourceEntity("Laptop", "10 Laptop for free rent", 10);
         laptop.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_laptop.jpg");
+        laptop.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_laptop.jpg");
+        laptop.getPhotos().add("https://localhost:8443/api/v1/files/init/laptop.jpg");
         resourceService.createResource(laptop, 4L, 4L);
 
         ResourceEntity bus = new ResourceEntity("Bus", "1 BUS free for rent for 1 day ", LocalDateTime.parse("2021-09-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
         bus.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_bus.jpg");
+        bus.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_bus.jpg");
+        bus.getPhotos().add("https://localhost:8443/api/v1/files/init/bus.jpg");
         resourceService.createResource(bus, 5L, 5L);
 
     }
@@ -359,6 +370,10 @@ public class InitServiceImpl implements InitService {
         projectEntity1.setUpvotes(19);
         projectEntity1.setProjStatus(ProjectStatusEnum.ON_HOLD);
         projectEntity1.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project1.jpg");
+        projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/project1.jpg");
+        projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/Bangladesh.jpg");
+        projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/Bangladesh1.jpg");
+        projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/Bangladesh2.jpg");
         projectService.createProject(projectEntity1, 2L);
 
         ProjectEntity projectEntity2 = new ProjectEntity("Women's financial literacy, Malawi", "CARE will work with 20,000 women from 1,000 village savings and loans groups in Lilongwe, Dowa and Kasungu Districts, to overcome chronic hunger by expanding their farms or micro-businesses.", "Malawi", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
@@ -367,6 +382,10 @@ public class InitServiceImpl implements InitService {
         projectEntity2.setUpvotes(19);
         projectEntity2.setProjStatus(ProjectStatusEnum.ON_HOLD);
         projectEntity2.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project2.jpg");
+        projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/project2.jpg");
+        projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/woman1.jpg");
+        projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/woman2.jpg");
+        projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/woman3.jpg");
         projectService.createProject(projectEntity2, 2L);
 
         ProjectEntity projectEntity3 = new ProjectEntity("Supporting rural families, Cambodia", "To support rural family.", "Cambodia", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
@@ -374,6 +393,9 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getSdgs().add(zeroHunger);
         projectEntity3.setUpvotes(19);
         projectEntity3.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project3.jpg");
+        projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/project3.jpg");
+        projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural.jpg");
+        projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural2.jpg");
         projectService.createProject(projectEntity3, 2L);
 
         ProjectEntity projectEntity4 = new ProjectEntity("Building housing in Phnom Penh, Cambodia", "As an alternative to Schoolies, 18 Mosman High year 12 students are travelling to Cambodia to build houses for local Cambodians living in poverty.", "Cambodia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
@@ -383,6 +405,12 @@ public class InitServiceImpl implements InitService {
         projectEntity4.setUpvotes(19);
         projectEntity4.setProjStatus(ProjectStatusEnum.ON_HOLD);
         projectEntity4.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project4.jpg");
+        projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/project4.jpg");
+        projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building.jpg");
+        projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building2.jpg");
+        projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building3.jpg");
+        
+        
         projectService.createProject(projectEntity4, 3L);
 
         ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Papua New Guinea", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Cambodia", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
@@ -390,6 +418,11 @@ public class InitServiceImpl implements InitService {
         projectEntity5.getSdgs().add(goodHealth);
         projectEntity5.setUpvotes(19);
         projectEntity5.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project5.png");
+        projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/project5.png");
+        projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/water.jpg");
+        projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/water2.jpg");
+        projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/water3.jpg");
+        
         projectService.createProject(projectEntity5, 4L);
 
         ProjectEntity projectEntity6 = new ProjectEntity("Save endangered sea turtles in Panama", "This project will launch a sea turtle research and conservation program to protect endangered leatherback and hawksbill turtles that were found at Bocas del Drago, Panama.", "Panama", LocalDateTime.parse("2021-01-05T11:50:55"), LocalDateTime.parse("2025-06-05T11:50:55"));
@@ -397,6 +430,9 @@ public class InitServiceImpl implements InitService {
         projectEntity6.getSdgs().add(sustainableCities);
         projectEntity6.setUpvotes(19);
         projectEntity6.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project6.jpg");
+        projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/project6.jpg");
+        projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/turtles.jpg");
+        projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/turtles2.jpg");
         projectService.createProject(projectEntity6, 5L);
 
         ProjectEntity projectEntity7 = new ProjectEntity("Protect reefs through sustainable tourism in Indonesia", "To protect threatened coral reefs in Indonesia by uniting governments, NGOs and the diving and snorkelling industry to establish international environmental standards for marine tourism.", "Indonesia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
@@ -405,6 +441,11 @@ public class InitServiceImpl implements InitService {
         projectEntity7.setUpvotes(19);
         projectEntity7.getSdgs().add(responsibleConsumption);
         projectEntity7.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project7.jpg");
+        projectEntity7.getPhotos().add("https://localhost:8443/api/v1/files/init/project7.jpg");
+        projectEntity7.getPhotos().add("https://localhost:8443/api/v1/files/init/reef.jpg");
+        projectEntity7.getPhotos().add("https://localhost:8443/api/v1/files/init/reef2.jpg");
+        projectEntity7.getPhotos().add("https://localhost:8443/api/v1/files/init/reef3.jpg");
+               
         projectService.createProject(projectEntity7, 6L);
 
         ProjectEntity projectEntity8 = new ProjectEntity("Solar lamps for remote villages in the Peruvian Andes", "To supply a number of households in remote villages in the Andes with solar lamps and solar panels (that charge effectively with cloud cover).", "Peru", LocalDateTime.parse("2022-06-05T11:50:55"), LocalDateTime.parse("2030-06-05T11:50:55"));
@@ -413,6 +454,9 @@ public class InitServiceImpl implements InitService {
         projectEntity8.getSdgs().add(goodHealth);
         projectEntity8.setUpvotes(19);
         projectEntity8.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project8.jpg");
+        projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/project8.jpg");
+        projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/solar.jpg");
+        projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/solar2.jpg");
         projectService.createProject(projectEntity8, 6L);
 
     }
