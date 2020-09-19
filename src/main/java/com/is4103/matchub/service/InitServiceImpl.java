@@ -318,7 +318,7 @@ public class InitServiceImpl implements InitService {
 
     public void initResources() {
 
-        ResourceEntity bread = new ResourceEntity("Bread", "Free Bread", 10);
+        ResourceEntity bread = new ResourceEntity("Bread", "Free Bread", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
         bread.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_bread.jpg");
         resourceService.createResource(bread, 1L, 2L);// category id, profileId
 
@@ -326,11 +326,11 @@ public class InitServiceImpl implements InitService {
         classroom.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_classroom.jpg");
         resourceService.createResource(classroom, 2L, 2L);
 
-        ResourceEntity water = new ResourceEntity("Water", "10 Free Bottle Water", 10);
+        ResourceEntity water = new ResourceEntity("Water", "10 Free Bottle Water", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
         water.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_water.jpg");
         resourceService.createResource(water, 3L, 3L);
 
-        ResourceEntity laptop = new ResourceEntity("Laptop", "10 Laptop for free rent", 10);
+        ResourceEntity laptop = new ResourceEntity("Laptop", "10 Laptop for free rent", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
         laptop.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_laptop.jpg");
         resourceService.createResource(laptop, 4L, 4L);
 
