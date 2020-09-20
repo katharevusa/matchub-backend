@@ -43,7 +43,6 @@ import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import java.util.Set;
-import static org.bouncycastle.asn1.iana.IANAObjectIdentifiers.directory;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -564,12 +563,16 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void deleteProfilePic(Long accountId) {
+    public void deleteProfilePic(Long accountId) throws IOException {
         AccountEntity account = accountEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 
         if (account instanceof ProfileEntity) {
             ProfileEntity p = (ProfileEntity) account;
+
+            //call attachmentService to delete the actual file from build folder
+            attachmentService.deleteFile(p.getProfilePhoto());
+
             p.setProfilePhoto(null);
             accountEntityRepository.save(p);
         } else {

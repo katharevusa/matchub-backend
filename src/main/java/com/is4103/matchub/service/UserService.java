@@ -13,7 +13,6 @@ import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import org.springframework.data.domain.Page;
@@ -67,7 +66,7 @@ public interface UserService {
 
     void delete(Long id);
 
-    void deleteProfilePic(Long accountId);
+    void deleteProfilePic(Long accountId) throws IOException;
 
     void triggerResetPasswordEmail(String email) throws MessagingException, IOException;
 
