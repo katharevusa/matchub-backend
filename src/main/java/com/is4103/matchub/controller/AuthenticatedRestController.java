@@ -69,7 +69,7 @@ public class AuthenticatedRestController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProfilePict/{id}")
-    void deleteProfilePic(@PathVariable Long id) throws IOException {
+    AccountEntity deleteProfilePic(@PathVariable Long id) throws IOException {
         userService.deleteProfilePic(id);
     }
 

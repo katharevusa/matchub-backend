@@ -66,7 +66,7 @@ public interface UserService {
 
     void delete(Long id);
 
-    void deleteProfilePic(Long accountId) throws IOException;
+    AccountEntity deleteProfilePic(Long accountId) throws IOException;
 
     void triggerResetPasswordEmail(String email) throws MessagingException, IOException;
 

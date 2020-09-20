@@ -563,7 +563,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void deleteProfilePic(Long accountId) throws IOException {
+    public AccountEntity deleteProfilePic(Long accountId) throws IOException {
         AccountEntity account = accountEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 
@@ -575,6 +575,8 @@ public class UserServiceImpl implements UserService {
 
             p.setProfilePhoto(null);
             accountEntityRepository.save(p);
+
+            return p;
         } else {
             throw new DeleteProfilePictureException("Unable to delete profile picture of accountId: " + accountId);
         }
