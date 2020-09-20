@@ -70,7 +70,12 @@ public class AuthenticatedRestController {
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProfilePict/{id}")
     AccountEntity deleteProfilePic(@PathVariable Long id) throws IOException {
-        userService.deleteProfilePic(id);
+        return userService.deleteProfilePic(id);
+    }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "/deleteOrgVerificationDoc/{id}")
+    AccountEntity deleteOrgVerificationDoc(@PathVariable Long id, @RequestParam(value = "filenamewithextension") String filenamewithextension) throws IOException {
+        return userService.deleteOrgVerificationDoc(id, filenamewithextension);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateIndividual")

@@ -68,6 +68,8 @@ public interface UserService {
 
     AccountEntity deleteProfilePic(Long accountId) throws IOException;
 
+    AccountEntity deleteOrgVerificationDoc(Long accountId, String filenamewithextension) throws IOException;
+
     void triggerResetPasswordEmail(String email) throws MessagingException, IOException;
 
     AccountEntity changePassword(UUID uuid, ChangePasswordVO vo);
