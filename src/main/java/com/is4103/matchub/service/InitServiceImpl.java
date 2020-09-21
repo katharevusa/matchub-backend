@@ -121,7 +121,8 @@ public class InitServiceImpl implements InitService {
         alexLow.setCity("Singapore");
         alexLow.setProfilePhoto("https://localhost:8443/api/v1/files/init/alexlow.jpg");
         alexLow.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(3))));
-        alexLow.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8))));
+        alexLow.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9))));
+        
         List<SDGEntity> sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
@@ -149,8 +150,8 @@ public class InitServiceImpl implements InitService {
         ikjun.setCountry("South Korea");
         ikjun.setCity("Seoul");
         ikjun.setProfilePhoto("https://localhost:8443/api/v1/files/init/ikjun.jpeg");
-        ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3))));
-        ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8))));
+        ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3), Long.valueOf(9), Long.valueOf(10))));
+        ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9), Long.valueOf(10))));
 
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
@@ -206,7 +207,7 @@ public class InitServiceImpl implements InitService {
         genc.setCountry("Canada");
         genc.setCity("Toronto");
         genc.setProfilePhoto("https://localhost:8443/api/v1/files/init/genc.jpg");
-        genc.setFollowing(new HashSet<>(Arrays.asList(sophia.getAccountId())));
+        genc.setFollowing(new HashSet<>(Arrays.asList(sophia.getAccountId(), Long.valueOf(9))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         genc.setSdgs(sdgs);
@@ -222,7 +223,7 @@ public class InitServiceImpl implements InitService {
         networkForGood.getRoles().add(ProfileEntity.ROLE_USER);
         networkForGood.setJoinDate(LocalDateTime.now());
         //profile & organisation attributes
-        areasOfExpertise = new HashSet<>(Arrays.asList("Fundraising Platform", "All-In-One Donor Management System", "Fundraising Software)"));
+        areasOfExpertise = new HashSet<>(Arrays.asList("Fundraising Platform", "All-In-One Donor Management System", "Fundraising Software"));
         networkForGood.setAreasOfExpertise(areasOfExpertise);
         networkForGood.setEmployees(new HashSet<>(Arrays.asList(alexLow.getAccountId())));
         networkForGood.setCountryCode("+1");
@@ -230,7 +231,7 @@ public class InitServiceImpl implements InitService {
         networkForGood.setCountry("United States");
         networkForGood.setCity("Washington");
         networkForGood.setProfilePhoto("https://localhost:8443/api/v1/files/init/networkforgood.png");
-        networkForGood.setFollowing(new HashSet<>(Arrays.asList(alexLow.getAccountId(), ikjun.getAccountId())));
+        networkForGood.setFollowing(new HashSet<>(Arrays.asList(alexLow.getAccountId(), ikjun.getAccountId(), Long.valueOf(9))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(2)));
@@ -240,6 +241,69 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
         networkForGood.setSdgs(sdgs);
         accountEntityRepository.save(networkForGood);
+        
+        //4th individual
+        IndividualEntity songhwa = new IndividualEntity("songhwa@gmail.com", passwordEncoder.encode("password"), "Song Hwa", "Chae", GenderEnum.FEMALE);
+        //account attributes
+        songhwa.setUuid(UUID.randomUUID());
+        songhwa.setDisabled(Boolean.FALSE);
+        songhwa.setIsVerified(Boolean.TRUE);
+        songhwa.getRoles().add(ProfileEntity.ROLE_USER);
+        songhwa.setJoinDate(LocalDateTime.now());
+        //profile & individual attributes
+        songhwa.setProfileDescription("Actively taking small steps to Save the earth");
+        skillsets = new HashSet<>(Arrays.asList("Hiking", "Nature Lover", "Pet Lover", "Verified First Aider"));
+        songhwa.setSkillSet(skillsets);
+
+        songhwa.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(5), Long.valueOf(6), Long.valueOf(7))));
+
+        songhwa.setCountryCode("+82");
+        songhwa.setPhoneNumber("012-456-4321");
+        songhwa.setCountry("South Korea");
+        songhwa.setCity("Seoul");
+        songhwa.setProfilePhoto("https://localhost:8443/api/v1/files/init/songhwa.jpg");
+        songhwa.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(10))));
+        songhwa.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(5), Long.valueOf(7), Long.valueOf(8), Long.valueOf(10))));
+
+        sdgs = new ArrayList<>();
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(6)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
+        songhwa.setSdgs(sdgs);
+        accountEntityRepository.save(songhwa);
+        
+        //3rd organisation, accountId = 10
+        description = "The Korean Federation for Environmental Movement (KFEM) is a civic environmental "
+                + "organization that takes progressive actions to support core values of life, peace, "
+                + "ecology, and bottom-up participation in harmony with the Mother Nature.";
+        OrganisationEntity kfem = new OrganisationEntity("kfem@gmail.com", passwordEncoder.encode("password"), "Korean Federation for Environmental Movement", description, "23, Pirundae-ro, Jongno-gu, Seoul, Korea 110-806");
+        //account attributes
+        kfem.setUuid(UUID.randomUUID());
+        kfem.setDisabled(Boolean.FALSE);
+        kfem.setIsVerified(Boolean.TRUE);
+        kfem.getRoles().add(ProfileEntity.ROLE_USER);
+        kfem.setJoinDate(LocalDateTime.now());
+        //profile & organisation attributes
+        areasOfExpertise = new HashSet<>(Arrays.asList("Nuclear Energy", "Climate Change", "Ocean Protection"));
+        kfem.setAreasOfExpertise(areasOfExpertise);
+        kfem.setEmployees(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId())));
+        kfem.setCountryCode("+82");
+        kfem.setPhoneNumber("02-735-7000");
+        kfem.setCountry("South Korea");
+        kfem.setCity("Seoul");
+        kfem.setProfilePhoto("https://localhost:8443/api/v1/files/init/kfem.png");
+        kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId())));
+        kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId())));
+        sdgs = new ArrayList<>();
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(6)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(12)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(15)));
+        kfem.setSdgs(sdgs);
+        accountEntityRepository.save(kfem);
     }
 
     private void initSDG() {
