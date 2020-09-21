@@ -93,6 +93,7 @@ public class AttachmentServiceImpl implements AttachmentService {
     }
 
     @Override
+    @Transactional
     public Boolean deleteFile(String directory) throws IOException {
         String substring = directory.substring(35);
 //        System.out.println(substring);

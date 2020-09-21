@@ -11,6 +11,7 @@ import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
+import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
 import java.util.UUID;
@@ -68,7 +69,8 @@ public interface UserService {
 
     AccountEntity deleteProfilePic(Long accountId) throws IOException;
 
-    AccountEntity deleteOrgVerificationDoc(Long accountId, String filenamewithextension) throws IOException;
+//    AccountEntity deleteOrgVerificationDoc(Long accountId, String filenamewithextension) throws IOException;
+    AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteOrganisationDocumentsVO filenameswithextension) throws IOException;
 
     void triggerResetPasswordEmail(String email) throws MessagingException, IOException;
 
