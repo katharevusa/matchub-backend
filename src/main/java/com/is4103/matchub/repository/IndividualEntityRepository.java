@@ -18,6 +18,10 @@ import org.springframework.data.jpa.repository.Query;
  * @author ngjin
  */
 public interface IndividualEntityRepository extends JpaRepository<IndividualEntity, Long> {
+    
+    @Query(value = "SELECT DISTINCT i FROM IndividualEntity i",
+            countQuery = "SELECT COUNT(i) FROM IndividualEntity i")
+    Page<IndividualEntity> findAll(Pageable pageable);
 
     @Query(value = "SELECT i FROM IndividualEntity i WHERE i.firstName LIKE %?1% OR i.lastName LIKE %?1% OR i.email LIKE %?1%",
             countQuery = "SELECT COUNT(i) FROM IndividualEntity i WHERE i.firstName LIKE %?1% OR i.lastName LIKE %?1% OR i.email LIKE %?1%")

@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
 import com.is4103.matchub.repository.IndividualEntityRepository;
+import com.is4103.matchub.repository.OrganisationEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.repository.TaskEntityRepository;
@@ -86,6 +87,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private IndividualEntityRepository individualEntityRepository;
+    
+     @Autowired
+    private OrganisationEntityRepository organisationEntityRepository;
 
     @Transactional
     @Override
@@ -737,6 +741,17 @@ public class UserServiceImpl implements UserService {
             page = individualEntityRepository.findAll(pageable);
         } else {
             page = individualEntityRepository.searchIndividuals(search, pageable);
+        }
+        return page;
+    }
+    
+    @Override
+    public Page<OrganisationEntity> searchOrganisations(String search, Pageable pageable) {
+        Page<OrganisationEntity> page;
+        if (search.isEmpty()) {
+            page = organisationEntityRepository.findAll(pageable);
+        } else {
+            page = organisationEntityRepository.searchOrganisations(search, pageable);
         }
         return page;
     }

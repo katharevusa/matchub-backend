@@ -82,4 +82,6 @@ public interface UserService {
 
     Page<IndividualEntity> searchIndividuals(String search, Pageable pageable);
 
+    Page<OrganisationEntity> searchOrganisations(String search, Pageable pageable);
+
 }

@@ -155,4 +155,9 @@ public class AuthenticatedRestController {
     Page<IndividualEntity> searchIndividuals(@RequestParam(value = "search") String search, Pageable pageable) {
         return userService.searchIndividuals(search, pageable);
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/searchOrganisations")
+    Page<OrganisationEntity> searchOrganisations(@RequestParam(value = "search") String search, Pageable pageable) {
+        return userService.searchOrganisations(search, pageable);
+    }
 }
