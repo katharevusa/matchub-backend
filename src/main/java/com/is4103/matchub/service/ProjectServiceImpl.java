@@ -343,6 +343,10 @@ public class ProjectServiceImpl implements ProjectService {
             throw new DownvoteProjectException("Unable to downvote project: Minimum 0 upvotes");
         }
         
+        if (project.getUpvotes() < 20) {
+            project.setProjStatus(ProjectStatusEnum.ON_HOLD);
+        }
+        
         project.setUpvotes(project.getUpvotes() - 1);
         profile.getDownvotedProjectIds().add(projectId);
         project = projectEntityRepository.saveAndFlush(project);
@@ -407,6 +411,10 @@ public class ProjectServiceImpl implements ProjectService {
 
         if(profile.getUpvotedProjectIds().contains(projectId)){
             throw new RevokeDownvoteException("Unable to revoke downvote: Please revoke upvote before you downvote the project ");
+        }
+        
+        if (project.getUpvotes() >= 20) {
+            project.setProjStatus(ProjectStatusEnum.ACTIVE);
         }
         
         project.setUpvotes(project.getUpvotes() + 1);
