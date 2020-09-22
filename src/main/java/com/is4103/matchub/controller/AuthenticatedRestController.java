@@ -1,10 +1,12 @@
 package com.is4103.matchub.controller;
 
+import com.google.firebase.auth.FirebaseAuthException;
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.service.AttachmentService;
+import com.is4103.matchub.service.FirebaseService;
 import com.is4103.matchub.service.UserService;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
@@ -12,7 +14,6 @@ import com.is4103.matchub.vo.ChangePasswordVO;
 import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,9 +37,17 @@ public class AuthenticatedRestController {
     @Autowired
     AttachmentService attachmentService;
 
+    @Autowired
+    FirebaseService firebaseService;
+
     @RequestMapping(method = RequestMethod.GET, value = "/me")
     AccountEntity getMe(Principal principal) {
         return userService.getAccount(principal.getName());
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/firebaseToken/{uuid}")
+    String getFirebaseToken(@PathVariable UUID uuid) throws FirebaseAuthException {
+        return firebaseService.issueFirebaseCustomToken(uuid);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{id}")
