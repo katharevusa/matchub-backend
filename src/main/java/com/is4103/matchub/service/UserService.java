@@ -11,9 +11,9 @@ import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
+import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import org.springframework.data.domain.Page;
@@ -67,7 +67,10 @@ public interface UserService {
 
     void delete(Long id);
 
-    void deleteProfilePic(Long accountId);
+    AccountEntity deleteProfilePic(Long accountId) throws IOException;
+
+//    AccountEntity deleteOrgVerificationDoc(Long accountId, String filenamewithextension) throws IOException;
+    AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteOrganisationDocumentsVO filenameswithextension) throws IOException;
 
     void triggerResetPasswordEmail(String email) throws MessagingException, IOException;
 
