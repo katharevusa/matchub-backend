@@ -17,6 +17,8 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.vo.ResourceVO;
+import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -157,6 +159,24 @@ public class ResourceServiceImpl implements ResourceService {
 
         return resourceEntityRepository.saveAndFlush(resource);
     }
+    
+     @Override 
+    public ResourceEntity deleteResourceProfilePic(Long resourceId)throws ResourceNotFoundException,UpdateResourceException, IOException  {
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException("Resource not found");
+        }
+        ResourceEntity resource = resourceOptional.get();
+        if(resource.getResourceProfilePic()== null){
+            throw new UpdateResourceException("Unable to delete profile picture: the resource currently does not have a profile picture  ");
+        }
+        attachmentService.deleteFile(resource.getResourceProfilePic());
+        resource.setResourceProfilePic(null);
+        
+        return resourceEntityRepository.saveAndFlush(resource);
+        
+    }
+    
 
     @Override
     public ResourceEntity uploadPhotos(Long resourceId, MultipartFile[] photos) throws ResourceNotFoundException {
@@ -172,6 +192,27 @@ public class ResourceServiceImpl implements ResourceService {
 
         }
         return resourceEntityRepository.saveAndFlush(resource);
+    }
+    @Override
+    public ResourceEntity deletePhotos (Long resourceId, String[] photoToDelete)throws ResourceNotFoundException, IOException, UpdateResourceException{
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException("Resource not exist");
+        }
+        ResourceEntity resource = resourceOptional.get();
+        
+        for(String s : photoToDelete){
+            if(!resource.getPhotos().contains(s)){
+                throw new UpdateResourceException("Unable to delete photos: photos not found");
+            }
+        }
+        
+        for(String s: photoToDelete){
+            resource.getPhotos().remove(s);
+            attachmentService.deleteFile(s);      
+        }
+        
+        return resourceEntityRepository.saveAndFlush(resource);     
     }
 
     @Override
@@ -190,6 +231,42 @@ public class ResourceServiceImpl implements ResourceService {
 
         }
         return resourceEntityRepository.saveAndFlush(resource);
+    }
+    
+    @Override 
+    public ResourceEntity deleteDocuments(Long resourceId, String[] docsToDelete) throws IOException,ResourceNotFoundException, UpdateResourceException {
+       Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+        if (!resourceOptional.isPresent()) {
+            throw new ResourceNotFoundException("Resource not exist");
+        }
+        ResourceEntity resource = resourceOptional.get();
+        Map<String, String> hashmap = resource.getDocuments();
+
+            //loop 1: check if all the documents are present
+            for (String key : docsToDelete) {
+                //get the path of the document to delete
+                String selectedDocumentPath = hashmap.get(key);
+                if (selectedDocumentPath == null) {
+                    throw new UpdateResourceException("Unable to delete resource document (Document not found): " + key);
+                }
+            }
+            
+            //loop2: delete the actual file when all files are present
+            for (String key : docsToDelete) {
+                //get the path of the document to delete
+                String selectedDocumentPath = hashmap.get(key);
+                //if file is present, call attachmentService to delete the actual file from /build folder
+                attachmentService.deleteFile(selectedDocumentPath);
+
+                //successfully removed the actual file from /build folder, update organisation hashmap
+                hashmap.remove(key);
+            }
+            
+            //save once all documents are removed successfully
+            resource.setDocuments(hashmap);
+            return resourceEntityRepository.saveAndFlush(resource);
+            
+        
     }
     
     @Override

@@ -12,6 +12,7 @@ import com.is4103.matchub.exception.TerminateResourceException;
 import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.vo.ResourceVO;
+import java.io.IOException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,5 +33,8 @@ public interface ResourceService {
    public ResourceEntity uploadPhotos(Long resourceId, MultipartFile[] photos) throws ResourceNotFoundException;
    public ResourceEntity uploadDocuments(Long resourceId, MultipartFile[] documents) throws ResourceNotFoundException;
    public ResourceEntity terminateResource(Long resourceId, Long terminatorId)throws  ResourceNotFoundException, TerminateResourceException;
-  
+   public ResourceEntity deleteDocuments(Long resourceId, String[] docsToDelete) throws IOException,ResourceNotFoundException, UpdateResourceException;
+   public ResourceEntity deletePhotos (Long resourceId, String[] photoToDelete)throws ResourceNotFoundException, IOException, UpdateResourceException;
+   public ResourceEntity deleteResourceProfilePic(Long resourceId)throws ResourceNotFoundException,UpdateResourceException, IOException;
+   
 }
