@@ -1,6 +1,5 @@
 package com.is4103.matchub.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,11 +8,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.security.oauth2.common.exceptions.InvalidRequestException;
 
 @Service
@@ -93,5 +90,24 @@ public class AttachmentServiceImpl implements AttachmentService {
             }
         }
         throw new InvalidRequestException("Invalid file extension: " + fileExtension);
+    }
+
+    @Override
+    @Transactional
+    public Boolean deleteFile(String directory) throws IOException {
+        String substring = directory.substring(35);
+//        System.out.println(substring);
+
+        String pathToDelete = imageDirectory + substring;
+//        System.out.println(pathToDelete);
+
+        Path fileToDeletePath = Paths.get(pathToDelete);
+        try {
+            Files.delete(fileToDeletePath);
+            return true;
+        } catch (IOException ex) {
+            throw new IOException("Unable to delete file: " + directory);
+        }
+
     }
 }

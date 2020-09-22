@@ -5,7 +5,9 @@
  */
 package com.is4103.matchub.exception;
 
+import com.google.firebase.auth.FirebaseAuthException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import javax.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,6 +96,26 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = NoSuchFileException.class)
+    public ResponseEntity<ExceptionResponse> unableToDeleteFile(NoSuchFileException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Failed to delete file");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = DeleteOrganisationVerificationDocumentException.class)
+    public ResponseEntity<ExceptionResponse> unableToDeleteOrganisationDoc(DeleteOrganisationVerificationDocumentException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Failed to delete organisation document");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = DeleteProfilePictureException.class)
@@ -245,7 +267,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = RevokeDownvoteException.class)
     public ResponseEntity<ExceptionResponse> revokeDownvoteException(RevokeDownvoteException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -255,11 +277,21 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-     @ExceptionHandler(value = RevokeUpvoteException.class)
+
+    @ExceptionHandler(value = RevokeUpvoteException.class)
     public ResponseEntity<ExceptionResponse> revokeUpvoteException(RevokeUpvoteException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to revoke upvote for this project");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = FirebaseAuthException.class)
+    public ResponseEntity<ExceptionResponse> firebaseAuthException(FirebaseAuthException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to authenticate user on Firebase");
         response.setErrorMessage(ex.getMessage());
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 

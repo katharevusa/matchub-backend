@@ -17,7 +17,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 /**
  *
  * @author longluqian
@@ -28,25 +27,28 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CommentEntity {
+
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long commentId;
-    
+
     @Column(nullable = false)
     @NotNull
     private String content;
-    
+
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @NotNull
     private LocalDateTime timeCreated;
 
-    public CommentEntity(String content, LocalDateTime timeCreated) {
-        
+    @Column(nullable = false)
+    @NotNull
+    private Long accountId;
+
+    public CommentEntity(String content, LocalDateTime timeCreated, Long accountId) {
         this.content = content;
         this.timeCreated = timeCreated;
+        this.accountId = accountId;
     }
-    
-    
-    
+
 }
