@@ -13,6 +13,7 @@ import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.ResourceService;
 import com.is4103.matchub.vo.ResourceVO;
+import java.io.IOException;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -74,16 +75,31 @@ public class ResourceController {
     public ResourceEntity updateResourceProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, @RequestParam("resourceId") Long resourceId) throws ResourceNotFoundException {
         return resourceService.setResourceProfilePic(resourceId, profilePic);
     }
+    
+     @RequestMapping(method = RequestMethod.DELETE, value = "/updateResource/deleteProfilePic")
+    public ResourceEntity deleteResourceProfilePic(@RequestParam(value = "resourceId") Long resourceId) throws ResourceNotFoundException,UpdateResourceException,IOException{
+        return resourceService.deleteResourceProfilePic(resourceId);
+    }
 
     //upload list of photos
     @RequestMapping(method = RequestMethod.POST, value = "/updateResource/uploadPhotos")
     public ResourceEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, @RequestParam("resourceId") Long resourceId) throws ResourceNotFoundException {
         return resourceService.uploadPhotos(resourceId, photos);
     }
+    
+     @RequestMapping(method = RequestMethod.DELETE, value = "/updateResource/deletePhotos")
+    public ResourceEntity deletePhotos(@RequestParam(value = "resourceId") Long resourceId, @RequestParam(value = "photosToDelete") String[] photosToDelete ) throws ResourceNotFoundException,UpdateResourceException,IOException{
+        return resourceService.deletePhotos(resourceId, photosToDelete);
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateResource/uploadDocuments")
     public ResourceEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, @RequestParam(value = "resourceId") Long resourceId) throws ResourceNotFoundException {
         return resourceService.uploadDocuments(resourceId, documents);
+    }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "/updateResource/deleteDocuments")
+    public ResourceEntity deleteDocuments(@RequestParam(value = "resourceId") Long resourceId, @RequestParam(value = "docsToDelete") String[] docsToDelete ) throws ResourceNotFoundException,UpdateResourceException,IOException{
+        return resourceService.deleteDocuments(resourceId, docsToDelete);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/terminateResource")

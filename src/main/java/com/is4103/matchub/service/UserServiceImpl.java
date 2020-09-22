@@ -667,11 +667,10 @@ public class UserServiceImpl implements UserService {
 
         if (account instanceof OrganisationEntity) {
             OrganisationEntity o = (OrganisationEntity) account;
+            Map<String, String> hashmap = o.getVerificationDocHashMap();
 
             //loop 1: check if all the documents are present
             for (String key : docsToDelete.getFileNamesWithExtension()) {
-                Map<String, String> hashmap = o.getVerificationDocHashMap();
-
                 //get the path of the document to delete
                 String selectedDocumentPath = hashmap.get(key);
                 if (selectedDocumentPath == null) {
@@ -681,23 +680,17 @@ public class UserServiceImpl implements UserService {
 
             //loop2: delete the actual file when all files are present
             for (String key : docsToDelete.getFileNamesWithExtension()) {
-                Map<String, String> hashmap = o.getVerificationDocHashMap();
-
                 //get the path of the document to delete
-                String selectedDocumentPath = hashmap.get(key);
-                if (selectedDocumentPath == null) {
-                    throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation document (Document not found): " + key);
-                }
-
+                String selectedDocumentPath = hashmap.get(key);             
                 //if file is present, call attachmentService to delete the actual file from /build folder
                 attachmentService.deleteFile(selectedDocumentPath);
-
                 //successfully removed the actual file from /build folder, update organisation hashmap
                 hashmap.remove(key);
             }
-
             //save once all documents are removed successfully
-            accountEntityRepository.save(o);
+            o.setVerificationDocHashMap(hashmap);
+            accountEntityRepository.saveAndFlush(o);
+            
             return o;
         } else {
             throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation documents for organisation with accountId: " + accountId);
