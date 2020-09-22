@@ -22,11 +22,14 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.vo.ProjectCreateVO;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.o;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -242,6 +245,23 @@ public class ProjectServiceImpl implements ProjectService {
 
         return project;
     }
+    
+    @Override 
+    public ProjectEntity deleteProjectProfilePic(Long projectId) throws  ProjectNotFoundException, UpdateProjectException,IOException{
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Project not exist");
+        }
+        ProjectEntity project = projectOptional.get();
+        if(project.getProjectProfilePic()== null){
+            throw new UpdateProjectException("Unable to delete profile picture: You currently do not have a profile picture  ");
+        }
+        attachmentService.deleteFile(project.getProjectProfilePic());
+        project.setProjectProfilePic(null);
+        
+        return projectEntityRepository.saveAndFlush(project);
+        
+    }
 
     @Override
     public ProjectEntity uploadPhotos(Long projectId, MultipartFile[] photos) throws ProjectNotFoundException {
@@ -259,7 +279,29 @@ public class ProjectServiceImpl implements ProjectService {
         project = projectEntityRepository.saveAndFlush(project);
         return project;
     }
-
+    
+    @Override
+    public ProjectEntity deletePhotos (Long projectId, String[] photoToDelete)throws ProjectNotFoundException, IOException, UpdateProjectException{
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Project not exist");
+        }
+        ProjectEntity project = projectOptional.get();
+        
+        for(String s : photoToDelete){
+            if(!project.getPhotos().contains(s)){
+                throw new UpdateProjectException("Unable to delete photos: photos not found");
+            }
+        }
+        
+        for(String s: photoToDelete){
+            project.getPhotos().remove(s);
+            attachmentService.deleteFile(s);
+        }
+        
+        return projectEntityRepository.saveAndFlush(project);     
+    }
+    
     @Override
     public ProjectEntity uploadDocuments(Long projectId, MultipartFile[] documents) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
@@ -277,6 +319,41 @@ public class ProjectServiceImpl implements ProjectService {
         }
         project = projectEntityRepository.saveAndFlush(project);
         return project;
+    }
+   @Override 
+    public ProjectEntity deleteDocuments(Long projectId, String[] docsToDelete) throws IOException,ProjectNotFoundException, UpdateProjectException {
+       Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Project not exist");
+        }
+        ProjectEntity project = projectOptional.get();
+        Map<String, String> hashmap = project.getDocuments();
+
+            //loop 1: check if all the documents are present
+            for (String key : docsToDelete) {
+                //get the path of the document to delete
+                String selectedDocumentPath = hashmap.get(key);
+                if (selectedDocumentPath == null) {
+                    throw new UpdateProjectException("Unable to delete project document (Document not found): " + key);
+                }
+            }
+            
+            //loop2: delete the actual file when all files are present
+            for (String key : docsToDelete) {
+                //get the path of the document to delete
+                String selectedDocumentPath = hashmap.get(key);
+                //if file is present, call attachmentService to delete the actual file from /build folder
+                attachmentService.deleteFile(selectedDocumentPath);
+
+                //successfully removed the actual file from /build folder, update organisation hashmap
+                hashmap.remove(key);
+            }
+            
+            //save once all documents are removed successfully
+            project.setDocuments(hashmap);
+            return projectEntityRepository.saveAndFlush(project);
+            
+        
     }
 
     @Override

@@ -16,9 +16,11 @@ import org.springframework.security.oauth2.common.exceptions.InvalidRequestExcep
 @Service
 @Transactional
 public class AttachmentServiceImpl implements AttachmentService {
-
+   //upload.image.extensions=jpg,png,pdf,docx,pptx,xlsx,jpeg
     @Value("${upload.image.extensions}")
     private String validImageExtensions;
+    
+    //upload.file.directory=build
 
     @Value("${upload.file.directory}/resources/main/files")
     private String imageDirectory;
@@ -54,7 +56,6 @@ public class AttachmentServiceImpl implements AttachmentService {
         try {
 //            System.out.println("Uploaded File To: " + directory);
             File temp;
-
             temp = new File(imageDirectory);
             temp.mkdirs();
             fileName = File.createTempFile("att-", "." + extension, temp);

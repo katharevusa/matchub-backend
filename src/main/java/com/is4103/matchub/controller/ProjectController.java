@@ -15,6 +15,7 @@ import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.ProjectService;
 import com.is4103.matchub.vo.ProjectCreateVO;
+import java.io.IOException;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,17 +114,35 @@ public class ProjectController {
 
         return projectService.setProjectProfilePic(projectId, filePath);
     }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "/updateProject/deleteProfilePic")
+    public ProjectEntity deleteProjectProfilePic(@RequestParam(value = "projectId") Long projectId) throws ProjectNotFoundException,UpdateProjectException,IOException{
+        return projectService.deleteProjectProfilePic(projectId);
+    }
 
     //upload list of photos
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/uploadPhotos")
     public ProjectEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, @RequestParam("projectId") Long projectId) throws ProjectNotFoundException {
         return projectService.uploadPhotos(projectId, photos);
     }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "/updateProject/deletePhotos")
+    public ProjectEntity deletePhotos(@RequestParam(value = "projectId") Long projectId, @RequestParam(value = "photosToDelete") String[] photosToDelete ) throws ProjectNotFoundException,UpdateProjectException,IOException{
+        return projectService.deletePhotos(projectId, photosToDelete);
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/uploadDocuments")
     public ProjectEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, @RequestParam("projectId") Long projectId) throws ProjectNotFoundException {
         return projectService.uploadDocuments(projectId, documents);
     }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "/updateProject/deleteDocuments")
+    public ProjectEntity deleteDocuments(@RequestParam(value = "projectId") Long projectId, @RequestParam(value = "docsToDelete") String[] docsToDelete ) throws ProjectNotFoundException,UpdateProjectException,IOException{
+        return projectService.deleteDocuments(projectId, docsToDelete);
+    }
+    
+    
+    
 
 
     //get a list of projects based on SDGs: Filter projects based on SDGs
