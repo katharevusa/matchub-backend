@@ -10,7 +10,6 @@ import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import java.security.Principal;
-import java.util.List;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +41,11 @@ public class AuthenticatedRestController {
     @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{id}")
     AccountEntity getAccount(@PathVariable Long id) {
         return userService.getAccount(id);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getAccountsByIds")
+    Page<AccountEntity> getAccountsByIds(@RequestParam(value = "ids") Long[] ids, Pageable pageable) {
+        return userService.getAccountsByIds(ids, pageable);
     }
 
 //    @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{uuid}")
@@ -121,5 +125,13 @@ public class AuthenticatedRestController {
 
         System.out.println("uploaded file successfully: relative pathImage is " + filePath);
         return userService.setProfilePic(uuid, filePath);
+    }
+
+    /*
+     * SEARCH METHOD CALLS HERE
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/searchIndividuals")
+    Page<IndividualEntity> searchIndividuals(@RequestParam(value = "search") String search, Pageable pageable) {
+        return userService.searchIndividuals(search, pageable);
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.repository.IndividualEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.repository.TaskEntityRepository;
@@ -42,8 +43,8 @@ import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
+import java.util.List;
 import java.util.Set;
-import static org.bouncycastle.asn1.iana.IANAObjectIdentifiers.directory;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -79,6 +80,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ProfileEntityRepository profileEntityRepository;
+
+    @Autowired
+    private IndividualEntityRepository individualEntityRepository;
 
     @Transactional
     @Override
@@ -368,6 +372,11 @@ public class UserServiceImpl implements UserService {
         return account;
     }
 
+    @Override
+    public Page<AccountEntity> getAccountsByIds(Long[] ids, Pageable pageable) {
+        return accountEntityRepository.getAccountsByIds(ids, pageable);
+    }
+
 //    @Override
 //    public List<AccountEntity> getAllAccounts() {
 //        return accountEntityRepository.findAll();
@@ -609,4 +618,16 @@ public class UserServiceImpl implements UserService {
         }
         return accountPage.map((a) -> UserVO.of(a));
     }
+
+    @Override
+    public Page<IndividualEntity> searchIndividuals(String search, Pageable pageable) {
+        Page<IndividualEntity> page;
+        if (search.isEmpty()) {
+            page = individualEntityRepository.findAll(pageable);
+        } else {
+            page = individualEntityRepository.searchIndividuals(search, pageable);
+        }
+        return page;
+    }
+
 }

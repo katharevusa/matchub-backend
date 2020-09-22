@@ -49,6 +49,8 @@ public interface UserService {
 
     AccountEntity getAccount(UUID uuid);
 
+    Page<AccountEntity> getAccountsByIds(Long[] ids, Pageable pageable);
+
 //    List<AccountEntity> getAllAccounts();
 //    List<AccountEntity> getAllActiveAccounts();
     Page<AccountEntity> getAllAccounts(Pageable pageable);
@@ -74,5 +76,7 @@ public interface UserService {
     AccountEntity changePassword(UUID uuid, ChangePasswordVO vo);
 
     Page<UserVO> search(String search, Pageable pageable);
+
+    Page<IndividualEntity> searchIndividuals(String search, Pageable pageable);
 
 }
