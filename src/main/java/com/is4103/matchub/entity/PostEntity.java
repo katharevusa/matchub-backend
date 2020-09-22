@@ -41,7 +41,7 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
     
-    @Column(nullable= false)
+    @Column(nullable= false, length = 1000)
     @NotNull
     private String content;
     
