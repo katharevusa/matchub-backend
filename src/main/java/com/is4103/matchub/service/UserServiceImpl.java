@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.exception.DeleteOrganisationVerificationDocumentException;
 import com.is4103.matchub.exception.DeleteProfilePictureException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.exception.EmailExistException;
@@ -42,8 +43,9 @@ import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
+import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
+import java.util.Map;
 import java.util.Set;
-import static org.bouncycastle.asn1.iana.IANAObjectIdentifiers.directory;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -564,16 +566,133 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public void deleteProfilePic(Long accountId) {
+    public AccountEntity deleteProfilePic(Long accountId) throws IOException {
         AccountEntity account = accountEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 
         if (account instanceof ProfileEntity) {
             ProfileEntity p = (ProfileEntity) account;
+
+            //call attachmentService to delete the actual file from /build folder
+            attachmentService.deleteFile(p.getProfilePhoto());
+
             p.setProfilePhoto(null);
             accountEntityRepository.save(p);
+
+            return p;
         } else {
             throw new DeleteProfilePictureException("Unable to delete profile picture of accountId: " + accountId);
+        }
+    }
+
+//    @Transactional
+//    @Override
+//    public AccountEntity deleteOrgVerificationDoc(Long accountId, String filenamewithextension) throws IOException {
+//        AccountEntity account = accountEntityRepository.findById(accountId)
+//                .orElseThrow(() -> new UserNotFoundException(accountId));
+//
+//        if (account instanceof OrganisationEntity) {
+//            OrganisationEntity o = (OrganisationEntity) account;
+//
+//            Map<String, String> hashmap = o.getVerificationDocHashMap();
+//
+//            //get the path of the document to delete
+//            String selectedDocumentPath = hashmap.get(filenamewithextension);
+//            if (selectedDocumentPath == null) {
+//                throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation document (Document not found): " + filenamewithextension);
+//            }
+//
+//            //if file is present, call attachmentService to delete the actual file from /build folder
+//            attachmentService.deleteFile(selectedDocumentPath);
+//
+//            //successfully removed the actual file from /build folder, update organisation hashmap
+//            hashmap.remove(filenamewithextension);
+//
+//            accountEntityRepository.save(o);
+//
+//            return o;
+//        } else {
+//            throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation document: " + filenamewithextension);
+//        }
+//    }
+    
+//    does not reflect the most updated instance 
+//    @Transactional
+//    @Override
+//    public AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteOrganisationDocumentsVO docsToDelete) throws IOException {
+//        AccountEntity account = accountEntityRepository.findById(accountId)
+//                .orElseThrow(() -> new UserNotFoundException(accountId));
+//
+//        if (account instanceof OrganisationEntity) {
+//            OrganisationEntity o = (OrganisationEntity) account;
+//
+//            for (String key : docsToDelete.getFileNamesWithExtension()) {
+//                Map<String, String> hashmap = o.getVerificationDocHashMap();
+//
+//                //get the path of the document to delete
+//                String selectedDocumentPath = hashmap.get(key);
+//                if (selectedDocumentPath == null) {
+//                    throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation document (Document not found): " + key);
+//                }
+//
+//                //if file is present, call attachmentService to delete the actual file from /build folder
+//                attachmentService.deleteFile(selectedDocumentPath);
+//
+//                //successfully removed the actual file from /build folder, update organisation hashmap
+//                hashmap.remove(key);
+//
+//            }
+//
+//            //save once all documents are removed successfully
+//            accountEntityRepository.save(o);
+//            return o;
+//        } else {
+//            throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation documents for organisation with accountId: " + accountId);
+//        }
+//    }
+    
+    @Transactional
+    @Override
+    public AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteOrganisationDocumentsVO docsToDelete) throws IOException {
+        AccountEntity account = accountEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        if (account instanceof OrganisationEntity) {
+            OrganisationEntity o = (OrganisationEntity) account;
+
+            //loop 1: check if all the documents are present
+            for (String key : docsToDelete.getFileNamesWithExtension()) {
+                Map<String, String> hashmap = o.getVerificationDocHashMap();
+
+                //get the path of the document to delete
+                String selectedDocumentPath = hashmap.get(key);
+                if (selectedDocumentPath == null) {
+                    throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation document (Document not found): " + key);
+                }
+            }
+            
+            //loop2: delete the actual file when all files are present
+            for (String key : docsToDelete.getFileNamesWithExtension()) {
+                Map<String, String> hashmap = o.getVerificationDocHashMap();
+
+                //get the path of the document to delete
+                String selectedDocumentPath = hashmap.get(key);
+                if (selectedDocumentPath == null) {
+                    throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation document (Document not found): " + key);
+                }
+
+                //if file is present, call attachmentService to delete the actual file from /build folder
+                attachmentService.deleteFile(selectedDocumentPath);
+
+                //successfully removed the actual file from /build folder, update organisation hashmap
+                hashmap.remove(key);
+            }
+
+            //save once all documents are removed successfully
+            accountEntityRepository.save(o);
+            return o;
+        } else {
+            throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation documents for organisation with accountId: " + accountId);
         }
     }
 
