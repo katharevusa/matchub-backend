@@ -47,6 +47,7 @@ import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import java.util.List;
 import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
+import com.is4103.matchub.vo.GetAccountsByUuidVO;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.web.multipart.MultipartFile;
@@ -87,8 +88,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private IndividualEntityRepository individualEntityRepository;
-    
-     @Autowired
+
+    @Autowired
     private OrganisationEntityRepository organisationEntityRepository;
 
     @Transactional
@@ -382,6 +383,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public Page<AccountEntity> getAccountsByIds(Long[] ids, Pageable pageable) {
         return accountEntityRepository.getAccountsByIds(ids, pageable);
+    }
+
+    @Override
+    public Page<AccountEntity> getAccountsByUuid(UUID[] uuid, Pageable pageable) {
+        return accountEntityRepository.getAccountsByUuid(uuid, pageable);
     }
 
 //    @Override
@@ -685,7 +691,7 @@ public class UserServiceImpl implements UserService {
             //loop2: delete the actual file when all files are present
             for (String key : docsToDelete.getFileNamesWithExtension()) {
                 //get the path of the document to delete
-                String selectedDocumentPath = hashmap.get(key);             
+                String selectedDocumentPath = hashmap.get(key);
                 //if file is present, call attachmentService to delete the actual file from /build folder
                 attachmentService.deleteFile(selectedDocumentPath);
                 //successfully removed the actual file from /build folder, update organisation hashmap
@@ -694,7 +700,7 @@ public class UserServiceImpl implements UserService {
             //save once all documents are removed successfully
             o.setVerificationDocHashMap(hashmap);
             accountEntityRepository.saveAndFlush(o);
-            
+
             return o;
         } else {
             throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation documents for organisation with accountId: " + accountId);
@@ -744,7 +750,7 @@ public class UserServiceImpl implements UserService {
         }
         return page;
     }
-    
+
     @Override
     public Page<OrganisationEntity> searchOrganisations(String search, Pageable pageable) {
         Page<OrganisationEntity> page;

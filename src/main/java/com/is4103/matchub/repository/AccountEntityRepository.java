@@ -34,5 +34,9 @@ public interface AccountEntityRepository extends JpaRepository<AccountEntity, Lo
     @Query(value = "SELECT ae FROM AccountEntity ae WHERE ae.accountId IN ?1",
             countQuery = "SELECT COUNT(ae) FROM AccountEntity ae WHERE ae.accountId IN ?1")
     Page<AccountEntity> getAccountsByIds(Long[] ids, Pageable pageable);
+    
+    @Query(value = "SELECT ae FROM AccountEntity ae WHERE ae.uuid IN ?1",
+            countQuery = "SELECT COUNT(ae) FROM AccountEntity ae WHERE ae.uuid IN ?1")
+    Page<AccountEntity> getAccountsByUuid(UUID[] uuid, Pageable pageable);
 
 }

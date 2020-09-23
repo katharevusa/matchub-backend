@@ -12,6 +12,7 @@ import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
+import com.is4103.matchub.vo.GetAccountsByUuidVO;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.UUID;
@@ -20,10 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -58,6 +61,12 @@ public class AuthenticatedRestController {
     @RequestMapping(method = RequestMethod.GET, value = "/getAccountsByIds")
     Page<AccountEntity> getAccountsByIds(@RequestParam(value = "ids") Long[] ids, Pageable pageable) {
         return userService.getAccountsByIds(ids, pageable);
+    }
+    
+    @PostMapping(value = "/getAccountsByUuid")
+    @ResponseBody
+    Page<AccountEntity> getAccountsByUuid(@Valid @RequestBody GetAccountsByUuidVO vo, Pageable pageable) {
+        return userService.getAccountsByUuid(vo.getUuid(), pageable);
     }
 
 //    @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{uuid}")
