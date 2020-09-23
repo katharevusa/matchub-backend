@@ -12,6 +12,7 @@ import com.is4103.matchub.vo.OrganisationSetupVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
+import com.is4103.matchub.vo.GetAccountsByUuidVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
 import java.util.UUID;
@@ -49,8 +50,14 @@ public interface UserService {
 
     AccountEntity getAccount(UUID uuid);
 
+    Page<AccountEntity> getAccountsByIds(Long[] ids, Pageable pageable);
+
+    Page<AccountEntity> getAccountsByUuid(UUID[] uuid, Pageable pageable);
+
+//    Page<AccountEntity> getAccountsByUuid(GetAccountsByUuidVO vo, Pageable pageable);
 //    List<AccountEntity> getAllAccounts();
 //    List<AccountEntity> getAllActiveAccounts();
+
     Page<AccountEntity> getAllAccounts(Pageable pageable);
 
     Page<AccountEntity> getAllActiveAccounts(Pageable pageable);
@@ -77,5 +84,9 @@ public interface UserService {
     AccountEntity changePassword(UUID uuid, ChangePasswordVO vo);
 
     Page<UserVO> search(String search, Pageable pageable);
+
+    Page<IndividualEntity> searchIndividuals(String search, Pageable pageable);
+
+    Page<OrganisationEntity> searchOrganisations(String search, Pageable pageable);
 
 }
