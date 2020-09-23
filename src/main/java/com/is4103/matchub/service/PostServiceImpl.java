@@ -8,10 +8,12 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.PostNotFoundException;
+import com.is4103.matchub.exception.UnableToDeletePostException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.PostEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.vo.PostVO;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,11 +84,32 @@ public class PostServiceImpl implements PostService {
         /* use case: viewing profile page posts */
         ProfileEntity profile = profileEntityRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        
+
         return postEntityRepository.getPostsByAccountId(id, pageable);
     }
-    
-//    public void deletePost(Long postId, Long postCreatorId) {
-//        
-//    }
+
+    @Transactional
+    @Override
+    public void deletePost(Long postId, Long postCreatorId) throws IOException {
+        PostEntity postToDelete = postEntityRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("PostId: " + postId + " cannot be found"));
+
+        if (postToDelete.getPostCreator().getAccountId().equals(postCreatorId)) {
+
+            if (postToDelete.getOriginalPostId() != null || postToDelete.getPreviousPostId() != null) {
+                //Post cannot be deleted if it is being reshared
+                throw new UnableToDeletePostException("Unable to delete post because post is reshared.");
+            }
+
+            //delete the all photos from build/ folder first
+            for (String photo : postToDelete.getPhotos()) {
+                attachmentService.deleteFile(photo);
+            }
+            //delete the post entity
+            postEntityRepository.delete(postToDelete);
+        } else {
+            throw new UnableToDeletePostException("Unable to delete post because account: " + postCreatorId
+                    + " is not the owner of the post to be deleted.");
+        }
+    }
 }

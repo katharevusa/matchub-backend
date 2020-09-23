@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.is4103.matchub.service.PostService;
+import java.io.IOException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,4 +52,8 @@ public class PostEntityController {
         return postEntityService.getPostsByAccountId(id, pageable);
     }
 
+    @RequestMapping(method = RequestMethod.DELETE, value = "/deletePost/{postId}/{postCreatorId}")
+    void deletePost(@PathVariable("postId") Long postId, @PathVariable("postCreatorId") Long postCreatorId) throws IOException {
+        postEntityService.deletePost(postId, postCreatorId);
+    }
 }

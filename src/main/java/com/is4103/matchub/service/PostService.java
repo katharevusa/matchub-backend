@@ -7,6 +7,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.vo.PostVO;
+import java.io.IOException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,4 +25,6 @@ public interface PostService {
     PostEntity getPostById(Long postId);
 
     Page<PostEntity> getPostsByAccountId(Long id, Pageable pageable);
+
+    void deletePost(Long postId, Long postCreatorId) throws IOException;
 }

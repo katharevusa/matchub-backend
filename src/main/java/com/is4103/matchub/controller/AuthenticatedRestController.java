@@ -49,12 +49,12 @@ public class AuthenticatedRestController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/firebaseToken/{uuid}")
-    String getFirebaseToken(@PathVariable UUID uuid) throws FirebaseAuthException {
+    String getFirebaseToken(@PathVariable("uuid") UUID uuid) throws FirebaseAuthException {
         return firebaseService.issueFirebaseCustomToken(uuid);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{id}")
-    AccountEntity getAccount(@PathVariable Long id) {
+    AccountEntity getAccount(@PathVariable("id") Long id) {
         return userService.getAccount(id);
     }
 
@@ -79,22 +79,22 @@ public class AuthenticatedRestController {
 //        return userService.getAccount(email);
 //    }
     @RequestMapping(method = RequestMethod.GET, value = "/getFollowing/{id}")
-    Page<ProfileEntity> getFollowing(@PathVariable Long id, Pageable pageable) {
+    Page<ProfileEntity> getFollowing(@PathVariable("id") Long id, Pageable pageable) {
         return userService.getFollowing(id, pageable);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getFollowers/{id}")
-    Page<ProfileEntity> getFollowers(@PathVariable Long id, Pageable pageable) {
+    Page<ProfileEntity> getFollowers(@PathVariable("id") Long id, Pageable pageable) {
         return userService.getFollowers(id, pageable);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteAccount/{id}")
-    void deleteAccount(@PathVariable Long id) {
+    void deleteAccount(@PathVariable("id") Long id) {
         userService.delete(id);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProfilePict/{id}")
-    AccountEntity deleteProfilePic(@PathVariable Long id) throws IOException {
+    AccountEntity deleteProfilePic(@PathVariable("id") Long id) throws IOException {
         return userService.deleteProfilePic(id);
     }
 
@@ -103,7 +103,7 @@ public class AuthenticatedRestController {
 //        return userService.deleteOrgVerificationDoc(id, filenamewithextension);
 //    }
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteOrgVerificationDocs/{id}")
-    AccountEntity deleteOrgVerificationDocs(@PathVariable Long id, @Valid @RequestBody DeleteOrganisationDocumentsVO fileNamesWithExtension) throws IOException {
+    AccountEntity deleteOrgVerificationDocs(@PathVariable("id") Long id, @Valid @RequestBody DeleteOrganisationDocumentsVO fileNamesWithExtension) throws IOException {
         return userService.deleteOrgVerificationDocs(id, fileNamesWithExtension);
     }
 
