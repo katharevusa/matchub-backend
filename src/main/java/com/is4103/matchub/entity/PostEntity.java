@@ -7,9 +7,7 @@ package com.is4103.matchub.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -23,7 +21,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -72,7 +69,7 @@ public class PostEntity {
     @OneToMany
     private List<CommentEntity> listOfComments = new ArrayList<>();
 
-    public PostEntity(String content, LocalDateTime timeCreated, Set<String> photos, Long originalPostId, Long previousPostId, ProfileEntity postCreator) {
+    public PostEntity(String content, LocalDateTime timeCreated, List<String> photos, Long originalPostId, Long previousPostId, ProfileEntity postCreator) {
         this.content = content;
         this.timeCreated = timeCreated;
         this.photos = photos;
