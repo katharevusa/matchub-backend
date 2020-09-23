@@ -12,7 +12,7 @@ import lombok.Data;
  * @author ngjin
  */
 @Data
-public class DeleteOrganisationDocumentsVO {
+public class DeleteFilesVO {
     
     private String[] fileNamesWithExtension;
     

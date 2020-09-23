@@ -11,7 +11,7 @@ import com.is4103.matchub.service.UserService;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
-import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
+import com.is4103.matchub.vo.DeleteFilesVO;
 import com.is4103.matchub.vo.GetAccountsByUuidVO;
 import java.io.IOException;
 import java.security.Principal;
@@ -103,7 +103,7 @@ public class AuthenticatedRestController {
 //        return userService.deleteOrgVerificationDoc(id, filenamewithextension);
 //    }
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteOrgVerificationDocs/{id}")
-    AccountEntity deleteOrgVerificationDocs(@PathVariable("id") Long id, @Valid @RequestBody DeleteOrganisationDocumentsVO fileNamesWithExtension) throws IOException {
+    AccountEntity deleteOrgVerificationDocs(@PathVariable("id") Long id, @Valid @RequestBody DeleteFilesVO fileNamesWithExtension) throws IOException {
         return userService.deleteOrgVerificationDocs(id, fileNamesWithExtension);
     }
 

@@ -9,6 +9,7 @@ import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.PostNotFoundException;
 import com.is4103.matchub.exception.UnableToDeletePostException;
+import com.is4103.matchub.exception.UpdatePostException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.PostEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
@@ -86,6 +87,50 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new UserNotFoundException(id));
 
         return postEntityRepository.getPostsByAccountId(id, pageable);
+    }
+
+    @Transactional
+    @Override
+    public PostEntity updatePost(Long postId, PostVO vo) {
+
+        ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
+                .orElseThrow(() -> new UserNotFoundException(vo.getPostCreatorId()));
+
+        PostEntity postToEdit = postEntityRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("PostId: " + postId + " cannot be found"));
+
+        //check if the postToEdit belongs to the postCreator
+        if (postToEdit.getPostCreator().getAccountId().equals(profile.getAccountId())) {
+            vo.updatePost(postToEdit);
+
+            postToEdit = postEntityRepository.saveAndFlush(postToEdit);
+            return postToEdit;
+        } else {
+            throw new UpdatePostException("Unable to update post because account: " + vo.getPostCreatorId()
+                    + " is not the owner of the post to be updated.");
+        }
+    }
+
+    @Transactional
+    @Override
+    public PostEntity deletePhotos(Long postId, String[] photosToDelete) throws IOException {
+
+        PostEntity post = postEntityRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("PostId: " + postId + " cannot be found"));
+
+        for (String photo : photosToDelete) {
+            if (!post.getPhotos().contains(photo)) {
+                throw new UpdatePostException("Unable to delete photo from post: " + photo + " cannot be found.");
+            }
+        }
+
+        for (String photo : photosToDelete) {
+            attachmentService.deleteFile(photo);
+            post.getPhotos().remove(photo);
+        }
+
+        post = postEntityRepository.saveAndFlush(post);
+        return post;
     }
 
     @Transactional

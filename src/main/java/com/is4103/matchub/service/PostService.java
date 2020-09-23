@@ -26,5 +26,9 @@ public interface PostService {
 
     Page<PostEntity> getPostsByAccountId(Long id, Pageable pageable);
 
+    PostEntity updatePost(Long postId, PostVO vo);
+
+    PostEntity deletePhotos(Long postId, String[] photosToDelete) throws IOException;
+
     void deletePost(Long postId, Long postCreatorId) throws IOException;
 }
