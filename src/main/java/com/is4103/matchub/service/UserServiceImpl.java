@@ -46,7 +46,7 @@ import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import java.util.List;
-import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
+import com.is4103.matchub.vo.DeleteFilesVO;
 import com.is4103.matchub.vo.GetAccountsByUuidVO;
 import java.util.Map;
 import java.util.Set;
@@ -638,7 +638,7 @@ public class UserServiceImpl implements UserService {
 //    does not reflect the most updated instance 
 //    @Transactional
 //    @Override
-//    public AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteOrganisationDocumentsVO docsToDelete) throws IOException {
+//    public AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteFilesVO docsToDelete) throws IOException {
 //        AccountEntity account = accountEntityRepository.findById(accountId)
 //                .orElseThrow(() -> new UserNotFoundException(accountId));
 //
@@ -671,7 +671,7 @@ public class UserServiceImpl implements UserService {
 //    }
     @Transactional
     @Override
-    public AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteOrganisationDocumentsVO docsToDelete) throws IOException {
+    public AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteFilesVO docsToDelete) throws IOException {
         AccountEntity account = accountEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 
@@ -758,6 +758,17 @@ public class UserServiceImpl implements UserService {
             page = organisationEntityRepository.findAll(pageable);
         } else {
             page = organisationEntityRepository.searchOrganisations(search, pageable);
+        }
+        return page;
+    }
+
+    @Override
+    public Page<ProfileEntity> searchAllUsers(String search, Pageable pageable) {
+        Page<ProfileEntity> page;
+        if (search.isEmpty()) {
+            page = profileEntityRepository.findAll(pageable);
+        } else {
+            page = profileEntityRepository.searchAllUsers(search, pageable);
         }
         return page;
     }
