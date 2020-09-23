@@ -762,4 +762,15 @@ public class UserServiceImpl implements UserService {
         return page;
     }
 
+    @Override
+    public Page<ProfileEntity> searchAllUsers(String search, Pageable pageable) {
+        Page<ProfileEntity> page;
+        if (search.isEmpty()) {
+            page = profileEntityRepository.findAll(pageable);
+        } else {
+            page = profileEntityRepository.searchAllUsers(search, pageable);
+        }
+        return page;
+    }
+
 }
