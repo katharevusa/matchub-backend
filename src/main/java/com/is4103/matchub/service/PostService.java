@@ -7,7 +7,8 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.vo.PostVO;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -22,5 +23,5 @@ public interface PostService {
 
     PostEntity getPostById(Long postId);
 
-    List<PostEntity> getPostsByAccountId(Long id);
+    Page<PostEntity> getPostsByAccountId(Long id, Pageable pageable);
 }

@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,16 +78,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostEntity> getPostsByAccountId(Long id) {
+    public Page<PostEntity> getPostsByAccountId(Long id, Pageable pageable) {
         /* use case: viewing profile page posts */
         ProfileEntity profile = profileEntityRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
         
-        List<PostEntity> posts = profile.getPosts();
-        return posts;
+        return postEntityRepository.getPostsByAccountId(id, pageable);
     }
     
-//    public void deletePost() {
+//    public void deletePost(Long postId, Long postCreatorId) {
 //        
 //    }
 }

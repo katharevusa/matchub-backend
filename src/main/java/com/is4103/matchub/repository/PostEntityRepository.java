@@ -6,7 +6,10 @@
 package com.is4103.matchub.repository;
 
 import com.is4103.matchub.entity.PostEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  *
@@ -14,4 +17,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface PostEntityRepository extends JpaRepository<PostEntity, Long> {
 
+    @Query(value = "SELECT p FROM PostEntity p WHERE p.postCreator.accountId = :id",
+            countQuery = "SELECT COUNT(p) FROM PostEntity p WHERE p.postCreator.accountId = :id")
+     Page<PostEntity> getPostsByAccountId(Long id, Pageable pageable);
 }

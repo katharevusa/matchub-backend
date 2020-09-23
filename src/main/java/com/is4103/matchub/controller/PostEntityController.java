@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.is4103.matchub.service.PostService;
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 
 /**
@@ -46,8 +47,8 @@ public class PostEntityController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPostsByAccountId/{id}")
-    List<PostEntity> getPostsByAccountId(@PathVariable Long id) {
-        return postEntityService.getPostsByAccountId(id);
+    Page<PostEntity> getPostsByAccountId(@PathVariable Long id, Pageable pageable) {
+        return postEntityService.getPostsByAccountId(id, pageable);
     }
 
 }
