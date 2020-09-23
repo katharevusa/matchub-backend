@@ -125,7 +125,7 @@ public class ProjectController {
     public ProjectEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, @RequestParam("projectId") Long projectId) throws ProjectNotFoundException {
         return projectService.uploadPhotos(projectId, photos);
     }
-    
+    // pass photo full path
     @RequestMapping(method = RequestMethod.DELETE, value = "/updateProject/deletePhotos")
     public ProjectEntity deletePhotos(@RequestParam(value = "projectId") Long projectId, @RequestParam(value = "photosToDelete") String[] photosToDelete ) throws ProjectNotFoundException,UpdateProjectException,IOException{
         return projectService.deletePhotos(projectId, photosToDelete);

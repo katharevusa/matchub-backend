@@ -286,5 +286,47 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(value = CreateResourceRequestException.class)
+    public ResponseEntity<ExceptionResponse> createResourceRequestException(CreateResourceRequestException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to create resource request");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = DeleteResourceRequestException.class)
+    public ResponseEntity<ExceptionResponse> deleteResourceRequestException(DeleteResourceRequestException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to delete resource request");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = ResourceRequestNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> resourceRequestNotFoundException(ResourceRequestNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to find resource request");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+     @ExceptionHandler(value = RespondToResourceRequestException.class)
+    public ResponseEntity<ExceptionResponse> respondToResourceRequestException(RespondToResourceRequestException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to respond resource request");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    
+        
 }
