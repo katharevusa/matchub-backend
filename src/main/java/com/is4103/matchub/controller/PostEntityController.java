@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.context.annotation.ComponentScan;
 import com.is4103.matchub.service.PostService;
+import java.util.List;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  *
@@ -37,6 +38,16 @@ public class PostEntityController {
     @RequestMapping(method = RequestMethod.POST, value = "post/uploadPhotos")
     public PostEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, @RequestParam("postId") Long postId) {
         return postEntityService.uploadPhotos(postId, photos);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getPost/{id}")
+    PostEntity getPost(@PathVariable Long id) {
+        return postEntityService.getPostById(id);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getPostsByAccountId/{id}")
+    List<PostEntity> getPostsByAccountId(@PathVariable Long id) {
+        return postEntityService.getPostsByAccountId(id);
     }
 
 }

@@ -13,7 +13,9 @@ import com.is4103.matchub.repository.PostEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.vo.PostVO;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -65,4 +67,26 @@ public class PostServiceImpl implements PostService {
         post = postEntityRepository.saveAndFlush(post);
         return post;
     }
+
+    @Override
+    public PostEntity getPostById(Long postId) {
+        PostEntity post = postEntityRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("PostId: " + postId + " cannot be found"));
+
+        return post;
+    }
+
+    @Override
+    public List<PostEntity> getPostsByAccountId(Long id) {
+        /* use case: viewing profile page posts */
+        ProfileEntity profile = profileEntityRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        
+        List<PostEntity> posts = profile.getPosts();
+        return posts;
+    }
+    
+//    public void deletePost() {
+//        
+//    }
 }
