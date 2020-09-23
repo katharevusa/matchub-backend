@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.exception;
 
+import com.google.firebase.auth.FirebaseAuthException;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import javax.mail.MessagingException;
@@ -316,6 +317,28 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+
+        
+        
+    @ExceptionHandler(value = FirebaseAuthException.class)
+    public ResponseEntity<ExceptionResponse> firebaseAuthException(FirebaseAuthException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to authenticate user on Firebase");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = PostNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> postNotFoundException(PostNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Post Not Found.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
     
      @ExceptionHandler(value = RespondToResourceRequestException.class)
     public ResponseEntity<ExceptionResponse> respondToResourceRequestException(RespondToResourceRequestException ex) {
@@ -326,7 +349,26 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-    
         
+        
+    @ExceptionHandler(value = UnableToDeletePostException.class)
+    public ResponseEntity<ExceptionResponse> postNotFoundException(UnableToDeletePostException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to delete post.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UpdatePostException.class)
+    public ResponseEntity<ExceptionResponse> updatePostException(UpdatePostException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to update post.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
 }

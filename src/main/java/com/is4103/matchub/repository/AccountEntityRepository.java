@@ -9,7 +9,6 @@ import java.util.UUID;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface AccountEntityRepository extends JpaRepository<AccountEntity, Long> {
 
@@ -23,7 +22,8 @@ public interface AccountEntityRepository extends JpaRepository<AccountEntity, Lo
     Page<AccountEntity> findAll(Pageable pageable);
 
     @Query(value = "SELECT a FROM AccountEntity a WHERE a.accountLocked = FALSE AND a.accountExpired = FALSE "
-            + "AND a.disabled = FALSE AND a.isVerified = TRUE", countQuery = "SELECT COUNT(a) FROM AccountEntity a "
+            + "AND a.disabled = FALSE AND a.isVerified = TRUE",
+            countQuery = "SELECT COUNT(a) FROM AccountEntity a "
             + "WHERE a.accountLocked = FALSE AND a.accountExpired = FALSE AND a.disabled = FALSE "
             + "AND a.isVerified = TRUE")
     Page<AccountEntity> findAllActiveAccounts(Pageable pageable);
@@ -31,4 +31,13 @@ public interface AccountEntityRepository extends JpaRepository<AccountEntity, Lo
     @Query(value = "SELECT ae FROM AccountEntity ae WHERE ae.email LIKE %?1%",
             countQuery = "SELECT COUNT(ae) FROM AccountEntity ae WHERE ae.email LIKE %?1%")
     Page<AccountEntity> search(String search, Pageable pageable);
+
+    @Query(value = "SELECT ae FROM AccountEntity ae WHERE ae.accountId IN ?1",
+            countQuery = "SELECT COUNT(ae) FROM AccountEntity ae WHERE ae.accountId IN ?1")
+    Page<AccountEntity> getAccountsByIds(Long[] ids, Pageable pageable);
+
+    @Query(value = "SELECT ae FROM AccountEntity ae WHERE ae.uuid IN ?1",
+            countQuery = "SELECT COUNT(ae) FROM AccountEntity ae WHERE ae.uuid IN ?1")
+    Page<AccountEntity> getAccountsByUuid(UUID[] uuid, Pageable pageable);
+
 }

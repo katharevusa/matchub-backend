@@ -26,6 +26,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.repository.IndividualEntityRepository;
+import com.is4103.matchub.repository.OrganisationEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.repository.TaskEntityRepository;
@@ -43,7 +45,9 @@ import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
-import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
+import java.util.List;
+import com.is4103.matchub.vo.DeleteFilesVO;
+import com.is4103.matchub.vo.GetAccountsByUuidVO;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.web.multipart.MultipartFile;
@@ -81,6 +85,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private ProfileEntityRepository profileEntityRepository;
+
+    @Autowired
+    private IndividualEntityRepository individualEntityRepository;
+
+    @Autowired
+    private OrganisationEntityRepository organisationEntityRepository;
 
     @Transactional
     @Override
@@ -370,6 +380,16 @@ public class UserServiceImpl implements UserService {
         return account;
     }
 
+    @Override
+    public Page<AccountEntity> getAccountsByIds(Long[] ids, Pageable pageable) {
+        return accountEntityRepository.getAccountsByIds(ids, pageable);
+    }
+
+    @Override
+    public Page<AccountEntity> getAccountsByUuid(UUID[] uuid, Pageable pageable) {
+        return accountEntityRepository.getAccountsByUuid(uuid, pageable);
+    }
+
 //    @Override
 //    public List<AccountEntity> getAllAccounts() {
 //        return accountEntityRepository.findAll();
@@ -615,11 +635,10 @@ public class UserServiceImpl implements UserService {
 //            throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation document: " + filenamewithextension);
 //        }
 //    }
-    
 //    does not reflect the most updated instance 
 //    @Transactional
 //    @Override
-//    public AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteOrganisationDocumentsVO docsToDelete) throws IOException {
+//    public AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteFilesVO docsToDelete) throws IOException {
 //        AccountEntity account = accountEntityRepository.findById(accountId)
 //                .orElseThrow(() -> new UserNotFoundException(accountId));
 //
@@ -650,10 +669,9 @@ public class UserServiceImpl implements UserService {
 //            throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation documents for organisation with accountId: " + accountId);
 //        }
 //    }
-    
     @Transactional
     @Override
-    public AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteOrganisationDocumentsVO docsToDelete) throws IOException {
+    public AccountEntity deleteOrgVerificationDocs(Long accountId, DeleteFilesVO docsToDelete) throws IOException {
         AccountEntity account = accountEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 
@@ -669,11 +687,11 @@ public class UserServiceImpl implements UserService {
                     throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation document (Document not found): " + key);
                 }
             }
-            
+
             //loop2: delete the actual file when all files are present
             for (String key : docsToDelete.getFileNamesWithExtension()) {
                 //get the path of the document to delete
-                String selectedDocumentPath = hashmap.get(key);             
+                String selectedDocumentPath = hashmap.get(key);
                 //if file is present, call attachmentService to delete the actual file from /build folder
                 attachmentService.deleteFile(selectedDocumentPath);
                 //successfully removed the actual file from /build folder, update organisation hashmap
@@ -682,7 +700,7 @@ public class UserServiceImpl implements UserService {
             //save once all documents are removed successfully
             o.setVerificationDocHashMap(hashmap);
             accountEntityRepository.saveAndFlush(o);
-            
+
             return o;
         } else {
             throw new DeleteOrganisationVerificationDocumentException("Unable to delete organisation documents for organisation with accountId: " + accountId);
@@ -721,4 +739,38 @@ public class UserServiceImpl implements UserService {
         }
         return accountPage.map((a) -> UserVO.of(a));
     }
+
+    @Override
+    public Page<IndividualEntity> searchIndividuals(String search, Pageable pageable) {
+        Page<IndividualEntity> page;
+        if (search.isEmpty()) {
+            page = individualEntityRepository.findAll(pageable);
+        } else {
+            page = individualEntityRepository.searchIndividuals(search, pageable);
+        }
+        return page;
+    }
+
+    @Override
+    public Page<OrganisationEntity> searchOrganisations(String search, Pageable pageable) {
+        Page<OrganisationEntity> page;
+        if (search.isEmpty()) {
+            page = organisationEntityRepository.findAll(pageable);
+        } else {
+            page = organisationEntityRepository.searchOrganisations(search, pageable);
+        }
+        return page;
+    }
+
+    @Override
+    public Page<ProfileEntity> searchAllUsers(String search, Pageable pageable) {
+        Page<ProfileEntity> page;
+        if (search.isEmpty()) {
+            page = profileEntityRepository.findAll(pageable);
+        } else {
+            page = profileEntityRepository.searchAllUsers(search, pageable);
+        }
+        return page;
+    }
+
 }

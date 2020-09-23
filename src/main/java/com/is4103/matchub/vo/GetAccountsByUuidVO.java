@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.vo;
 
+import java.util.UUID;
 import lombok.Data;
 
 /**
@@ -12,8 +13,7 @@ import lombok.Data;
  * @author ngjin
  */
 @Data
-public class DeleteOrganisationDocumentsVO {
-    
-    private String[] fileNamesWithExtension;
-    
+public class GetAccountsByUuidVO {
+
+    private UUID[] uuid;
 }

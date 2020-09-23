@@ -1,28 +1,32 @@
 package com.is4103.matchub.controller;
 
+import com.google.firebase.auth.FirebaseAuthException;
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.service.AttachmentService;
+import com.is4103.matchub.service.FirebaseService;
 import com.is4103.matchub.service.UserService;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
-import com.is4103.matchub.vo.DeleteOrganisationDocumentsVO;
+import com.is4103.matchub.vo.DeleteFilesVO;
+import com.is4103.matchub.vo.GetAccountsByUuidVO;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.List;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -36,14 +40,33 @@ public class AuthenticatedRestController {
     @Autowired
     AttachmentService attachmentService;
 
+    @Autowired
+    FirebaseService firebaseService;
+
     @RequestMapping(method = RequestMethod.GET, value = "/me")
     AccountEntity getMe(Principal principal) {
         return userService.getAccount(principal.getName());
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/firebaseToken/{uuid}")
+    String getFirebaseToken(@PathVariable("uuid") UUID uuid) throws FirebaseAuthException {
+        return firebaseService.issueFirebaseCustomToken(uuid);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{id}")
-    AccountEntity getAccount(@PathVariable Long id) {
+    AccountEntity getAccount(@PathVariable("id") Long id) {
         return userService.getAccount(id);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getAccountsByIds")
+    Page<AccountEntity> getAccountsByIds(@RequestParam(value = "ids") Long[] ids, Pageable pageable) {
+        return userService.getAccountsByIds(ids, pageable);
+    }
+    
+    @PostMapping(value = "/getAccountsByUuid")
+    @ResponseBody
+    Page<AccountEntity> getAccountsByUuid(@Valid @RequestBody GetAccountsByUuidVO vo, Pageable pageable) {
+        return userService.getAccountsByUuid(vo.getUuid(), pageable);
     }
 
 //    @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{uuid}")
@@ -56,22 +79,22 @@ public class AuthenticatedRestController {
 //        return userService.getAccount(email);
 //    }
     @RequestMapping(method = RequestMethod.GET, value = "/getFollowing/{id}")
-    Page<ProfileEntity> getFollowing(@PathVariable Long id, Pageable pageable) {
+    Page<ProfileEntity> getFollowing(@PathVariable("id") Long id, Pageable pageable) {
         return userService.getFollowing(id, pageable);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getFollowers/{id}")
-    Page<ProfileEntity> getFollowers(@PathVariable Long id, Pageable pageable) {
+    Page<ProfileEntity> getFollowers(@PathVariable("id") Long id, Pageable pageable) {
         return userService.getFollowers(id, pageable);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteAccount/{id}")
-    void deleteAccount(@PathVariable Long id) {
+    void deleteAccount(@PathVariable("id") Long id) {
         userService.delete(id);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProfilePict/{id}")
-    AccountEntity deleteProfilePic(@PathVariable Long id) throws IOException {
+    AccountEntity deleteProfilePic(@PathVariable("id") Long id) throws IOException {
         return userService.deleteProfilePic(id);
     }
 
@@ -80,7 +103,7 @@ public class AuthenticatedRestController {
 //        return userService.deleteOrgVerificationDoc(id, filenamewithextension);
 //    }
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteOrgVerificationDocs/{id}")
-    AccountEntity deleteOrgVerificationDocs(@PathVariable Long id, @Valid @RequestBody DeleteOrganisationDocumentsVO fileNamesWithExtension) throws IOException {
+    AccountEntity deleteOrgVerificationDocs(@PathVariable("id") Long id, @Valid @RequestBody DeleteFilesVO fileNamesWithExtension) throws IOException {
         return userService.deleteOrgVerificationDocs(id, fileNamesWithExtension);
     }
 
@@ -132,5 +155,23 @@ public class AuthenticatedRestController {
 
         System.out.println("uploaded file successfully: relative pathImage is " + filePath);
         return userService.setProfilePic(uuid, filePath);
+    }
+
+    /*
+     * SEARCH METHOD CALLS HERE
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/searchIndividuals")
+    Page<IndividualEntity> searchIndividuals(@RequestParam(value = "search") String search, Pageable pageable) {
+        return userService.searchIndividuals(search, pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/searchOrganisations")
+    Page<OrganisationEntity> searchOrganisations(@RequestParam(value = "search") String search, Pageable pageable) {
+        return userService.searchOrganisations(search, pageable);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/searchAllUsers")
+    Page<ProfileEntity> searchAllUsers(@RequestParam(value = "search") String search, Pageable pageable) {
+        return userService.searchAllUsers(search, pageable);
     }
 }
