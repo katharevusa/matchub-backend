@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class PostEntity {
 
     @Id
@@ -64,6 +66,7 @@ public class PostEntity {
     @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
+    @JsonIgnoreProperties(value = {"posts"})
     private ProfileEntity postCreator;
 
     @OneToMany
