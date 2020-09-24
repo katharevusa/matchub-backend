@@ -417,5 +417,37 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(value = RespondToJoinProjectRequestException.class)
+    public ResponseEntity<ExceptionResponse> respondToJoinProjectRequestException(RespondToJoinProjectRequestException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to respond to the join project request");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = RemoveTeamMemberException.class)
+    public ResponseEntity<ExceptionResponse> removeTeamMemberException(RemoveTeamMemberException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to remove team member");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = LeaveProjectException.class)
+    public ResponseEntity<ExceptionResponse> leaveProjectException(LeaveProjectException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to leave project");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+
 
 }

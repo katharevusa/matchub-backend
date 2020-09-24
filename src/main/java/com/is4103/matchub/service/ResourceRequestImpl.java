@@ -84,6 +84,10 @@ public class ResourceRequestImpl implements ResourceRequestService {
         if (!profileEntityRepository.findById(vo.getRequestorId()).isPresent()) {
             throw new CreateResourceRequestException("Unable to create resource request: requestor not found");
         }
+        
+        if(resource.getMatchedProjectId()!=null){
+            throw new CreateResourceRequestException("This resource is already matched to another project");
+        }
 
         ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
         vo.createResourceRequestResourceOwner(resourceRequest);
