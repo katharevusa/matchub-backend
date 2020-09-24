@@ -43,5 +43,9 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "WHERE a.accountLocked = FALSE AND a.accountExpired = FALSE AND a.disabled = FALSE "
             + "AND a.isVerified = TRUE")
     Page<ProfileEntity> findAll(Pageable pageable);
+    
+    @Query(value = "SELECT pe FROM ProfileEntity pe WHERE pe.accountId IN ?1",
+            countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe WHERE pe.accountId IN ?1")
+    Page<ProfileEntity> getEmployees(Set<Long> employeesId, Pageable pageable);
 
 }
