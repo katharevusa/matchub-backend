@@ -22,4 +22,6 @@ public interface OrganisationService {
     OrganisationEntity removeMemberFromOrganisation(Long organisationId, Long individualId);
 
     Page<ProfileEntity> viewOrganisationMembers(Long organisationId, Pageable pageable);
+
+    Page<ProfileEntity> viewOrganisationKAHs(Long organisationId, Pageable pageable);
 }

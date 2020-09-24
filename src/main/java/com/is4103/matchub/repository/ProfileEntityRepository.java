@@ -47,5 +47,10 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
     @Query(value = "SELECT pe FROM ProfileEntity pe WHERE pe.accountId IN ?1",
             countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe WHERE pe.accountId IN ?1")
     Page<ProfileEntity> getEmployees(Set<Long> employeesId, Pageable pageable);
+    
+    @Query(value = "SELECT pe FROM ProfileEntity pe WHERE pe.accountId IN ?1",
+            countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe WHERE pe.accountId IN ?1")
+    Page<ProfileEntity> getKAHs(Set<Long> kahIds, Pageable pageable);
+
 
 }

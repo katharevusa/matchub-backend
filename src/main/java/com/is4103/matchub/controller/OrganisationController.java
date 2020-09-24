@@ -41,4 +41,9 @@ public class OrganisationController {
     Page<ProfileEntity> viewOrganisationMembers(@PathVariable("organisationId") Long organisationId, Pageable pageable) {
         return organisationService.viewOrganisationMembers(organisationId, pageable);
     }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "organisation/viewKAHs/{organisationId}")
+    Page<ProfileEntity> viewOrganisationKAHs(@PathVariable("organisationId") Long organisationId, Pageable pageable) {
+        return organisationService.viewOrganisationKAHs(organisationId, pageable);
+    }
 }

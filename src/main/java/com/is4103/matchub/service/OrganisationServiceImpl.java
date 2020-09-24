@@ -90,6 +90,18 @@ public class OrganisationServiceImpl implements OrganisationService {
         return profileEntityRepository.getEmployees(employeesId, pageable);
 
     }
+    
+    @Override
+    public Page<ProfileEntity> viewOrganisationKAHs(Long organisationId, Pageable pageable) {
+
+        OrganisationEntity organisation = organisationEntityRepository.findById(organisationId)
+                .orElseThrow(() -> new OrganisationNotFoundException("Organisation with id: " + organisationId + " not found."));
+
+        Set<Long> kahIds = organisation.getKahs();
+
+        return profileEntityRepository.getKAHs(kahIds, pageable);
+
+    }
 
     //    @Transactional
 //    @Override
