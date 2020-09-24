@@ -14,6 +14,7 @@ import com.is4103.matchub.service.ResourceRequestService;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,30 +53,30 @@ public class ResourceRequestController {
 
     //get resource request by id 
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceRequestById")
-    void getResourceRequestById(@RequestParam(value = "requestId", required = true) Long requestId) throws ResourceRequestNotFoundException {
-        resourceRequestService.getResourceRequestById(requestId);
+    ResourceRequestEntity getResourceRequestById(@RequestParam(value = "requestId", required = true) Long requestId) throws ResourceRequestNotFoundException {
+       return resourceRequestService.getResourceRequestById(requestId);
     }
 
     //get resource requests by requestor id
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceRequestByRequestorId")
-    void getResourceRequestByRequestorId(@RequestParam(value = "requestorId", required = true) Long requestorId, @RequestParam(value = "pageable", required = true) Pageable page) throws ResourceRequestNotFoundException {
-        resourceRequestService.getResourceRequestByRequestorId(requestorId, page);
+    Page<ResourceRequestEntity> getResourceRequestByRequestorId(@RequestParam(value = "requestorId", required = true) Long requestorId,  Pageable pageable) throws ResourceRequestNotFoundException {
+       return resourceRequestService.getResourceRequestByRequestorId(requestorId, pageable);
     }
 
     // get resource requests by resource Id 
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceRequestByResourceId")
-    void getResourceRequestByResourceId(@RequestParam(value = "resourceId", required = true) Long resourceId, @RequestParam(value = "pageable", required = true) Pageable page) throws ResourceRequestNotFoundException {
-        resourceRequestService.getResourceRequestByResourceId(resourceId, page);
+    Page<ResourceRequestEntity> getResourceRequestByResourceId(@RequestParam(value = "resourceId", required = true) Long resourceId, Pageable pageable) throws ResourceRequestNotFoundException {
+       return resourceRequestService.getResourceRequestByResourceId(resourceId, pageable);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceRequestByProjectId")
-    void getResourceRequestByProjectId(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "pageable", required = true) Pageable page) throws ResourceRequestNotFoundException {
-        resourceRequestService.getResourceRequestByProjectId(projectId, page);
+    Page<ResourceRequestEntity> getResourceRequestByProjectId(@RequestParam(value = "projectId", required = true) Long projectId,  Pageable pageable) throws ResourceRequestNotFoundException {
+       return resourceRequestService.getResourceRequestByProjectId(projectId, pageable);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/respondToResourceRequest")
-    void respondToResourceRequest(@RequestParam(value = "requestId", required = true) Long requestId, @RequestParam(value = "responderId", required = true) Long responderId, @RequestParam(value = "response", required = true) boolean response) throws ResourceRequestNotFoundException, RespondToResourceRequestException {
-        resourceRequestService.respondToResourceRequest(requestId,responderId, response);
+    ResourceRequestEntity respondToResourceRequest(@RequestParam(value = "requestId", required = true) Long requestId, @RequestParam(value = "responderId", required = true) Long responderId, @RequestParam(value = "response", required = true) boolean response) throws ResourceRequestNotFoundException, RespondToResourceRequestException {
+        return resourceRequestService.respondToResourceRequest(requestId,responderId, response);
     }
 
   

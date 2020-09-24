@@ -60,9 +60,18 @@ public class ResourceRequestImpl implements ResourceRequestService {
         if (!profileEntityRepository.findById(vo.getRequestorId()).isPresent()) {
             throw new CreateResourceRequestException("Unable to create resource request: requestor not found");
         }
+        
+        if(!project.getProjectOwners().contains(profileEntityRepository.findById(vo.getRequestorId()).get())){
+            throw new CreateResourceRequestException("Unable to create resource request: can only create resource request for owned projects");
+        }
+        
+        if(vo.getUnitsRequired()>resource.getUnits()){
+            throw new CreateResourceRequestException("Unable to create resource request: the requested amount is more than the resource provided");
+        }
 
         ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
         vo.createResourceRequestProjectOwner(resourceRequest);
+        System.err.println(resourceRequest);
         project.getListOfRequests().add(resourceRequest);
         resource.getListOfRequests().add(resourceRequest);
         return resourceRequestEntityRepository.saveAndFlush(resourceRequest);
@@ -85,8 +94,16 @@ public class ResourceRequestImpl implements ResourceRequestService {
             throw new CreateResourceRequestException("Unable to create resource request: requestor not found");
         }
         
+        if(!resource.getResourceOwnerId().equals(vo.getRequestorId())){
+            throw new CreateResourceRequestException("Unable to create resource request: can only create request for owned resource");
+        }
+        
         if(resource.getMatchedProjectId()!=null){
             throw new CreateResourceRequestException("This resource is already matched to another project");
+        }
+        
+        if(vo.getUnitsRequired()>resource.getUnits()){
+            throw new CreateResourceRequestException("Unable to create resource request: the requested amount is more than the resource provided");
         }
 
         ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
@@ -143,6 +160,7 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
     @Override
     public Page<ResourceRequestEntity> getResourceRequestByResourceId(Long resourceId, Pageable pageable) {
+        System.err.println("Reach here");
         return resourceRequestEntityRepository.getResourceRequestByResourceId(resourceId, pageable);
     }
 
