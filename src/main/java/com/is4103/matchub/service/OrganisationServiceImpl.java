@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.OrganisationNotFoundException;
 import com.is4103.matchub.exception.UnableToAddKAHToOrganisationException;
 import com.is4103.matchub.exception.UnableToAddMemberToOrganisationException;
+import com.is4103.matchub.exception.UnableToRemoveKAHFromOrganisationException;
 import com.is4103.matchub.exception.UnableToRemoveMemberFromOrganisationException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.OrganisationEntityRepository;
@@ -104,20 +105,50 @@ public class OrganisationServiceImpl implements OrganisationService {
 
         //check if individual is already inside organisation
         if (organisation.getEmployees().contains(kahToAdd.getAccountId())) {
-            
+
             if (!organisation.getKahs().contains(kahToAdd.getAccountId())) {
                 organisation.getKahs().add(kahToAdd.getAccountId());
-                
+
                 organisation = organisationEntityRepository.saveAndFlush(organisation);
                 return organisation;
             } else {
                 throw new UnableToAddKAHToOrganisationException("Unable to add account " + individualId
-                    + " as KAH into organisationId " + organisationId + ": account is already a KAH of organisation.");
+                        + " as KAH into organisationId " + organisationId + ": account is already a KAH of organisation.");
             }
 
         } else {
             throw new UnableToAddKAHToOrganisationException("Unable to add account " + individualId
                     + " as KAH into organisationId " + organisationId + ": account is not a member of organisation.");
+        }
+
+    }
+
+    @Transactional
+    @Override
+    public OrganisationEntity removeKahFromOrganisation(Long organisationId, Long individualId) {
+
+        OrganisationEntity organisation = organisationEntityRepository.findById(organisationId)
+                .orElseThrow(() -> new OrganisationNotFoundException("Organisation with id: " + organisationId + " not found."));
+
+        ProfileEntity kahToRemove = profileEntityRepository.findById(individualId)
+                .orElseThrow(() -> new UserNotFoundException(individualId));
+
+        //check if individual is already inside organisation
+        if (organisation.getEmployees().contains(kahToRemove.getAccountId())) {
+
+            if (organisation.getKahs().contains(kahToRemove.getAccountId())) {
+                organisation.getKahs().remove(kahToRemove.getAccountId());
+
+                organisation = organisationEntityRepository.saveAndFlush(organisation);
+                return organisation;
+            } else {
+                throw new UnableToRemoveKAHFromOrganisationException("Unable to remove account " + individualId
+                        + " as KAH from organisationId " + organisationId + ": account is a member but not a KAH of organisation.");
+            }
+
+        } else {
+            throw new UnableToAddKAHToOrganisationException("Unable to remove account " + individualId
+                    + " as KAH from organisationId " + organisationId + ": account is not a member of organisation.");
         }
 
     }
@@ -134,11 +165,4 @@ public class OrganisationServiceImpl implements OrganisationService {
 
     }
 
-    //    @Transactional
-//    @Override
-//    public OrganisationEntity addKAH(Long organisationId, Long individualId) {
-//        
-//        OrganisationEntity organisation = organisationEntityRepository.findById(organisationId)
-//                .orElseThrow(() -> new UserNotFoundException(organisationId));
-//    }
 }

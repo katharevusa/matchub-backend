@@ -47,6 +47,11 @@ public class OrganisationController {
         return organisationService.addKahToOrganisation(organisationId, individualId);
     }
     
+    @RequestMapping(method = RequestMethod.PUT, value = "organisation/removeKAH/{organisationId}/{individualId}")
+    OrganisationEntity removeKAH(@PathVariable("organisationId") Long organisationId, @PathVariable("individualId") Long individualId) {
+        return organisationService.removeKahFromOrganisation(organisationId, individualId);
+    }
+    
     @RequestMapping(method = RequestMethod.GET, value = "organisation/viewKAHs/{organisationId}")
     Page<ProfileEntity> viewOrganisationKAHs(@PathVariable("organisationId") Long organisationId, Pageable pageable) {
         return organisationService.viewOrganisationKAHs(organisationId, pageable);
