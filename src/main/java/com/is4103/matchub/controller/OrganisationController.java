@@ -24,8 +24,13 @@ public class OrganisationController {
     @Autowired
     OrganisationService organisationService;
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/addMember/{organisationId}/{individualId}")
+    @RequestMapping(method = RequestMethod.PUT, value = "organisation/addMember/{organisationId}/{individualId}")
     OrganisationEntity addMember(@PathVariable("organisationId") Long organisationId, @PathVariable("individualId") Long individualId) {
         return organisationService.addMemberToOrganisation(organisationId, individualId);
+    }
+    
+    @RequestMapping(method = RequestMethod.PUT, value = "organisation/removeMember/{organisationId}/{individualId}")
+    OrganisationEntity removeMember(@PathVariable("organisationId") Long organisationId, @PathVariable("individualId") Long individualId) {
+        return organisationService.removeMemberFromOrganisation(organisationId, individualId);
     }
 }

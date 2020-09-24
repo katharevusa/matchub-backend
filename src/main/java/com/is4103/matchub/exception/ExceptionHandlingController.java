@@ -387,5 +387,15 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(value = UnableToRemoveMemberFromOrganisationException.class)
+    public ResponseEntity<ExceptionResponse> unableToRemoveMemberFromOrganisationException(UnableToRemoveMemberFromOrganisationException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to remove member from organisation.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 
 }

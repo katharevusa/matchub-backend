@@ -9,6 +9,7 @@ import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.OrganisationNotFoundException;
 import com.is4103.matchub.exception.UnableToAddMemberToOrganisationException;
+import com.is4103.matchub.exception.UnableToRemoveMemberFromOrganisationException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.OrganisationEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
@@ -41,7 +42,7 @@ public class OrganisationServiceImpl implements OrganisationService {
     public OrganisationEntity addMemberToOrganisation(Long organisationId, Long individualId) {
 
         OrganisationEntity organisation = organisationEntityRepository.findById(organisationId)
-                .orElseThrow(() -> new OrganisationNotFoundException("Organisatio with id: "+ organisationId + " not found."));
+                .orElseThrow(() -> new OrganisationNotFoundException("Organisation with id: "+ organisationId + " not found."));
 
         ProfileEntity memberToAdd = profileEntityRepository.findById(individualId)
                 .orElseThrow(() -> new UserNotFoundException(individualId));
@@ -55,6 +56,29 @@ public class OrganisationServiceImpl implements OrganisationService {
         } else {
             throw new UnableToAddMemberToOrganisationException("Unable to add account " + individualId
                     + " into organisationId " + organisationId + ": account is already a member of organisation.");
+        }
+
+    }
+    
+    @Transactional
+    @Override
+    public OrganisationEntity removeMemberFromOrganisation(Long organisationId, Long individualId) {
+
+        OrganisationEntity organisation = organisationEntityRepository.findById(organisationId)
+                .orElseThrow(() -> new OrganisationNotFoundException("Organisation with id: "+ organisationId + " not found."));
+
+        ProfileEntity memberToRemove = profileEntityRepository.findById(individualId)
+                .orElseThrow(() -> new UserNotFoundException(individualId));
+
+        //check if individual is inside organisation
+        if (organisation.getEmployees().contains(memberToRemove.getAccountId())) {
+            organisation.getEmployees().remove(memberToRemove.getAccountId());
+            
+            organisation = organisationEntityRepository.saveAndFlush(organisation);
+            return organisation;
+        } else {
+            throw new UnableToRemoveMemberFromOrganisationException("Unable to remove account " + individualId
+                    + " from organisationId " + organisationId + ": account is not a member of organisation.");
         }
 
     }

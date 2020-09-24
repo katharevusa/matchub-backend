@@ -15,4 +15,6 @@ public interface OrganisationService {
 
 //    OrganisationEntity addKAH(Long organ isationId, Long individualId);
     OrganisationEntity addMemberToOrganisation(Long organisationId, Long individualId);
+
+    OrganisationEntity removeMemberFromOrganisation(Long organisationId, Long individualId);
 }
