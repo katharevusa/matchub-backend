@@ -46,7 +46,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = OrganisationNotFoundException.class)
     public ResponseEntity<ExceptionResponse> organisationNotFoundException(OrganisationNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -387,11 +387,31 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = UnableToRemoveMemberFromOrganisationException.class)
     public ResponseEntity<ExceptionResponse> unableToRemoveMemberFromOrganisationException(UnableToRemoveMemberFromOrganisationException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to remove member from organisation.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnableToAddKAHToOrganisationException.class)
+    public ResponseEntity<ExceptionResponse> unableToAddKAHTOOrganisationException(UnableToAddKAHToOrganisationException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to add KAH into organisation.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = UnableToRemoveKAHFromOrganisationException.class)
+    public ResponseEntity<ExceptionResponse> unableToRemoveKAHFromOrganisationException(UnableToRemoveKAHFromOrganisationException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to remove KAH from organisation.");
         response.setErrorMessage(ex.getMessage());
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 

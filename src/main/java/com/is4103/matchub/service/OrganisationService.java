@@ -6,6 +6,9 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.OrganisationEntity;
+import com.is4103.matchub.entity.ProfileEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  *
@@ -17,4 +20,12 @@ public interface OrganisationService {
     OrganisationEntity addMemberToOrganisation(Long organisationId, Long individualId);
 
     OrganisationEntity removeMemberFromOrganisation(Long organisationId, Long individualId);
+
+    Page<ProfileEntity> viewOrganisationMembers(Long organisationId, Pageable pageable);
+
+    OrganisationEntity addKahToOrganisation(Long organisationId, Long individualId);
+
+    OrganisationEntity removeKahFromOrganisation(Long organisationId, Long individualId);
+
+    Page<ProfileEntity> viewOrganisationKAHs(Long organisationId, Pageable pageable);
 }
