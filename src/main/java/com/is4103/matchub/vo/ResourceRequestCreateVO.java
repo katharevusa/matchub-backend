@@ -18,28 +18,26 @@ import lombok.Data;
 @Data
 public class ResourceRequestCreateVO {
     
-    @NotBlank(message = "ResourceId cannot be blank.")
+   
     @NotNull(message = "ResourceId cannot be null.")  
     private Long resourceId;
      
-    @NotBlank(message = "ProjectId cannot be blank.")
     @NotNull(message = "ProjectId cannot be null.")
     private Long projectId;
     
-    @NotBlank(message = "UnitsRequired cannot be blank.")
     @NotNull(message = "UnitsRequired cannot be null.")
     private Integer unitsRequired;
     
-    @NotBlank(message = "RequestorId cannot be blank.")
     @NotNull(message = "RequestorId cannot be null.")
     private Long requestorId;
     
     private String message;
     
     public void createResourceRequestProjectOwner(ResourceRequestEntity newResourceRequest){
-        newResourceRequest.setRequestorId(resourceId);
+        newResourceRequest.setRequestorId(requestorId);
         newResourceRequest.setProjectId(projectId);
         newResourceRequest.setUnitsRequired(unitsRequired);
+        newResourceRequest.setResourceId(resourceId);
         newResourceRequest.setMessage(message);
         newResourceRequest.setRequestorEnum(RequestorEnum.PROJECT_OWNER);
         
@@ -47,8 +45,9 @@ public class ResourceRequestCreateVO {
     }
     
     public void createResourceRequestResourceOwner(ResourceRequestEntity newResourceRequest){
-        newResourceRequest.setRequestorId(resourceId);
+        newResourceRequest.setRequestorId(requestorId);
         newResourceRequest.setProjectId(projectId);
+        newResourceRequest.setResourceId(resourceId);
         newResourceRequest.setUnitsRequired(unitsRequired);
         newResourceRequest.setRequestorEnum(RequestorEnum.RESOURCE_OWNER);
         newResourceRequest.setMessage(message);
