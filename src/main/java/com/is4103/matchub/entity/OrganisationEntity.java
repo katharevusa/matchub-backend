@@ -36,10 +36,6 @@ public class OrganisationEntity extends ProfileEntity {
     @Nullable
     private String address;
 
-//    @Column(nullable = true)
-//    @Nullable
-//    private String verificationDoc;
-    
     //Key: filename, Value = docPath
     @ElementCollection
     private Map<String, String> verificationDocHashMap = new HashMap<>();

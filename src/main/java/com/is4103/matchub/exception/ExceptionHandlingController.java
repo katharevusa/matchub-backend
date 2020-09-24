@@ -297,7 +297,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = PostNotFoundException.class)
     public ResponseEntity<ExceptionResponse> postNotFoundException(PostNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -307,7 +307,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = UnableToDeletePostException.class)
     public ResponseEntity<ExceptionResponse> postNotFoundException(UnableToDeletePostException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -322,6 +322,16 @@ public class ExceptionHandlingController {
     public ResponseEntity<ExceptionResponse> updatePostException(UpdatePostException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to update post.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnableToAddMemberToOrganisationException.class)
+    public ResponseEntity<ExceptionResponse> unableToAddMemberToOrganisationException(UnableToAddMemberToOrganisationException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable add member into organisation.");
         response.setErrorMessage(ex.getMessage());
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
