@@ -78,9 +78,5 @@ public class ResourceRequestController {
         resourceRequestService.respondToResourceRequest(requestId,responderId, response);
     }
 
-    //Terminate Resource Request
-    //View Resource Request
-    //Respond to Resource Request
-    // Terminate Donation Resource Request
-    //View Resource Donation Request
+  
 }
