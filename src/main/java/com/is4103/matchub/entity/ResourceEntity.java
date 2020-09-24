@@ -70,7 +70,7 @@ public class ResourceEntity {
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime endTime;
     
-    @OneToMany(mappedBy = "resource")
+    @OneToMany
     private List<ResourceRequestEntity> listOfRequests;
     
     

@@ -7,6 +7,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.exception.OrganisationNotFoundException;
 import com.is4103.matchub.exception.UnableToAddMemberToOrganisationException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.OrganisationEntityRepository;
@@ -40,7 +41,7 @@ public class OrganisationServiceImpl implements OrganisationService {
     public OrganisationEntity addMemberToOrganisation(Long organisationId, Long individualId) {
 
         OrganisationEntity organisation = organisationEntityRepository.findById(organisationId)
-                .orElseThrow(() -> new UserNotFoundException(organisationId));
+                .orElseThrow(() -> new OrganisationNotFoundException("Organisatio with id: "+ organisationId + " not found."));
 
         ProfileEntity memberToAdd = profileEntityRepository.findById(individualId)
                 .orElseThrow(() -> new UserNotFoundException(individualId));
