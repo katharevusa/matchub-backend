@@ -31,40 +31,40 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class PostEntityController {
 
     @Autowired
-    PostService postEntityService;
+    PostService postService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/createPost")
     PostEntity createPost(@Valid @RequestBody PostVO createVO) {
-        return postEntityService.createPost(createVO);
+        return postService.createPost(createVO);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "post/uploadPhotos/{postId}")
     public PostEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, @PathVariable("postId") Long postId) {
-        return postEntityService.uploadPhotos(postId, photos);
+        return postService.uploadPhotos(postId, photos);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPost/{postId}")
     PostEntity getPost(@PathVariable("postId") Long postId) {
-        return postEntityService.getPostById(postId);
+        return postService.getPostById(postId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getPostsByAccountId/{postId}")
-    Page<PostEntity> getPostsByAccountId(@PathVariable("postId") Long postId, Pageable pageable) {
-        return postEntityService.getPostsByAccountId(postId, pageable);
+    @RequestMapping(method = RequestMethod.GET, value = "/getPostsByAccountId/{accountId}")
+    Page<PostEntity> getPostsByAccountId(@PathVariable("accountId") Long postId, Pageable pageable) {
+        return postService.getPostsByAccountId(postId, pageable);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updatePost/{postId}")
     PostEntity updatePost(@PathVariable("postId") Long postId, @Valid @RequestBody PostVO vo) {
-        return postEntityService.updatePost(postId, vo);
+        return postService.updatePost(postId, vo);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "post/deletePhotos/{postId}")
     PostEntity deletePhotos(@PathVariable("postId") Long postId, @Valid @RequestBody DeleteFilesVO vo) throws IOException {
-        return postEntityService.deletePhotos(postId, vo.getFileNamesWithExtension());
+        return postService.deletePhotos(postId, vo.getFileNamesWithExtension());
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deletePost/{postId}/{postCreatorId}")
     void deletePost(@PathVariable("postId") Long postId, @PathVariable("postCreatorId") Long postCreatorId) throws IOException {
-        postEntityService.deletePost(postId, postCreatorId);
+        postService.deletePost(postId, postCreatorId);
     }
 }

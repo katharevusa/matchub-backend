@@ -46,6 +46,16 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(value = OrganisationNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> organisationNotFoundException(OrganisationNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Organisation not found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ExceptionResponse> invalidInput(MethodArgumentNotValidException ex) {
@@ -287,7 +297,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = CreateResourceRequestException.class)
     public ResponseEntity<ExceptionResponse> createResourceRequestException(CreateResourceRequestException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -297,7 +307,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = DeleteResourceRequestException.class)
     public ResponseEntity<ExceptionResponse> deleteResourceRequestException(DeleteResourceRequestException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -307,7 +317,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = ResourceRequestNotFoundException.class)
     public ResponseEntity<ExceptionResponse> resourceRequestNotFoundException(ResourceRequestNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -318,8 +328,6 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
-        
-        
     @ExceptionHandler(value = FirebaseAuthException.class)
     public ResponseEntity<ExceptionResponse> firebaseAuthException(FirebaseAuthException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -329,7 +337,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = PostNotFoundException.class)
     public ResponseEntity<ExceptionResponse> postNotFoundException(PostNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -339,8 +347,8 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-     @ExceptionHandler(value = RespondToResourceRequestException.class)
+
+    @ExceptionHandler(value = RespondToResourceRequestException.class)
     public ResponseEntity<ExceptionResponse> respondToResourceRequestException(RespondToResourceRequestException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to respond resource request");
@@ -349,8 +357,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-        
-        
+
     @ExceptionHandler(value = UnableToDeletePostException.class)
     public ResponseEntity<ExceptionResponse> postNotFoundException(UnableToDeletePostException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -365,6 +372,26 @@ public class ExceptionHandlingController {
     public ResponseEntity<ExceptionResponse> updatePostException(UpdatePostException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to update post.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnableToAddMemberToOrganisationException.class)
+    public ResponseEntity<ExceptionResponse> unableToAddMemberToOrganisationException(UnableToAddMemberToOrganisationException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable add member into organisation.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = UnableToRemoveMemberFromOrganisationException.class)
+    public ResponseEntity<ExceptionResponse> unableToRemoveMemberFromOrganisationException(UnableToRemoveMemberFromOrganisationException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to remove member from organisation.");
         response.setErrorMessage(ex.getMessage());
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
