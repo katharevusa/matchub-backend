@@ -284,6 +284,9 @@ public class ResourceServiceImpl implements ResourceService {
         if(resource.getMatchedProjectId()!= null){
             throw new TerminateResourceException("This resource is already matched with another project hence can not be terminated");
         }
+        if(!resource.getListOfRequests().isEmpty()){
+            throw new TerminateResourceException("This resource is used in some resource requests hence can not be deleted");
+        }
         
         resource.setAvailable(Boolean.FALSE);
         return resourceEntityRepository.saveAndFlush(resource);

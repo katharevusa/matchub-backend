@@ -9,7 +9,7 @@ package com.is4103.matchub.enumeration;
  *
  * @author longluqian
  */
-public enum ApproverEnum {
+public enum RequestorEnum {
 PROJECT_OWNER,
 RESOURCE_OWNER
 }

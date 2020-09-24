@@ -7,7 +7,7 @@
 
 package com.is4103.matchub.entity;
 
-import com.is4103.matchub.enumeration.ApproverEnum;
+import com.is4103.matchub.enumeration.RequestorEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -40,31 +40,50 @@ public class ResourceRequestEntity {
     
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @NotNull
-    private LocalDateTime requestCreationTime;
+    private LocalDateTime requestCreationTime = LocalDateTime.now();
     
     @Column(nullable = false)
     @NotNull
-    private RequestStatusEnum status;
+    private RequestStatusEnum status = RequestStatusEnum.ON_HOLD;
     
     @Column(nullable = false)
     @NotNull
-    private ApproverEnum approver;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private ResourceEntity resource;
+    private Long requestorId;
     
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private ProjectEntity project;
+    @Column(nullable = false)
+    @NotNull
+    private RequestorEnum requestorEnum;
+    
+    @Column(nullable = false)
+    @NotNull
+    private Long resourceId;
+     
+    @Column(nullable = false)
+    @NotNull
+    private Long projectId;
+    
+    @Column(nullable = false)
+    @NotNull
+    private Integer unitsRequired;
+    
+    @Column(nullable = true)
+    private String message;
 
-    public ResourceRequestEntity(LocalDateTime requestCreationTime, RequestStatusEnum status, ApproverEnum approver, ResourceEntity Resource, ProjectEntity project) {
-        this.requestCreationTime = requestCreationTime;
-        this.status = status;
-        this.approver = approver;
-        this.resource = Resource;
-        this.project = project;
+    public ResourceRequestEntity(Long requestorId, Long resourceId, Long projectId, Integer unitsRequired, String message) {
+        this.requestorId = requestorId;
+        this.resourceId = resourceId;
+        this.projectId = projectId;
+        this.unitsRequired = unitsRequired;
+        this.message = message;
     }
+    
+
+   
+     
+     
+       
+
+    
     
     
     
