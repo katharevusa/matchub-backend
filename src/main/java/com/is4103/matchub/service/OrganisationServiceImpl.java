@@ -8,6 +8,7 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.OrganisationNotFoundException;
+import com.is4103.matchub.exception.UnableToAddKAHToOrganisationException;
 import com.is4103.matchub.exception.UnableToAddMemberToOrganisationException;
 import com.is4103.matchub.exception.UnableToRemoveMemberFromOrganisationException;
 import com.is4103.matchub.exception.UserNotFoundException;
@@ -90,7 +91,37 @@ public class OrganisationServiceImpl implements OrganisationService {
         return profileEntityRepository.getEmployees(employeesId, pageable);
 
     }
-    
+
+    @Transactional
+    @Override
+    public OrganisationEntity addKahToOrganisation(Long organisationId, Long individualId) {
+
+        OrganisationEntity organisation = organisationEntityRepository.findById(organisationId)
+                .orElseThrow(() -> new OrganisationNotFoundException("Organisation with id: " + organisationId + " not found."));
+
+        ProfileEntity kahToAdd = profileEntityRepository.findById(individualId)
+                .orElseThrow(() -> new UserNotFoundException(individualId));
+
+        //check if individual is already inside organisation
+        if (organisation.getEmployees().contains(kahToAdd.getAccountId())) {
+            
+            if (!organisation.getKahs().contains(kahToAdd.getAccountId())) {
+                organisation.getKahs().add(kahToAdd.getAccountId());
+                
+                organisation = organisationEntityRepository.saveAndFlush(organisation);
+                return organisation;
+            } else {
+                throw new UnableToAddKAHToOrganisationException("Unable to add account " + individualId
+                    + " as KAH into organisationId " + organisationId + ": account is already a KAH of organisation.");
+            }
+
+        } else {
+            throw new UnableToAddKAHToOrganisationException("Unable to add account " + individualId
+                    + " as KAH into organisationId " + organisationId + ": account is not a member of organisation.");
+        }
+
+    }
+
     @Override
     public Page<ProfileEntity> viewOrganisationKAHs(Long organisationId, Pageable pageable) {
 

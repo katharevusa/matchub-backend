@@ -23,5 +23,7 @@ public interface OrganisationService {
 
     Page<ProfileEntity> viewOrganisationMembers(Long organisationId, Pageable pageable);
 
+    OrganisationEntity addKahToOrganisation(Long organisationId, Long individualId);
+
     Page<ProfileEntity> viewOrganisationKAHs(Long organisationId, Pageable pageable);
 }
