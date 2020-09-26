@@ -137,7 +137,10 @@ public class OrganisationServiceImpl implements OrganisationService {
         if (organisation.getEmployees().contains(kahToRemove.getAccountId())) {
 
             if (organisation.getKahs().contains(kahToRemove.getAccountId())) {
+                //remove from KAH
                 organisation.getKahs().remove(kahToRemove.getAccountId());
+                //remove from members
+                organisation.getEmployees().remove(kahToRemove.getAccountId());
 
                 organisation = organisationEntityRepository.saveAndFlush(organisation);
                 return organisation;
