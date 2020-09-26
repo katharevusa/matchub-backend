@@ -153,6 +153,11 @@ public class PostServiceImpl implements PostService {
             for (String photo : postToDelete.getPhotos()) {
                 attachmentService.deleteFile(photo);
             }
+
+            //remove from association
+            ProfileEntity postCreator = postToDelete.getPostCreator();
+            postCreator.getPosts().remove(postToDelete);
+
             //delete the post entity
             postEntityRepository.delete(postToDelete);
         } else {
