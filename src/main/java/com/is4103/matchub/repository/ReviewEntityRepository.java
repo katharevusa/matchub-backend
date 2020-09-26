@@ -5,9 +5,10 @@
  */
 package com.is4103.matchub.repository;
 
-import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -17,6 +18,15 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface ReviewEntityRepository extends JpaRepository<ReviewEntity, Long> {
 
-    @Query("SELECT r FROM ReviewEntity r WHERE r.reviewerId = :id")
-    List<ReviewEntity> getAllReviewsByAccount(Long id);
+    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewReceiver.accountId = :id",
+            countQuery = "SELECT COUNT(r) FROM ReviewEntity r WHERE r.reviewReceiver.accountId = :id")
+    Page<ReviewEntity> getReviewsReceivedByAccountId(Long id, Pageable pageable);
+
+    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewerId = :id",
+            countQuery = "SELECT COUNT(r) FROM ReviewEntity r WHERE r.reviewerId = :id")
+    Page<ReviewEntity> getReviewsGivenByAccountId(Long id, Pageable pageable);
+
+    //this query is to check for reviews given before deleting an account (used in UserServiceImpl)
+    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewerId = :id")
+    List<ReviewEntity> getReviewsGivenByAccountId(Long id);
 }
