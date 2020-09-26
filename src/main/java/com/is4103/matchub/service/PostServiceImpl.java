@@ -54,6 +54,9 @@ public class PostServiceImpl implements PostService {
         vo.updatePost(newPost);
 
         newPost = postEntityRepository.saveAndFlush(newPost);
+        //set associations
+        profile.getPosts().add(newPost);
+
         return newPost;
     }
 
