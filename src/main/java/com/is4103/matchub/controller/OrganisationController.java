@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -41,19 +42,24 @@ public class OrganisationController {
     Page<ProfileEntity> viewOrganisationMembers(@PathVariable("organisationId") Long organisationId, Pageable pageable) {
         return organisationService.viewOrganisationMembers(organisationId, pageable);
     }
-    
+
     @RequestMapping(method = RequestMethod.PUT, value = "organisation/addKAH/{organisationId}/{individualId}")
     OrganisationEntity addKAH(@PathVariable("organisationId") Long organisationId, @PathVariable("individualId") Long individualId) {
         return organisationService.addKahToOrganisation(organisationId, individualId);
     }
-    
+
     @RequestMapping(method = RequestMethod.PUT, value = "organisation/removeKAH/{organisationId}/{individualId}")
     OrganisationEntity removeKAH(@PathVariable("organisationId") Long organisationId, @PathVariable("individualId") Long individualId) {
         return organisationService.removeKahFromOrganisation(organisationId, individualId);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "organisation/viewKAHs/{organisationId}")
     Page<ProfileEntity> viewOrganisationKAHs(@PathVariable("organisationId") Long organisationId, Pageable pageable) {
         return organisationService.viewOrganisationKAHs(organisationId, pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "organisation/searchMembers/{organisationId}")
+    Page<ProfileEntity> searchMembers(@PathVariable("organisationId") Long organisationId, @RequestParam(value = "search") String search, Pageable pageable) {
+        return organisationService.searchMembers(organisationId, search, pageable);
     }
 }

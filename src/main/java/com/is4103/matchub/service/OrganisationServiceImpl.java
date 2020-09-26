@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.OrganisationNotFoundException;
@@ -71,6 +72,11 @@ public class OrganisationServiceImpl implements OrganisationService {
         //check if individual is inside organisation
         if (organisation.getEmployees().contains(memberToRemove.getAccountId())) {
             organisation.getEmployees().remove(memberToRemove.getAccountId());
+
+            //check if individuals is inside KAH 
+            if (organisation.getKahs().contains(memberToRemove.getAccountId())) {
+                organisation.getKahs().remove(memberToRemove.getAccountId());
+            }
 
             organisation = organisationEntityRepository.saveAndFlush(organisation);
             return organisation;
@@ -139,8 +145,6 @@ public class OrganisationServiceImpl implements OrganisationService {
             if (organisation.getKahs().contains(kahToRemove.getAccountId())) {
                 //remove from KAH
                 organisation.getKahs().remove(kahToRemove.getAccountId());
-                //remove from members
-                organisation.getEmployees().remove(kahToRemove.getAccountId());
 
                 organisation = organisationEntityRepository.saveAndFlush(organisation);
                 return organisation;
@@ -166,6 +170,23 @@ public class OrganisationServiceImpl implements OrganisationService {
 
         return profileEntityRepository.getKAHs(kahIds, pageable);
 
+    }
+
+    @Override
+    public Page<ProfileEntity> searchMembers(Long organisationId, String search, Pageable pageable) {
+        Page<ProfileEntity> page;
+
+        OrganisationEntity organisation = organisationEntityRepository.findById(organisationId)
+                .orElseThrow(() -> new OrganisationNotFoundException("Organisation with id: " + organisationId + " not found."));
+
+        Set<Long> memberIds = organisation.getEmployees();
+
+        if (search.isEmpty()) {
+            page = profileEntityRepository.findAllMembers(memberIds, pageable);
+        } else {
+            page = profileEntityRepository.searchMembers(memberIds, search, pageable);
+        }
+        return page;
     }
 
 }
