@@ -6,14 +6,19 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.BadgeEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.UnableToCreateProjectBadgeException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.BadgeEntityRepository;
+import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +34,9 @@ public class BadgeServiceImpl implements BadgeService {
 
     @Autowired
     private ProjectEntityRepository projectEntityRepository;
+
+    @Autowired
+    private ProfileEntityRepository profileEntityRepository;
 
     @Transactional
     @Override
@@ -50,11 +58,19 @@ public class BadgeServiceImpl implements BadgeService {
         newBadge.setProject(project);
 
         newBadge = badgeEntityRepository.saveAndFlush(newBadge);
-        
+
         //set association on project
         project.setProjectBadge(newBadge);
-        
+
         return newBadge;
+    }
+
+    @Override
+    public Page<BadgeEntity> getBadgesByAccountId(Long id, Pageable pageable) {
+        ProfileEntity profile = profileEntityRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(id));
+        
+        return badgeEntityRepository.getBadgesByAccountId(id, pageable);
     }
 
 }

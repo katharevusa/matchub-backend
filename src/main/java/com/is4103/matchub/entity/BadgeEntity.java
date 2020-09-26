@@ -58,7 +58,7 @@ public class BadgeEntity {
     private List<ProfileEntity> profiles = new ArrayList<>();
 
     @OneToOne(optional = true)
-    @JsonIgnoreProperties({"projectBadge", "sdgs", "teamMembers"})
+    @JsonIgnoreProperties({"projectBadge", "sdgs", "teamMembers", "projectOwners"})
     private ProjectEntity project;
 
     public BadgeEntity(BadgeTypeEnum badgeType, String badgeTitle, String icon) {
