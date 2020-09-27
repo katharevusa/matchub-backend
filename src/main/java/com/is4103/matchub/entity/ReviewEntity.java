@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,7 +36,7 @@ public class ReviewEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     @NotNull
     private String content;
 
@@ -49,10 +50,12 @@ public class ReviewEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
+    @JsonIgnoreProperties({"reviews", "projectOwners", "teamMembers", "listOfRequests"})
     private ProjectEntity project;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
+    @JsonIgnoreProperties({"reviewsReceived", "projectsOwned", "hostedResources", "sdgs", "likedPosts"})
     private ProfileEntity reviewReceiver;
 
     public ReviewEntity(String content, BigDecimal rating) {
