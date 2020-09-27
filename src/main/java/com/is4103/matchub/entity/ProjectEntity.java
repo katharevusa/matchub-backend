@@ -150,7 +150,6 @@ public class ProjectEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projectsOwned", "sdgs", "meetings", "projectsJoined", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> projectOwners = new ArrayList<>();
-
     public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate) {
         this.projectTitle = projectTitle;
         this.projectDescription = projectDescription;
