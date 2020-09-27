@@ -11,6 +11,7 @@ import com.is4103.matchub.exception.DeleteResourceRequestException;
 import com.is4103.matchub.exception.ResourceRequestNotFoundException;
 import com.is4103.matchub.exception.RespondToResourceRequestException;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -35,5 +36,13 @@ public interface ResourceRequestService {
     public Page<ResourceRequestEntity> getResourceRequestByProjectId(Long projectId, Pageable pageable);
 
     public ResourceRequestEntity respondToResourceRequest(Long requestId, Long responderId, boolean response) throws RespondToResourceRequestException;
+
+    public List<ResourceRequestEntity> getAllIncomingResourceDonationRequests(Long userId);
+
+    public List<ResourceRequestEntity> getAllOutgoingResourceRequests(Long userId);
+
+    public List<ResourceRequestEntity> getAllIncomingResourceRequests(Long userId);
+    
+    public List<ResourceRequestEntity> getAllOutgoingDonationRequests(Long userId);
 
 }

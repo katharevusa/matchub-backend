@@ -5,12 +5,14 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.JoinRequestEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
+import com.is4103.matchub.exception.JoinProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.RevokeDownvoteException;
 import com.is4103.matchub.exception.RevokeUpvoteException;
@@ -18,6 +20,7 @@ import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UpdateProjectException;
 import com.is4103.matchub.exception.UpvoteProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
+import com.is4103.matchub.repository.JoinRequestEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
@@ -29,9 +32,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import static org.bouncycastle.asn1.x500.style.RFC4519Style.o;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,6 +57,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private AttachmentService attachmentService;
+
+    @Autowired
+    private JoinRequestEntityRepository joinRequestEntityRepository;
 
     @Override
     public ProjectEntity createProject(ProjectCreateVO vo) {
@@ -245,22 +251,22 @@ public class ProjectServiceImpl implements ProjectService {
 
         return project;
     }
-    
-    @Override 
-    public ProjectEntity deleteProjectProfilePic(Long projectId) throws  ProjectNotFoundException, UpdateProjectException,IOException{
+
+    @Override
+    public ProjectEntity deleteProjectProfilePic(Long projectId) throws ProjectNotFoundException, UpdateProjectException, IOException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Project not exist");
         }
         ProjectEntity project = projectOptional.get();
-        if(project.getProjectProfilePic()== null){
+        if (project.getProjectProfilePic() == null) {
             throw new UpdateProjectException("Unable to delete profile picture: You currently do not have a profile picture  ");
         }
         attachmentService.deleteFile(project.getProjectProfilePic());
         project.setProjectProfilePic(null);
-        
+
         return projectEntityRepository.saveAndFlush(project);
-        
+
     }
 
     @Override
@@ -279,29 +285,29 @@ public class ProjectServiceImpl implements ProjectService {
         project = projectEntityRepository.saveAndFlush(project);
         return project;
     }
-    
+
     @Override
-    public ProjectEntity deletePhotos (Long projectId, String[] photoToDelete)throws ProjectNotFoundException, IOException, UpdateProjectException{
+    public ProjectEntity deletePhotos(Long projectId, String[] photoToDelete) throws ProjectNotFoundException, IOException, UpdateProjectException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Project not exist");
         }
         ProjectEntity project = projectOptional.get();
-        
-        for(String s : photoToDelete){
-            if(!project.getPhotos().contains(s)){
+
+        for (String s : photoToDelete) {
+            if (!project.getPhotos().contains(s)) {
                 throw new UpdateProjectException("Unable to delete photos: photos not found");
             }
         }
-        
-        for(String s: photoToDelete){
+
+        for (String s : photoToDelete) {
             project.getPhotos().remove(s);
             attachmentService.deleteFile(s);
         }
-        
-        return projectEntityRepository.saveAndFlush(project);     
+
+        return projectEntityRepository.saveAndFlush(project);
     }
-    
+
     @Override
     public ProjectEntity uploadDocuments(Long projectId, MultipartFile[] documents) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
@@ -320,40 +326,40 @@ public class ProjectServiceImpl implements ProjectService {
         project = projectEntityRepository.saveAndFlush(project);
         return project;
     }
-   @Override 
-    public ProjectEntity deleteDocuments(Long projectId, String[] docsToDelete) throws IOException,ProjectNotFoundException, UpdateProjectException {
-       Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+
+    @Override
+    public ProjectEntity deleteDocuments(Long projectId, String[] docsToDelete) throws IOException, ProjectNotFoundException, UpdateProjectException {
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Project not exist");
         }
         ProjectEntity project = projectOptional.get();
         Map<String, String> hashmap = project.getDocuments();
 
-            //loop 1: check if all the documents are present
-            for (String key : docsToDelete) {
-                //get the path of the document to delete
-                String selectedDocumentPath = hashmap.get(key);
-                if (selectedDocumentPath == null) {
-                    throw new UpdateProjectException("Unable to delete project document (Document not found): " + key);
-                }
+        //loop 1: check if all the documents are present
+        for (String key : docsToDelete) {
+            //get the path of the document to delete
+            String selectedDocumentPath = hashmap.get(key);
+            if (selectedDocumentPath == null) {
+                throw new UpdateProjectException("Unable to delete project document (Document not found): " + key);
             }
-            
-            //loop2: delete the actual file when all files are present
-            for (String key : docsToDelete) {
-                //get the path of the document to delete
-                String selectedDocumentPath = hashmap.get(key);
-                //if file is present, call attachmentService to delete the actual file from /build folder
-                attachmentService.deleteFile(selectedDocumentPath);
+        }
 
-                //successfully removed the actual file from /build folder, update organisation hashmap
-                hashmap.remove(key);
-            }
-            
-            //save once all documents are removed successfully
-            project.setDocuments(hashmap);
-            return projectEntityRepository.saveAndFlush(project);
-            
-        
+        //loop2: delete the actual file when all files are present
+        for (String key : docsToDelete) {
+            //get the path of the document to delete
+            String selectedDocumentPath = hashmap.get(key);
+            //if file is present, call attachmentService to delete the actual file from /build folder
+            attachmentService.deleteFile(selectedDocumentPath);
+
+            //successfully removed the actual file from /build folder, update organisation hashmap
+            hashmap.remove(key);
+        }
+
+        //save once all documents are removed successfully
+        project.setDocuments(hashmap);
+        return projectEntityRepository.saveAndFlush(project);
+
     }
 
     @Override
@@ -371,7 +377,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (profile.getUpvotedProjectIds().contains(projectId)) {
             throw new UpvoteProjectException("Upable to upvote project: You have already upvoted this project");
         }
-        
+
         if (profile.getDownvotedProjectIds().contains(projectId)) {
             throw new UpvoteProjectException("Upable to upvote project: Please revoke downvote before upvote the project");
         }
@@ -411,7 +417,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (profile.getDownvotedProjectIds().contains(projectId)) {
             throw new DownvoteProjectException("Upable to downvote project: You have already downvoted this project");
         }
-        
+
         if (profile.getUpvotedProjectIds().contains(projectId)) {
             throw new DownvoteProjectException("Upable to downvote project: Please revoke upvote before downvote the project");
         }
@@ -419,11 +425,11 @@ public class ProjectServiceImpl implements ProjectService {
         if (project.getUpvotes() == 0) {
             throw new DownvoteProjectException("Unable to downvote project: Minimum 0 upvotes");
         }
-        
+
         if (project.getUpvotes() < 20) {
             project.setProjStatus(ProjectStatusEnum.ON_HOLD);
         }
-        
+
         project.setUpvotes(project.getUpvotes() - 1);
         profile.getDownvotedProjectIds().add(projectId);
         project = projectEntityRepository.saveAndFlush(project);
@@ -431,8 +437,9 @@ public class ProjectServiceImpl implements ProjectService {
         return project;
 
     }
-     @Override
-    public ProjectEntity revokeUpvote(Long projectId, Long profileId) throws ProjectNotFoundException, UserNotFoundException, RevokeUpvoteException{
+
+    @Override
+    public ProjectEntity revokeUpvote(Long projectId, Long profileId) throws ProjectNotFoundException, UserNotFoundException, RevokeUpvoteException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
 
@@ -446,16 +453,16 @@ public class ProjectServiceImpl implements ProjectService {
 
         ProjectEntity project = projectOptional.get();
         ProfileEntity profile = profOptional.get();
-        
-        if(!profile.getUpvotedProjectIds().contains(projectId)){
+
+        if (!profile.getUpvotedProjectIds().contains(projectId)) {
             throw new RevokeUpvoteException("Unable to revoke upvote: You have never upvoted this project");
         }
-        
-        if(profile.getDownvotedProjectIds().contains(projectId)){
+
+        if (profile.getDownvotedProjectIds().contains(projectId)) {
             throw new RevokeUpvoteException("Unable to revoke upvote: Please revoke downvote before you upvote the project ");
         }
         project.setUpvotes(project.getUpvotes() - 1);
-        
+
         if (project.getUpvotes() < 20) {
             project.setProjStatus(ProjectStatusEnum.ON_HOLD);
         }
@@ -465,9 +472,9 @@ public class ProjectServiceImpl implements ProjectService {
         return project;
 
     }
-    
-     @Override
-    public ProjectEntity revokeDownvote(Long projectId, Long profileId) throws ProjectNotFoundException, UserNotFoundException, RevokeDownvoteException{
+
+    @Override
+    public ProjectEntity revokeDownvote(Long projectId, Long profileId) throws ProjectNotFoundException, UserNotFoundException, RevokeDownvoteException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
 
@@ -478,28 +485,81 @@ public class ProjectServiceImpl implements ProjectService {
         if (!profOptional.isPresent()) {
             throw new UserNotFoundException("Unable to revoke downvote: User not found");
         }
-        
+
         ProjectEntity project = projectOptional.get();
         ProfileEntity profile = profOptional.get();
-        
-        if(!profile.getDownvotedProjectIds().contains(projectId)){
+
+        if (!profile.getDownvotedProjectIds().contains(projectId)) {
             throw new RevokeDownvoteException("Unable to revoke downvote: You have never downvoted this project");
         }
 
-        if(profile.getUpvotedProjectIds().contains(projectId)){
+        if (profile.getUpvotedProjectIds().contains(projectId)) {
             throw new RevokeDownvoteException("Unable to revoke downvote: Please revoke upvote before you downvote the project ");
         }
-        
+
         if (project.getUpvotes() >= 20) {
             project.setProjStatus(ProjectStatusEnum.ACTIVE);
         }
-        
+
         project.setUpvotes(project.getUpvotes() + 1);
         profile.getDownvotedProjectIds().remove(projectId);
         project = projectEntityRepository.saveAndFlush(project);
 
         return project;
 
+    }
+
+    @Override
+    public Page<ProjectEntity> retrieveProjectBySDGId(Long sdgId, Pageable pageable) throws ProjectNotFoundException {
+        Optional<SDGEntity> optionalSDG = sDGEntityRepository.findById(sdgId);
+        if (optionalSDG.isPresent()) {
+            SDGEntity sdg = optionalSDG.get();
+            List<ProjectEntity> projects = sdg.getProjects();
+            Long start = pageable.getOffset();
+            Long end = (start + pageable.getPageSize()) > projects.size() ? projects.size() : (start + pageable.getPageSize());
+            Page<ProjectEntity> pages = new PageImpl<ProjectEntity>(projects.subList(start.intValue(), end.intValue()), pageable, projects.size());
+            return pages;
+        } else {
+            throw new ProjectNotFoundException("SDG with id does not exist");
+        }
+    }
+
+//    make a request to join project (project id, profile id)
+    @Override
+    public JoinRequestEntity createJoinRequest(Long projectId, Long profileId) throws ProjectNotFoundException, JoinProjectException {
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
+
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Unable to revoke downvote: Project not exist");
+        }
+
+        if (!profOptional.isPresent()) {
+            throw new UserNotFoundException("Unable to revoke downvote: User not found");
+        }
+
+        ProjectEntity project = projectOptional.get();
+        ProfileEntity requestor = profOptional.get();
+
+        // One user can only make one join request to one project 
+        Optional<JoinRequestEntity> requestOptional = joinRequestEntityRepository.searchJoinRequestProjectByProjectAndRequestor(projectId, projectId);
+        if (requestOptional.isPresent()) {
+            throw new JoinProjectException("One can only create one join request for one project");
+        }
+        // If user is already a teammember or project creators,  can not make join request
+        if (project.getTeamMembers().contains(requestor) || project.getProjectOwners().contains(requestor)) {
+            throw new JoinProjectException("You are already participating this project");
+        }
+
+        JoinRequestEntity joinRequest = new JoinRequestEntity();
+        joinRequest.setProject(project);
+        project.getJoinRequests().add(joinRequest);
+        joinRequest.setRequestor(requestor);
+        requestor.getJoinRequests().add(joinRequest);
+        
+        //make anouncement to project owners 
+        
+        return joinRequestEntityRepository.saveAndFlush(joinRequest);
     }
 
 }
