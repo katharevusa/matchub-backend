@@ -36,11 +36,11 @@ public class JoinRequestEntity {
     
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @NotNull
-    private LocalDateTime requestCreationTime;
+    private LocalDateTime requestCreationTime = LocalDateTime.now();
     
     @Column(nullable = false)
     @NotNull
-    private JoinRequestStatusEnum status;
+    private JoinRequestStatusEnum status = JoinRequestStatusEnum.ON_HOLD;
     
     @ManyToOne
     @NotNull

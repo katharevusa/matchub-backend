@@ -5,9 +5,11 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.JoinRequestEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
+import com.is4103.matchub.exception.JoinProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.RevokeDownvoteException;
 import com.is4103.matchub.exception.RevokeUpvoteException;
@@ -64,11 +66,17 @@ public interface ProjectService {
     public ProjectEntity revokeUpvote(Long projectId, Long profileId) throws ProjectNotFoundException, UserNotFoundException, RevokeUpvoteException;
 
     public ProjectEntity revokeDownvote(Long projectId, Long profileId) throws ProjectNotFoundException, UserNotFoundException, RevokeDownvoteException;
-    
-    public ProjectEntity deleteDocuments(Long projectId, String[] docsToDelete) throws IOException,ProjectNotFoundException, UpdateProjectException;
-   
-    public ProjectEntity deletePhotos (Long projectId, String[] photoToDelete)throws ProjectNotFoundException, IOException, UpdateProjectException;
 
-    public ProjectEntity deleteProjectProfilePic(Long projectId) throws  ProjectNotFoundException, UpdateProjectException,IOException;
+    public ProjectEntity deleteDocuments(Long projectId, String[] docsToDelete) throws IOException, ProjectNotFoundException, UpdateProjectException;
+
+    public ProjectEntity deletePhotos(Long projectId, String[] photoToDelete) throws ProjectNotFoundException, IOException, UpdateProjectException;
+
+    public ProjectEntity deleteProjectProfilePic(Long projectId) throws ProjectNotFoundException, UpdateProjectException, IOException;
+
+    public JoinRequestEntity createJoinRequest(Long projectId, Long profileId) throws ProjectNotFoundException, JoinProjectException;
+
+    public Page<ProjectEntity> retrieveProjectBySDGId(Long sdgId, Pageable pageable) throws ProjectNotFoundException;
+
+
 
 }

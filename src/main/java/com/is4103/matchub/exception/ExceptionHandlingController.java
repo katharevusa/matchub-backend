@@ -448,6 +448,16 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
     
+    @ExceptionHandler(value = JoinProjectException.class)
+    public ResponseEntity<ExceptionResponse> joinProjectException(JoinProjectException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to join project");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
 
 
 }

@@ -141,15 +141,5 @@ public class ProjectController {
         return projectService.deleteDocuments(projectId, docsToDelete);
     }
     
-    
-    
-
-
-    //get a list of projects based on SDGs: Filter projects based on SDGs
-//    @RequestMapping(method = RequestMethod.GET, value = "/searchProjectBySDGs")
-//    List<ProjectEntity> searchProjectBySDGs(@RequestParam (value = "SDGs", defaultValue = "")List<Long> sdgIds){
-//        return projectService.searchProjectBySDGs(sdgIds);
-//    }
-//    
-    // make a request to join project (project id, profile id)
+ 
 }

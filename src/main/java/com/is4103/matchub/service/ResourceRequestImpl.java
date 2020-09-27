@@ -65,9 +65,17 @@ public class ResourceRequestImpl implements ResourceRequestService {
             throw new CreateResourceRequestException("Unable to create resource request: can only create resource request for owned projects");
         }
         
+        // between resource and project, there can only be one on_hold request 
+        if(resourceRequestEntityRepository.searchResourceRequestProjectByProjectAndResourceOnHold(project.getProjectId(),resource.getResourceId(), RequestStatusEnum.ON_HOLD).isPresent()){
+            throw new CreateResourceRequestException("There exits one request between resource and project with status on_hold, please make a decision before creating a new request");
+        }
+        
+        
         if(vo.getUnitsRequired()>resource.getUnits()){
             throw new CreateResourceRequestException("Unable to create resource request: the requested amount is more than the resource provided");
         }
+        
+        
 
         ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
         vo.createResourceRequestProjectOwner(resourceRequest);
@@ -105,6 +113,12 @@ public class ResourceRequestImpl implements ResourceRequestService {
         if(vo.getUnitsRequired()>resource.getUnits()){
             throw new CreateResourceRequestException("Unable to create resource request: the requested amount is more than the resource provided");
         }
+        
+        // between resource and project, there can only be one on_hold request 
+        if(resourceRequestEntityRepository.searchResourceRequestProjectByProjectAndResourceOnHold(project.getProjectId(),resource.getResourceId(), RequestStatusEnum.ON_HOLD).isPresent()){
+            throw new CreateResourceRequestException("There exits one request between resource and project with status on_hold, please make a decision before creating a new request");
+        }
+        
 
         ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
         vo.createResourceRequestResourceOwner(resourceRequest);
