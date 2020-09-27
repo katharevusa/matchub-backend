@@ -7,6 +7,7 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
@@ -19,7 +20,9 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
+import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +64,9 @@ public class InitServiceImpl implements InitService {
     @Autowired
     ResourceCategoryEntityRepository resourceCategoryEntityRepository;
 
+    @Autowired
+    ReviewEntityRepository reviewEntityRepository;
+
     @Transactional
     public void init() {
         initSDG();
@@ -68,6 +74,9 @@ public class InitServiceImpl implements InitService {
         initResourceCategories();
         initResources();
         initProjects();
+
+        //added for badge and review use case
+        initCompletedProject();
     }
 
     private void initUsers() {
@@ -122,7 +131,7 @@ public class InitServiceImpl implements InitService {
         alexLow.setProfilePhoto("https://localhost:8443/api/v1/files/init/alexlow.jpg");
         alexLow.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(3))));
         alexLow.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9))));
-        
+
         List<SDGEntity> sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
@@ -241,7 +250,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
         networkForGood.setSdgs(sdgs);
         accountEntityRepository.save(networkForGood);
-        
+
         //4th individual
         IndividualEntity songhwa = new IndividualEntity("songhwa@gmail.com", passwordEncoder.encode("password"), "Song Hwa", "Chae", GenderEnum.FEMALE);
         //account attributes
@@ -271,7 +280,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
         songhwa.setSdgs(sdgs);
         accountEntityRepository.save(songhwa);
-        
+
         //3rd organisation, accountId = 10
         description = "The Korean Federation for Environmental Movement (KFEM) is a civic environmental "
                 + "organization that takes progressive actions to support core values of life, peace, "
@@ -392,7 +401,7 @@ public class InitServiceImpl implements InitService {
         classroom.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_classroom.jpg");
         classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_classroom.jpg");
         classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/classroom.jpg");
-        
+
         resourceService.createResource(classroom, 2L, 2L);
 
         ResourceEntity water = new ResourceEntity("Water", "10 Free Bottle Water", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
@@ -473,8 +482,7 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building.jpg");
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building2.jpg");
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building3.jpg");
-        
-        
+
         projectService.createProject(projectEntity4, 3L);
 
         ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Papua New Guinea", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Cambodia", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
@@ -486,7 +494,7 @@ public class InitServiceImpl implements InitService {
         projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/water.jpg");
         projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/water2.jpg");
         projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/water3.jpg");
-        
+
         projectService.createProject(projectEntity5, 4L);
 
         ProjectEntity projectEntity6 = new ProjectEntity("Save endangered sea turtles in Panama", "This project will launch a sea turtle research and conservation program to protect endangered leatherback and hawksbill turtles that were found at Bocas del Drago, Panama.", "Panama", LocalDateTime.parse("2021-01-05T11:50:55"), LocalDateTime.parse("2025-06-05T11:50:55"));
@@ -509,7 +517,7 @@ public class InitServiceImpl implements InitService {
         projectEntity7.getPhotos().add("https://localhost:8443/api/v1/files/init/reef.jpg");
         projectEntity7.getPhotos().add("https://localhost:8443/api/v1/files/init/reef2.jpg");
         projectEntity7.getPhotos().add("https://localhost:8443/api/v1/files/init/reef3.jpg");
-               
+
         projectService.createProject(projectEntity7, 6L);
 
         ProjectEntity projectEntity8 = new ProjectEntity("Solar lamps for remote villages in the Peruvian Andes", "To supply a number of households in remote villages in the Andes with solar lamps and solar panels (that charge effectively with cloud cover).", "Peru", LocalDateTime.parse("2022-06-05T11:50:55"), LocalDateTime.parse("2030-06-05T11:50:55"));
@@ -523,6 +531,57 @@ public class InitServiceImpl implements InitService {
         projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/solar2.jpg");
         projectService.createProject(projectEntity8, 6L);
 
+    }
+
+    //for badge and review use cases
+    public void initCompletedProject() {
+
+        SDGEntity cleanWater = sdgEntityRepository.findBySdgName("Clean Water and Sanitation");
+        SDGEntity sustainablecities = sdgEntityRepository.findBySdgName("Sustainable Cities and Communities");
+        SDGEntity lifeBelowWater = sdgEntityRepository.findBySdgName("Life Below Water");
+
+        //create a completed project 
+        String projDesc = "One of Seoul KFEM’s projects is to clean up and protect the Hangang River, "
+                + "which runs through South Korea’s capital city. The river is a vital source of water "
+                + "for the 10 million people who live there, but years of neglect have dramatically "
+                + "reduced the quality of the water. As part of the new partnership, Oris will be "
+                + "supporting a series of clean-up days Seoul KFEM has scheduled. During these, "
+                + "hundreds of local volunteers will work along the river to pick up litter, "
+                + "plastic and other harmful pollutants. The events will also help raise awareness "
+                + "of the importance of clean water in Seoul.";
+        ProjectEntity completedProject = new ProjectEntity("Time To Clean Up Hangang River", projDesc, "South Korea", LocalDateTime.parse("2018-06-05T11:45:55"), LocalDateTime.parse("2020-02-26T10:25:55"));
+        completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
+        completedProject.setUpvotes(45);
+        completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/timeToCleanUpHangang.jpg");
+        completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/timeToCleanUpHangang1.jpg");
+        completedProject.setProjectProfilePic("https://localhost:8443/api/v1/files/init/timeToCleanUpHangang.jpg");
+
+        //associations
+        completedProject.getSdgs().add(cleanWater);
+        completedProject.getSdgs().add(sustainablecities);
+        completedProject.getSdgs().add(lifeBelowWater);
+
+        projectService.createProject(completedProject, 5L);
+        //set team members 
+        ProfileEntity songhwa = profileEntityRepository.findById(Long.valueOf(9)).get();
+        completedProject.getTeamMembers().add(songhwa);
+
+        /* set reviews for project */
+        ReviewEntity reviewForIkjun = new ReviewEntity("Ik Jun was very helpful and played a great role in this project! He motivated the team to keep progressing when things got tough.", BigDecimal.valueOf(5));
+        reviewForIkjun.setReviewerId(Long.valueOf(9));
+        reviewForIkjun.setProject(completedProject);
+
+        ProfileEntity ikjun = profileEntityRepository.findById(Long.valueOf(5)).get();
+        reviewForIkjun.setReviewReceiver(ikjun);
+        reviewEntityRepository.save(reviewForIkjun);
+
+        //do another review for songhwa
+        ReviewEntity reviewForSonghwa = new ReviewEntity("Songhwa brought positivity into the project, and took good care of the elderly during community river cleanup events.", BigDecimal.valueOf(5));
+        reviewForSonghwa.setReviewerId(Long.valueOf(5));
+        reviewForSonghwa.setProject(completedProject);
+
+        reviewForSonghwa.setReviewReceiver(songhwa);
+        reviewEntityRepository.save(reviewForSonghwa);
     }
 
 }

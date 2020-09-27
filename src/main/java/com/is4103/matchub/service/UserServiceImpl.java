@@ -563,7 +563,7 @@ public class UserServiceImpl implements UserService {
 
             //account cannot be deleted if it has incomplete tasks, reviews given
             if (taskEntityRepository.getIncompleteTasksOfAccount(accountId).size() > 0
-                    || reviewEntityRepository.getAllReviewsByAccount(accountId).size() > 0) {
+                    || reviewEntityRepository.getReviewsGivenByAccountId(accountId).size() > 0) {
                 deleteAccount = false;
             }
         } else {
@@ -571,7 +571,7 @@ public class UserServiceImpl implements UserService {
 
             //account cannot be deleted if it has incomplete tasks, reviews given
             if (taskEntityRepository.getIncompleteTasksOfAccount(accountId).size() > 0
-                    || reviewEntityRepository.getAllReviewsByAccount(accountId).size() > 0) {
+                    || reviewEntityRepository.getReviewsGivenByAccountId(accountId).size() > 0) {
                 deleteAccount = false;
             }
         }
