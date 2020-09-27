@@ -542,7 +542,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProfileEntity requestor = profOptional.get();
 
         // One user can only make one join request to one project 
-        Optional<JoinRequestEntity> requestOptional = joinRequestEntityRepository.searchJoinRequestProjectByProjectAndRequestor(projectId, projectId);
+        Optional<JoinRequestEntity> requestOptional = joinRequestEntityRepository.searchJoinRequestProjectByProjectAndRequestor(projectId, profileId);
         if (requestOptional.isPresent()) {
             throw new JoinProjectException("One can only create one join request for one project");
         }
