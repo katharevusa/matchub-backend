@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.is4103.matchub.enumeration.JoinRequestStatusEnum;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -44,10 +45,12 @@ public class JoinRequestEntity {
     
     @ManyToOne
     @NotNull
+    @JsonIgnoreProperties({"likedPosts","joinedChannel", "managedChannel", "tasks", "fundPladges", "badges","reviewsReceived", "joinRequests","projectsOwned","projectsJoined", "meetings", "sdgs", "hostedResources", "notifications"  })
     private ProfileEntity requestor;
     
     @ManyToOne
     @NotNull
+    @JsonIgnoreProperties({"joinRequests", "reviews","projectBadge","fundsCampaign", "meetings","listOfRequests",  "sdgs", "kpis", "teamMembers", "channels" ,"projectOwners" })
     private ProjectEntity project;
 
     public JoinRequestEntity(LocalDateTime requestCreationTime, JoinRequestStatusEnum status) {

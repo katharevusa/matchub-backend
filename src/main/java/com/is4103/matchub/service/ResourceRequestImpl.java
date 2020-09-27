@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import static com.google.cloud.storage.Storage.GetHmacKeyOption.projectId;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
@@ -20,6 +21,10 @@ import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
+import static io.grpc.internal.ConscryptLoader.isPresent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -60,22 +65,19 @@ public class ResourceRequestImpl implements ResourceRequestService {
         if (!profileEntityRepository.findById(vo.getRequestorId()).isPresent()) {
             throw new CreateResourceRequestException("Unable to create resource request: requestor not found");
         }
-        
-        if(!project.getProjectOwners().contains(profileEntityRepository.findById(vo.getRequestorId()).get())){
+
+        if (!project.getProjectOwners().contains(profileEntityRepository.findById(vo.getRequestorId()).get())) {
             throw new CreateResourceRequestException("Unable to create resource request: can only create resource request for owned projects");
         }
-        
+
         // between resource and project, there can only be one on_hold request 
-        if(resourceRequestEntityRepository.searchResourceRequestProjectByProjectAndResourceOnHold(project.getProjectId(),resource.getResourceId(), RequestStatusEnum.ON_HOLD).isPresent()){
+        if (resourceRequestEntityRepository.searchResourceRequestProjectByProjectAndResourceOnHold(project.getProjectId(), resource.getResourceId(), RequestStatusEnum.ON_HOLD).isPresent()) {
             throw new CreateResourceRequestException("There exits one request between resource and project with status on_hold, please make a decision before creating a new request");
         }
-        
-        
-        if(vo.getUnitsRequired()>resource.getUnits()){
+
+        if (vo.getUnitsRequired() > resource.getUnits()) {
             throw new CreateResourceRequestException("Unable to create resource request: the requested amount is more than the resource provided");
         }
-        
-        
 
         ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
         vo.createResourceRequestProjectOwner(resourceRequest);
@@ -101,24 +103,23 @@ public class ResourceRequestImpl implements ResourceRequestService {
         if (!profileEntityRepository.findById(vo.getRequestorId()).isPresent()) {
             throw new CreateResourceRequestException("Unable to create resource request: requestor not found");
         }
-        
-        if(!resource.getResourceOwnerId().equals(vo.getRequestorId())){
+
+        if (!resource.getResourceOwnerId().equals(vo.getRequestorId())) {
             throw new CreateResourceRequestException("Unable to create resource request: can only create request for owned resource");
         }
-        
-        if(resource.getMatchedProjectId()!=null){
+
+        if (resource.getMatchedProjectId() != null) {
             throw new CreateResourceRequestException("This resource is already matched to another project");
         }
-        
-        if(vo.getUnitsRequired()>resource.getUnits()){
+
+        if (vo.getUnitsRequired() > resource.getUnits()) {
             throw new CreateResourceRequestException("Unable to create resource request: the requested amount is more than the resource provided");
         }
-        
+
         // between resource and project, there can only be one on_hold request 
-        if(resourceRequestEntityRepository.searchResourceRequestProjectByProjectAndResourceOnHold(project.getProjectId(),resource.getResourceId(), RequestStatusEnum.ON_HOLD).isPresent()){
+        if (resourceRequestEntityRepository.searchResourceRequestProjectByProjectAndResourceOnHold(project.getProjectId(), resource.getResourceId(), RequestStatusEnum.ON_HOLD).isPresent()) {
             throw new CreateResourceRequestException("There exits one request between resource and project with status on_hold, please make a decision before creating a new request");
         }
-        
 
         ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
         vo.createResourceRequestResourceOwner(resourceRequest);
@@ -214,7 +215,75 @@ public class ResourceRequestImpl implements ResourceRequestService {
             request.setStatus(RequestStatusEnum.REJECTED);
         }
         return resourceRequestEntityRepository.saveAndFlush(request);
-       
+
+    }
+
+    // get project owner's all incoming resource donation requests 
+    @Override
+    public List<ResourceRequestEntity> getAllIncomingResourceDonationRequests(Long userId) {
+        Optional<ProfileEntity> userOptional = profileEntityRepository.findById(userId);
+        ProfileEntity user = userOptional.get();
+        List<ResourceRequestEntity> resourceRequests = new ArrayList<>();
+        for (ProjectEntity p : user.getProjectsOwned()) {
+            for (ResourceRequestEntity rr : p.getListOfRequests()) {
+                if (rr.getRequestorEnum() == RequestorEnum.RESOURCE_OWNER) {
+                    resourceRequests.add(rr);
+                }
+            }
+
+        }
+        return resourceRequests;
+    }
+
+    //get project owner's all outgoing resource requests
+    @Override
+    public List<ResourceRequestEntity> getAllOutgoingResourceRequests(Long userId) {
+        Optional<ProfileEntity> userOptional = profileEntityRepository.findById(userId);
+        ProfileEntity user = userOptional.get();
+        List<ResourceRequestEntity> resourceRequests = new ArrayList<>();
+        for (ProjectEntity p : user.getProjectsOwned()) {
+            for (ResourceRequestEntity rr : p.getListOfRequests()) {
+                if (rr.getRequestorEnum() == RequestorEnum.PROJECT_OWNER) {
+                    resourceRequests.add(rr);
+                }
+            }
+
+        }
+        return resourceRequests;
+    }
+
+    //get resoure owner's all incoming resource requests
+    @Override
+    public List<ResourceRequestEntity> getAllIncomingResourceRequests(Long userId) {
+        Optional<ProfileEntity> userOptional = profileEntityRepository.findById(userId);
+        ProfileEntity user = userOptional.get();
+        List<ResourceRequestEntity> resourceRequests = new ArrayList<>();
+        for (ResourceEntity p : user.getHostedResources()) {
+            for (ResourceRequestEntity rr : p.getListOfRequests()) {
+                if (rr.getRequestorEnum() == RequestorEnum.PROJECT_OWNER) {
+                    resourceRequests.add(rr);
+                }
+            }
+
+        }
+        return resourceRequests;
+    }
+
+    //get resource owner's all outgoing donation requests
+    @Override
+    public List<ResourceRequestEntity> getAllOutgoingDonationRequests(Long userId) {
+        Optional<ProfileEntity> userOptional = profileEntityRepository.findById(userId);
+        ProfileEntity user = userOptional.get();
+        List<ResourceRequestEntity> resourceRequests = new ArrayList<>();
+        for (ResourceEntity r : user.getHostedResources()) {
+            for (ResourceRequestEntity rr : r.getListOfRequests()) {
+                if (rr.getRequestorEnum() == RequestorEnum.RESOURCE_OWNER) {
+                    resourceRequests.add(rr);
+                }
+            }
+
+        }
+        return resourceRequests;
     }
 
 }

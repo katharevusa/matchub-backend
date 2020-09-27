@@ -12,6 +12,7 @@ import com.is4103.matchub.exception.ResourceRequestNotFoundException;
 import com.is4103.matchub.exception.RespondToResourceRequestException;
 import com.is4103.matchub.service.ResourceRequestService;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -72,6 +73,28 @@ public class ResourceRequestController {
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceRequestByProjectId")
     Page<ResourceRequestEntity> getResourceRequestByProjectId(@RequestParam(value = "projectId", required = true) Long projectId,  Pageable pageable) throws ResourceRequestNotFoundException {
        return resourceRequestService.getResourceRequestByProjectId(projectId, pageable);
+    }
+    // get project owner's all incoming resource donation requests
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllIncomingResourceDonationRequests")
+    List<ResourceRequestEntity> getAllIncomingResourceDonationRequests(@RequestParam(value = "userId", required = true) Long userId) throws ResourceRequestNotFoundException {
+       return resourceRequestService.getAllIncomingResourceDonationRequests(userId);
+    }
+    //get project owner's all outgoing resource requests
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllOutgoingResourceRequests")
+    List<ResourceRequestEntity> getAllOutgoingResourceRequests(Long userId){
+        return resourceRequestService.getAllOutgoingResourceRequests(userId);
+    }
+    
+    //get resoure owner's all incoming resource requests
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllIncomingResourceRequests")
+     List<ResourceRequestEntity> getAllIncomingResourceRequests(Long userId){
+        return resourceRequestService.getAllIncomingResourceRequests(userId);
+    }
+     
+    //get resource owner's all outgoing donation requests
+     @RequestMapping(method = RequestMethod.GET, value = "/getAllOutgoingDonationRequests")
+    List<ResourceRequestEntity> getAllOutgoingDonationRequests(Long userId){
+        return resourceRequestService.getAllOutgoingDonationRequests(userId);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/respondToResourceRequest")
