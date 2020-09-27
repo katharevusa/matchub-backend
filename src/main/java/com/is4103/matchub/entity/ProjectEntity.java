@@ -141,7 +141,7 @@ public class ProjectEntity {
     private List<KPIEntity> kpis = new ArrayList<>();
 
     @ManyToMany
-    @JsonIgnoreProperties({"projectsOwned", "sdgs", "meetings", "projectsJoined", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
+    @JsonIgnoreProperties({"hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> teamMembers = new ArrayList<>();
 
     @OneToMany(mappedBy = "project")

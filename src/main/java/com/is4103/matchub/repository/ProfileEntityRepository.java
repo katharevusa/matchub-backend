@@ -43,14 +43,21 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "WHERE a.accountLocked = FALSE AND a.accountExpired = FALSE AND a.disabled = FALSE "
             + "AND a.isVerified = TRUE")
     Page<ProfileEntity> findAll(Pageable pageable);
-    
+
     @Query(value = "SELECT pe FROM ProfileEntity pe WHERE pe.accountId IN ?1",
             countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe WHERE pe.accountId IN ?1")
     Page<ProfileEntity> getEmployees(Set<Long> employeesId, Pageable pageable);
-    
+
     @Query(value = "SELECT pe FROM ProfileEntity pe WHERE pe.accountId IN ?1",
             countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe WHERE pe.accountId IN ?1")
     Page<ProfileEntity> getKAHs(Set<Long> kahIds, Pageable pageable);
 
+    @Query(value = "SELECT pe FROM ProfileEntity pe WHERE pe.accountId IN ?1",
+            countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe WHERE pe.accountId IN ?1")
+    Page<ProfileEntity> findAllMembers(Set<Long> memberIds, Pageable pageable);
+
+    @Query(value = "SELECT pe FROM ProfileEntity pe WHERE pe.accountId IN ?1 AND (pe.firstName LIKE %?2% OR pe.lastName LIKE %?2% OR pe.email LIKE %?2%)",
+            countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe WHERE pe.accountId IN ?1 AND (pe.firstName LIKE %?2% OR pe.lastName LIKE %?2% OR pe.email LIKE %?2%)")
+    Page<ProfileEntity> searchMembers(Set<Long> memberIds, String search, Pageable pageable);
 
 }
