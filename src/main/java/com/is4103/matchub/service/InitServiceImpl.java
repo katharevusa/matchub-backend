@@ -1,6 +1,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
@@ -9,6 +10,7 @@ import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.repository.BadgeEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
@@ -67,6 +70,9 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     ReviewEntityRepository reviewEntityRepository;
+    
+    @Autowired
+    BadgeEntityRepository badgeEntityRepository;
 
     @Transactional
     public void init() {
@@ -583,6 +589,14 @@ public class InitServiceImpl implements InitService {
 
         reviewForSonghwa.setReviewReceiver(songhwa);
         reviewEntityRepository.save(reviewForSonghwa);
+        
+        /* create project badge for completed project */
+        BadgeEntity projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Hangang Cleanup Contributor", "https://localhost:8443/api/v1/files/badgeIcons/environment.png");
+        projBadge.setProject(completedProject);
+        projBadge.getProfiles().add(ikjun);
+        projBadge.getProfiles().add(songhwa);
+        
+        badgeEntityRepository.save(projBadge);
     }
 
 }
