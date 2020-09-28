@@ -565,6 +565,7 @@ public class InitServiceImpl implements InitService {
         //set team members 
         ProfileEntity songhwa = profileEntityRepository.findById(Long.valueOf(9)).get();
         completedProject.getTeamMembers().add(songhwa);
+        songhwa.getProjectsJoined().add(completedProject);
 
         /* set reviews for project */
         ReviewEntity reviewForIkjun = new ReviewEntity("Ik Jun was very helpful and played a great role in this project! He motivated the team to keep progressing when things got tough.", BigDecimal.valueOf(5));
