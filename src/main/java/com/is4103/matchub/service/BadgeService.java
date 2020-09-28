@@ -6,6 +6,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.BadgeEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
 import com.is4103.matchub.vo.ProjectBadgeUpdateVO;
@@ -26,4 +27,6 @@ public interface BadgeService {
     Page<BadgeEntity> getBadgesByAccountId(Long id, Pageable pageable);
 
     BadgeEntity updateProjectBadge(Long badgeId, ProjectBadgeUpdateVO updateVO);
+
+    void issueLeaderboardBadges(BadgeEntity leaderboardBadge, List<ProfileEntity> profiles);
 }

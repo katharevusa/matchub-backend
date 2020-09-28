@@ -84,6 +84,9 @@ public class InitServiceImpl implements InitService {
 
         //added for badge and review use case
         initCompletedProject();
+
+        //community badges
+        initCommunityBadges();
     }
 
     private void initUsers() {
@@ -598,6 +601,32 @@ public class InitServiceImpl implements InitService {
         projBadge.getProfiles().add(songhwa);
 
         badgeEntityRepository.save(projBadge);
+    }
+
+    public void initCommunityBadges() {
+        //create sysadmin badge
+        BadgeEntity sysadmin = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "SYSADMIN", "https://localhost:8443/api/v1/files/communityBadges/sysadmin.png");
+        
+        //create leaderboard badges
+        BadgeEntity top10 = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "TOP 10 IN LEADERBOARD", "https://localhost:8443/api/v1/files/communityBadges/top10.png");
+        
+        BadgeEntity top50 = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "TOP 50 IN LEADERBOARD", "https://localhost:8443/api/v1/files/communityBadges/top50.png");
+        
+        BadgeEntity top100 = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "TOP 100 IN LEADERBOARD", "https://localhost:8443/api/v1/files/communityBadges/top100.png");
+        
+        //create project contributor badges
+        BadgeEntity fiveProjects = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "5 PROJECT CONTRIBUTIONS", "https://localhost:8443/api/v1/files/communityBadges/5projects.png");
+        
+        BadgeEntity tenProjects = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "10 PROJECT CONTRIBUTIONS", "https://localhost:8443/api/v1/files/communityBadges/10projects.png");
+        
+        BadgeEntity fiftyProjects = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "50 PROJECT CONTRIBUTIONS", "https://localhost:8443/api/v1/files/communityBadges/50projects.png");
+        
+        //create long service badges
+        BadgeEntity oneYear = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "1 YEAR WITH MATCHUB", "https://localhost:8443/api/v1/files/communityBadges/1year.png");
+        
+        BadgeEntity twoYears = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "2 YEARS WITH MATCHUB", "https://localhost:8443/api/v1/files/communityBadges/2years.png");
+        
+        BadgeEntity fiveYears = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "5 YEARS WITH MATCHUB", "https://localhost:8443/api/v1/files/communityBadges/5years.png");
     }
 
 }

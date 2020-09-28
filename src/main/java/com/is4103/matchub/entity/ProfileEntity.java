@@ -65,29 +65,32 @@ public abstract class ProfileEntity extends AccountEntity {
     @PositiveOrZero
     private Integer spotlightChances = 0;
 
+    //************************** ASSOCIATIONS HERE **************************
     @OneToMany(mappedBy = "postCreator")
+    @JsonIgnoreProperties({"postCreator", "listOfComments"})
     private List<PostEntity> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "notifiedUser")
     private List<NotificationEntity> notifications = new ArrayList<>();
 
     @OneToMany
+    @JsonIgnoreProperties({"listOfRequests", "listOfComments"})
     private List<ResourceEntity> hostedResources = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-
     @JsonIgnoreProperties({"projects"})
-
     private List<SDGEntity> sdgs = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ScheduleEntity> meetings = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
     private List<ProjectEntity> projectsJoined = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties("projectOwners")
+//    @JsonIgnoreProperties("projectOwners")
+    @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
     private List<ProjectEntity> projectsOwned = new ArrayList<>();
 
     @OneToMany(mappedBy = "requestor")

@@ -127,4 +127,26 @@ public class BadgeServiceImpl implements BadgeService {
         }
     }
 
+    @Override
+    public void issueLeaderboardBadges(BadgeEntity leaderboardBadge, List<ProfileEntity> profiles) {
+        //unassociate the initial people with the badges 
+        for (ProfileEntity p : leaderboardBadge.getProfiles()) {
+            p.getBadges().remove(leaderboardBadge);
+
+            profileEntityRepository.save(p);
+        }
+        //clear the leaderboard badge first
+        leaderboardBadge.getProfiles().clear();
+
+        //associate the new profiles with the badge (2 ways)
+        for (ProfileEntity p : profiles) {
+            p.getBadges().add(leaderboardBadge);
+            profileEntityRepository.save(p);
+
+            leaderboardBadge.getProfiles().add(p);
+        }
+
+        badgeEntityRepository.save(leaderboardBadge);
+    }
+
 }
