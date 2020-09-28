@@ -9,17 +9,19 @@ import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
+import com.is4103.matchub.exception.BadgeNotFoundException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.UnableToCreateProjectBadgeException;
+import com.is4103.matchub.exception.UnableToUpdateBadgeException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.BadgeEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
+import com.is4103.matchub.vo.ProjectBadgeUpdateVO;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -54,7 +56,7 @@ public class BadgeServiceImpl implements BadgeService {
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/healthcare.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/help-community.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/partnerships.png");
-        
+
         return badgeIcons;
     }
 
@@ -91,6 +93,32 @@ public class BadgeServiceImpl implements BadgeService {
                 .orElseThrow(() -> new UserNotFoundException(id));
 
         return badgeEntityRepository.getBadgesByAccountId(id, pageable);
+    }
+
+    @Override
+    public BadgeEntity updateProjectBadge(Long badgeId, ProjectBadgeUpdateVO updateVO) {
+        //check if the badge exists
+        BadgeEntity badgeToUpdate = badgeEntityRepository.findById(badgeId)
+                .orElseThrow(() -> new BadgeNotFoundException("Badge id: " + badgeId + " cannot be found"));
+
+        //check if account updating the badge is authorised
+        List<ProfileEntity> projectOwners = badgeToUpdate.getProject().getProjectOwners();
+
+        List<Long> projectOwnersId = projectOwners.stream()
+                .map(ProfileEntity::getAccountId)
+                .collect(Collectors.toList());
+        
+        if (projectOwnersId.contains(updateVO.getAccountId())) {
+            //update the badge 
+            updateVO.updateProjectBadge(badgeToUpdate);
+            
+            badgeToUpdate = badgeEntityRepository.saveAndFlush(badgeToUpdate);
+            return badgeToUpdate;
+        } else {
+            throw new UnableToUpdateBadgeException("Unable to update badge: accountId "
+                    + updateVO.getAccountId() + " is not a project owner and does not have "
+                    + "rights to update project badge.");
+        }
     }
 
 }

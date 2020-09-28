@@ -9,6 +9,7 @@ import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.service.BadgeService;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
+import com.is4103.matchub.vo.ProjectBadgeUpdateVO;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,11 @@ public class BadgeController {
     @RequestMapping(method = RequestMethod.GET, value = "/getBadgesByAccountId/{accountId}")
     Page<BadgeEntity> getBadgesByAccountId(@PathVariable("accountId") Long postId, Pageable pageable) {
         return badgeService.getBadgesByAccountId(postId, pageable);
+    }
+    
+    @RequestMapping(method = RequestMethod.PUT, value = "/updateProjectBadge/{badgeId}")
+    BadgeEntity updateProjectBadge(@PathVariable("badgeId") Long badgeId, @Valid @RequestBody ProjectBadgeUpdateVO vo) {
+        return badgeService.updateProjectBadge(badgeId, vo);
     }
 
 }

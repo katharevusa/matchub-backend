@@ -8,6 +8,7 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
+import com.is4103.matchub.vo.ProjectBadgeUpdateVO;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +24,6 @@ public interface BadgeService {
     BadgeEntity createProjectBadge(ProjectBadgeCreateVO createVO) throws ProjectNotFoundException;
 
     Page<BadgeEntity> getBadgesByAccountId(Long id, Pageable pageable);
+
+    BadgeEntity updateProjectBadge(Long badgeId, ProjectBadgeUpdateVO updateVO);
 }

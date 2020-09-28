@@ -459,9 +459,29 @@ public class ExceptionHandlingController {
     }
 
     @ExceptionHandler(value = UnableToCreateProjectBadgeException.class)
-    public ResponseEntity<ExceptionResponse> leaveProjectException(UnableToCreateProjectBadgeException ex) {
+    public ResponseEntity<ExceptionResponse> unableToCreateProjectBadgeException(UnableToCreateProjectBadgeException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to create project badge.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = BadgeNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> badgeNotFoundException(BadgeNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Badge not found.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = UnableToUpdateBadgeException.class)
+    public ResponseEntity<ExceptionResponse> unableToUpdateProjectBadgeException(UnableToUpdateBadgeException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to update project badge.");
         response.setErrorMessage(ex.getMessage());
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
