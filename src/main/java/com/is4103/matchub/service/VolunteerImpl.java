@@ -113,6 +113,8 @@ public class VolunteerImpl implements VolunteerService {
                 j.setStatus(JoinRequestStatusEnum.REJECTED);
             }
         }
+        projectEntityRepository.flush();
+        
 
     }
 
