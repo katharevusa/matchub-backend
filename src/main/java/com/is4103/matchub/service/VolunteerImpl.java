@@ -133,6 +133,8 @@ public class VolunteerImpl implements VolunteerService {
         joinRequests.stream().filter((j) -> (j.getRequestor().getAccountId().equals(memberId))).forEachOrdered((j) -> {
             j.setStatus(JoinRequestStatusEnum.REJECTED);
         });
+        
+        projectEntityRepository.flush();
 
     }
 }

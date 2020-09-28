@@ -209,6 +209,13 @@ public class ResourceRequestImpl implements ResourceRequestService {
         if (response == true) {
             request.setStatus(RequestStatusEnum.ACCEPTED);
             resource.setMatchedProjectId(request.getProjectId());
+            resource.setAvailable(Boolean.FALSE);
+            //reject the rest resource request
+            for(ResourceRequestEntity r: resource.getListOfRequests()){
+                if(!r.getRequestId().equals(requestId)){
+                    r.setStatus(RequestStatusEnum.REJECTED);
+                }
+            }
 
         } else {
             //response false: decline request
