@@ -9,6 +9,7 @@ import com.is4103.matchub.entity.JoinRequestEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.enumeration.JoinRequestStatusEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
@@ -542,9 +543,9 @@ public class ProjectServiceImpl implements ProjectService {
         ProfileEntity requestor = profOptional.get();
 
         // One user can only make one join request to one project 
-        Optional<JoinRequestEntity> requestOptional = joinRequestEntityRepository.searchJoinRequestProjectByProjectAndRequestor(projectId, profileId);
+        Optional<JoinRequestEntity> requestOptional = joinRequestEntityRepository.searchJoinRequestProjectByProjectAndRequestorAndStatus(projectId, profileId,JoinRequestStatusEnum.ON_HOLD);
         if (requestOptional.isPresent()) {
-            throw new JoinProjectException("One can only create one join request for one project");
+            throw new JoinProjectException("There is already one on-hold join request to this project created.");
         }
         // If user is already a teammember or project creators,  can not make join request
         if (project.getTeamMembers().contains(requestor) || project.getProjectOwners().contains(requestor)) {
