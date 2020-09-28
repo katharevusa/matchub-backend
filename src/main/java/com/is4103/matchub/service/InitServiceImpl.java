@@ -70,7 +70,7 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     ReviewEntityRepository reviewEntityRepository;
-    
+
     @Autowired
     BadgeEntityRepository badgeEntityRepository;
 
@@ -575,7 +575,7 @@ public class InitServiceImpl implements InitService {
 
         /* set reviews for project */
         ReviewEntity reviewForIkjun = new ReviewEntity(LocalDateTime.of(2020, Month.MARCH, 15, 9, 0), "Ik Jun was very helpful and played a great role in this project! He motivated the team to keep progressing when things got tough.", BigDecimal.valueOf(5));
-        reviewForIkjun.setReviewerId(Long.valueOf(9));
+        reviewForIkjun.setReviewer(songhwa);
         reviewForIkjun.setProject(completedProject);
 
         ProfileEntity ikjun = profileEntityRepository.findById(Long.valueOf(5)).get();
@@ -584,18 +584,18 @@ public class InitServiceImpl implements InitService {
 
         //do another review for songhwa
         ReviewEntity reviewForSonghwa = new ReviewEntity(LocalDateTime.of(2020, Month.MARCH, 17, 11, 15), "Songhwa brought positivity into the project, and took good care of the elderly during community river cleanup events.", BigDecimal.valueOf(5));
-        reviewForSonghwa.setReviewerId(Long.valueOf(5));
+        reviewForSonghwa.setReviewer(ikjun);
         reviewForSonghwa.setProject(completedProject);
 
         reviewForSonghwa.setReviewReceiver(songhwa);
         reviewEntityRepository.save(reviewForSonghwa);
-        
+
         /* create project badge for completed project */
         BadgeEntity projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Hangang Cleanup Contributor", "https://localhost:8443/api/v1/files/badgeIcons/environment.png");
         projBadge.setProject(completedProject);
         projBadge.getProfiles().add(ikjun);
         projBadge.getProfiles().add(songhwa);
-        
+
         badgeEntityRepository.save(projBadge);
     }
 

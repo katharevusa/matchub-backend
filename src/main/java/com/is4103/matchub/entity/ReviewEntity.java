@@ -49,9 +49,13 @@ public class ReviewEntity {
     @NotNull
     private BigDecimal rating;
 
-    @Column(nullable = false)
-    @NotNull
-    private Long reviewerId;
+//    @Column(nullable = false)
+//    @NotNull
+//    private Long reviewerId;
+    @ManyToOne(optional = false)
+    @JoinColumn(nullable = false)
+    @JsonIgnoreProperties({"reviewsReceived", "projectsOwned", "hostedResources", "sdgs", "likedPosts"})
+    private ProfileEntity reviewer;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
@@ -67,13 +71,6 @@ public class ReviewEntity {
         this.timeCreated = timeCreated;
         this.content = content;
         this.rating = rating;
-    }
-
-    public ReviewEntity(LocalDateTime timeCreated, String content, BigDecimal rating, Long reviewerId) {
-        this.timeCreated = timeCreated;
-        this.content = content;
-        this.rating = rating;
-        this.reviewerId = reviewerId;
     }
 
 }
