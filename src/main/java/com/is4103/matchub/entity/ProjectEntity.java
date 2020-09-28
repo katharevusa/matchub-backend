@@ -86,7 +86,6 @@ public class ProjectEntity {
     @NotNull
     private Integer upvotes = 0;
 
-
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String> relatedResources = new ArrayList<>();
 
@@ -101,20 +100,18 @@ public class ProjectEntity {
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     @Nullable
     private LocalDateTime spotlightEndTime;
-    
+
     private String projectProfilePic;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @OrderColumn()
     private List<String> photos = new ArrayList<>();
-    
+
     //Key: filename, Value = docPath
     @ElementCollection
     private Map<String, String> documents = new HashMap<>();
-    
-    
-    //*********************Associations Below******************
 
+    //*********************Associations Below******************
     @OneToMany
     private List<JoinRequestEntity> joinRequests = new ArrayList<>();
 
@@ -150,6 +147,7 @@ public class ProjectEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projectsOwned", "sdgs", "meetings", "projectsJoined", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> projectOwners = new ArrayList<>();
+
     public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate) {
         this.projectTitle = projectTitle;
         this.projectDescription = projectDescription;
