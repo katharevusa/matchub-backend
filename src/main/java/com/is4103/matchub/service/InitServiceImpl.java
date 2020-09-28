@@ -1,6 +1,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
@@ -9,6 +10,7 @@ import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.repository.BadgeEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
@@ -24,6 +27,7 @@ import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -66,6 +70,9 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     ReviewEntityRepository reviewEntityRepository;
+
+    @Autowired
+    BadgeEntityRepository badgeEntityRepository;
 
     @Transactional
     public void init() {
@@ -567,8 +574,8 @@ public class InitServiceImpl implements InitService {
         completedProject.getTeamMembers().add(songhwa);
 
         /* set reviews for project */
-        ReviewEntity reviewForIkjun = new ReviewEntity("Ik Jun was very helpful and played a great role in this project! He motivated the team to keep progressing when things got tough.", BigDecimal.valueOf(5));
-        reviewForIkjun.setReviewerId(Long.valueOf(9));
+        ReviewEntity reviewForIkjun = new ReviewEntity(LocalDateTime.of(2020, Month.MARCH, 15, 9, 0), "Ik Jun was very helpful and played a great role in this project! He motivated the team to keep progressing when things got tough.", BigDecimal.valueOf(5));
+        reviewForIkjun.setReviewer(songhwa);
         reviewForIkjun.setProject(completedProject);
 
         ProfileEntity ikjun = profileEntityRepository.findById(Long.valueOf(5)).get();
@@ -576,12 +583,20 @@ public class InitServiceImpl implements InitService {
         reviewEntityRepository.save(reviewForIkjun);
 
         //do another review for songhwa
-        ReviewEntity reviewForSonghwa = new ReviewEntity("Songhwa brought positivity into the project, and took good care of the elderly during community river cleanup events.", BigDecimal.valueOf(5));
-        reviewForSonghwa.setReviewerId(Long.valueOf(5));
+        ReviewEntity reviewForSonghwa = new ReviewEntity(LocalDateTime.of(2020, Month.MARCH, 17, 11, 15), "Songhwa brought positivity into the project, and took good care of the elderly during community river cleanup events.", BigDecimal.valueOf(5));
+        reviewForSonghwa.setReviewer(ikjun);
         reviewForSonghwa.setProject(completedProject);
 
         reviewForSonghwa.setReviewReceiver(songhwa);
         reviewEntityRepository.save(reviewForSonghwa);
+
+        /* create project badge for completed project */
+        BadgeEntity projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Hangang Cleanup Contributor", "https://localhost:8443/api/v1/files/badgeIcons/environment.png");
+        projBadge.setProject(completedProject);
+        projBadge.getProfiles().add(ikjun);
+        projBadge.getProfiles().add(songhwa);
+
+        badgeEntityRepository.save(projBadge);
     }
 
 }
