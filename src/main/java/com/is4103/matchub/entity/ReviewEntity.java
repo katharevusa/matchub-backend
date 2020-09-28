@@ -7,6 +7,7 @@ package com.is4103.matchub.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -36,6 +37,10 @@ public class ReviewEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long reviewId;
 
+    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @NotNull
+    private LocalDateTime timeCreated;
+
     @Column(nullable = false, length = 1000)
     @NotNull
     private String content;
@@ -58,9 +63,17 @@ public class ReviewEntity {
     @JsonIgnoreProperties({"reviewsReceived", "projectsOwned", "hostedResources", "sdgs", "likedPosts"})
     private ProfileEntity reviewReceiver;
 
-    public ReviewEntity(String content, BigDecimal rating) {
+    public ReviewEntity(LocalDateTime timeCreated, String content, BigDecimal rating) {
+        this.timeCreated = timeCreated;
         this.content = content;
         this.rating = rating;
+    }
+
+    public ReviewEntity(LocalDateTime timeCreated, String content, BigDecimal rating, Long reviewerId) {
+        this.timeCreated = timeCreated;
+        this.content = content;
+        this.rating = rating;
+        this.reviewerId = reviewerId;
     }
 
 }
