@@ -24,6 +24,7 @@ import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -567,7 +568,7 @@ public class InitServiceImpl implements InitService {
         completedProject.getTeamMembers().add(songhwa);
 
         /* set reviews for project */
-        ReviewEntity reviewForIkjun = new ReviewEntity("Ik Jun was very helpful and played a great role in this project! He motivated the team to keep progressing when things got tough.", BigDecimal.valueOf(5));
+        ReviewEntity reviewForIkjun = new ReviewEntity(LocalDateTime.of(2020, Month.MARCH, 15, 9, 0), "Ik Jun was very helpful and played a great role in this project! He motivated the team to keep progressing when things got tough.", BigDecimal.valueOf(5));
         reviewForIkjun.setReviewerId(Long.valueOf(9));
         reviewForIkjun.setProject(completedProject);
 
@@ -576,7 +577,7 @@ public class InitServiceImpl implements InitService {
         reviewEntityRepository.save(reviewForIkjun);
 
         //do another review for songhwa
-        ReviewEntity reviewForSonghwa = new ReviewEntity("Songhwa brought positivity into the project, and took good care of the elderly during community river cleanup events.", BigDecimal.valueOf(5));
+        ReviewEntity reviewForSonghwa = new ReviewEntity(LocalDateTime.of(2020, Month.MARCH, 17, 11, 15), "Songhwa brought positivity into the project, and took good care of the elderly during community river cleanup events.", BigDecimal.valueOf(5));
         reviewForSonghwa.setReviewerId(Long.valueOf(5));
         reviewForSonghwa.setProject(completedProject);
 
