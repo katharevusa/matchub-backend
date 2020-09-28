@@ -54,6 +54,9 @@ public class PostServiceImpl implements PostService {
         vo.updatePost(newPost);
 
         newPost = postEntityRepository.saveAndFlush(newPost);
+        //set associations
+        profile.getPosts().add(newPost);
+
         return newPost;
     }
 
@@ -150,6 +153,11 @@ public class PostServiceImpl implements PostService {
             for (String photo : postToDelete.getPhotos()) {
                 attachmentService.deleteFile(photo);
             }
+
+            //remove from association
+            ProfileEntity postCreator = postToDelete.getPostCreator();
+            postCreator.getPosts().remove(postToDelete);
+
             //delete the post entity
             postEntityRepository.delete(postToDelete);
         } else {

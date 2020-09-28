@@ -5,6 +5,8 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +55,13 @@ public class BadgeEntity {
     private String icon;
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnore
+    @JsonIgnoreProperties({"posts", "hostedResources", "sdgs", "projectsJoined", "projectsOwned", "reviewsReceived", "badges", "likedPosts"})
     private List<ProfileEntity> profiles = new ArrayList<>();
 
     @OneToOne(optional = true)
+    @JsonIgnore
+    @JsonIgnoreProperties({"projectBadge", "sdgs", "teamMembers", "projectOwners"})
     private ProjectEntity project;
 
     public BadgeEntity(BadgeTypeEnum badgeType, String badgeTitle, String icon) {

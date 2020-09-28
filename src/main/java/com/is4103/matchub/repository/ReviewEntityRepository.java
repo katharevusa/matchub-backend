@@ -22,11 +22,11 @@ public interface ReviewEntityRepository extends JpaRepository<ReviewEntity, Long
             countQuery = "SELECT COUNT(r) FROM ReviewEntity r WHERE r.reviewReceiver.accountId = :id")
     Page<ReviewEntity> getReviewsReceivedByAccountId(Long id, Pageable pageable);
 
-    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewerId = :id",
-            countQuery = "SELECT COUNT(r) FROM ReviewEntity r WHERE r.reviewerId = :id")
+    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewer.accountId = :id",
+            countQuery = "SELECT COUNT(r) FROM ReviewEntity r WHERE r.reviewer.accountId = :id")
     Page<ReviewEntity> getReviewsGivenByAccountId(Long id, Pageable pageable);
 
     //this query is to check for reviews given before deleting an account (used in UserServiceImpl)
-    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewerId = :id")
+    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewer.accountId = :id")
     List<ReviewEntity> getReviewsGivenByAccountId(Long id);
 }

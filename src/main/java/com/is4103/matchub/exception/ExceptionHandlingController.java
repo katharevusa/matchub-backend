@@ -407,7 +407,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = UnableToRemoveKAHFromOrganisationException.class)
     public ResponseEntity<ExceptionResponse> unableToRemoveKAHFromOrganisationException(UnableToRemoveKAHFromOrganisationException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -417,7 +417,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = RespondToJoinProjectRequestException.class)
     public ResponseEntity<ExceptionResponse> respondToJoinProjectRequestException(RespondToJoinProjectRequestException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -427,7 +427,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = RemoveTeamMemberException.class)
     public ResponseEntity<ExceptionResponse> removeTeamMemberException(RemoveTeamMemberException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -437,7 +437,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = LeaveProjectException.class)
     public ResponseEntity<ExceptionResponse> leaveProjectException(LeaveProjectException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -447,7 +447,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = JoinProjectException.class)
     public ResponseEntity<ExceptionResponse> joinProjectException(JoinProjectException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -457,7 +457,35 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
 
+    @ExceptionHandler(value = UnableToCreateProjectBadgeException.class)
+    public ResponseEntity<ExceptionResponse> unableToCreateProjectBadgeException(UnableToCreateProjectBadgeException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to create project badge.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = BadgeNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> badgeNotFoundException(BadgeNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Badge not found.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = UnableToUpdateBadgeException.class)
+    public ResponseEntity<ExceptionResponse> unableToUpdateProjectBadgeException(UnableToUpdateBadgeException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to update project badge.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 
 }
