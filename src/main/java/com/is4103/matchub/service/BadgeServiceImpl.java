@@ -35,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class BadgeServiceImpl implements BadgeService {
 
+    private static final List<String> badgeIcons = new ArrayList<>();
+
     @Autowired
     private BadgeEntityRepository badgeEntityRepository;
 
@@ -44,9 +46,7 @@ public class BadgeServiceImpl implements BadgeService {
     @Autowired
     private ProfileEntityRepository profileEntityRepository;
 
-    @Override
-    public List<String> retrieveBadgeIcons() {
-        List<String> badgeIcons = new ArrayList<>();
+    private static void setBadgeIcons() {
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/cities.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/construction.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/education.png");
@@ -56,7 +56,13 @@ public class BadgeServiceImpl implements BadgeService {
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/healthcare.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/help-community.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/partnerships.png");
+    }
 
+    @Override
+    public List<String> retrieveBadgeIcons() {
+        if (badgeIcons.size() == 0) {
+            setBadgeIcons();
+        }
         return badgeIcons;
     }
 
@@ -107,11 +113,11 @@ public class BadgeServiceImpl implements BadgeService {
         List<Long> projectOwnersId = projectOwners.stream()
                 .map(ProfileEntity::getAccountId)
                 .collect(Collectors.toList());
-        
+
         if (projectOwnersId.contains(updateVO.getAccountId())) {
             //update the badge 
             updateVO.updateProjectBadge(badgeToUpdate);
-            
+
             badgeToUpdate = badgeEntityRepository.saveAndFlush(badgeToUpdate);
             return badgeToUpdate;
         } else {
