@@ -16,6 +16,10 @@ import com.is4103.matchub.repository.BadgeEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +41,22 @@ public class BadgeServiceImpl implements BadgeService {
 
     @Autowired
     private ProfileEntityRepository profileEntityRepository;
+
+    @Override
+    public List<String> retrieveBadgeIcons() {
+        List<String> badgeIcons = new ArrayList<>();
+        badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/cities.png");
+        badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/construction.png");
+        badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/education.png");
+        badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/environment.png");
+        badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/food.png");
+        badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/gender-equality.png");
+        badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/healthcare.png");
+        badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/help-community.png");
+        badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/partnerships.png");
+        
+        return badgeIcons;
+    }
 
     @Transactional
     @Override
@@ -69,7 +89,7 @@ public class BadgeServiceImpl implements BadgeService {
     public Page<BadgeEntity> getBadgesByAccountId(Long id, Pageable pageable) {
         ProfileEntity profile = profileEntityRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-        
+
         return badgeEntityRepository.getBadgesByAccountId(id, pageable);
     }
 
