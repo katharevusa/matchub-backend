@@ -12,5 +12,6 @@ package com.is4103.matchub.enumeration;
 public enum RequestStatusEnum {
 ON_HOLD,
 REJECTED,
-ACCEPTED
+ACCEPTED,
+EXPIRED
 }
