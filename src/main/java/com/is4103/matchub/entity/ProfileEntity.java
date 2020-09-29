@@ -77,7 +77,6 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY)
 
     @JsonIgnoreProperties({"projects"})
-
     private List<SDGEntity> sdgs = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
