@@ -175,7 +175,6 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
     @Override
     public Page<ResourceRequestEntity> getResourceRequestByResourceId(Long resourceId, Pageable pageable) {
-        System.err.println("Reach here");
         return resourceRequestEntityRepository.getResourceRequestByResourceId(resourceId, pageable);
     }
 
