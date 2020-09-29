@@ -6,6 +6,7 @@
 package com.is4103.matchub.repository;
 
 import com.is4103.matchub.entity.ProfileEntity;
+import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -59,5 +60,15 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
     @Query(value = "SELECT pe FROM ProfileEntity pe WHERE pe.accountId IN ?1 AND (pe.firstName LIKE %?2% OR pe.lastName LIKE %?2% OR pe.email LIKE %?2%)",
             countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe WHERE pe.accountId IN ?1 AND (pe.firstName LIKE %?2% OR pe.lastName LIKE %?2% OR pe.email LIKE %?2%)")
     Page<ProfileEntity> searchMembers(Set<Long> memberIds, String search, Pageable pageable);
+
+    
+    //this query is for system use case (issue badge)
+    @Query(value = "SELECT pe FROM ProfileEntity pe WHERE (pe.accountLocked = FALSE AND pe.accountExpired = FALSE "
+            + "AND pe.disabled = FALSE AND pe.isVerified = TRUE) "
+            + "ORDER BY pe.reputationPoints DESC", 
+            countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe WHERE (pe.accountLocked = FALSE AND pe.accountExpired = FALSE "
+            + "AND pe.disabled = FALSE AND pe.isVerified = TRUE) "
+            + "ORDER BY pe.reputationPoints DESC")
+    Page<ProfileEntity> leaderboard(Pageable pageable);
 
 }

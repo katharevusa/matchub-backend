@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -127,8 +128,50 @@ public class BadgeServiceImpl implements BadgeService {
         }
     }
 
+    // **************** SYSTEM USE CASE ****************
     @Override
-    public void issueLeaderboardBadges(BadgeEntity leaderboardBadge, List<ProfileEntity> profiles) {
+    public void leaderboardTop10() {
+        //find the top10 badge 
+        BadgeEntity top10Badge = badgeEntityRepository.findByBadgeTitle("TOP 10 IN LEADERBOARD");
+
+        //find the top 10
+        Pageable top10 = PageRequest.of(0, 10);
+        List<ProfileEntity> profiles = profileEntityRepository.leaderboard(top10).toList();
+
+        //issue and remove badge 
+        removeAndIssueLeaderboardBadges(top10Badge, profiles);
+
+    }
+
+    @Override
+    public void leaderboardTop50() {
+        //find the top50 badge 
+        BadgeEntity top50Badge = badgeEntityRepository.findByBadgeTitle("TOP 50 IN LEADERBOARD");
+
+        //find the top 50
+        Pageable top50 = PageRequest.of(0, 50);
+        List<ProfileEntity> profiles = profileEntityRepository.leaderboard(top50).toList();
+
+        //issue and remove badge 
+        removeAndIssueLeaderboardBadges(top50Badge, profiles.subList(10, profiles.size() - 1));
+
+    }
+
+    @Override
+    public void leaderboardTop100() {
+        //find the top100 badge 
+        BadgeEntity top100Badge = badgeEntityRepository.findByBadgeTitle("TOP 100 IN LEADERBOARD");
+
+        //find the top 100
+        Pageable top100 = PageRequest.of(0, 100);
+        List<ProfileEntity> profiles = profileEntityRepository.leaderboard(top100).toList();
+
+        //issue and remove badge 
+        removeAndIssueLeaderboardBadges(top100Badge, profiles.subList(50, profiles.size() - 1));
+
+    }
+
+    private void removeAndIssueLeaderboardBadges(BadgeEntity leaderboardBadge, List<ProfileEntity> profiles) {
         //unassociate the initial people with the badges 
         for (ProfileEntity p : leaderboardBadge.getProfiles()) {
             p.getBadges().remove(leaderboardBadge);

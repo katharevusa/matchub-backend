@@ -28,5 +28,12 @@ public interface BadgeService {
 
     BadgeEntity updateProjectBadge(Long badgeId, ProjectBadgeUpdateVO updateVO);
 
-    void issueLeaderboardBadges(BadgeEntity leaderboardBadge, List<ProfileEntity> profiles);
+    // **************** SYSTEM USE CASE ****************
+    void leaderboardTop10();
+
+    void leaderboardTop50();
+
+    void leaderboardTop100();
+
+//    static void removeAndIssueLeaderboardBadges(BadgeEntity leaderboardBadge, List<ProfileEntity> profiles);
 }

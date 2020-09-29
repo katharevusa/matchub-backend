@@ -601,40 +601,47 @@ public class InitServiceImpl implements InitService {
         projBadge.getProfiles().add(songhwa);
 
         badgeEntityRepository.save(projBadge);
+        
+        ikjun.getBadges().add(projBadge);
+        songhwa.getBadges().add(projBadge);
+
+        profileEntityRepository.save(ikjun);
+        profileEntityRepository.save(songhwa);
+
     }
 
     public void initCommunityBadges() {
         //create sysadmin badge
         BadgeEntity sysadmin = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "SYSADMIN", "https://localhost:8443/api/v1/files/communityBadges/sysadmin.png");
         badgeEntityRepository.save(sysadmin);
-        
+
         //create leaderboard badges
         BadgeEntity top10 = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "TOP 10 IN LEADERBOARD", "https://localhost:8443/api/v1/files/communityBadges/top10.png");
         badgeEntityRepository.save(top10);
-        
+
         BadgeEntity top50 = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "TOP 50 IN LEADERBOARD", "https://localhost:8443/api/v1/files/communityBadges/top50.png");
         badgeEntityRepository.save(top50);
-        
+
         BadgeEntity top100 = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "TOP 100 IN LEADERBOARD", "https://localhost:8443/api/v1/files/communityBadges/top100.png");
         badgeEntityRepository.save(top100);
-        
+
         //create project contributor badges
         BadgeEntity fiveProjects = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "5 PROJECT CONTRIBUTIONS", "https://localhost:8443/api/v1/files/communityBadges/5projects.png");
         badgeEntityRepository.save(fiveProjects);
-        
+
         BadgeEntity tenProjects = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "10 PROJECT CONTRIBUTIONS", "https://localhost:8443/api/v1/files/communityBadges/10projects.png");
         badgeEntityRepository.save(tenProjects);
-        
+
         BadgeEntity fiftyProjects = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "50 PROJECT CONTRIBUTIONS", "https://localhost:8443/api/v1/files/communityBadges/50projects.png");
         badgeEntityRepository.save(fiftyProjects);
-        
+
         //create long service badges
         BadgeEntity oneYear = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "1 YEAR WITH MATCHUB", "https://localhost:8443/api/v1/files/communityBadges/1year.png");
         badgeEntityRepository.save(oneYear);
-        
+
         BadgeEntity twoYears = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "2 YEARS WITH MATCHUB", "https://localhost:8443/api/v1/files/communityBadges/2years.png");
         badgeEntityRepository.save(twoYears);
-        
+
         BadgeEntity fiveYears = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "5 YEARS WITH MATCHUB", "https://localhost:8443/api/v1/files/communityBadges/5years.png");
         badgeEntityRepository.save(fiveYears);
     }

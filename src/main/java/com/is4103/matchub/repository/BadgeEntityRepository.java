@@ -16,6 +16,8 @@ import org.springframework.data.jpa.repository.Query;
  * @author ngjin
  */
 public interface BadgeEntityRepository extends JpaRepository<BadgeEntity, Long> {
+    
+    BadgeEntity findByBadgeTitle(String badgeTitle);
 
     @Query(value = "SELECT b, p FROM BadgeEntity b JOIN b.profiles p WHERE p.accountId = :accountId",
             countQuery = "SELECT COUNT(b), p FROM BadgeEntity b JOIN b.profiles p WHERE p.accountId = :accountId")
