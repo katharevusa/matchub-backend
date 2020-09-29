@@ -91,6 +91,12 @@ public class ProjectController {
     Page<ProjectEntity> getLaunchedProjects(Pageable pageable) {
         return projectService.getLaunchedProjects(pageable);
     }
+    
+    // get a list of owned projects
+    @RequestMapping(method = RequestMethod.GET, value = "/getOwnedProjects")
+    List<ProjectEntity> getOwnedProjects(Long userId) {
+        return projectService.getOwnedProjects(userId);
+    }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProject")
     void deleteProject(
