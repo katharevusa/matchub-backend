@@ -97,6 +97,13 @@ public class ProjectController {
     List<ProjectEntity> getOwnedProjects(Long userId) {
         return projectService.getOwnedProjects(userId);
     }
+    
+    // get a list of projects by list of project ids
+     @RequestMapping(method = RequestMethod.GET, value = "/getProjectsByListOfIds")
+    List<ProjectEntity> getProjectsByListOfIds(List<Long> ids) throws ProjectNotFoundException{
+        return projectService.getProjectsByListOfIds(ids);
+    }
+    
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProject")
     void deleteProject(

@@ -14,6 +14,7 @@ import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.ResourceService;
 import com.is4103.matchub.vo.ResourceVO;
 import java.io.IOException;
+import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,6 +59,12 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET, value = "/getAllResources")
     Page<ResourceEntity> getAllResources(Pageable pageable) {
         return resourceService.getAllResources(pageable);
+    }
+    
+    //get list of resources by list of resource ids
+    @RequestMapping(method = RequestMethod.GET, value = "/getListOfResourcesByIds")
+    List<ResourceEntity> getListOfResourcesByIds(List<Long> ids) throws ResourceNotFoundException{
+        return resourceService.getResourcesByListOfId(ids);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceById")

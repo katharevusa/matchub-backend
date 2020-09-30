@@ -568,5 +568,24 @@ public class ProjectServiceImpl implements ProjectService {
         
         return joinRequestEntityRepository.saveAndFlush(joinRequest);
     }
+    
+    @Override
+    public List<ProjectEntity> getProjectsByListOfIds(List<Long> ids) throws ProjectNotFoundException {
+        List<ProjectEntity> listOfProjects = new ArrayList<>();
+        ProjectEntity project;
+        for (Long id : ids) {
+            Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(id);
+            if (projectOptional.isPresent()) {
+                project = projectOptional.get();
+                listOfProjects.add(project);
+            } else {
+                throw new ProjectNotFoundException("Resource is not found");
+            }
+            
+
+        }
+        return listOfProjects;
+
+    }
 
 }

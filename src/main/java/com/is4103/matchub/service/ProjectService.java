@@ -79,6 +79,7 @@ public interface ProjectService {
     
     public List<ProjectEntity> getOwnedProjects(Long userId);
 
+    public List<ProjectEntity> getProjectsByListOfIds(List<Long> ids) throws ProjectNotFoundException;
 
 
 }
