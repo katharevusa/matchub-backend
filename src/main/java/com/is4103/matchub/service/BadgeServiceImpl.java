@@ -221,7 +221,7 @@ public class BadgeServiceImpl implements BadgeService {
         badgeEntityRepository.save(twoYears);
         badgeEntityRepository.save(oneYear);
     }
-    
+
     @Override
     public void issueLongServiceAward5YearsBadge(ProfileEntity profile) {
         //add the 5 year badge 
@@ -238,6 +238,28 @@ public class BadgeServiceImpl implements BadgeService {
         profileEntityRepository.save(profile);
         badgeEntityRepository.save(twoYears);
         badgeEntityRepository.save(fiveYears);
+    }
+
+    @Override
+    public void issueProjectBadge(ProjectEntity project) {
+
+        BadgeEntity badge = project.getProjectBadge();
+
+        for (ProfileEntity p : project.getTeamMembers()) {
+            badge.getProfiles().add(p);
+            p.getBadges().add(badge);
+
+            profileEntityRepository.save(p);
+        }
+
+        for (ProfileEntity p : project.getProjectOwners()) {
+            badge.getProfiles().add(p);
+            p.getBadges().add(badge);
+
+            profileEntityRepository.save(p);
+        }
+
+        badgeEntityRepository.save(badge);
     }
 
 }

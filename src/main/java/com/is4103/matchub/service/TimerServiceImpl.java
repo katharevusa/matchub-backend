@@ -9,14 +9,17 @@ import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.AccountEntityRepository;
 import com.is4103.matchub.repository.BadgeEntityRepository;
 import com.is4103.matchub.repository.PostEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
+import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,12 +57,15 @@ public class TimerServiceImpl implements TimerService {
     @Autowired
     private ReviewEntityRepository reviewEntityRepository;
 
+    @Autowired
+    private ProjectEntityRepository projectEntityRepository;
+
     //leaderboard will be refreshed everyday at 12pm 
 //    @Scheduled(cron = "0 0 12 * * ?")
 //    @Scheduled(fixedRate = 2000, initialDelay = 15000)
     @Override
     public void refreshLeaderboardBadges() {
-        System.out.println("Executed Here: ********************");
+        System.out.println("Executed Here: Leaderboard Badge ********************");
 
 //        test code
 //        Long accountId = Long.valueOf(5);
@@ -88,10 +94,10 @@ public class TimerServiceImpl implements TimerService {
     //method will be called monthly to check for activity of user and increment counter accordingly
     //runs 1st of every month, 12pm
 //    @Scheduled(cron = "0 0 12 1 * ?")
-    @Scheduled(fixedRate = 2000, initialDelay = 15000)
+//    @Scheduled(fixedRate = 2000, initialDelay = 15000)
     public void longServiceBadges() {
         System.out.println("Executed Here: Long Service Badges ********************");
-        
+
         Boolean increment = false;
         List<ProfileEntity> profiles = profileEntityRepository.findAllActiveAccounts();
 
@@ -133,6 +139,7 @@ public class TimerServiceImpl implements TimerService {
 
     }
 
+    //helper method for longservicebadge method
     private Boolean isActiveLastMonth(LocalDateTime x) {
 
         LocalDateTime now = LocalDateTime.now();
@@ -155,5 +162,22 @@ public class TimerServiceImpl implements TimerService {
 
         return false;
 
+    }
+
+    //will check for completed projects everyday 12pm and issue badge 
+//    @Scheduled(cron = "0 0 12 * * ?")
+//    @Scheduled(fixedRate = 2000, initialDelay = 15000)
+    public void trackDailyCompletedProjects() {
+        System.out.println("Executed Here: Track Daily Completed Project ********************");
+
+        Calendar now = Calendar.getInstance();
+        now.add(Calendar.DATE, -1);
+        LocalDateTime yesterday = LocalDateTime.ofInstant(now.toInstant(), ZoneId.systemDefault());
+
+        List<ProjectEntity> completedProjs = projectEntityRepository.getCompletedProjectsByEndDate(yesterday);
+
+        for (ProjectEntity p : completedProjs) {
+            badgeService.issueProjectBadge(p);
+        }
     }
 }
