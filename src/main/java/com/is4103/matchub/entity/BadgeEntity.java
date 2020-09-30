@@ -54,14 +54,13 @@ public class BadgeEntity {
     @NotNull
     private String icon;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonIgnore
     @JsonIgnoreProperties({"posts", "hostedResources", "sdgs", "projectsJoined", "projectsOwned", "reviewsReceived", "badges", "likedPosts"})
     private List<ProfileEntity> profiles = new ArrayList<>();
 
     @OneToOne(optional = true)
-//    @JsonIgnore
-    @JsonIgnoreProperties({"projectBadge", "sdgs", "teamMembers", "projectOwners"})
+    @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
     private ProjectEntity project;
 
     public BadgeEntity(BadgeTypeEnum badgeType, String badgeTitle, String icon) {

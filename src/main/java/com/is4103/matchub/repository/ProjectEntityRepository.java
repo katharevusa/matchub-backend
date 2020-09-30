@@ -26,6 +26,11 @@ public interface ProjectEntityRepository extends JpaRepository<ProjectEntity, Lo
             countQuery = "SELECT COUNT(pe) FROM ProjectEntity pe WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.ACTIVE")
     Page<ProjectEntity> getLaunchedProjects(Pageable pageable);
     
+    //for issue long service badge usecase
+//    @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projCreatorId = :id ORDER BY pe.",
+//            countQuery = "SELECT COUNT(pe) FROM ProjectEntity pe WHERE pe.projCreatorId = :id")
+//    Page<ProjectEntity> getLatestProjectById(Long id, Pageable pageable);
+    
     
     
     

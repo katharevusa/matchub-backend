@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -127,8 +129,50 @@ public class BadgeServiceImpl implements BadgeService {
         }
     }
 
+    // **************** SYSTEM USE CASE ****************
     @Override
-    public void issueLeaderboardBadges(BadgeEntity leaderboardBadge, List<ProfileEntity> profiles) {
+    public void leaderboardTop10() {
+        //find the top10 badge 
+        BadgeEntity top10Badge = badgeEntityRepository.findByBadgeTitle("TOP 10 IN LEADERBOARD");
+
+        //find the top 10
+        Pageable top10 = PageRequest.of(0, 10);
+        List<ProfileEntity> profiles = profileEntityRepository.leaderboard(top10).toList();
+
+        //issue and remove badge 
+        removeAndIssueLeaderboardBadges(top10Badge, profiles);
+
+    }
+
+    @Override
+    public void leaderboardTop50() {
+        //find the top50 badge 
+        BadgeEntity top50Badge = badgeEntityRepository.findByBadgeTitle("TOP 50 IN LEADERBOARD");
+
+        //find the top 50
+        Pageable top50 = PageRequest.of(0, 50);
+        List<ProfileEntity> profiles = profileEntityRepository.leaderboard(top50).toList();
+
+        //issue and remove badge 
+        removeAndIssueLeaderboardBadges(top50Badge, profiles.subList(10, profiles.size() - 1));
+
+    }
+
+    @Override
+    public void leaderboardTop100() {
+        //find the top100 badge 
+        BadgeEntity top100Badge = badgeEntityRepository.findByBadgeTitle("TOP 100 IN LEADERBOARD");
+
+        //find the top 100
+        Pageable top100 = PageRequest.of(0, 100);
+        List<ProfileEntity> profiles = profileEntityRepository.leaderboard(top100).toList();
+
+        //issue and remove badge 
+        removeAndIssueLeaderboardBadges(top100Badge, profiles.subList(50, profiles.size() - 1));
+
+    }
+
+    private void removeAndIssueLeaderboardBadges(BadgeEntity leaderboardBadge, List<ProfileEntity> profiles) {
         //unassociate the initial people with the badges 
         for (ProfileEntity p : leaderboardBadge.getProfiles()) {
             p.getBadges().remove(leaderboardBadge);
@@ -147,6 +191,53 @@ public class BadgeServiceImpl implements BadgeService {
         }
 
         badgeEntityRepository.save(leaderboardBadge);
+    }
+
+    @Override
+    public void issueLongServiceAward1YearBadge(ProfileEntity profile) {
+        BadgeEntity oneYear = badgeEntityRepository.findByBadgeTitle("1 YEAR WITH MATCHUB");
+
+        profile.getBadges().add(oneYear);
+        profileEntityRepository.save(profile);
+
+        oneYear.getProfiles().add(profile);
+        badgeEntityRepository.save(oneYear);
+    }
+
+    @Override
+    public void issueLongServiceAward2YearsBadge(ProfileEntity profile) {
+        //add the 2 year badge 
+        BadgeEntity twoYears = badgeEntityRepository.findByBadgeTitle("2 YEARS WITH MATCHUB");
+
+        profile.getBadges().add(twoYears);
+        twoYears.getProfiles().add(profile);
+
+        //remove the 1 year badge
+        BadgeEntity oneYear = badgeEntityRepository.findByBadgeTitle("1 YEAR WITH MATCHUB");
+        profile.getBadges().remove(oneYear);
+        oneYear.getProfiles().remove(profile);
+
+        profileEntityRepository.save(profile);
+        badgeEntityRepository.save(twoYears);
+        badgeEntityRepository.save(oneYear);
+    }
+    
+    @Override
+    public void issueLongServiceAward5YearsBadge(ProfileEntity profile) {
+        //add the 5 year badge 
+        BadgeEntity fiveYears = badgeEntityRepository.findByBadgeTitle("5 YEARS WITH MATCHUB");
+
+        profile.getBadges().add(fiveYears);
+        fiveYears.getProfiles().add(profile);
+
+        //remove the 2 year badge
+        BadgeEntity twoYears = badgeEntityRepository.findByBadgeTitle("2 YEARS WITH MATCHUB");
+        profile.getBadges().remove(twoYears);
+        twoYears.getProfiles().remove(profile);
+
+        profileEntityRepository.save(profile);
+        badgeEntityRepository.save(twoYears);
+        badgeEntityRepository.save(fiveYears);
     }
 
 }

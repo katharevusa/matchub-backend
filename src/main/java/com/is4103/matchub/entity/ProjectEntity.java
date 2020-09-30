@@ -86,7 +86,7 @@ public class ProjectEntity {
     @NotNull
     private Integer upvotes = 0;
 
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.LAZY)
     private List<String> relatedResources = new ArrayList<>();
 
     @Column(nullable = false)
