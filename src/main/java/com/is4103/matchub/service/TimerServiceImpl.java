@@ -56,7 +56,7 @@ public class TimerServiceImpl implements TimerService {
 
     //leaderboard will be refreshed everyday at 12pm 
 //    @Scheduled(cron = "0 0 12 * * ?")
-    @Scheduled(fixedRate = 2000, initialDelay = 15000)
+//    @Scheduled(fixedRate = 2000, initialDelay = 15000)
     @Override
     public void refreshLeaderboardBadges() {
         System.out.println("Executed Here: ********************");
@@ -87,8 +87,11 @@ public class TimerServiceImpl implements TimerService {
 
     //method will be called monthly to check for activity of user and increment counter accordingly
     //runs 1st of every month, 12pm
-    @Scheduled(cron = "0 0 12 1 * ?")
+//    @Scheduled(cron = "0 0 12 1 * ?")
+    @Scheduled(fixedRate = 2000, initialDelay = 15000)
     public void longServiceBadges() {
+        System.out.println("Executed Here: Long Service Badges ********************");
+        
         Boolean increment = false;
         List<ProfileEntity> profiles = profileEntityRepository.findAllActiveAccounts();
 
