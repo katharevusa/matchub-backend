@@ -70,5 +70,11 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "AND pe.disabled = FALSE AND pe.isVerified = TRUE) "
             + "ORDER BY pe.reputationPoints DESC")
     Page<ProfileEntity> leaderboard(Pageable pageable);
+    
+    @Query(value = "SELECT p FROM ProfileEntity p WHERE p.accountLocked = FALSE AND p.accountExpired = FALSE "
+            + "AND p.disabled = FALSE AND p.isVerified = TRUE",
+            countQuery = "SELECT COUNT(p) FROM ProfileEntity p WHERE p.accountLocked = FALSE AND p.accountExpired = FALSE "
+            + "AND p.disabled = FALSE AND p.isVerified = TRUE")
+    List<ProfileEntity> findAllActiveAccounts();
 
 }

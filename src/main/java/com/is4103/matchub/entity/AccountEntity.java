@@ -64,7 +64,7 @@ public class AccountEntity {
     private Boolean accountExpired = false;
 
     @Column(nullable = false)
-    @NotNull
+    @NotNull    
     private Boolean disabled = true;
 
     @ElementCollection(fetch = FetchType.EAGER)

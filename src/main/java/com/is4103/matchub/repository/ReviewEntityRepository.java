@@ -18,12 +18,12 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface ReviewEntityRepository extends JpaRepository<ReviewEntity, Long> {
 
-    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewReceiver.accountId = :id",
-            countQuery = "SELECT COUNT(r) FROM ReviewEntity r WHERE r.reviewReceiver.accountId = :id")
+    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewReceiver.accountId = :id ORDER BY r.timeCreated",
+            countQuery = "SELECT COUNT(r) FROM ReviewEntity r WHERE r.reviewReceiver.accountId = :id ORDER BY r.timeCreated")
     Page<ReviewEntity> getReviewsReceivedByAccountId(Long id, Pageable pageable);
 
-    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewer.accountId = :id",
-            countQuery = "SELECT COUNT(r) FROM ReviewEntity r WHERE r.reviewer.accountId = :id")
+    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewer.accountId = :id ORDER BY r.timeCreated",
+            countQuery = "SELECT COUNT(r) FROM ReviewEntity r WHERE r.reviewer.accountId = :id ORDER BY r.timeCreated")
     Page<ReviewEntity> getReviewsGivenByAccountId(Long id, Pageable pageable);
 
     //this query is to check for reviews given before deleting an account (used in UserServiceImpl)

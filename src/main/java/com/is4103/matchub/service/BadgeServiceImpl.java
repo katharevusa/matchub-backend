@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
@@ -190,6 +191,53 @@ public class BadgeServiceImpl implements BadgeService {
         }
 
         badgeEntityRepository.save(leaderboardBadge);
+    }
+
+    @Override
+    public void issueLongServiceAward1YearBadge(ProfileEntity profile) {
+        BadgeEntity oneYear = badgeEntityRepository.findByBadgeTitle("1 YEAR WITH MATCHUB");
+
+        profile.getBadges().add(oneYear);
+        profileEntityRepository.save(profile);
+
+        oneYear.getProfiles().add(profile);
+        badgeEntityRepository.save(oneYear);
+    }
+
+    @Override
+    public void issueLongServiceAward2YearsBadge(ProfileEntity profile) {
+        //add the 2 year badge 
+        BadgeEntity twoYears = badgeEntityRepository.findByBadgeTitle("2 YEARS WITH MATCHUB");
+
+        profile.getBadges().add(twoYears);
+        twoYears.getProfiles().add(profile);
+
+        //remove the 1 year badge
+        BadgeEntity oneYear = badgeEntityRepository.findByBadgeTitle("1 YEAR WITH MATCHUB");
+        profile.getBadges().remove(oneYear);
+        oneYear.getProfiles().remove(profile);
+
+        profileEntityRepository.save(profile);
+        badgeEntityRepository.save(twoYears);
+        badgeEntityRepository.save(oneYear);
+    }
+    
+    @Override
+    public void issueLongServiceAward5YearsBadge(ProfileEntity profile) {
+        //add the 5 year badge 
+        BadgeEntity fiveYears = badgeEntityRepository.findByBadgeTitle("5 YEARS WITH MATCHUB");
+
+        profile.getBadges().add(fiveYears);
+        fiveYears.getProfiles().add(profile);
+
+        //remove the 2 year badge
+        BadgeEntity twoYears = badgeEntityRepository.findByBadgeTitle("2 YEARS WITH MATCHUB");
+        profile.getBadges().remove(twoYears);
+        twoYears.getProfiles().remove(profile);
+
+        profileEntityRepository.save(profile);
+        badgeEntityRepository.save(twoYears);
+        badgeEntityRepository.save(fiveYears);
     }
 
 }

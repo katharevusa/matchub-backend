@@ -36,4 +36,9 @@ public interface BadgeService {
     void leaderboardTop100();
 
 //    static void removeAndIssueLeaderboardBadges(BadgeEntity leaderboardBadge, List<ProfileEntity> profiles);
+    void issueLongServiceAward1YearBadge(ProfileEntity profile);
+
+    void issueLongServiceAward2YearsBadge(ProfileEntity profile);
+
+    void issueLongServiceAward5YearsBadge(ProfileEntity profile);
 }
