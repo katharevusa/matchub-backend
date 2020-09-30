@@ -76,6 +76,10 @@ public class AccountEntity {
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime joinDate;
+    
+    @Column(nullable = false)
+    @NotNull
+    private Integer activeMonths = 0;
 
     public AccountEntity(String email, String password) {
         this.uuid = UUID.randomUUID();
