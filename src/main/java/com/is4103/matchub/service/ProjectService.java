@@ -76,6 +76,8 @@ public interface ProjectService {
     public JoinRequestEntity createJoinRequest(Long projectId, Long profileId) throws ProjectNotFoundException, JoinProjectException;
 
     public Page<ProjectEntity> retrieveProjectBySDGId(Long sdgId, Pageable pageable) throws ProjectNotFoundException;
+    
+    public List<ProjectEntity> getOwnedProjects(Long userId);
 
 
 

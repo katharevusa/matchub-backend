@@ -238,6 +238,12 @@ public class ProjectServiceImpl implements ProjectService {
     public Page<ProjectEntity> getAllProjects(Pageable pageble) {
         return projectEntityRepository.findAll(pageble);
     }
+    
+    @Override
+    public List<ProjectEntity> getOwnedProjects(Long userId) {
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+        return user.getProjectsOwned();
+    }
 
     @Override
     public ProjectEntity setProjectProfilePic(Long projectId, String path) throws ProjectNotFoundException {
