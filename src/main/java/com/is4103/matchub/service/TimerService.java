@@ -12,4 +12,12 @@ package com.is4103.matchub.service;
 public interface TimerService {
 
     void refreshLeaderboardBadges();
+
+    void issueSysadminBadge();
+
+    void longServiceBadges();
+
+    void trackDailyCompletedProjects();
+
+    String longServiceAwardDemo(Long accountId, Integer noOfYears);
 }

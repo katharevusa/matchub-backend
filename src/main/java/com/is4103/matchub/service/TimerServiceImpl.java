@@ -77,6 +77,7 @@ public class TimerServiceImpl implements TimerService {
 //        profile.getBadges().add(top10Badge);
 //        badgeEntityRepository.save(top10Badge);
 //        profileEntityRepository.save(profile);
+        /*read code starts here*/
         //find the top 10 & remove/issue badge 
         badgeService.leaderboardTop10();
         //find the top 50 & remove/issue badge
@@ -86,7 +87,8 @@ public class TimerServiceImpl implements TimerService {
     }
 
     //sysdmin badge to be issuesd
-    @Scheduled(cron = "0 0 12 * * ?")
+//    @Scheduled(cron = "0 0 12 * * ?")
+    @Override
     public void issueSysadminBadge() {
 
     }
@@ -95,6 +97,7 @@ public class TimerServiceImpl implements TimerService {
     //runs 1st of every month, 12pm
 //    @Scheduled(cron = "0 0 12 1 * ?")
 //    @Scheduled(fixedRate = 2000, initialDelay = 15000)
+    @Override
     public void longServiceBadges() {
         System.out.println("Executed Here: Long Service Badges ********************");
 
@@ -167,6 +170,7 @@ public class TimerServiceImpl implements TimerService {
     //will check for completed projects everyday 12pm and issue badge 
 //    @Scheduled(cron = "0 0 12 * * ?")
 //    @Scheduled(fixedRate = 2000, initialDelay = 15000)
+    @Override
     public void trackDailyCompletedProjects() {
         System.out.println("Executed Here: Track Daily Completed Project ********************");
 
@@ -179,5 +183,37 @@ public class TimerServiceImpl implements TimerService {
         for (ProjectEntity p : completedProjs) {
             badgeService.issueProjectBadge(p);
         }
+    }
+
+    @Override
+    public String longServiceAwardDemo(Long accountId, Integer noOfYears) {
+
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        //manually set his joinDate 
+        LocalDateTime newJoinDate = profile.getJoinDate().minusYears(noOfYears);
+        profile.setJoinDate(newJoinDate);
+
+        BadgeEntity badge;
+
+        //query for the correct long service badge
+        if (noOfYears >= 5) {
+            badge = badgeEntityRepository.findByBadgeTitle("5 YEARS WITH MATCHUB");
+        } else if (noOfYears >= 2) {
+            badge = badgeEntityRepository.findByBadgeTitle("2 YEARS WITH MATCHUB");
+        } else if (noOfYears == 1) {
+            badge = badgeEntityRepository.findByBadgeTitle("1 YEAR WITH MATCHUB");
+        } else {
+            return "Please enter a positive integer for noOfYears!";
+        }
+
+        badge.getProfiles().add(profile);
+        badgeEntityRepository.save(badge);
+
+        profile.getBadges().add(badge);
+        profileEntityRepository.save(profile);
+        
+        return "AccountId " + accountId + " is successfully awarded the longservicebadge.";
     }
 }

@@ -49,8 +49,8 @@ public class PostEntityController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getPostsByAccountId/{accountId}")
-    Page<PostEntity> getPostsByAccountId(@PathVariable("accountId") Long postId, Pageable pageable) {
-        return postService.getPostsByAccountId(postId, pageable);
+    Page<PostEntity> getPostsByAccountId(@PathVariable("accountId") Long accountId, Pageable pageable) {
+        return postService.getPostsByAccountId(accountId, pageable);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updatePost/{postId}")
