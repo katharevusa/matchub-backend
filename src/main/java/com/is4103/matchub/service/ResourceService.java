@@ -13,6 +13,7 @@ import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.vo.ResourceVO;
 import java.io.IOException;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,19 +23,35 @@ import org.springframework.web.multipart.MultipartFile;
  * @author longluqian
  */
 public interface ResourceService {
-   public ResourceEntity createResource(ResourceEntity resourceEntity, Long categoryId, Long profileId);
-   public Page<ResourceEntity> getAllAvailableResources(Pageable pageble);
-   public Page<ResourceEntity> getAllResources(Pageable pageble);
-   public ResourceEntity getResourceById(Long id) throws ResourceNotFoundException;
-   public Page<ResourceEntity> getHostedResources(Long profileId,Pageable pageable);
-   public ResourceEntity createResource(ResourceVO vo)throws ResourceCategoryNotFoundException, UserNotFoundException;
-   public ResourceEntity updateResource(ResourceVO vo, Long updaterId, Long resourceId) throws ResourceNotFoundException, UpdateResourceException;
-   public ResourceEntity setResourceProfilePic(Long resourceId, MultipartFile pic) throws ResourceNotFoundException;
-   public ResourceEntity uploadPhotos(Long resourceId, MultipartFile[] photos) throws ResourceNotFoundException;
-   public ResourceEntity uploadDocuments(Long resourceId, MultipartFile[] documents) throws ResourceNotFoundException;
-   public ResourceEntity terminateResource(Long resourceId, Long terminatorId)throws  ResourceNotFoundException, TerminateResourceException;
-   public ResourceEntity deleteDocuments(Long resourceId, String[] docsToDelete) throws IOException,ResourceNotFoundException, UpdateResourceException;
-   public ResourceEntity deletePhotos (Long resourceId, String[] photoToDelete)throws ResourceNotFoundException, IOException, UpdateResourceException;
-   public ResourceEntity deleteResourceProfilePic(Long resourceId)throws ResourceNotFoundException,UpdateResourceException, IOException;
-   
+
+    public ResourceEntity createResource(ResourceEntity resourceEntity, Long categoryId, Long profileId);
+
+    public Page<ResourceEntity> getAllAvailableResources(Pageable pageble);
+
+    public Page<ResourceEntity> getAllResources(Pageable pageble);
+
+    public ResourceEntity getResourceById(Long id) throws ResourceNotFoundException;
+
+    public Page<ResourceEntity> getHostedResources(Long profileId, Pageable pageable);
+
+    public ResourceEntity createResource(ResourceVO vo) throws ResourceCategoryNotFoundException, UserNotFoundException;
+
+    public ResourceEntity updateResource(ResourceVO vo, Long updaterId, Long resourceId) throws ResourceNotFoundException, UpdateResourceException;
+
+    public ResourceEntity setResourceProfilePic(Long resourceId, MultipartFile pic) throws ResourceNotFoundException;
+
+    public ResourceEntity uploadPhotos(Long resourceId, MultipartFile[] photos) throws ResourceNotFoundException;
+
+    public ResourceEntity uploadDocuments(Long resourceId, MultipartFile[] documents) throws ResourceNotFoundException;
+
+    public ResourceEntity terminateResource(Long resourceId, Long terminatorId) throws ResourceNotFoundException, TerminateResourceException;
+
+    public ResourceEntity deleteDocuments(Long resourceId, String[] docsToDelete) throws IOException, ResourceNotFoundException, UpdateResourceException;
+
+    public ResourceEntity deletePhotos(Long resourceId, String[] photoToDelete) throws ResourceNotFoundException, IOException, UpdateResourceException;
+
+    public ResourceEntity deleteResourceProfilePic(Long resourceId) throws ResourceNotFoundException, UpdateResourceException, IOException;
+
+    public List<ResourceEntity> getResourcesByListOfId(List<Long> ids) throws ResourceNotFoundException;
+
 }

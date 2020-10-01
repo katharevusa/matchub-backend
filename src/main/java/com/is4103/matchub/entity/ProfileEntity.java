@@ -70,7 +70,7 @@ public abstract class ProfileEntity extends AccountEntity {
     @JsonIgnoreProperties({"postCreator", "listOfComments"})
     private List<PostEntity> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "notifiedUser")
+    @OneToMany
     private List<NotificationEntity> notifications = new ArrayList<>();
 
     @OneToMany
