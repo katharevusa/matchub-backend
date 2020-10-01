@@ -7,6 +7,7 @@ package com.is4103.matchub.entity;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import java.util.ArrayList;
@@ -22,7 +23,6 @@ import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
@@ -55,14 +55,14 @@ public class BadgeEntity {
     private String icon;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnore
+//    @JsonIgnsore
 //    @JsonIdentityInfo(generator = what thing)
-//    @JsonIgnoreProperties({"posts", "hostedResources", "sdgs", "projectsJoined", "projectsOwned", "reviewsReceived", "badges", "likedPosts"})
+    @JsonIgnoreProperties({"posts", "hostedResources", "sdgs", "projectsJoined", "projectsOwned", "reviewsReceived", "badges", "likedPosts"})
     private List<ProfileEntity> profiles = new ArrayList<>();
 
     @OneToOne(optional = true, fetch = FetchType.LAZY)
-    @JsonIgnore
-//    @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
+//    @JsonIgnore
+    @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
     private ProjectEntity project;
 
     public BadgeEntity(BadgeTypeEnum badgeType, String badgeTitle, String icon) {
