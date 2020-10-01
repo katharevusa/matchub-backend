@@ -83,7 +83,7 @@ public class InitServiceImpl implements InitService {
         initProjects();
 
         //added for badge and review use case
-        initCompletedProject();
+        initCompletedProjects();
 
         //community badges
         initCommunityBadges();
@@ -510,12 +510,31 @@ public class InitServiceImpl implements InitService {
         ProjectEntity projectEntity6 = new ProjectEntity("Save endangered sea turtles in Panama", "This project will launch a sea turtle research and conservation program to protect endangered leatherback and hawksbill turtles that were found at Bocas del Drago, Panama.", "Panama", LocalDateTime.parse("2021-01-05T11:50:55"), LocalDateTime.parse("2025-06-05T11:50:55"));
         projectEntity6.getSdgs().add(climateAction);
         projectEntity6.getSdgs().add(sustainableCities);
-        projectEntity6.setUpvotes(19);
+        projectEntity6.setUpvotes(50);
+        projectEntity6.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity6.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project6.jpg");
         projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/project6.jpg");
         projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/turtles.jpg");
         projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/turtles2.jpg");
         projectService.createProject(projectEntity6, 5L);
+
+        /* create project badge */
+        BadgeEntity projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Sea Turtle Saver", "https://localhost:8443/api/v1/files/badgeIcons/help-community.png");
+        projBadge.setProject(projectEntity6);
+        badgeEntityRepository.save(projBadge);
+
+        projectEntity6.setProjectBadge(projBadge);
+        projectEntityRepository.save(projectEntity6);
+        /* end of project badge */
+
+ /* add team member into this project */
+        ProfileEntity songhwa = profileEntityRepository.findById(Long.valueOf(9)).get();
+        projectEntity6.getTeamMembers().add(songhwa);
+        songhwa.getProjectsJoined().add(projectEntity6);
+
+        profileEntityRepository.save(songhwa);
+        projectEntityRepository.save(projectEntity6);
+        /* end of add team member */
 
         ProjectEntity projectEntity7 = new ProjectEntity("Protect reefs through sustainable tourism in Indonesia", "To protect threatened coral reefs in Indonesia by uniting governments, NGOs and the diving and snorkelling industry to establish international environmental standards for marine tourism.", "Indonesia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
         projectEntity7.getSdgs().add(climateAction);
@@ -544,13 +563,17 @@ public class InitServiceImpl implements InitService {
     }
 
     //for badge and review use cases
-    public void initCompletedProject() {
+    public void initCompletedProjects() {
 
+        SDGEntity genderEquality = sdgEntityRepository.findBySdgName("Gender Equality");
         SDGEntity cleanWater = sdgEntityRepository.findBySdgName("Clean Water and Sanitation");
         SDGEntity sustainablecities = sdgEntityRepository.findBySdgName("Sustainable Cities and Communities");
         SDGEntity lifeBelowWater = sdgEntityRepository.findBySdgName("Life Below Water");
+        SDGEntity responsibleConsumption = sdgEntityRepository.findBySdgName("Responsible Consumption and Production");
+        SDGEntity qualityEducation = sdgEntityRepository.findBySdgName("Quality Education");
 
         //create a completed project 
+        /* start of completed project 1 */
         String projDesc = "One of Seoul KFEM’s projects is to clean up and protect the Hangang River, "
                 + "which runs through South Korea’s capital city. The river is a vital source of water "
                 + "for the 10 million people who live there, but years of neglect have dramatically "
@@ -597,16 +620,139 @@ public class InitServiceImpl implements InitService {
         /* create project badge for completed project */
         BadgeEntity projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Hangang Cleanup Contributor", "https://localhost:8443/api/v1/files/badgeIcons/environment.png");
         projBadge.setProject(completedProject);
+        completedProject.setProjectBadge(projBadge);
+        projectEntityRepository.save(completedProject);
+
         projBadge.getProfiles().add(ikjun);
         projBadge.getProfiles().add(songhwa);
 
         badgeEntityRepository.save(projBadge);
-        
+
         ikjun.getBadges().add(projBadge);
         songhwa.getBadges().add(projBadge);
 
         profileEntityRepository.save(ikjun);
         profileEntityRepository.save(songhwa);
+        /* end of completed project 1 */
+
+ /* start of completed project 2 */
+        projDesc = "How can you play a part in making fashion sustainable? Surely, some of us must have"
+                + " attempted the KonMarie’s method to start our journey on decluttering our jam-packed "
+                + "closet. The meaning of decluttering is to get rid of clothes that do not spark joy out. "
+                + "Thanks to KonMarie,  your closet’s now organised, clean, and left with the items you need. "
+                + "What’s next? What do you do with the items which do not spark joy? Discard them? Often, "
+                + "this scenario is common in Singapore. However, do you know that discarding is not the only "
+                + "way to get rid of these pre-loved clothes? You can give them a new lease of life by recycling! Let's get started!";
+        completedProject = new ProjectEntity("Recycle Clothes Movement", projDesc, "Singapore", LocalDateTime.parse("2018-07-07T11:45:55"), LocalDateTime.parse("2020-03-28T10:25:55"));
+        completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
+        completedProject.setUpvotes(55);
+        completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/recycleClothes.jpg");
+        completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/recycleClothes1.jpg");
+        completedProject.setProjectProfilePic("https://localhost:8443/api/v1/files/init/recycleClothes.jpg");
+
+        //associations
+        completedProject.getSdgs().add(sustainablecities);
+        completedProject.getSdgs().add(responsibleConsumption);
+
+        projectService.createProject(completedProject, 5L);
+        //set team members 
+        completedProject.getTeamMembers().add(songhwa);
+        songhwa.getProjectsJoined().add(completedProject);
+
+        /* create project badge for completed project */
+        projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Sustainable Fashion", "https://localhost:8443/api/v1/files/badgeIcons/environment.png");
+        projBadge.setProject(completedProject);
+        completedProject.setProjectBadge(projBadge);
+        projectEntityRepository.save(completedProject);
+
+        projBadge.getProfiles().add(ikjun);
+        projBadge.getProfiles().add(songhwa);
+
+        badgeEntityRepository.save(projBadge);
+
+        ikjun.getBadges().add(projBadge);
+        songhwa.getBadges().add(projBadge);
+
+        profileEntityRepository.save(ikjun);
+        profileEntityRepository.save(songhwa);
+        /* end of completed project 2 */
+
+        /* start of completed project 4 */
+        projDesc = "End all forms of violence and harmful practices against women and girls, "
+                + "regardless of gender identity and sexual orientation";
+        completedProject = new ProjectEntity("End violence Against Women", projDesc, "India", LocalDateTime.parse("2017-02-07T11:45:55"), LocalDateTime.parse("2019-12-28T10:25:55"));
+        completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
+        completedProject.setUpvotes(36);
+        completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/genderEqualityIndia.jpg");
+        completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/genderEqualityIndia1.jpg");
+        completedProject.setProjectProfilePic("https://localhost:8443/api/v1/files/init/genderEqualityIndia.jpg");
+
+        //associations
+        completedProject.getSdgs().add(genderEquality);
+
+        projectService.createProject(completedProject, 5L);
+        //set team members 
+        completedProject.getTeamMembers().add(songhwa);
+        songhwa.getProjectsJoined().add(completedProject);
+
+        /* create project badge for completed project */
+        projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Equal Beings", "https://localhost:8443/api/v1/files/badgeIcons/gender-equality.png");
+        projBadge.setProject(completedProject);
+        completedProject.setProjectBadge(projBadge);
+        projectEntityRepository.save(completedProject);
+
+        projBadge.getProfiles().add(ikjun);
+        projBadge.getProfiles().add(songhwa);
+
+        badgeEntityRepository.save(projBadge);
+
+        ikjun.getBadges().add(projBadge);
+        songhwa.getBadges().add(projBadge);
+
+        profileEntityRepository.save(ikjun);
+        profileEntityRepository.save(songhwa);
+        /* end of completed project 3 */
+
+ /* start of completed project 4 */
+        projDesc = "The Education for All Project's long-term development objective is to improve access to, "
+                + "and benefit from basic and primary education for children, especially girls and children "
+                + "from disadvantaged groups, and from literacy programs for poor adults. The project will "
+                + "achieve three strategic goals: a) improving access to, and equity of basic and primary "
+                + "education; b) enhancing educational quality and relevance; and, c) improving efficiency, "
+                + "and institutional capacity of education service delivery. ";
+        completedProject = new ProjectEntity("Education For All", projDesc, "Liberia", LocalDateTime.parse("2015-02-07T11:45:55"), LocalDateTime.parse("2018-11-20T10:25:55"));
+        completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
+        completedProject.setUpvotes(60);
+        completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll.jpg");
+        completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll1.jpg");
+        completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll2.jpg");
+        completedProject.setProjectProfilePic("https://localhost:8443/api/v1/files/init/educationForAll.jpg");
+
+        //associations
+        completedProject.getSdgs().add(qualityEducation);
+
+        projectService.createProject(completedProject, 5L);
+        //set team members 
+        completedProject.getTeamMembers().add(songhwa);
+        songhwa.getProjectsJoined().add(completedProject);
+
+        /* create project badge for completed project */
+        projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Liberia Education Movement", "https://localhost:8443/api/v1/files/badgeIcons/education.png");
+        projBadge.setProject(completedProject);
+        completedProject.setProjectBadge(projBadge);
+        projectEntityRepository.save(completedProject);
+
+        projBadge.getProfiles().add(ikjun);
+        projBadge.getProfiles().add(songhwa);
+
+        badgeEntityRepository.save(projBadge);
+
+        ikjun.getBadges().add(projBadge);
+        songhwa.getBadges().add(projBadge);
+
+        profileEntityRepository.save(ikjun);
+        profileEntityRepository.save(songhwa);
+        /* end of completed project 4 */
 
     }
 
