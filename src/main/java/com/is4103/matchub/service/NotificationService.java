@@ -23,4 +23,5 @@ public interface NotificationService {
 
     public NotificationEntity createNotification(NotificationVO newNotificationVO);
 
+    public void viewNotification(Long notificationId, Long viewerId);
 }

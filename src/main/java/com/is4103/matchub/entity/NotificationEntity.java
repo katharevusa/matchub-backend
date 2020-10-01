@@ -64,6 +64,10 @@ public class NotificationEntity {
     @Column(nullable = false)
     @NotNull
     private NotificationTypeEnum type;
+    
+    @Column(nullable = false)
+    @NotNull
+    private Boolean viewed = Boolean.FALSE;
 
     public NotificationEntity(String content, LocalDateTime timestamp, Long projectId) {
         this.content = content;
