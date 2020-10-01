@@ -68,7 +68,7 @@ public abstract class ProfileEntity extends AccountEntity {
     @OneToMany(mappedBy = "postCreator")
     private List<PostEntity> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "notifiedUser")
+    @OneToMany
     private List<NotificationEntity> notifications = new ArrayList<>();
 
     @OneToMany

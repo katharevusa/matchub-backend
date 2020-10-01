@@ -11,6 +11,7 @@ import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.JoinRequestStatusEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
+import com.is4103.matchub.exception.CompleteProjectException;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.JoinProjectException;
@@ -201,7 +202,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
     }
 
-    //only project creator can terminate project
+    //only project creator can terminate project, no reputation points will be given
     @Override
     public void terminateProject(Long projectId, Long profileId) throws TerminateProjectException {
         Optional<ProfileEntity> profileOptional = profileEntityRepository.findById(profileId);
@@ -218,11 +219,36 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         project.setEndDate(LocalDateTime.now());
+        project.setProjStatus(ProjectStatusEnum.TERMINATED);
+        projectEntityRepository.saveAndFlush(project);
+        
+        // Incomplete: give notifications
+    }
+    // manually complete project for early completion of project, reputation point and review should be given
+    @Override
+    public void completeProject(Long projectId, Long profileId) throws CompleteProjectException{
+        Optional<ProfileEntity> profileOptional = profileEntityRepository.findById(profileId);
+        if (!profileOptional.isPresent()) {
+            throw new CompleteProjectException("Fail to complete project: User is not found");
+        }
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if (!projectOptional.isPresent()) {
+            throw new CompleteProjectException("Fail to complete project: Project is not found");
+        }
+        ProjectEntity project = projectOptional.get();
+        if (project.getProjCreatorId().equals(profileId)) {
+            throw new CompleteProjectException("Only project creator can change the status of a project");
+        }
+
+        project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.COMPLETED);
         projectEntityRepository.saveAndFlush(project);
-        // Incomplete: timer to start the point allocation and reviewa
-
+        
+        // Incomplete: reputation points, reviews, badge should be started
+        
     }
+    
+    
 
     @Override
     public Page<ProjectEntity> searchProjectByKeywords(String keyword, Pageable pageable) {

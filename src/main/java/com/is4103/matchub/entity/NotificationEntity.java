@@ -35,6 +35,10 @@ public class NotificationEntity {
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long notificationId;
+    
+    @Column(nullable = false)
+    @NotNull
+    private String title;
 
     @Column(nullable = false)
     @NotNull
@@ -46,11 +50,7 @@ public class NotificationEntity {
 
     @Column(nullable = false)
     @NotNull
-    private String title;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private ProfileEntity notifiedUser;
+    private Long notifiedUserId;
 
     @Column(nullable = true)
     private Long projectId;

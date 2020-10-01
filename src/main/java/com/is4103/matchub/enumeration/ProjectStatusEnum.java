@@ -10,5 +10,5 @@ package com.is4103.matchub.enumeration;
  * @author ngjin
  */
 public enum ProjectStatusEnum {
-    ACTIVE, COMPLETED, ON_HOLD;
+    ACTIVE, COMPLETED, ON_HOLD, TERMINATED;
 }

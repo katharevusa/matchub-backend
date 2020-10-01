@@ -5,10 +5,22 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.NotificationEntity;
+import com.is4103.matchub.vo.NotificationVO;
+import java.util.List;
+
 /**
  *
  * @author longluqian
  */
 public interface NotificationService {
-    
+
+    public void deleteNotificationById(Long notificationId);
+
+    public NotificationEntity getNotificationById(Long notificationId);
+
+    public List<NotificationEntity> getNotificationsByUserId(Long userId);
+
+    public NotificationEntity createNotification(NotificationVO newNotificationVO);
+
 }

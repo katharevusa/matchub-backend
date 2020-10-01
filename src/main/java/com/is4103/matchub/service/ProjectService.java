@@ -7,6 +7,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.JoinRequestEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.exception.CompleteProjectException;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.JoinProjectException;
@@ -80,6 +81,8 @@ public interface ProjectService {
     public List<ProjectEntity> getOwnedProjects(Long userId);
 
     public List<ProjectEntity> getProjectsByListOfIds(List<Long> ids) throws ProjectNotFoundException;
+    
+    public void completeProject(Long projectId, Long profileId) throws CompleteProjectException;
 
 
 }

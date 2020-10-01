@@ -6,6 +6,7 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.exception.CompleteProjectException;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
@@ -85,6 +86,12 @@ public class ProjectController {
     void terminateProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId, @RequestParam(value = "profileId", defaultValue = "") Long profileId) throws TerminateProjectException {
         projectService.terminateProject(projectId, profileId);
     }
+    
+    @RequestMapping(method = RequestMethod.PUT, value = "/completeProject")
+    void completeProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId, @RequestParam(value = "profileId", defaultValue = "") Long profileId) throws CompleteProjectException {
+        projectService.completeProject(projectId, profileId);
+    }
+    
 
     //get a list of launched projects 
     @RequestMapping(method = RequestMethod.GET, value = "/getLaunchedProjects")
