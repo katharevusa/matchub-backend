@@ -18,6 +18,8 @@ import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.vo.ResourceVO;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,6 +133,7 @@ public class ResourceServiceImpl implements ResourceService {
         return resourceEntityRepository.findAll(pageble);
     }
 
+    @Override
     public ResourceEntity getResourceById(Long id) throws ResourceNotFoundException {
 
         Optional<ResourceEntity> resourceEntity = resourceEntityRepository.findById(id);
@@ -139,6 +142,25 @@ public class ResourceServiceImpl implements ResourceService {
         } else {
             throw new ResourceNotFoundException("Resource is not found");
         }
+
+    }
+
+    @Override
+    public List<ResourceEntity> getResourcesByListOfId(List<Long> ids) throws ResourceNotFoundException {
+        List<ResourceEntity> listOfResources = new ArrayList<>();
+        ResourceEntity resourceEntity;
+        for (Long id : ids) {
+            Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(id);
+            if (resourceOptional.isPresent()) {
+                resourceEntity = resourceOptional.get();
+                listOfResources.add(resourceEntity);
+            } else {
+                throw new ResourceNotFoundException("Resource is not found");
+            }
+            
+
+        }
+        return listOfResources;
 
     }
 
@@ -159,24 +181,23 @@ public class ResourceServiceImpl implements ResourceService {
 
         return resourceEntityRepository.saveAndFlush(resource);
     }
-    
-     @Override 
-    public ResourceEntity deleteResourceProfilePic(Long resourceId)throws ResourceNotFoundException,UpdateResourceException, IOException  {
+
+    @Override
+    public ResourceEntity deleteResourceProfilePic(Long resourceId) throws ResourceNotFoundException, UpdateResourceException, IOException {
         Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
         if (!resourceOptional.isPresent()) {
             throw new ResourceNotFoundException("Resource not found");
         }
         ResourceEntity resource = resourceOptional.get();
-        if(resource.getResourceProfilePic()== null){
+        if (resource.getResourceProfilePic() == null) {
             throw new UpdateResourceException("Unable to delete profile picture: the resource currently does not have a profile picture  ");
         }
         attachmentService.deleteFile(resource.getResourceProfilePic());
         resource.setResourceProfilePic(null);
-        
+
         return resourceEntityRepository.saveAndFlush(resource);
-        
+
     }
-    
 
     @Override
     public ResourceEntity uploadPhotos(Long resourceId, MultipartFile[] photos) throws ResourceNotFoundException {
@@ -193,26 +214,27 @@ public class ResourceServiceImpl implements ResourceService {
         }
         return resourceEntityRepository.saveAndFlush(resource);
     }
+
     @Override
-    public ResourceEntity deletePhotos (Long resourceId, String[] photoToDelete)throws ResourceNotFoundException, IOException, UpdateResourceException{
+    public ResourceEntity deletePhotos(Long resourceId, String[] photoToDelete) throws ResourceNotFoundException, IOException, UpdateResourceException {
         Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
         if (!resourceOptional.isPresent()) {
             throw new ResourceNotFoundException("Resource not exist");
         }
         ResourceEntity resource = resourceOptional.get();
-        
-        for(String s : photoToDelete){
-            if(!resource.getPhotos().contains(s)){
+
+        for (String s : photoToDelete) {
+            if (!resource.getPhotos().contains(s)) {
                 throw new UpdateResourceException("Unable to delete photos: photos not found");
             }
         }
-        
-        for(String s: photoToDelete){
+
+        for (String s : photoToDelete) {
             resource.getPhotos().remove(s);
-            attachmentService.deleteFile(s);      
+            attachmentService.deleteFile(s);
         }
-        
-        return resourceEntityRepository.saveAndFlush(resource);     
+
+        return resourceEntityRepository.saveAndFlush(resource);
     }
 
     @Override
@@ -232,65 +254,64 @@ public class ResourceServiceImpl implements ResourceService {
         }
         return resourceEntityRepository.saveAndFlush(resource);
     }
-    
-    @Override 
-    public ResourceEntity deleteDocuments(Long resourceId, String[] docsToDelete) throws IOException,ResourceNotFoundException, UpdateResourceException {
-       Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
+
+    @Override
+    public ResourceEntity deleteDocuments(Long resourceId, String[] docsToDelete) throws IOException, ResourceNotFoundException, UpdateResourceException {
+        Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
         if (!resourceOptional.isPresent()) {
             throw new ResourceNotFoundException("Resource not exist");
         }
         ResourceEntity resource = resourceOptional.get();
         Map<String, String> hashmap = resource.getDocuments();
 
-            //loop 1: check if all the documents are present
-            for (String key : docsToDelete) {
-                //get the path of the document to delete
-                String selectedDocumentPath = hashmap.get(key);
-                if (selectedDocumentPath == null) {
-                    throw new UpdateResourceException("Unable to delete resource document (Document not found): " + key);
-                }
+        //loop 1: check if all the documents are present
+        for (String key : docsToDelete) {
+            //get the path of the document to delete
+            String selectedDocumentPath = hashmap.get(key);
+            if (selectedDocumentPath == null) {
+                throw new UpdateResourceException("Unable to delete resource document (Document not found): " + key);
             }
-            
-            //loop2: delete the actual file when all files are present
-            for (String key : docsToDelete) {
-                //get the path of the document to delete
-                String selectedDocumentPath = hashmap.get(key);
-                //if file is present, call attachmentService to delete the actual file from /build folder
-                attachmentService.deleteFile(selectedDocumentPath);
+        }
 
-                //successfully removed the actual file from /build folder, update organisation hashmap
-                hashmap.remove(key);
-            }
-            
-            //save once all documents are removed successfully
-            resource.setDocuments(hashmap);
-            return resourceEntityRepository.saveAndFlush(resource);
-            
-        
+        //loop2: delete the actual file when all files are present
+        for (String key : docsToDelete) {
+            //get the path of the document to delete
+            String selectedDocumentPath = hashmap.get(key);
+            //if file is present, call attachmentService to delete the actual file from /build folder
+            attachmentService.deleteFile(selectedDocumentPath);
+
+            //successfully removed the actual file from /build folder, update organisation hashmap
+            hashmap.remove(key);
+        }
+
+        //save once all documents are removed successfully
+        resource.setDocuments(hashmap);
+        return resourceEntityRepository.saveAndFlush(resource);
+
     }
-    
+
     @Override
-    public ResourceEntity terminateResource(Long resourceId, Long terminatorId)throws  ResourceNotFoundException, TerminateResourceException{
+    public ResourceEntity terminateResource(Long resourceId, Long terminatorId) throws ResourceNotFoundException, TerminateResourceException {
         Optional<ResourceEntity> resourceOptional = resourceEntityRepository.findById(resourceId);
         if (!resourceOptional.isPresent()) {
             throw new ResourceNotFoundException("Resource not exist");
         }
         ResourceEntity resource = resourceOptional.get();
-        
-        if (!resource.getResourceOwnerId().equals(terminatorId)){
+
+        if (!resource.getResourceOwnerId().equals(terminatorId)) {
             throw new TerminateResourceException("Only resource owner can terminate this resource");
         }
-        
-        if(resource.getMatchedProjectId()!= null){
+
+        if (resource.getMatchedProjectId() != null) {
             throw new TerminateResourceException("This resource is already matched with another project hence can not be terminated");
         }
-        if(!resource.getListOfRequests().isEmpty()){
+        if (!resource.getListOfRequests().isEmpty()) {
             throw new TerminateResourceException("This resource is used in some resource requests hence can not be deleted");
         }
-        
+
         resource.setAvailable(Boolean.FALSE);
         return resourceEntityRepository.saveAndFlush(resource);
-        
+
     }
 
 }
