@@ -17,7 +17,7 @@ public interface TimerService {
 
     void longServiceBadges();
 
-    void trackDailyCompletedProjects();
+//    void trackDailyCompletedProjects();
 
     String longServiceAwardDemo(Long accountId, Integer noOfYears);
 }

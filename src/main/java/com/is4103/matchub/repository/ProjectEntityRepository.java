@@ -31,7 +31,11 @@ public interface ProjectEntityRepository extends JpaRepository<ProjectEntity, Lo
 //    @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projCreatorId = :id ORDER BY pe.",
 //            countQuery = "SELECT COUNT(pe) FROM ProjectEntity pe WHERE pe.projCreatorId = :id")
 //    Page<ProjectEntity> getLatestProjectById(Long id, Pageable pageable);
-    @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.COMPLETED AND pe.endDate = :date")
-    List<ProjectEntity> getCompletedProjectsByEndDate(LocalDateTime date);
+    
+    
+    /* query method for significantprojectcontributor badge usecase*/
+    @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.COMPLETED "
+            + "AND ((pe.teamMembers tm WHERE tm.accountId = :accountId) OR (pe.projectOwners po WHERE po.accountId = :accountId)")
+    List<ProjectEntity> getCompletedProjectsByAccountId(Long accountId);
 
 }

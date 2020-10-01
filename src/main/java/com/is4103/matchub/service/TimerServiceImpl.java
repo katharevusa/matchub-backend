@@ -170,20 +170,20 @@ public class TimerServiceImpl implements TimerService {
     //will check for completed projects everyday 12pm and issue badge 
 //    @Scheduled(cron = "0 0 12 * * ?")
 //    @Scheduled(fixedRate = 2000, initialDelay = 15000)
-    @Override
-    public void trackDailyCompletedProjects() {
-        System.out.println("Executed Here: Track Daily Completed Project ********************");
-
-        Calendar now = Calendar.getInstance();
-        now.add(Calendar.DATE, -1);
-        LocalDateTime yesterday = LocalDateTime.ofInstant(now.toInstant(), ZoneId.systemDefault());
-
-        List<ProjectEntity> completedProjs = projectEntityRepository.getCompletedProjectsByEndDate(yesterday);
-
-        for (ProjectEntity p : completedProjs) {
-            badgeService.issueProjectBadge(p);
-        }
-    }
+//    @Override
+//    public void trackDailyCompletedProjects() {
+//        System.out.println("Executed Here: Track Daily Completed Project ********************");
+//
+//        Calendar now = Calendar.getInstance();
+//        now.add(Calendar.DATE, -1);
+//        LocalDateTime yesterday = LocalDateTime.ofInstant(now.toInstant(), ZoneId.systemDefault());
+//
+//        List<ProjectEntity> completedProjs = projectEntityRepository.getCompletedProjectsByEndDate(yesterday);
+//
+//        for (ProjectEntity p : completedProjs) {
+//            badgeService.issueProjectBadge(p);
+//        }
+//    }
 
     @Override
     public String longServiceAwardDemo(Long accountId, Integer noOfYears) {
