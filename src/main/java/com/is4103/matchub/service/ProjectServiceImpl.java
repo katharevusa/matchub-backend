@@ -63,6 +63,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private JoinRequestEntityRepository joinRequestEntityRepository;
 
+    @Autowired
+    private BadgeService badgeService;
+
     @Override
     public ProjectEntity createProject(ProjectCreateVO vo) {
         ProjectEntity newProject = new ProjectEntity();
@@ -221,12 +224,13 @@ public class ProjectServiceImpl implements ProjectService {
         project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.TERMINATED);
         projectEntityRepository.saveAndFlush(project);
-        
+
         // Incomplete: give notifications
     }
+
     // manually complete project for early completion of project, reputation point and review should be given
     @Override
-    public void completeProject(Long projectId, Long profileId) throws CompleteProjectException{
+    public void completeProject(Long projectId, Long profileId) throws CompleteProjectException {
         Optional<ProfileEntity> profileOptional = profileEntityRepository.findById(profileId);
         if (!profileOptional.isPresent()) {
             throw new CompleteProjectException("Fail to complete project: User is not found");
@@ -243,12 +247,11 @@ public class ProjectServiceImpl implements ProjectService {
         project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.COMPLETED);
         projectEntityRepository.saveAndFlush(project);
-        
+
         // Incomplete: reputation points, reviews, badge should be started
-        
+        //trigger the issueProjectBadge method 
+        badgeService.issueProjectBadge(project);
     }
-    
-    
 
     @Override
     public Page<ProjectEntity> searchProjectByKeywords(String keyword, Pageable pageable) {
@@ -264,7 +267,7 @@ public class ProjectServiceImpl implements ProjectService {
     public Page<ProjectEntity> getAllProjects(Pageable pageble) {
         return projectEntityRepository.findAll(pageble);
     }
-    
+
     @Override
     public List<ProjectEntity> getOwnedProjects(Long userId) {
         ProfileEntity user = profileEntityRepository.findById(userId).get();
@@ -575,7 +578,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProfileEntity requestor = profOptional.get();
 
         // One user can only make one join request to one project 
-        Optional<JoinRequestEntity> requestOptional = joinRequestEntityRepository.searchJoinRequestProjectByProjectAndRequestorAndStatus(projectId, profileId,JoinRequestStatusEnum.ON_HOLD);
+        Optional<JoinRequestEntity> requestOptional = joinRequestEntityRepository.searchJoinRequestProjectByProjectAndRequestorAndStatus(projectId, profileId, JoinRequestStatusEnum.ON_HOLD);
         if (requestOptional.isPresent()) {
             throw new JoinProjectException("There is already one on-hold join request to this project created.");
         }
@@ -589,12 +592,11 @@ public class ProjectServiceImpl implements ProjectService {
         project.getJoinRequests().add(joinRequest);
         joinRequest.setRequestor(requestor);
         requestor.getJoinRequests().add(joinRequest);
-        
+
         //make anouncement to project owners 
-        
         return joinRequestEntityRepository.saveAndFlush(joinRequest);
     }
-    
+
     @Override
     public List<ProjectEntity> getProjectsByListOfIds(List<Long> ids) throws ProjectNotFoundException {
         List<ProjectEntity> listOfProjects = new ArrayList<>();
@@ -607,7 +609,6 @@ public class ProjectServiceImpl implements ProjectService {
             } else {
                 throw new ProjectNotFoundException("Resource is not found");
             }
-            
 
         }
         return listOfProjects;
