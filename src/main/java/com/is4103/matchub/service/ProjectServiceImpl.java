@@ -240,7 +240,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new CompleteProjectException("Fail to complete project: Project is not found");
         }
         ProjectEntity project = projectOptional.get();
-        if (project.getProjCreatorId().equals(profileId)) {
+        if (!project.getProjCreatorId().equals(profileId)) {
             throw new CompleteProjectException("Only project creator can change the status of a project");
         }
 
@@ -249,7 +249,7 @@ public class ProjectServiceImpl implements ProjectService {
         projectEntityRepository.saveAndFlush(project);
 
         // Incomplete: reputation points, reviews, badge should be started
-        //trigger the issueProjectBadge method 
+        /* trigger the issueProjectBadge method */
         badgeService.issueProjectBadge(project);
     }
 

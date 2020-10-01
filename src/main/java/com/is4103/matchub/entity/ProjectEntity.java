@@ -6,6 +6,7 @@
 package com.is4103.matchub.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import java.time.LocalDateTime;
@@ -118,7 +119,8 @@ public class ProjectEntity {
     @OneToMany(mappedBy = "project")
     private List<ReviewEntity> reviews = new ArrayList<>();
 
-    @OneToOne(optional = true)//need to change to false later cos every project needs to have one badge
+    @JsonIgnoreProperties({"profiles", "project"})
+    @OneToOne(optional = true, fetch = FetchType.LAZY)//need to change to false later cos every project needs to have one badge
     private BadgeEntity projectBadge;
 
     @OneToMany

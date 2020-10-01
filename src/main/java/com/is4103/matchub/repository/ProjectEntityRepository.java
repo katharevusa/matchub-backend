@@ -34,8 +34,12 @@ public interface ProjectEntityRepository extends JpaRepository<ProjectEntity, Lo
     
     
     /* query method for significantprojectcontributor badge usecase*/
-    @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.COMPLETED "
-            + "AND ((pe.teamMembers tm WHERE tm.accountId = :accountId) OR (pe.projectOwners po WHERE po.accountId = :accountId)")
+//    @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.COMPLETED "
+//            + "AND ((pe.teamMembers tm WHERE tm.accountId = :accountId) OR (pe.projectOwners po WHERE po.accountId = :accountId))")
+//    List<ProjectEntity> getCompletedProjectsByAccountId(Long accountId);
+    
+    @Query(value = "SELECT pe FROM ProjectEntity pe JOIN pe.teamMembers tm JOIN pe.projectOwners po WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.COMPLETED "
+            + "AND ((tm.accountId = :accountId) OR (po.accountId = :accountId))")
     List<ProjectEntity> getCompletedProjectsByAccountId(Long accountId);
 
 }

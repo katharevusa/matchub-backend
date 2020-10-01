@@ -268,8 +268,12 @@ public class BadgeServiceImpl implements BadgeService {
     
     public void significantProjectContributorBadge(List<ProfileEntity> profiles) {
         
+        System.out.println("Significant Project Contributor Badge: ***************");
+        
         for (ProfileEntity p : profiles) {
             Integer completed = projectEntityRepository.getCompletedProjectsByAccountId(p.getAccountId()).size();
+            
+            System.out.println("acountId " + p.getAccountId() + " = completed " + completed + " projects");
             
             BadgeEntity badge;
 
