@@ -220,7 +220,10 @@ public class InitServiceImpl implements InitService {
         //profile & organisation attributes
         Set<String> areasOfExpertise = new HashSet<>(Arrays.asList("Work together to advocate for policy changes", "Inclusive Intersectional Leadership", "Collective Action to Advance Gender Equality"));
         genc.setAreasOfExpertise(areasOfExpertise);
-        genc.setEmployees(new HashSet<>(Arrays.asList(sophia.getAccountId())));
+        //set employees
+        genc.setEmployees(new HashSet<>(Arrays.asList(sophia.getAccountId(), Long.valueOf(12))));
+        //set kah
+        genc.setKahs(new HashSet<>(Arrays.asList(sophia.getAccountId())));
         genc.setCountryCode("+1");
         genc.setPhoneNumber("866 293 4483");
         genc.setCountry("Canada");
@@ -245,7 +248,7 @@ public class InitServiceImpl implements InitService {
         areasOfExpertise = new HashSet<>(Arrays.asList("Fundraising Platform", "All-In-One Donor Management System", "Fundraising Software"));
         networkForGood.setAreasOfExpertise(areasOfExpertise);
         //set employees
-        networkForGood.setEmployees(new HashSet<>(Arrays.asList(alexLow.getAccountId())));
+        networkForGood.setEmployees(new HashSet<>(Arrays.asList(alexLow.getAccountId(), Long.valueOf(11))));
         //set KAH
         networkForGood.setKahs(new HashSet<>(Arrays.asList(alexLow.getAccountId())));
         networkForGood.setCountryCode("+1");
@@ -308,7 +311,10 @@ public class InitServiceImpl implements InitService {
         //profile & organisation attributes
         areasOfExpertise = new HashSet<>(Arrays.asList("Nuclear Energy", "Climate Change", "Ocean Protection"));
         kfem.setAreasOfExpertise(areasOfExpertise);
+        //set employee
         kfem.setEmployees(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId())));
+        //set kah
+        kfem.setKahs(new HashSet<>(Arrays.asList(ikjun.getAccountId())));
         kfem.setCountryCode("+82");
         kfem.setPhoneNumber("02-735-7000");
         kfem.setCountry("South Korea");
@@ -326,6 +332,67 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(15)));
         kfem.setSdgs(sdgs);
         accountEntityRepository.save(kfem);
+
+        //individual, accountId = 11
+        IndividualEntity jeongha = new IndividualEntity("jeongha@gmail.com", passwordEncoder.encode("password"), "Jeong Ha", "Ahn", GenderEnum.FEMALE);
+        //account attributes
+        jeongha.setUuid(UUID.randomUUID());
+        jeongha.setDisabled(Boolean.FALSE);
+        jeongha.setIsVerified(Boolean.TRUE);
+        jeongha.getRoles().add(ProfileEntity.ROLE_USER);
+        jeongha.setJoinDate(LocalDateTime.now());
+        //profile & individual attributes
+        jeongha.setProfileDescription("Making the world a better place through creativity");
+        skillsets = new HashSet<>(Arrays.asList("Painting", "Drawing"));
+        jeongha.setSkillSet(skillsets);
+
+        jeongha.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(5), Long.valueOf(6), Long.valueOf(7))));
+
+        jeongha.setCountryCode("+82");
+        jeongha.setPhoneNumber("022-179-4100");
+        jeongha.setCountry("South Korea");
+        jeongha.setCity("Seoul");
+        jeongha.setProfilePhoto("https://localhost:8443/api/v1/files/init/jeongha.jpg");
+        jeongha.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(10))));
+        jeongha.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(5), Long.valueOf(7), Long.valueOf(8), Long.valueOf(10))));
+
+        sdgs = new ArrayList<>();
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(6)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
+        jeongha.setSdgs(sdgs);
+        accountEntityRepository.save(jeongha);
+
+        //individual, accountId = 12
+        IndividualEntity billy = new IndividualEntity("billy@gmail.com", passwordEncoder.encode("password"), "Billy", "Chan", GenderEnum.MALE);
+        //account attributes
+        billy.setUuid(UUID.randomUUID());
+        billy.setDisabled(Boolean.FALSE);
+        billy.setIsVerified(Boolean.TRUE);
+        billy.getRoles().add(ProfileEntity.ROLE_USER);
+        billy.setJoinDate(LocalDateTime.now());
+        //profile & individual attributes
+        billy.setProfileDescription("Teaching Makes A Difference");
+        skillsets = new HashSet<>(Arrays.asList("Teaching", "Economist"));
+        billy.setSkillSet(skillsets);
+
+        billy.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(5), Long.valueOf(6), Long.valueOf(7))));
+
+        billy.setCountryCode("+65");
+        billy.setPhoneNumber("90004321");
+        billy.setCountry("Singapore");
+        billy.setCity("Singapore");
+        billy.setProfilePhoto("https://localhost:8443/api/v1/files/init/billy.png");
+        billy.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(10))));
+        billy.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(5), Long.valueOf(7), Long.valueOf(8), Long.valueOf(10))));
+
+        sdgs = new ArrayList<>();
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(2)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(4)));
+        sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
+        billy.setSdgs(sdgs);
+        accountEntityRepository.save(billy);
     }
 
     private void initSDG() {
@@ -680,7 +747,7 @@ public class InitServiceImpl implements InitService {
         profileEntityRepository.save(songhwa);
         /* end of completed project 2 */
 
-        /* start of completed project 4 */
+ /* start of completed project 4 */
         projDesc = "End all forms of violence and harmful practices against women and girls, "
                 + "regardless of gender identity and sexual orientation";
         completedProject = new ProjectEntity("End violence Against Women", projDesc, "India", LocalDateTime.parse("2017-02-07T11:45:55"), LocalDateTime.parse("2019-12-28T10:25:55"));
