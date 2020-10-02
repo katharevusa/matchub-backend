@@ -222,12 +222,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (!project.getProjCreatorId().equals(profileId)) {
             throw new TerminateProjectException("Only project creator can terminate project");
         }
-        
-        //avoid double termination
-        if(project.getProjStatus()==ProjectStatusEnum.TERMINATED){
-            throw new TerminateProjectException("This project is already terminated");
-        }
-        
+            
         //only allow termination of active projects
         if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
             throw new TerminateProjectException("Failed to terminate project: can only terminate active projects");
@@ -274,9 +269,6 @@ public class ProjectServiceImpl implements ProjectService {
             throw new CompleteProjectException("You can only complete active projects");
         }
         
-        if(project.getProjStatus()==ProjectStatusEnum.COMPLETED){
-            throw new CompleteProjectException("You have already completed the project");
-        }
 
         project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.COMPLETED);
