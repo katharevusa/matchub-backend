@@ -204,6 +204,12 @@ public class ResourceRequestImpl implements ResourceRequestService {
             }
         }
 
+        //Only resource request with ON_HOLD status can change status
+        if(request.getStatus()!=RequestStatusEnum.ON_HOLD){
+            throw new RespondToResourceRequestException("This resource request is "+ request.getStatus()+". Status can not be changed");
+        }
+        
+        
         //response true: accept request
         if (response == true) {
             request.setStatus(RequestStatusEnum.ACCEPTED);

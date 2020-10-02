@@ -39,7 +39,6 @@ public class NotificationImpl implements NotificationService{
         return newNotificationEntity;     
     }
             
-    
     //retrieve notification by userId
     @Override
     public List<NotificationEntity> getNotificationsByUserId(Long userId){
@@ -61,6 +60,7 @@ public class NotificationImpl implements NotificationService{
         
     }
   
+    @Override
     public void viewNotification(Long notificationId, Long viewerId){
         ProfileEntity user = profileEntityRepository.findById(viewerId).get();
         NotificationEntity notification = notificationEntityRepository.findById(notificationId).get();
