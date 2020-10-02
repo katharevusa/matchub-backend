@@ -74,6 +74,10 @@ public class ResourceRequestImpl implements ResourceRequestService {
         if (resourceRequestEntityRepository.searchResourceRequestProjectByProjectAndResourceOnHold(project.getProjectId(), resource.getResourceId(), RequestStatusEnum.ON_HOLD).isPresent()) {
             throw new CreateResourceRequestException("There exits one request between resource and project with status on_hold, please make a decision before creating a new request");
         }
+        
+        if (resource.getMatchedProjectId() != null) {
+            throw new CreateResourceRequestException("This resource is already matched to another project");
+        }
 
         if (vo.getUnitsRequired() > resource.getUnits()) {
             throw new CreateResourceRequestException("Unable to create resource request: the requested amount is more than the resource provided");
@@ -108,6 +112,7 @@ public class ResourceRequestImpl implements ResourceRequestService {
             throw new CreateResourceRequestException("Unable to create resource request: can only create request for owned resource");
         }
 
+        // If resource already matched to project, can not request one more time
         if (resource.getMatchedProjectId() != null) {
             throw new CreateResourceRequestException("This resource is already matched to another project");
         }
