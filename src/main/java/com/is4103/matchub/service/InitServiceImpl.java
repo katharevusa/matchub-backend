@@ -402,20 +402,20 @@ public class InitServiceImpl implements InitService {
         bread.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_bread.jpg");
         bread.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_bread.jpg");
         bread.getPhotos().add("https://localhost:8443/api/v1/files/init/bread2.jpg");
-        resourceService.createResource(bread, 1L, 2L);// category id, profileId
+        resourceService.createResource(bread, 1L, 4L);// category id, profileId
 
         ResourceEntity classroom = new ResourceEntity("Classroom", "Free classroom", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
         classroom.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_classroom.jpg");
         classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_classroom.jpg");
         classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/classroom.jpg");
 
-        resourceService.createResource(classroom, 2L, 2L);
+        resourceService.createResource(classroom, 2L, 5L);
 
         ResourceEntity water = new ResourceEntity("Water", "10 Free Bottle Water", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
         water.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_water.jpg");
         water.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_water.jpg");
         water.getPhotos().add("https://localhost:8443/api/v1/files/init/water1.jpg");
-        resourceService.createResource(water, 3L, 3L);
+        resourceService.createResource(water, 3L, 8L);
 
         ResourceEntity laptop = new ResourceEntity("Laptop", "10 Laptop for free rent", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
         laptop.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_laptop.jpg");
@@ -454,7 +454,7 @@ public class InitServiceImpl implements InitService {
         projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/Bangladesh.jpg");
         projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/Bangladesh1.jpg");
         projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/Bangladesh2.jpg");
-        projectService.createProject(projectEntity1, 2L);
+        projectService.createProject(projectEntity1, 4L);
 
         ProjectEntity projectEntity2 = new ProjectEntity("Women's financial literacy, Malawi", "CARE will work with 20,000 women from 1,000 village savings and loans groups in Lilongwe, Dowa and Kasungu Districts, to overcome chronic hunger by expanding their farms or micro-businesses.", "Malawi", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
         projectEntity2.getSdgs().add(genderEquality);
@@ -466,7 +466,7 @@ public class InitServiceImpl implements InitService {
         projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/woman1.jpg");
         projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/woman2.jpg");
         projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/woman3.jpg");
-        projectService.createProject(projectEntity2, 2L);
+        projectService.createProject(projectEntity2, 5L);
 
         ProjectEntity projectEntity3 = new ProjectEntity("Supporting rural families, Cambodia", "To support rural family.", "Cambodia", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
         projectEntity3.getSdgs().add(poverty);
@@ -476,7 +476,7 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/project3.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural2.jpg");
-        projectService.createProject(projectEntity3, 2L);
+        projectService.createProject(projectEntity3, 6L);
 
         ProjectEntity projectEntity4 = new ProjectEntity("Building housing in Phnom Penh, Cambodia", "As an alternative to Schoolies, 18 Mosman High year 12 students are travelling to Cambodia to build houses for local Cambodians living in poverty.", "Cambodia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
         projectEntity4.getSdgs().add(genderEquality);
@@ -490,7 +490,7 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building2.jpg");
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building3.jpg");
 
-        projectService.createProject(projectEntity4, 3L);
+        projectService.createProject(projectEntity4, 4L);
 
         ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Papua New Guinea", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Cambodia", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
         projectEntity5.getSdgs().add(cleanWater);
@@ -502,7 +502,7 @@ public class InitServiceImpl implements InitService {
         projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/water2.jpg");
         projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/water3.jpg");
 
-        projectService.createProject(projectEntity5, 4L);
+        projectService.createProject(projectEntity5, 7L);
 
         ProjectEntity projectEntity6 = new ProjectEntity("Save endangered sea turtles in Panama", "This project will launch a sea turtle research and conservation program to protect endangered leatherback and hawksbill turtles that were found at Bocas del Drago, Panama.", "Panama", LocalDateTime.parse("2021-01-05T11:50:55"), LocalDateTime.parse("2025-06-05T11:50:55"));
         projectEntity6.getSdgs().add(climateAction);
@@ -536,7 +536,7 @@ public class InitServiceImpl implements InitService {
         projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/project8.jpg");
         projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/solar.jpg");
         projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/solar2.jpg");
-        projectService.createProject(projectEntity8, 6L);
+        projectService.createProject(projectEntity8, 8L);
 
     }
 
