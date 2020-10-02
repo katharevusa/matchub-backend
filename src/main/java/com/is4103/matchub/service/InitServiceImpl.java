@@ -652,7 +652,7 @@ public class InitServiceImpl implements InitService {
         projectService.createProject(projectEntity6, 5L);
 
         /* create project badge */
-        projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Sea Turtle Saver", "https://localhost:8443/api/v1/files/badgeIcons/help-community.png");
+        projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Sea Turtle Saver", "https://localhost:8443/api/v1/files/badgeIcons/animal.png");
         projBadge.setProject(projectEntity6);
         badgeEntityRepository.save(projBadge);
 
@@ -683,7 +683,7 @@ public class InitServiceImpl implements InitService {
 
         projectService.createProject(projectEntity7, 7L);
         /* create project badge */
-        projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Reefs Protecter", "https://localhost:8443/api/v1/files/badgeIcons/environment.png");
+        projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Reefs Protecter", "https://localhost:8443/api/v1/files/badgeIcons/animal.png");
         projBadge.setProject(projectEntity7);
         badgeEntityRepository.save(projBadge);
 
