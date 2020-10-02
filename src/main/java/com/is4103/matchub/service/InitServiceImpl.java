@@ -594,7 +594,7 @@ public class InitServiceImpl implements InitService {
         ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Papua New Guinea", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Cambodia", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
         projectEntity5.getSdgs().add(cleanWater);
         projectEntity5.getSdgs().add(goodHealth);
-        projectEntity5.setUpvotes(19);
+        projectEntity5.setUpvotes(25);
         projectEntity5.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity5.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project5.png");
         projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/project5.png");
