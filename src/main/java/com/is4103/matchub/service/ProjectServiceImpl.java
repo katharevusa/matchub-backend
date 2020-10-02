@@ -219,8 +219,18 @@ public class ProjectServiceImpl implements ProjectService {
             throw new TerminateProjectException("Fail to terminate project: Project is not found");
         }
         ProjectEntity project = projectOptional.get();
-        if (project.getProjCreatorId() != profileId) {
+        if (project.getProjCreatorId().equals(profileId)) {
             throw new TerminateProjectException("Only project creator can terminate project");
+        }
+        
+        //avoid double termination
+        if(project.getProjStatus()==ProjectStatusEnum.TERMINATED){
+            throw new TerminateProjectException("This project is already terminated");
+        }
+        
+        //only allow termination of active projects
+        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
+            throw new TerminateProjectException("Failed to terminate project: can only terminate active projects");
         }
 
         project.setEndDate(LocalDateTime.now());
@@ -249,15 +259,23 @@ public class ProjectServiceImpl implements ProjectService {
     public void completeProject(Long projectId, Long profileId) throws CompleteProjectException {
         Optional<ProfileEntity> profileOptional = profileEntityRepository.findById(profileId);
         if (!profileOptional.isPresent()) {
-            throw new CompleteProjectException("Fail to complete project: User is not found");
+            throw new CompleteProjectException("Failed to complete project: User is not found");
         }
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
-            throw new CompleteProjectException("Fail to complete project: Project is not found");
+            throw new CompleteProjectException("Failed to complete project: Project is not found");
         }
         ProjectEntity project = projectOptional.get();
         if (!project.getProjCreatorId().equals(profileId)) {
             throw new CompleteProjectException("Only project creator can change the status of a project");
+        }
+        
+        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
+            throw new CompleteProjectException("You can only complete active projects");
+        }
+        
+        if(project.getProjStatus()==ProjectStatusEnum.COMPLETED){
+            throw new CompleteProjectException("You have already completed the project");
         }
 
         project.setEndDate(LocalDateTime.now());
