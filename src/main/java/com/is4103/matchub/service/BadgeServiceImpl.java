@@ -49,6 +49,7 @@ public class BadgeServiceImpl implements BadgeService {
     private ProfileEntityRepository profileEntityRepository;
 
     private static void setBadgeIcons() {
+        badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/animal.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/cities.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/construction.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/education.png");
