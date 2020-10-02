@@ -120,7 +120,8 @@ public class ProjectEntity {
     private List<ReviewEntity> reviews = new ArrayList<>();
 
     @JsonIgnoreProperties({"profiles", "project"})
-    @OneToOne(optional = true, fetch = FetchType.LAZY)//need to change to false later cos every project needs to have one badge
+//    @OneToOne(optional = true, fetch = FetchType.LAZY)//need to change to false later cos every project needs to have one badge
+    @OneToOne(optional = true)//need to change to false later cos every project needs to have one badge
     private BadgeEntity projectBadge;
 
     @OneToMany

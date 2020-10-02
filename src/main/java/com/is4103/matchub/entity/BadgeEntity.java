@@ -34,7 +34,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "project")
+//@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "project")
 public class BadgeEntity {
 
     @Id
@@ -60,7 +60,8 @@ public class BadgeEntity {
     @JsonIgnoreProperties({"posts", "hostedResources", "sdgs", "projectsJoined", "projectsOwned", "reviewsReceived", "badges", "likedPosts"})
     private List<ProfileEntity> profiles = new ArrayList<>();
 
-    @OneToOne(optional = true, fetch = FetchType.LAZY)
+//    @OneToOne(optional = true, fetch = FetchType.LAZY)
+    @OneToOne(optional = true)
 //    @JsonIgnore
     @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
     private ProjectEntity project;
