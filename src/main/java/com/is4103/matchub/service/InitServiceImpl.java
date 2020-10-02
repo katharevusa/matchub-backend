@@ -748,6 +748,40 @@ public class InitServiceImpl implements InitService {
         projectEntity10.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity10);
         /* end of project badge */
+        
+        ProjectEntity projectEntity11 = new ProjectEntity("Protect endangered zebras in Kenya", "The Grevy's zebra (Equus grevyi) is one of Africa's most endangered large mammals. They are a separate species of zebra, distinct from the widely-recognized common zebra (or plains zebra) through their large, fluffy ears, white belly, and comparatively thinner black stripes. Once distributed across the horn of Africa, 92% of the remaining Grevy’s zebra are now only found in Kenya, with a few small isolated populations in Ethiopia.", "Kenya", LocalDateTime.parse("2019-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
+        projectEntity11.getSdgs().add(sustainableCities);
+        projectEntity11.setUpvotes(35);
+        projectEntity11.setProjStatus(ProjectStatusEnum.ACTIVE);
+        projectEntity11.setProjectProfilePic("https://localhost:8443/api/v1/files/init/zebra.jpeg");
+        projectEntity11.getPhotos().add("https://localhost:8443/api/v1/files/init/zebra1.jpeg");
+        projectEntity11.getPhotos().add("https://localhost:8443/api/v1/files/init/zebra.jpeg");
+        projectService.createProject(projectEntity11, 11L);
+        /* create project badge */
+        projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Zebra Protector", "https://localhost:8443/api/v1/files/badgeIcons/animal.png");
+        projBadge.setProject(projectEntity11);
+        badgeEntityRepository.save(projBadge);
+
+        projectEntity11.setProjectBadge(projBadge);
+        projectEntityRepository.save(projectEntity11);
+        /* end of project badge */
+        
+        ProjectEntity projectEntity12 = new ProjectEntity("Close the gap in eye health for Indigenous Australians", "For decades, Aboriginal and Torres Strait Lander people have experienced low health outcomes than non-indigenous Australians. Today, there’s still a ten-year gap in life expectancy. Poor eye health and a lack of easy access to services play a part in this.", "Australians", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
+        projectEntity12.getSdgs().add(goodHealth);
+        projectEntity12.setUpvotes(35);
+        projectEntity12.setProjStatus(ProjectStatusEnum.ACTIVE);
+        projectEntity12.setProjectProfilePic("https://localhost:8443/api/v1/files/init/eye.jpg");
+        projectEntity12.getPhotos().add("https://localhost:8443/api/v1/files/init/eye1.jpg");
+        projectEntity12.getPhotos().add("https://localhost:8443/api/v1/files/init/eye.jpg");
+        projectService.createProject(projectEntity12, 12L);
+        /* create project badge */
+        projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Eye Care Advocator", "https://localhost:8443/api/v1/files/badgeIcons/healthcare.png");
+        projBadge.setProject(projectEntity12);
+        badgeEntityRepository.save(projBadge);
+
+        projectEntity12.setProjectBadge(projBadge);
+        projectEntityRepository.save(projectEntity12);
+        /* end of project badge */
 
     }
 
