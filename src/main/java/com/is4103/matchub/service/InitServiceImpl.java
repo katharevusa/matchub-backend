@@ -13,6 +13,7 @@ import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
+import com.is4103.matchub.exception.ProjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -73,6 +74,8 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     BadgeEntityRepository badgeEntityRepository;
+    
+   
 
     @Transactional
     public void init() {
@@ -87,6 +90,9 @@ public class InitServiceImpl implements InitService {
 
         //community badges
         initCommunityBadges();
+        
+        //join request 
+        initJoinRequest();
     }
 
     private void initUsers() {
@@ -568,7 +574,7 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/project3.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural2.jpg");
-        projectService.createProject(projectEntity3, 5L);
+        projectService.createProject(projectEntity3, 9L);
 
         ProjectEntity projectEntity4 = new ProjectEntity("Building housing in Phnom Penh, Cambodia", "As an alternative to Schoolies, 18 Mosman High year 12 students are travelling to Cambodia to build houses for local Cambodians living in poverty.", "Cambodia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
         projectEntity4.getSdgs().add(genderEquality);
@@ -605,7 +611,7 @@ public class InitServiceImpl implements InitService {
         projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/project6.jpg");
         projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/turtles.jpg");
         projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/turtles2.jpg");
-        projectService.createProject(projectEntity6, 9L);
+        projectService.createProject(projectEntity6, 5L);
 
         /* create project badge */
         BadgeEntity projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Sea Turtle Saver", "https://localhost:8443/api/v1/files/badgeIcons/help-community.png");
@@ -900,6 +906,17 @@ public class InitServiceImpl implements InitService {
 
         BadgeEntity fiveYears = new BadgeEntity(BadgeTypeEnum.COMMUNITY, "5 YEARS WITH MATCHUB", "https://localhost:8443/api/v1/files/communityBadges/5years.png");
         badgeEntityRepository.save(fiveYears);
+    }
+    
+    public void initJoinRequest(){
+        try{
+         projectService.createJoinRequest(3L, 4L);
+         projectService.createJoinRequest(3L, 6L);
+        }catch(Exception e){
+            System.err.println("Error in init join request");
+        }
+        
+         
     }
 
 }
