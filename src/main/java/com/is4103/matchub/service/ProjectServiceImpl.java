@@ -219,7 +219,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new TerminateProjectException("Fail to terminate project: Project is not found");
         }
         ProjectEntity project = projectOptional.get();
-        if (project.getProjCreatorId().equals(profileId)) {
+        if (!project.getProjCreatorId().equals(profileId)) {
             throw new TerminateProjectException("Only project creator can terminate project");
         }
         
