@@ -99,7 +99,8 @@ public abstract class ProfileEntity extends AccountEntity {
     @OneToMany(mappedBy = "reviewReceiver")
     private List<ReviewEntity> reviewsReceived = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties({"profiles", "project"})
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<BadgeEntity> badges = new ArrayList<>();
 
     @OneToMany(mappedBy = "profile")

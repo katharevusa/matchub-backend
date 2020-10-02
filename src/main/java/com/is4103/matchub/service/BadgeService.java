@@ -7,6 +7,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
 import com.is4103.matchub.vo.ProjectBadgeUpdateVO;
@@ -41,4 +42,6 @@ public interface BadgeService {
     void issueLongServiceAward2YearsBadge(ProfileEntity profile);
 
     void issueLongServiceAward5YearsBadge(ProfileEntity profile);
+
+    void issueProjectBadge(ProjectEntity project);
 }

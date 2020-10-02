@@ -36,18 +36,18 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class BadgeServiceImpl implements BadgeService {
-
+    
     private static final List<String> badgeIcons = new ArrayList<>();
-
+    
     @Autowired
     private BadgeEntityRepository badgeEntityRepository;
-
+    
     @Autowired
     private ProjectEntityRepository projectEntityRepository;
-
+    
     @Autowired
     private ProfileEntityRepository profileEntityRepository;
-
+    
     private static void setBadgeIcons() {
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/cities.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/construction.png");
@@ -59,7 +59,7 @@ public class BadgeServiceImpl implements BadgeService {
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/help-community.png");
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/partnerships.png");
     }
-
+    
     @Override
     public List<String> retrieveBadgeIcons() {
         if (badgeIcons.size() == 0) {
@@ -67,7 +67,7 @@ public class BadgeServiceImpl implements BadgeService {
         }
         return badgeIcons;
     }
-
+    
     @Transactional
     @Override
     public BadgeEntity createProjectBadge(ProjectBadgeCreateVO createVO) throws ProjectNotFoundException {
@@ -80,29 +80,29 @@ public class BadgeServiceImpl implements BadgeService {
             throw new UnableToCreateProjectBadgeException("Unable to create project badge: projectId "
                     + createVO.getProjectId() + " already has a project badge created.");
         }
-
+        
         BadgeEntity newBadge = new BadgeEntity();
         newBadge.setBadgeType(BadgeTypeEnum.PROJECT_SPECIFIC);
-
+        
         createVO.updateProjectBadge(newBadge);
         newBadge.setProject(project);
-
+        
         newBadge = badgeEntityRepository.saveAndFlush(newBadge);
 
         //set association on project
         project.setProjectBadge(newBadge);
-
+        
         return newBadge;
     }
-
+    
     @Override
     public Page<BadgeEntity> getBadgesByAccountId(Long id, Pageable pageable) {
         ProfileEntity profile = profileEntityRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-
+        
         return badgeEntityRepository.getBadgesByAccountId(id, pageable);
     }
-
+    
     @Override
     public BadgeEntity updateProjectBadge(Long badgeId, ProjectBadgeUpdateVO updateVO) {
         //check if the badge exists
@@ -111,15 +111,15 @@ public class BadgeServiceImpl implements BadgeService {
 
         //check if account updating the badge is authorised
         List<ProfileEntity> projectOwners = badgeToUpdate.getProject().getProjectOwners();
-
+        
         List<Long> projectOwnersId = projectOwners.stream()
                 .map(ProfileEntity::getAccountId)
                 .collect(Collectors.toList());
-
+        
         if (projectOwnersId.contains(updateVO.getAccountId())) {
             //update the badge 
             updateVO.updateProjectBadge(badgeToUpdate);
-
+            
             badgeToUpdate = badgeEntityRepository.saveAndFlush(badgeToUpdate);
             return badgeToUpdate;
         } else {
@@ -141,9 +141,9 @@ public class BadgeServiceImpl implements BadgeService {
 
         //issue and remove badge 
         removeAndIssueLeaderboardBadges(top10Badge, profiles);
-
+        
     }
-
+    
     @Override
     public void leaderboardTop50() {
         //find the top50 badge 
@@ -155,9 +155,9 @@ public class BadgeServiceImpl implements BadgeService {
 
         //issue and remove badge 
         removeAndIssueLeaderboardBadges(top50Badge, profiles.subList(10, profiles.size() - 1));
-
+        
     }
-
+    
     @Override
     public void leaderboardTop100() {
         //find the top100 badge 
@@ -169,14 +169,14 @@ public class BadgeServiceImpl implements BadgeService {
 
         //issue and remove badge 
         removeAndIssueLeaderboardBadges(top100Badge, profiles.subList(50, profiles.size() - 1));
-
+        
     }
-
+    
     private void removeAndIssueLeaderboardBadges(BadgeEntity leaderboardBadge, List<ProfileEntity> profiles) {
         //unassociate the initial people with the badges 
         for (ProfileEntity p : leaderboardBadge.getProfiles()) {
             p.getBadges().remove(leaderboardBadge);
-
+            
             profileEntityRepository.save(p);
         }
         //clear the leaderboard badge first
@@ -186,29 +186,29 @@ public class BadgeServiceImpl implements BadgeService {
         for (ProfileEntity p : profiles) {
             p.getBadges().add(leaderboardBadge);
             profileEntityRepository.save(p);
-
+            
             leaderboardBadge.getProfiles().add(p);
         }
-
+        
         badgeEntityRepository.save(leaderboardBadge);
     }
-
+    
     @Override
     public void issueLongServiceAward1YearBadge(ProfileEntity profile) {
         BadgeEntity oneYear = badgeEntityRepository.findByBadgeTitle("1 YEAR WITH MATCHUB");
-
+        
         profile.getBadges().add(oneYear);
         profileEntityRepository.save(profile);
-
+        
         oneYear.getProfiles().add(profile);
         badgeEntityRepository.save(oneYear);
     }
-
+    
     @Override
     public void issueLongServiceAward2YearsBadge(ProfileEntity profile) {
         //add the 2 year badge 
         BadgeEntity twoYears = badgeEntityRepository.findByBadgeTitle("2 YEARS WITH MATCHUB");
-
+        
         profile.getBadges().add(twoYears);
         twoYears.getProfiles().add(profile);
 
@@ -216,7 +216,7 @@ public class BadgeServiceImpl implements BadgeService {
         BadgeEntity oneYear = badgeEntityRepository.findByBadgeTitle("1 YEAR WITH MATCHUB");
         profile.getBadges().remove(oneYear);
         oneYear.getProfiles().remove(profile);
-
+        
         profileEntityRepository.save(profile);
         badgeEntityRepository.save(twoYears);
         badgeEntityRepository.save(oneYear);
@@ -226,7 +226,7 @@ public class BadgeServiceImpl implements BadgeService {
     public void issueLongServiceAward5YearsBadge(ProfileEntity profile) {
         //add the 5 year badge 
         BadgeEntity fiveYears = badgeEntityRepository.findByBadgeTitle("5 YEARS WITH MATCHUB");
-
+        
         profile.getBadges().add(fiveYears);
         fiveYears.getProfiles().add(profile);
 
@@ -234,10 +234,67 @@ public class BadgeServiceImpl implements BadgeService {
         BadgeEntity twoYears = badgeEntityRepository.findByBadgeTitle("2 YEARS WITH MATCHUB");
         profile.getBadges().remove(twoYears);
         twoYears.getProfiles().remove(profile);
-
+        
         profileEntityRepository.save(profile);
         badgeEntityRepository.save(twoYears);
         badgeEntityRepository.save(fiveYears);
     }
+    
+    @Override
+    public void issueProjectBadge(ProjectEntity project) {
+        
+        BadgeEntity badge = project.getProjectBadge();
+        
+        for (ProfileEntity p : project.getTeamMembers()) {
+            badge.getProfiles().add(p);
+            p.getBadges().add(badge);
+            
+            profileEntityRepository.save(p);
+        }
+        
+        for (ProfileEntity p : project.getProjectOwners()) {
+            badge.getProfiles().add(p);
+            p.getBadges().add(badge);
+            
+            profileEntityRepository.save(p);
+        }
+        
+        badgeEntityRepository.save(badge);
 
+        //trigger the significantprojectcontributor badge method
+        significantProjectContributorBadge(project.getTeamMembers());
+        significantProjectContributorBadge(project.getProjectOwners());
+    }
+    
+    public void significantProjectContributorBadge(List<ProfileEntity> profiles) {
+        
+        System.out.println("Significant Project Contributor Badge: ***************");
+        
+        for (ProfileEntity p : profiles) {
+            Integer completed = projectEntityRepository.getCompletedProjectsByAccountId(p.getAccountId()).size();
+            
+            System.out.println("acountId " + p.getAccountId() + " = completed " + completed + " projects");
+            
+            BadgeEntity badge;
+
+            //query for the correct significant project contributor badge
+            if (completed == 5) {
+                badge = badgeEntityRepository.findByBadgeTitle("5 PROJECT CONTRIBUTIONS");
+            } else if (completed == 10) {
+                badge = badgeEntityRepository.findByBadgeTitle("10 PROJECT CONTRIBUTIONS");
+            } else if (completed == 50) {
+                badge = badgeEntityRepository.findByBadgeTitle("50 PROJECT CONTRIBUTIONS");
+            } else {
+                continue;
+            }
+            
+            badge.getProfiles().add(p);
+            badgeEntityRepository.save(badge);
+            
+            p.getBadges().add(badge);
+            profileEntityRepository.save(p);
+            
+        }
+    }
+    
 }
