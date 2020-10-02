@@ -244,7 +244,10 @@ public class InitServiceImpl implements InitService {
         //profile & organisation attributes
         areasOfExpertise = new HashSet<>(Arrays.asList("Fundraising Platform", "All-In-One Donor Management System", "Fundraising Software"));
         networkForGood.setAreasOfExpertise(areasOfExpertise);
+        //set employees
         networkForGood.setEmployees(new HashSet<>(Arrays.asList(alexLow.getAccountId())));
+        //set KAH
+        networkForGood.setKahs(new HashSet<>(Arrays.asList(alexLow.getAccountId())));
         networkForGood.setCountryCode("+1");
         networkForGood.setPhoneNumber("888 284 7978");
         networkForGood.setCountry("United States");
