@@ -19,7 +19,7 @@ public interface BadgeEntityRepository extends JpaRepository<BadgeEntity, Long> 
     
     BadgeEntity findByBadgeTitle(String badgeTitle);
 
-    @Query(value = "SELECT b, p FROM BadgeEntity b JOIN b.profiles p WHERE p.accountId = :accountId",
+    @Query(value = "SELECT b FROM BadgeEntity b JOIN b.profiles p WHERE p.accountId = :accountId",
             countQuery = "SELECT COUNT(b), p FROM BadgeEntity b JOIN b.profiles p WHERE p.accountId = :accountId")
     Page<BadgeEntity> getBadgesByAccountId(Long accountId, Pageable pageable);
 }
