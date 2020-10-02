@@ -33,18 +33,25 @@ public class NotificationController {
         
     }
       
-    @RequestMapping(method = RequestMethod.POST, value = "/deleteNotificationById")
+    @RequestMapping(method = RequestMethod.DELETE, value = "/deleteNotificationById")
     public void deleteNotificationById(Long notificationId){
         notificationService.deleteNotificationById(notificationId);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/getNotificationById")
+    @RequestMapping(method = RequestMethod.GET, value = "/getNotificationById")
     public NotificationEntity getNotificationById(Long notificationId){
        return notificationService.getNotificationById(notificationId);
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/getNotificationsByUserId")
     public List<NotificationEntity> getNotificationsByUserId(Long userId){
         return notificationService.getNotificationsByUserId(userId);
+    }
+    
+    //notification viewed changes to true
+    @RequestMapping(method = RequestMethod.PUT, value = "/viewNotification")
+    public void viewNotification(Long notificationId, Long viewerId){
+         notificationService.viewNotification(notificationId, viewerId);
     }
     
     

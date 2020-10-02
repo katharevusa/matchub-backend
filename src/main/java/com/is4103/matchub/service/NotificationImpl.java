@@ -39,7 +39,6 @@ public class NotificationImpl implements NotificationService{
         return newNotificationEntity;     
     }
             
-    
     //retrieve notification by userId
     @Override
     public List<NotificationEntity> getNotificationsByUserId(Long userId){
@@ -60,7 +59,17 @@ public class NotificationImpl implements NotificationService{
         notificationEntityRepository.delete(notificationEntity);
         
     }
-    // delete notification
+  
+    @Override
+    public void viewNotification(Long notificationId, Long viewerId){
+        ProfileEntity user = profileEntityRepository.findById(viewerId).get();
+        NotificationEntity notification = notificationEntityRepository.findById(notificationId).get();
+        if(notification.getNotifiedUserId().equals(viewerId)){
+            notification.setViewed(Boolean.TRUE);  
+            notificationEntityRepository.flush();
+        }
+        
+    }
     
     
 }

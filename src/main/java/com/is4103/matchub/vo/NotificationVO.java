@@ -32,6 +32,7 @@ public class NotificationVO {
 
     @NotNull
     private NotificationTypeEnum type;
+   
 
     private Long projectId;
 

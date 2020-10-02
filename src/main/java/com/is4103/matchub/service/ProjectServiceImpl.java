@@ -8,9 +8,11 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.JoinRequestEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.JoinRequestStatusEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
+import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.exception.CompleteProjectException;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
@@ -223,6 +225,20 @@ public class ProjectServiceImpl implements ProjectService {
 
         project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.TERMINATED);
+        // all project's onhold resource request becomes expired 
+        for(ResourceRequestEntity rr: project.getListOfRequests()){
+            if(rr.getStatus()==RequestStatusEnum.ON_HOLD){
+                rr.setStatus(RequestStatusEnum.EXPIRED);
+            }
+        }
+        
+        // all project's onhold join request becomes rejected
+        for(JoinRequestEntity jr: project.getJoinRequests()){
+            if(jr.getStatus()==JoinRequestStatusEnum.ON_HOLD){
+                jr.setStatus(JoinRequestStatusEnum.REJECTED);
+            }
+        }
+        
         projectEntityRepository.saveAndFlush(project);
 
         // Incomplete: give notifications
@@ -246,6 +262,20 @@ public class ProjectServiceImpl implements ProjectService {
 
         project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.COMPLETED);
+        
+        // all project's onhold resource request becomes expired 
+        for(ResourceRequestEntity rr: project.getListOfRequests()){
+            if(rr.getStatus()==RequestStatusEnum.ON_HOLD){
+                rr.setStatus(RequestStatusEnum.EXPIRED);
+            }
+        }
+        
+        // all project's onhold join request becomes rejected
+        for(JoinRequestEntity jr: project.getJoinRequests()){
+            if(jr.getStatus()==JoinRequestStatusEnum.ON_HOLD){
+                jr.setStatus(JoinRequestStatusEnum.REJECTED);
+            }
+        }
         projectEntityRepository.saveAndFlush(project);
 
         // Incomplete: reputation points, reviews, badge should be started
