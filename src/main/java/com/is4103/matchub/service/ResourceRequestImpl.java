@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
+import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.enumeration.RequestorEnum;
 import com.is4103.matchub.exception.CreateResourceRequestException;
@@ -48,10 +49,15 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
     @Autowired
     ProfileEntityRepository profileEntityRepository;
+    
+    
 
     // create resource request: Project owner initiate request (projectownerId, projectId, resourceId, unitsRequired
     @Override
     public ResourceRequestEntity createResourceRequestProjectOwner(ResourceRequestCreateVO vo) throws CreateResourceRequestException {
+        
+        
+        
         if (!resourceEntityRepository.findById(vo.getResourceId()).isPresent()) {
             throw new CreateResourceRequestException("Unable to create resource request: resource not found");
         }
@@ -61,6 +67,11 @@ public class ResourceRequestImpl implements ResourceRequestService {
             throw new CreateResourceRequestException("Unable to create resource request: project not found");
         }
         ProjectEntity project = projectEntityRepository.findById(vo.getProjectId()).get();
+        
+        // Only active project can recieving resource request
+        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
+            throw new CreateResourceRequestException("Sorry action is only allowed for activated projects");
+        }
 
         if (!profileEntityRepository.findById(vo.getRequestorId()).isPresent()) {
             throw new CreateResourceRequestException("Unable to create resource request: requestor not found");
@@ -108,6 +119,10 @@ public class ResourceRequestImpl implements ResourceRequestService {
             throw new CreateResourceRequestException("Unable to create resource request: requestor not found");
         }
 
+        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
+            throw new CreateResourceRequestException("Sorry action is only allowed for activated projects");
+        }
+        
         if (!resource.getResourceOwnerId().equals(vo.getRequestorId())) {
             throw new CreateResourceRequestException("Unable to create resource request: can only create request for owned resource");
         }

@@ -606,6 +606,11 @@ public class ProjectServiceImpl implements ProjectService {
 
         ProjectEntity project = projectOptional.get();
         ProfileEntity requestor = profOptional.get();
+        
+        // Only active project can recieving resource request
+        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
+            throw new JoinProjectException("Sorry action is only allowed for activated projects");
+        }
 
         // One user can only make one join request to one project 
         Optional<JoinRequestEntity> requestOptional = joinRequestEntityRepository.searchJoinRequestProjectByProjectAndRequestorAndStatus(projectId, profileId, JoinRequestStatusEnum.ON_HOLD);
@@ -644,5 +649,6 @@ public class ProjectServiceImpl implements ProjectService {
         return listOfProjects;
 
     }
+    
 
 }
