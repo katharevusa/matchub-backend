@@ -62,17 +62,18 @@ public class AuthenticatedRestController {
     Page<AccountEntity> getAccountsByIds(@RequestParam(value = "ids") Long[] ids, Pageable pageable) {
         return userService.getAccountsByIds(ids, pageable);
     }
-    
+
     @PostMapping(value = "/getAccountsByUuid")
     @ResponseBody
     Page<AccountEntity> getAccountsByUuid(@Valid @RequestBody GetAccountsByUuidVO vo, Pageable pageable) {
         return userService.getAccountsByUuid(vo.getUuid(), pageable);
     }
 
-//    @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{uuid}")
-//    AccountEntity getAccount(@PathVariable UUID uuid) {
-//        return userService.getAccount(uuid);
-//    }
+    @RequestMapping(method = RequestMethod.GET, value = "/getAccountByUUID/{uuid}")
+    AccountEntity getAccount(@PathVariable UUID uuid) {
+        return userService.getAccount(uuid);
+    }
+
 //    
 //    @RequestMapping(method = RequestMethod.GET, value = "/getAccount/{email}")
 //    AccountEntity getAccount(@PathVariable String email) {
@@ -169,7 +170,7 @@ public class AuthenticatedRestController {
     Page<OrganisationEntity> searchOrganisations(@RequestParam(value = "search") String search, Pageable pageable) {
         return userService.searchOrganisations(search, pageable);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/searchAllUsers")
     Page<ProfileEntity> searchAllUsers(@RequestParam(value = "search") String search, Pageable pageable) {
         return userService.searchAllUsers(search, pageable);
