@@ -582,7 +582,7 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getSdgs().add(poverty);
         projectEntity3.getSdgs().add(zeroHunger);
         projectEntity3.setUpvotes(25);
-        projectEntity2.setProjStatus(ProjectStatusEnum.ACTIVE);
+        projectEntity3.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity3.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project3.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/project3.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural.jpg");
@@ -781,6 +781,23 @@ public class InitServiceImpl implements InitService {
 
         projectEntity12.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity12);
+        /* end of project badge */
+        
+        ProjectEntity projectEntity13 = new ProjectEntity("Build School Toilets for Nepal", "Building School-Friendly Toilets for Girls in Nepal.", "Nepal", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
+        projectEntity13.getSdgs().add(goodHealth);
+        projectEntity13.setUpvotes(35);
+        projectEntity13.setProjStatus(ProjectStatusEnum.ACTIVE);
+        projectEntity13.setProjectProfilePic("https://localhost:8443/api/v1/files/init/toilet.jpg");
+        projectEntity13.getPhotos().add("https://localhost:8443/api/v1/files/init/toilet1.jpg");
+        projectEntity13.getPhotos().add("https://localhost:8443/api/v1/files/init/toilet.jpg");
+        projectService.createProject(projectEntity13, 5L);
+        /* create project badge */
+        projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Toilet Builder", "https://localhost:8443/api/v1/files/badgeIcons/construction.png");
+        projBadge.setProject(projectEntity13);
+        badgeEntityRepository.save(projBadge);
+
+        projectEntity13.setProjectBadge(projBadge);
+        projectEntityRepository.save(projectEntity13);
         /* end of project badge */
 
     }
@@ -1019,6 +1036,13 @@ public class InitServiceImpl implements InitService {
         try {
             projectService.createJoinRequest(3L, 4L);
             projectService.createJoinRequest(3L, 6L);
+        } catch (Exception e) {
+            System.err.println("Error in init join request");
+        }
+        
+        try {
+            projectService.createJoinRequest(13L, 11L);
+            projectService.createJoinRequest(13L, 12L);
         } catch (Exception e) {
             System.err.println("Error in init join request");
         }
