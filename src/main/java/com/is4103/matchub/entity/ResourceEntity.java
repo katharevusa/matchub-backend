@@ -71,7 +71,7 @@ public class ResourceEntity {
     private LocalDateTime endTime;
     
     @OneToMany
-    private List<ResourceRequestEntity> listOfRequests;
+    private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
     
     
     @Column(nullable = false)
