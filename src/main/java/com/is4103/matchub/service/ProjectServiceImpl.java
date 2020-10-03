@@ -224,9 +224,9 @@ public class ProjectServiceImpl implements ProjectService {
         }
             
         //only allow termination of active projects
-        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
-            throw new TerminateProjectException("Failed to terminate project: can only terminate active projects");
-        }
+//        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
+//            throw new TerminateProjectException("Failed to terminate project: can only terminate active projects");
+//        }
 
         project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.TERMINATED);

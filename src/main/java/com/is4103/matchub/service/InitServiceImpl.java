@@ -13,7 +13,7 @@ import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
-import com.is4103.matchub.exception.CreateResourceRequestException;
+import com.is4103.matchub.exception.ProjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,6 @@ import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
-import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -75,9 +74,6 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     BadgeEntityRepository badgeEntityRepository;
-    
-    @Autowired
-    ResourceRequestService resourceRequestService;
 
     @Transactional
     public void init() {
@@ -94,9 +90,9 @@ public class InitServiceImpl implements InitService {
         initCommunityBadges();
 
         //join request 
-        initJoinRequests();
-        
-//        initResourceRequests();
+
+        initJoinRequest();
+
     }
 
     private void initUsers() {
@@ -1038,7 +1034,7 @@ public class InitServiceImpl implements InitService {
         badgeEntityRepository.save(fiveYears);
     }
 
-    public void initJoinRequests() {
+    public void initJoinRequest() {
         try {
             projectService.createJoinRequest(3L, 4L);
             projectService.createJoinRequest(3L, 6L);
@@ -1053,59 +1049,6 @@ public class InitServiceImpl implements InitService {
             System.err.println("Error in init join request");
         }
 
-    }
-    
-    public void initResourceRequests(){
-        
-       // owner 7 request resource 3 water for project 7 
-      try{
-      ResourceRequestCreateVO request1 = new ResourceRequestCreateVO();
-      request1.setProjectId(7L);
-      request1.setRequestorId(7L);
-      request1.setResourceId(3L);
-      request1.setUnitsRequired(10);
-      request1.setMessage("Would you like to provide water for my project");
-      resourceRequestService.createResourceRequestProjectOwner(request1);
-      
-      // owner 7 request resource 3 water for project 8
-      ResourceRequestCreateVO request2 = new ResourceRequestCreateVO();
-      request2.setProjectId(8L);
-      request2.setRequestorId(7L);
-      request2.setResourceId(3L);
-      request2.setUnitsRequired(10);
-      request2.setMessage("Would you like to provide water for my project");
-      resourceRequestService.createResourceRequestProjectOwner(request2);
-      
-      // owner 7 request resource 8 clothes   for project 7
-      ResourceRequestCreateVO request3 = new ResourceRequestCreateVO();
-      request3.setProjectId(7L);
-      request3.setRequestorId(7L);
-      request3.setResourceId(8L);
-      request3.setUnitsRequired(10);
-      request3.setMessage("Would you like to provide clothes for my project");
-      resourceRequestService.createResourceRequestProjectOwner(request3);
-      
-      // owner 7 request resource 8 clothes for project 8
-      ResourceRequestCreateVO request4 = new ResourceRequestCreateVO();
-      request4.setProjectId(8L);
-      request4.setRequestorId(7L);
-      request4.setResourceId(8L);
-      request4.setUnitsRequired(10);
-      request4.setMessage("Would you like to provide clothes for my project");
-      resourceRequestService.createResourceRequestProjectOwner(request4);
-      
-
-      }catch(CreateResourceRequestException e ){
-          System.err.println("Fail to init resource request: "+e.getMessage());
-      }
-//    private Long resourceId;
-//    private Long projectId; 
-//    private Integer unitsRequired;  
-//    private Long requestorId;  
-//    private String message;
-        
-        
-        
     }
 
 }
