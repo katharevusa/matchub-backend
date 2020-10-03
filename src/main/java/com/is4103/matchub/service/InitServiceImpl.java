@@ -96,7 +96,7 @@ public class InitServiceImpl implements InitService {
         //join request 
         initJoinRequests();
         
-        initResourceRequests();
+//        initResourceRequests();
     }
 
     private void initUsers() {

@@ -96,11 +96,12 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
         ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
         vo.createResourceRequestProjectOwner(resourceRequest);
-        resourceRequest = resourceRequestEntityRepository.saveAndFlush(resourceRequest);
-        System.err.println("resource request"+ resourceRequest);
         project.getListOfRequests().add(resourceRequest);
         resource.getListOfRequests().add(resourceRequest);
+        resourceRequest = resourceRequestEntityRepository.saveAndFlush(resourceRequest);
+        System.err.println("resource request"+ resourceRequest);
         return resourceRequest;
+        
     }
 
     //Create Resource Donation Request
@@ -144,9 +145,9 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
         ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
         vo.createResourceRequestResourceOwner(resourceRequest);
-        resourceRequest = resourceRequestEntityRepository.saveAndFlush(resourceRequest);
         project.getListOfRequests().add(resourceRequest);
         resource.getListOfRequests().add(resourceRequest);
+        resourceRequest = resourceRequestEntityRepository.saveAndFlush(resourceRequest);
         return resourceRequest;
 
     }
