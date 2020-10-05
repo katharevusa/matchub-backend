@@ -222,28 +222,27 @@ public class ProjectServiceImpl implements ProjectService {
         if (!project.getProjCreatorId().equals(profileId)) {
             throw new TerminateProjectException("Only project creator can terminate project");
         }
-            
+
         //only allow termination of active projects
 //        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
 //            throw new TerminateProjectException("Failed to terminate project: can only terminate active projects");
 //        }
-
         project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.TERMINATED);
         // all project's onhold resource request becomes expired 
-        for(ResourceRequestEntity rr: project.getListOfRequests()){
-            if(rr.getStatus()==RequestStatusEnum.ON_HOLD){
+        for (ResourceRequestEntity rr : project.getListOfRequests()) {
+            if (rr.getStatus() == RequestStatusEnum.ON_HOLD) {
                 rr.setStatus(RequestStatusEnum.EXPIRED);
             }
         }
-        
+
         // all project's onhold join request becomes rejected
-        for(JoinRequestEntity jr: project.getJoinRequests()){
-            if(jr.getStatus()==JoinRequestStatusEnum.ON_HOLD){
+        for (JoinRequestEntity jr : project.getJoinRequests()) {
+            if (jr.getStatus() == JoinRequestStatusEnum.ON_HOLD) {
                 jr.setStatus(JoinRequestStatusEnum.REJECTED);
             }
         }
-        
+
         projectEntityRepository.saveAndFlush(project);
 
         // Incomplete: give notifications
@@ -264,25 +263,24 @@ public class ProjectServiceImpl implements ProjectService {
         if (!project.getProjCreatorId().equals(profileId)) {
             throw new CompleteProjectException("Only project creator can change the status of a project");
         }
-        
-        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
+
+        if (project.getProjStatus() != ProjectStatusEnum.ACTIVE) {
             throw new CompleteProjectException("You can only complete active projects");
         }
-        
 
         project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.COMPLETED);
-        
+
         // all project's onhold resource request becomes expired 
-        for(ResourceRequestEntity rr: project.getListOfRequests()){
-            if(rr.getStatus()==RequestStatusEnum.ON_HOLD){
+        for (ResourceRequestEntity rr : project.getListOfRequests()) {
+            if (rr.getStatus() == RequestStatusEnum.ON_HOLD) {
                 rr.setStatus(RequestStatusEnum.EXPIRED);
             }
         }
-        
+
         // all project's onhold join request becomes rejected
-        for(JoinRequestEntity jr: project.getJoinRequests()){
-            if(jr.getStatus()==JoinRequestStatusEnum.ON_HOLD){
+        for (JoinRequestEntity jr : project.getJoinRequests()) {
+            if (jr.getStatus() == JoinRequestStatusEnum.ON_HOLD) {
                 jr.setStatus(JoinRequestStatusEnum.REJECTED);
             }
         }
@@ -586,18 +584,21 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<ProjectEntity> retrieveProjectBySDGId(Long sdgId, Pageable pageable) throws ProjectNotFoundException {
-        Optional<SDGEntity> optionalSDG = sDGEntityRepository.findById(sdgId);
-        if (optionalSDG.isPresent()) {
-            SDGEntity sdg = optionalSDG.get();
-            List<ProjectEntity> projects = sdg.getProjects();
-            Long start = pageable.getOffset();
-            Long end = (start + pageable.getPageSize()) > projects.size() ? projects.size() : (start + pageable.getPageSize());
-            Page<ProjectEntity> pages = new PageImpl<ProjectEntity>(projects.subList(start.intValue(), end.intValue()), pageable, projects.size());
-            return pages;
-        } else {
-            throw new ProjectNotFoundException("SDG with id does not exist");
+    public Page<ProjectEntity> retrieveProjectBySDGIds(List<Long> sdgIds, Pageable pageable) throws ProjectNotFoundException {
+        List<ProjectEntity> projects = new ArrayList<>();
+        for (Long id : sdgIds) {
+            Optional<SDGEntity> optionalSDG = sDGEntityRepository.findById(id);
+            if (optionalSDG.isPresent()) {
+                SDGEntity sdg = optionalSDG.get();
+                projects.addAll(sdg.getProjects());
+            } else {
+                throw new ProjectNotFoundException("SDG does not exist");
+            }
         }
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > projects.size() ? projects.size() : (start + pageable.getPageSize());
+        Page<ProjectEntity> pages = new PageImpl<ProjectEntity>(projects.subList(start.intValue(), end.intValue()), pageable, projects.size());
+        return pages;
     }
 
 //    make a request to join project (project id, profile id)
@@ -616,9 +617,9 @@ public class ProjectServiceImpl implements ProjectService {
 
         ProjectEntity project = projectOptional.get();
         ProfileEntity requestor = profOptional.get();
-        
+
         // Only active project can recieving resource request
-        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
+        if (project.getProjStatus() != ProjectStatusEnum.ACTIVE) {
             throw new JoinProjectException("Sorry action is only allowed for activated projects");
         }
 
@@ -659,6 +660,5 @@ public class ProjectServiceImpl implements ProjectService {
         return listOfProjects;
 
     }
-    
 
 }

@@ -9,11 +9,12 @@ package com.is4103.matchub.enumeration;
  *
  * @author longluqian
  */
-public enum NotificationTypeEnum {
-PROJECT_UPDATE,
+public enum AnnouncementTypeEnum {
+PROJECT_INTERNAL_ANNOUNCEMENT,
 TASK_ASSIGNED,
 REPOST,
 RESOURCE_REQUEST,
 JOIN_PROJ_REQUEST,
-FUND_PLEGDE
+FUND_PLEGDE,
+PROJECT_PUBLIC_ANNOUNCEMENT;
 }
