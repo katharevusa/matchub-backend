@@ -487,5 +487,27 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(value = CreateAnnouncementException.class)
+    public ResponseEntity<ExceptionResponse> createAnnouncementException(CreateAnnouncementException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Fail to create announcement");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = DeleteAnnouncementException.class)
+    public ResponseEntity<ExceptionResponse> deleteAnnouncementException(DeleteAnnouncementException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Fail to delete announcement");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    
 
 }

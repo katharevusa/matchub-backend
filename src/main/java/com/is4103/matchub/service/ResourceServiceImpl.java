@@ -163,6 +163,11 @@ public class ResourceServiceImpl implements ResourceService {
         return listOfResources;
 
     }
+    
+    @Override
+    public Page<ResourceEntity> searchResourceByKeywords(String keyword, Pageable pageable) {
+        return resourceEntityRepository.getResourcesByKeyword(keyword, pageable);
+    }
 
     @Override
     public Page<ResourceEntity> getHostedResources(Long profileId, Pageable pageable) {
@@ -313,5 +318,7 @@ public class ResourceServiceImpl implements ResourceService {
         return resourceEntityRepository.saveAndFlush(resource);
 
     }
+    
+    
 
 }

@@ -5,15 +5,19 @@
  */
 package com.is4103.matchub.entity;
 
-import com.is4103.matchub.enumeration.NotificationTypeEnum;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,12 +33,12 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationEntity {
+public class AnnouncementEntity {
 
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long notificationId;
+    private Long announcementId;
     
     @Column(nullable = false)
     @NotNull
@@ -48,9 +52,10 @@ public class NotificationEntity {
     @NotNull
     private LocalDateTime timestamp;
 
-    @Column(nullable = false)
-    @NotNull
-    private Long notifiedUserId;
+    @ManyToMany(fetch = FetchType.LAZY)
+    
+    @JsonIgnoreProperties({"announcements"})
+    private List<ProfileEntity> notifiedUsers = new ArrayList<>();
 
     @Column(nullable = true)
     private Long projectId;
@@ -63,16 +68,21 @@ public class NotificationEntity {
 
     @Column(nullable = false)
     @NotNull
-    private NotificationTypeEnum type;
+    private AnnouncementTypeEnum type;
     
-    @Column(nullable = false)
-    @NotNull
-    private Boolean viewed = Boolean.FALSE;
+    @ElementCollection
+    private List<Long> viewedUserIds = new ArrayList<>();
+   
+    @Column(nullable = true)
+    private Long creatorId;
 
-    public NotificationEntity(String content, LocalDateTime timestamp, Long projectId) {
+    public AnnouncementEntity(String title, String content, LocalDateTime timestamp, AnnouncementTypeEnum type) {
+        this.title = title;
         this.content = content;
         this.timestamp = timestamp;
-        this.projectId = projectId;
+        this.type = type;
     }
+
+  
 
 }

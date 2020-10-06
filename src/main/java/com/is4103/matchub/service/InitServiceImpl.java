@@ -90,7 +90,9 @@ public class InitServiceImpl implements InitService {
         initCommunityBadges();
 
         //join request 
+
         initJoinRequest();
+
     }
 
     private void initUsers() {

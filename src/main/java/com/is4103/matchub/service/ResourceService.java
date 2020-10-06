@@ -53,5 +53,7 @@ public interface ResourceService {
     public ResourceEntity deleteResourceProfilePic(Long resourceId) throws ResourceNotFoundException, UpdateResourceException, IOException;
 
     public List<ResourceEntity> getResourcesByListOfId(List<Long> ids) throws ResourceNotFoundException;
+    
+    public Page<ResourceEntity> searchResourceByKeywords(String keyword, Pageable pageable);
 
 }
