@@ -7,6 +7,7 @@ package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.BadgeService;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
 import com.is4103.matchub.vo.ProjectBadgeUpdateVO;
@@ -19,7 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -42,11 +45,16 @@ public class BadgeController {
         return badgeService.createProjectBadge(createVO);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "projectBadge/uploadBadgeIcon/{badgeId}")
+    public BadgeEntity uploadBadgeIcon(@RequestParam(value = "icon") MultipartFile icon, @PathVariable("badgeId") Long badgeId) {
+        return badgeService.uploadBadgeIcon(badgeId, icon);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/getBadgesByAccountId/{accountId}")
     Page<BadgeEntity> getBadgesByAccountId(@PathVariable("accountId") Long postId, Pageable pageable) {
         return badgeService.getBadgesByAccountId(postId, pageable);
     }
-    
+
     @RequestMapping(method = RequestMethod.PUT, value = "/updateProjectBadge/{badgeId}")
     BadgeEntity updateProjectBadge(@PathVariable("badgeId") Long badgeId, @Valid @RequestBody ProjectBadgeUpdateVO vo) {
         return badgeService.updateProjectBadge(badgeId, vo);

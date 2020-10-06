@@ -23,12 +23,14 @@ import com.is4103.matchub.vo.ProjectBadgeUpdateVO;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.mail.Multipart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -47,6 +49,9 @@ public class BadgeServiceImpl implements BadgeService {
 
     @Autowired
     private ProfileEntityRepository profileEntityRepository;
+
+    @Autowired
+    private AttachmentService attachmentService;
 
     private static void setBadgeIcons() {
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/animal.png");
@@ -95,6 +100,20 @@ public class BadgeServiceImpl implements BadgeService {
         projectEntityRepository.save(project);
 
         return newBadge;
+    }
+
+    @Transactional
+    @Override
+    public BadgeEntity uploadBadgeIcon(Long badgeId, MultipartFile icon) {
+        //check if the badge exists
+        BadgeEntity badge = badgeEntityRepository.findById(badgeId)
+                .orElseThrow(() -> new BadgeNotFoundException("Badge id: " + badgeId + " cannot be found"));
+
+        String path = attachmentService.upload(icon);
+        badge.setIcon(path);
+
+        badge = badgeEntityRepository.saveAndFlush(badge);
+        return badge;
     }
 
     @Override
