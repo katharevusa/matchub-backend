@@ -11,6 +11,7 @@ import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.BadgeService;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
 import com.is4103.matchub.vo.ProjectBadgeUpdateVO;
+import java.io.IOException;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class BadgeController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "projectBadge/uploadBadgeIcon/{badgeId}")
-    public BadgeEntity uploadBadgeIcon(@RequestParam(value = "icon") MultipartFile icon, @PathVariable("badgeId") Long badgeId) {
+    public BadgeEntity uploadBadgeIcon(@RequestParam(value = "icon") MultipartFile icon, @PathVariable("badgeId") Long badgeId) throws IOException {
         return badgeService.uploadBadgeIcon(badgeId, icon);
     }
 

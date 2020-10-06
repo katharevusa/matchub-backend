@@ -20,11 +20,14 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
 import com.is4103.matchub.vo.ProjectBadgeUpdateVO;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.mail.Multipart;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -52,6 +55,9 @@ public class BadgeServiceImpl implements BadgeService {
 
     @Autowired
     private AttachmentService attachmentService;
+
+    @Value("${upload.file.directory}/resources/main/files")
+    private String imageDirectory;
 
     private static void setBadgeIcons() {
         badgeIcons.add("https://localhost:8443/api/v1/files/badgeIcons/animal.png");
@@ -102,13 +108,23 @@ public class BadgeServiceImpl implements BadgeService {
         return newBadge;
     }
 
+    //this method is used for both Upload Badge Icon and Updating of badge Icon
     @Transactional
     @Override
-    public BadgeEntity uploadBadgeIcon(Long badgeId, MultipartFile icon) {
+    public BadgeEntity uploadBadgeIcon(Long badgeId, MultipartFile icon) throws IOException {
         //check if the badge exists
         BadgeEntity badge = badgeEntityRepository.findById(badgeId)
                 .orElseThrow(() -> new BadgeNotFoundException("Badge id: " + badgeId + " cannot be found"));
 
+//        System.out.println("HERE*************");
+//        System.out.println("old*************: " + badge.getIcon());
+        if (!badge.getIcon().contains("badgeIcons")) {//there is an existing customised badge icon associated to it 
+//            System.out.println("badge icon is customised");
+            //icon is customised, delete from build/ folder
+            attachmentService.deleteFile(badge.getIcon());
+        }
+
+//        System.out.println("HERE NOW*************");
         String path = attachmentService.upload(icon);
         badge.setIcon(path);
 
