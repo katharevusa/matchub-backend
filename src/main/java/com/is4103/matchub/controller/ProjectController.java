@@ -76,11 +76,6 @@ public class ProjectController {
         return projectService.getCreatedProjects(profileId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getAllProjects")
-    Page<ProjectEntity> getAllProjects(Pageable pageable) {
-        return projectService.getAllProjects(pageable);
-    }
-
     //terminate a project ( project id, terminator id)
     @RequestMapping(method = RequestMethod.PUT, value = "/terminateProject")
     void terminateProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId, @RequestParam(value = "profileId", defaultValue = "") Long profileId) throws TerminateProjectException {
@@ -93,12 +88,6 @@ public class ProjectController {
     }
     
 
-    //get a list of launched projects 
-    @RequestMapping(method = RequestMethod.GET, value = "/getLaunchedProjects")
-    Page<ProjectEntity> getLaunchedProjects(Pageable pageable) {
-        return projectService.getLaunchedProjects(pageable);
-    }
-    
     // get a list of owned projects
     @RequestMapping(method = RequestMethod.GET, value = "/getOwnedProjects")
     List<ProjectEntity> getOwnedProjects(Long userId) {
@@ -120,11 +109,7 @@ public class ProjectController {
 
     }
 
-    //Search a list of Projects based on Keywords (keywords)
-    @RequestMapping(method = RequestMethod.GET, value = "/searchProjectByKeywords")
-    Page<ProjectEntity> searchProjectByKeywords(@RequestParam(value = "keyword", defaultValue = "") String keyword, Pageable pageable) {
-        return projectService.searchProjectByKeywords(keyword, pageable);
-    }
+    
 
     //upload projectProfilePic
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/updateProjectProfilePic")

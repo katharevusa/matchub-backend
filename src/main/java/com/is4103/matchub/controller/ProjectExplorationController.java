@@ -15,6 +15,7 @@ import com.is4103.matchub.exception.RevokeUpvoteException;
 import com.is4103.matchub.exception.UpvoteProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.ProjectService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,28 @@ public class ProjectExplorationController {
     ProjectService projectService;
     
    
+    //Search a list of Projects based on Keywords (keywords)
+    @RequestMapping(method = RequestMethod.GET, value = "/searchProjectByKeywords")
+    Page<ProjectEntity> searchProjectByKeywords(@RequestParam(value = "keyword", defaultValue = "") String keyword, Pageable pageable) {
+        return projectService.searchProjectByKeywords(keyword, pageable);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllProjects")
+    Page<ProjectEntity> getAllProjects(Pageable pageable) {
+        return projectService.getAllProjects(pageable);
+    }
+    
+     //get a list of launched projects 
+    @RequestMapping(method = RequestMethod.GET, value = "/getLaunchedProjects")
+    Page<ProjectEntity> getLaunchedProjects(Pageable pageable) {
+        return projectService.getLaunchedProjects(pageable);
+    }
+    
+    // get projects by list of SDGs
+    @RequestMapping(method = RequestMethod.GET, value = "/retrieveProjectBySDGIds")
+    public Page<ProjectEntity> retrieveProjectBySDGIds(@RequestParam(value ="sdgIds",required = true)List<Long> sdgIds, Pageable pageable) throws ProjectNotFoundException {
+        return projectService.retrieveProjectBySDGIds(sdgIds, pageable);
+    }
 
     //upvote a project
     @RequestMapping(method = RequestMethod.POST, value = "/upvoteProject")
@@ -70,9 +93,6 @@ public class ProjectExplorationController {
         return projectService.createJoinRequest(projectId, profileId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/retrieveProjectBySDGId")
-    public Page<ProjectEntity> retrieveProjectBySDGId(@RequestParam(value ="sdgId",required = true)Long sdgId, Pageable pageable) throws ProjectNotFoundException {
-        return projectService.retrieveProjectBySDGId(sdgId, pageable);
-    }
+  
 
 }

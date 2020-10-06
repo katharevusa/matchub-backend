@@ -77,6 +77,12 @@ public class ResourceController {
     Page<ResourceEntity> getHostedResources(Pageable pageable, Long profileId) {
         return resourceService.getHostedResources(profileId, pageable);
     }
+    
+    // get resource by keywords
+     @RequestMapping(method = RequestMethod.GET, value = "/searchResourceByKeywords")
+    public Page<ResourceEntity> searchResourceByKeywords(String keyword, Pageable pageable) {
+        return resourceService.searchResourceByKeywords(keyword, pageable);
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateResource/updateResourceProfilePic")
     public ResourceEntity updateResourceProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, @RequestParam("resourceId") Long resourceId) throws ResourceNotFoundException {

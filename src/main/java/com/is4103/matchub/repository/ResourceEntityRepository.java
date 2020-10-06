@@ -31,6 +31,10 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
             countQuery = "SELECT r FROM ResourceEntity r WHERE r.resourceOwnerId = :profileId")
     Page<ResourceEntity> getHostedResources( Long profileId, Pageable pageable);
     
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%",
+            countQuery = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%")
+    Page<ResourceEntity> getResourcesByKeyword(String keyword, Pageable pageable);
     
     
+
 }
