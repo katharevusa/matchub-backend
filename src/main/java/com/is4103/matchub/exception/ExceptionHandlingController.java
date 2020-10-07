@@ -5,11 +5,8 @@
  */
 package com.is4103.matchub.exception;
 
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.messaging.FirebaseMessagingException;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
-import java.util.concurrent.ExecutionException;
 import javax.mail.MessagingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -330,16 +327,6 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = FirebaseAuthException.class)
-    public ResponseEntity<ExceptionResponse> firebaseAuthException(FirebaseAuthException ex) {
-        ExceptionResponse response = new ExceptionResponse();
-        response.setErrorCode("Unable to authenticate user on Firebase");
-        response.setErrorMessage(ex.getMessage());
-        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
-
-        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(value = PostNotFoundException.class)
     public ResponseEntity<ExceptionResponse> postNotFoundException(PostNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -489,7 +476,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = CreateAnnouncementException.class)
     public ResponseEntity<ExceptionResponse> createAnnouncementException(CreateAnnouncementException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -499,7 +486,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = DeleteAnnouncementException.class)
     public ResponseEntity<ExceptionResponse> deleteAnnouncementException(DeleteAnnouncementException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -509,33 +496,11 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-    
 
-    @ExceptionHandler(value = InterruptedException.class)
-    public ResponseEntity<ExceptionResponse> unableToSendNotifications(InterruptedException ex) {
+    @ExceptionHandler(value = FirebaseRuntimeException.class)
+    public ResponseEntity<ExceptionResponse> firebaseException(FirebaseRuntimeException ex) {
         ExceptionResponse response = new ExceptionResponse();
-        response.setErrorCode("Unable to send notifications: InterruptedException");
-        response.setErrorMessage(ex.getMessage());
-        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
-
-        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = ExecutionException.class)
-    public ResponseEntity<ExceptionResponse> unableToSendNotifications(ExecutionException ex) {
-        ExceptionResponse response = new ExceptionResponse();
-        response.setErrorCode("Unable to send notifications: ExecutionException");
-        response.setErrorMessage(ex.getMessage());
-        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
-
-        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(value = FirebaseMessagingException.class)
-    public ResponseEntity<ExceptionResponse> unableToSendNotifications(FirebaseMessagingException ex) {
-        ExceptionResponse response = new ExceptionResponse();
-        response.setErrorCode("Unable to send notifications: FirebaseMessagingException");
+        response.setErrorCode("Unexpected error from Firebase");
         response.setErrorMessage(ex.getMessage());
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
