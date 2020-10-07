@@ -23,7 +23,7 @@ public class FirebaseController {
     FirebaseService firebaseService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/sendNotificationsToUsers")
-    void sendNotificationsToUsers(@Valid @RequestBody SendNotificationsToUsersVO vo) throws InterruptedException, ExecutionException, FirebaseMessagingException {
+    void sendNotificationsToUsers(@Valid @RequestBody SendNotificationsToUsersVO vo) {
         firebaseService.sendNotificationsToUsers(vo);
     }
 }
