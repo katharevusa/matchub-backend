@@ -5,11 +5,14 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.JoinRequestEntity;
+import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.JoinRequestStatusEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
@@ -29,6 +32,7 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.vo.ProjectCreateVO;
+import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -67,6 +71,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private BadgeService badgeService;
+
+    @Autowired
+    private FirebaseService firebaseService;
 
     @Override
     public ProjectEntity createProject(ProjectCreateVO vo) {
@@ -639,7 +646,32 @@ public class ProjectServiceImpl implements ProjectService {
         joinRequest.setRequestor(requestor);
         requestor.getJoinRequests().add(joinRequest);
 
-        //make anouncement to project owners 
+        // make anouncement to project owners 
+        // yet to create actual entity (before sending notification)
+        List<String> projectOwnerUuids = new ArrayList<>();
+        for (ProfileEntity owner : project.getProjectOwners()) {
+            projectOwnerUuids.add(owner.getUuid().toString());
+        }
+
+        String requestorName = "";
+        if (requestor instanceof IndividualEntity) {
+            requestorName = ((IndividualEntity) requestor).getFirstName() + " " + ((IndividualEntity) requestor).getLastName();
+        } else if (requestor instanceof OrganisationEntity) {
+            requestorName = ((OrganisationEntity) requestor).getOrganizationName();
+        }
+        
+        String title = "Join Project Request";
+        String body = requestorName + " has applied to join your " + project.getProjectTitle() + " project.";
+
+        SendNotificationsToUsersVO notificationVO = new SendNotificationsToUsersVO(
+                projectOwnerUuids,
+                AnnouncementTypeEnum.JOIN_PROJ_REQUEST.toString(),
+                title,
+                body,
+                ""
+        );
+        firebaseService.sendNotificationsToUsers(notificationVO);
+
         return joinRequestEntityRepository.saveAndFlush(joinRequest);
     }
 

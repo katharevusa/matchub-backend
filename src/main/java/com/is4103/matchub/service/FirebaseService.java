@@ -1,6 +1,6 @@
 package com.is4103.matchub.service;
 
-import com.google.firebase.auth.FirebaseAuthException;
+import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.util.UUID;
 
 /**
@@ -9,5 +9,7 @@ import java.util.UUID;
  */
 public interface FirebaseService {
 
-    public String issueFirebaseCustomToken(UUID uuid) throws FirebaseAuthException;
+    public String issueFirebaseCustomToken(UUID uuid);
+
+    public void sendNotificationsToUsers(SendNotificationsToUsersVO vo);
 }
