@@ -5,7 +5,6 @@
  */
 package com.is4103.matchub.exception;
 
-import com.google.firebase.auth.FirebaseAuthException;
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
 import javax.mail.MessagingException;
@@ -328,16 +327,6 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = FirebaseAuthException.class)
-    public ResponseEntity<ExceptionResponse> firebaseAuthException(FirebaseAuthException ex) {
-        ExceptionResponse response = new ExceptionResponse();
-        response.setErrorCode("Unable to authenticate user on Firebase");
-        response.setErrorMessage(ex.getMessage());
-        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
-
-        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(value = PostNotFoundException.class)
     public ResponseEntity<ExceptionResponse> postNotFoundException(PostNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -467,7 +456,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = BadgeNotFoundException.class)
     public ResponseEntity<ExceptionResponse> badgeNotFoundException(BadgeNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -477,7 +466,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = UnableToUpdateBadgeException.class)
     public ResponseEntity<ExceptionResponse> unableToUpdateProjectBadgeException(UnableToUpdateBadgeException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -487,7 +476,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = CreateAnnouncementException.class)
     public ResponseEntity<ExceptionResponse> createAnnouncementException(CreateAnnouncementException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -497,7 +486,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = DeleteAnnouncementException.class)
     public ResponseEntity<ExceptionResponse> deleteAnnouncementException(DeleteAnnouncementException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -507,7 +496,14 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-    
 
+    @ExceptionHandler(value = FirebaseRuntimeException.class)
+    public ResponseEntity<ExceptionResponse> firebaseException(FirebaseRuntimeException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unexpected error from Firebase");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 }
