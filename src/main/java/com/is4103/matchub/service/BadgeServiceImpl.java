@@ -118,7 +118,7 @@ public class BadgeServiceImpl implements BadgeService {
 
 //        System.out.println("HERE*************");
 //        System.out.println("old*************: " + badge.getIcon());
-        if (!badge.getIcon().contains("badgeIcons")) {//there is an existing customised badge icon associated to it 
+        if (badge.getIcon() != null && !badge.getIcon().contains("badgeIcons")) {//there is an existing customised badge icon associated to it 
 //            System.out.println("badge icon is customised");
             //icon is customised, delete from build/ folder
             attachmentService.deleteFile(badge.getIcon());

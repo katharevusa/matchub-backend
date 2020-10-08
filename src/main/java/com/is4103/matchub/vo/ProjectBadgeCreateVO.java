@@ -29,7 +29,7 @@ public class ProjectBadgeCreateVO {
     public void updateProjectBadge(BadgeEntity badge) {
         badge.setBadgeTitle(this.badgeTitle);
 
-        if (!icon.isEmpty()) {
+        if (icon != null && !icon.isEmpty()) {
             badge.setIcon(this.icon);
         }
 
