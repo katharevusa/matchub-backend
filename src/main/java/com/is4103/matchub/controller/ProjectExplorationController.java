@@ -37,8 +37,8 @@ public class ProjectExplorationController {
     
    
     //Search a list of Projects based on Keywords (keywords)
-    @RequestMapping(method = RequestMethod.GET, value = "/searchProjectByKeywords")
-    Page<ProjectEntity> searchProjectByKeywords(@RequestParam(value = "keyword", defaultValue = "") String keyword, Pageable pageable) {
+    @RequestMapping(method = RequestMethod.GET, value = "/searchProjectByKeyword")
+    Page<ProjectEntity> searchProjectByKeyword(@RequestParam(value = "keyword", defaultValue = "") String keyword, Pageable pageable) {
         return projectService.searchProjectByKeywords(keyword, pageable);
     }
     
