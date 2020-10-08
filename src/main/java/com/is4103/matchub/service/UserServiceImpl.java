@@ -48,6 +48,7 @@ import com.is4103.matchub.vo.ChangePasswordVO;
 import java.util.List;
 import com.is4103.matchub.vo.DeleteFilesVO;
 import com.is4103.matchub.vo.GetAccountsByUuidVO;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import org.springframework.web.multipart.MultipartFile;
@@ -770,6 +771,20 @@ public class UserServiceImpl implements UserService {
         } else {
             page = profileEntityRepository.searchAllUsers(search, pageable);
         }
+        return page;
+    }
+
+    @Override
+    public Page<ProfileEntity> globalSearchAllUsers(String search, String country, Long[] sdgIds, Pageable pageable) {
+        Page<ProfileEntity> page;
+        if (search.isEmpty() && country.isEmpty() && sdgIds.length == 0) {
+            page = profileEntityRepository.findAll(pageable);
+        } else if (country.isEmpty()) {
+            page = profileEntityRepository.globalSearchAllUsers(search, sdgIds, pageable);
+        } else {
+            page = profileEntityRepository.globalSearchAllUsers(search, country, sdgIds, pageable);
+        }
+
         return page;
     }
 

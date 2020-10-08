@@ -11,9 +11,11 @@ import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.vo.ProjectBadgeCreateVO;
 import com.is4103.matchub.vo.ProjectBadgeUpdateVO;
+import java.io.IOException;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -24,6 +26,8 @@ public interface BadgeService {
     List<String> retrieveBadgeIcons();
 
     BadgeEntity createProjectBadge(ProjectBadgeCreateVO createVO) throws ProjectNotFoundException;
+
+    BadgeEntity uploadBadgeIcon(Long badgeId, MultipartFile icon) throws IOException;
 
     Page<BadgeEntity> getBadgesByAccountId(Long id, Pageable pageable);
 

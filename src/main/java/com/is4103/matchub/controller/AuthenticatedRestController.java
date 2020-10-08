@@ -15,6 +15,7 @@ import com.is4103.matchub.vo.DeleteFilesVO;
 import com.is4103.matchub.vo.GetAccountsByUuidVO;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Set;
 import java.util.UUID;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -174,5 +175,11 @@ public class AuthenticatedRestController {
     @RequestMapping(method = RequestMethod.GET, value = "/searchAllUsers")
     Page<ProfileEntity> searchAllUsers(@RequestParam(value = "search") String search, Pageable pageable) {
         return userService.searchAllUsers(search, pageable);
+    }
+
+    // ************** GLOBAL SEARCH METHOD FOR PROFILE EXPLORATION ************** //
+    @RequestMapping(method = RequestMethod.GET, value = "/globalSearchAllUsers")
+    Page<ProfileEntity> globalSearchAllUsers(@RequestParam(value = "search", defaultValue = "") String search, @RequestParam(value = "country", defaultValue = "") String country, @RequestParam(value = "sdgIds", defaultValue = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17") Long[] sdgIds, Pageable pageable) {
+        return userService.globalSearchAllUsers(search, country, sdgIds, pageable);
     }
 }
