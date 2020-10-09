@@ -39,8 +39,10 @@ public class AnnouncementImpl implements AnnouncementService {
     // create project public announcement, only by project owners, associate with project, notify project followers
     @Override
     public AnnouncementEntity createProjectPublicAnnouncement(AnnouncementVO newAnnouncementVO) throws CreateAnnouncementException{
+        System.err.println("New announcement VO:"+ newAnnouncementVO);
         AnnouncementEntity newAnnouncementEntity = new AnnouncementEntity();
         newAnnouncementVO.createProjectPublicAnnouncement(newAnnouncementEntity);
+        System.err.println(newAnnouncementEntity.getProjectId());
         ProjectEntity project = projectEntityRepository.findById(newAnnouncementEntity.getProjectId()).get();
         ProfileEntity creator = profileEntityRepository.findById(newAnnouncementEntity.getCreatorId()).get();
         if(!project.getProjectOwners().contains(creator)){
@@ -113,7 +115,13 @@ public class AnnouncementImpl implements AnnouncementService {
     // only project owners can delete project internal announcement
     @Override
     public void deleteProjectInternalAnnouncement(Long announcementId, Long userId) throws DeleteAnnouncementException{  
+       if(!announcementEntityRepository.findById(announcementId).isPresent()){
+           throw new DeleteAnnouncementException("Announcement not found");
+       }
+        
         AnnouncementEntity announcement = announcementEntityRepository.findById(announcementId).get();
+        
+        
         ProjectEntity project = projectEntityRepository.findById(announcement.getProjectId()).get();
         ProfileEntity user = profileEntityRepository.findById(userId).get();    
         
@@ -124,14 +132,14 @@ public class AnnouncementImpl implements AnnouncementService {
         List<ProfileEntity> projectTeammembers = project.getTeamMembers();
         List<ProfileEntity> projectOwners = project.getProjectOwners();
         
-        //remove announcements to project teammember
+        //remove announcements of project teammember
         for(ProfileEntity p: projectTeammembers ){
             p.getAnnouncements().remove(announcement);
         }
         
-        //remove announcements to project owners
+        //remove announcements of project owners
         for(ProfileEntity p: projectOwners ){
-            p.getAnnouncements().add(announcement);
+            p.getAnnouncements().remove(announcement);
         }
         
         announcement.setNotifiedUsers(new ArrayList<>());      

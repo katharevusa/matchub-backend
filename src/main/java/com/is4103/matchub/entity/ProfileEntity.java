@@ -70,7 +70,7 @@ public abstract class ProfileEntity extends AccountEntity {
     @JsonIgnoreProperties({"postCreator", "listOfComments"})
     private List<PostEntity> posts = new ArrayList<>();
 
-     @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"notifiedUsers"})
     private List<AnnouncementEntity> announcements = new ArrayList<>();
 
