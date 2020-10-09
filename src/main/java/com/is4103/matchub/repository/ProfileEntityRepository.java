@@ -82,14 +82,14 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
             + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
             + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
-            + "LOWER(pe.country) LIKE LOWER(CONCAT('%', :search, '%'))) AND "
+            + "pe.country LIKE %:search%) AND "
             + "sdg.sdgId IN :sdgIds",
             countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe JOIN pe.sdgs sdg "
             + "WHERE (pe.email LIKE %:search% OR "
             + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
             + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
             + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
-            + "LOWER(pe.country) LIKE LOWER(CONCAT('%', :search, '%'))) AND "
+            + "pe.country LIKE %:search%) AND "
             + "sdg.sdgId IN :sdgIds")
     Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("sdgIds") Long[] sdgIds, Pageable pageable);
 
@@ -98,14 +98,14 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
             + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
             + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%)) AND "
-            + "LOWER(pe.country) LIKE LOWER(CONCAT('%', :country, '%')) AND "
+            + "pe.country LIKE %:country% AND "
             + "sdg.sdgId IN :sdgIds",
             countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe JOIN pe.sdgs sdg "
             + "WHERE (pe.email LIKE %:search% OR "
             + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
             + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
             + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%)) AND "
-            + "LOWER(pe.country) LIKE LOWER(CONCAT('%', :country, '%')) AND "
+            + "pe.country LIKE %:country% AND "
             + "sdg.sdgId IN :sdgIds")
     Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("country") String country, @Param("sdgIds") Long[] sdgIds, Pageable pageable);
 
