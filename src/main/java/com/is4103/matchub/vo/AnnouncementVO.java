@@ -25,10 +25,7 @@ public class AnnouncementVO {
 
     @NotNull
     private String content;
-
-    @NotNull
-    private LocalDateTime timestamp;
-   
+  
     private Long projectId;
 
     private Long taskId;
@@ -44,7 +41,7 @@ public class AnnouncementVO {
     public void createAnnouncement(AnnouncementEntity entity, AnnouncementTypeEnum type) {
         entity.setTitle(this.title);
         entity.setContent(this.content);
-        entity.setTimestamp(this.timestamp);
+        entity.setTimestamp(LocalDateTime.now());
 
         if(projectId != null){
             entity.setProjectId(this.projectId);
@@ -61,7 +58,7 @@ public class AnnouncementVO {
     public void createProjectPublicAnnouncement(AnnouncementEntity entity)throws NullPointerException{   
         entity.setTitle(this.title);
         entity.setContent(this.content);
-        entity.setTimestamp(this.timestamp);
+        entity.setTimestamp(LocalDateTime.now());
         entity.setType(AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT);
         entity.setProjectId(this.projectId);
         entity.setCreatorId(this.creatorId);   
@@ -70,7 +67,7 @@ public class AnnouncementVO {
     public void createProjectInternalAnnouncement(AnnouncementEntity entity)throws NullPointerException{   
         entity.setTitle(this.title);
         entity.setContent(this.content);
-        entity.setTimestamp(this.timestamp);
+        entity.setTimestamp(LocalDateTime.now());
         entity.setType(AnnouncementTypeEnum.PROJECT_INTERNAL_ANNOUNCEMENT);
         entity.setProjectId(this.projectId);
         entity.setCreatorId(this.creatorId);   
