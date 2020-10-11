@@ -14,6 +14,7 @@ import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.ResourceService;
 import com.is4103.matchub.vo.ResourceVO;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,20 @@ public class ResourceController {
     Page<ResourceEntity> getAllResources(Pageable pageable) {
         return resourceService.getAllResources(pageable);
     }
+    
+    // resource global search method
+    // if availabillity is empty, will not be filtered by availibility
+    // startTime - endTime: those resource within this time range + resource with no start & end time will be returned
+    @RequestMapping(method = RequestMethod.GET, value = "/resourceGlobalSearch")
+    public Page<ResourceEntity> resourceGlobalSearch(@RequestParam(value = "keywords", defaultValue ="")String keywords, @RequestParam(value = "categoryIds", defaultValue ="") List<Long> categoryIds, @RequestParam(value = "availability") Boolean availability,@RequestParam(value = "startTime", defaultValue = "") String startTime,@RequestParam(value = "endTime",defaultValue = "") String endTime, Pageable pageable) {  
+        System.err.println("keywords:"+keywords);
+        System.err.println("categoryIds"+categoryIds.toString());
+        System.err.println("availability"+availability);
+        System.err.println("startTime"+startTime);
+        System.err.println("endTime"+endTime);
+        return resourceService.resourceGlobalSearch(keywords, categoryIds, availability, startTime, endTime, pageable);
+    }
+    
     
     //get list of resources by list of resource ids
     @RequestMapping(method = RequestMethod.GET, value = "/getListOfResourcesByIds")

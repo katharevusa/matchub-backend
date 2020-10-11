@@ -7,6 +7,7 @@ package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.JoinRequestEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.JoinProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
@@ -34,28 +35,33 @@ public class ProjectExplorationController {
 
     @Autowired
     ProjectService projectService;
-    
-   
+
     //Search a list of Projects based on Keyword (keywords)
     @RequestMapping(method = RequestMethod.GET, value = "/searchProjectByKeywords")
     Page<ProjectEntity> searchProjectByKeyword(@RequestParam(value = "keywords", defaultValue = "") String keywords, Pageable pageable) {
         return projectService.searchProjectByKeywords(keywords, pageable);
     }
-    
+
+    // global search for projects with filtering 
+    @RequestMapping(method = RequestMethod.GET, value = "/projectGlobalSearch")
+    public Page<ProjectEntity> projectGlobalSearch(@RequestParam(value = "keywords", defaultValue ="") String keywords, @RequestParam(value = "sdgIds", defaultValue ="") List<Long> sdgIds, @RequestParam(value = "country", defaultValue = "") String country,  ProjectStatusEnum status, Pageable pageable) {  
+        return projectService.projectGlobalSearch(keywords, sdgIds, country, status, pageable);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/getAllProjects")
     Page<ProjectEntity> getAllProjects(Pageable pageable) {
         return projectService.getAllProjects(pageable);
     }
-    
-     //get a list of launched projects 
+
+    //get a list of launched projects 
     @RequestMapping(method = RequestMethod.GET, value = "/getLaunchedProjects")
     Page<ProjectEntity> getLaunchedProjects(Pageable pageable) {
         return projectService.getLaunchedProjects(pageable);
     }
-    
+
     // get projects by list of SDGs
     @RequestMapping(method = RequestMethod.GET, value = "/retrieveProjectBySDGIds")
-    public Page<ProjectEntity> retrieveProjectBySDGIds(@RequestParam(value ="sdgIds",required = true)List<Long> sdgIds, Pageable pageable) throws ProjectNotFoundException {
+    public Page<ProjectEntity> retrieveProjectBySDGIds(@RequestParam(value = "sdgIds", required = true) List<Long> sdgIds, Pageable pageable) throws ProjectNotFoundException {
         return projectService.retrieveProjectBySDGIds(sdgIds, pageable);
     }
 
@@ -89,10 +95,8 @@ public class ProjectExplorationController {
 
     //join a project 
     @RequestMapping(method = RequestMethod.POST, value = "/createJoinRequest")
-    public JoinRequestEntity createJoinRequest(@RequestParam(value ="projectId",required = true) Long projectId,@RequestParam(value ="profileId",required = true) Long profileId) throws ProjectNotFoundException, JoinProjectException {
+    public JoinRequestEntity createJoinRequest(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "profileId", required = true) Long profileId) throws ProjectNotFoundException, JoinProjectException {
         return projectService.createJoinRequest(projectId, profileId);
     }
-
-  
 
 }

@@ -18,12 +18,16 @@ import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.vo.ResourceVO;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -79,6 +83,100 @@ public class ResourceServiceImpl implements ResourceService {
 
     }
 
+    @Override
+    public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTimeStr, String endTimeStr, Pageable pageable){
+       
+        
+        
+        
+        
+        
+        List<ResourceEntity> initResource = new ArrayList();
+        if (keyword.equals("")) {
+            System.err.println("key word is null");
+            initResource = resourceEntityRepository.findAll();
+        } else {
+            String[] keywords = keyword.split(" ");
+            Set<ResourceEntity> temp = new HashSet<>();
+            for (String s : keywords) {
+                temp.addAll(resourceEntityRepository.getResourcesByKeyword(s));
+            }
+
+            for (ResourceEntity r : temp) {
+                initResource.add(r);
+            }
+        }
+        
+        
+        //filter by availability 
+        List<ResourceEntity> resultFilterByAvailability = new ArrayList();
+        if(availability!=null){
+            for(ResourceEntity r : initResource){
+                if(availability == r.isAvailable()){
+                    resultFilterByAvailability.add(r);
+                }
+            }
+        }else{
+            resultFilterByAvailability = initResource;
+        }
+        
+        //filter by categoryIds
+        List<ResourceEntity> resultFilterByCategories = new ArrayList();
+        if(!categoryIds.isEmpty()){
+            for(ResourceEntity r : resultFilterByAvailability){
+                if(categoryIds.contains(r.getResourceCategoryId())){
+                    resultFilterByCategories.add(r);
+                }
+                
+            }   
+        }else{
+            resultFilterByCategories = resultFilterByAvailability;
+        }
+        
+       
+        
+        //filter by start date  
+        List<ResourceEntity> resultFilterByStartDate = new ArrayList();
+        if(!startTimeStr.equals("")){
+            LocalDateTime startTime = LocalDateTime.parse(startTimeStr);
+           for(ResourceEntity r : resultFilterByCategories){
+                if((r.getStartTime().isAfter(startTime)||r.getStartTime().isEqual(startTime)||(r.getStartTime()==null))){
+                    resultFilterByStartDate.add(r);
+                }
+                
+            }    
+            
+        }else{
+            resultFilterByStartDate = resultFilterByCategories;
+        }
+        
+        //filter by end date
+        List<ResourceEntity> resultFilterByEndDate = new ArrayList();
+        if(!endTimeStr.equals("")){
+            LocalDateTime endTime = LocalDateTime.parse(endTimeStr);
+           for(ResourceEntity r : resultFilterByStartDate){
+               System.err.println("r.getEndTime(): "+r.getEndTime());
+               System.err.println("endTime"+endTime);
+               System.err.println("r.getEndTime().isEqual(endTime):"+r.getEndTime().isEqual(endTime));
+               
+                if((r.getEndTime().isBefore(endTime)||r.getEndTime().isEqual(endTime)||(r.getEndTime()==null))){
+                    resultFilterByEndDate.add(r);
+                }
+                
+            }    
+            
+        }else{
+            resultFilterByEndDate = resultFilterByStartDate;
+        }
+        
+       
+        
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > resultFilterByEndDate.size() ? resultFilterByEndDate.size() : (start + pageable.getPageSize());
+        Page<ResourceEntity> pages = new PageImpl<ResourceEntity>(resultFilterByEndDate.subList(start.intValue(), end.intValue()), pageable, resultFilterByEndDate.size());
+
+        return pages;
+    }
     //This creation method is only for current data init
     @Override
     public ResourceEntity createResource(ResourceEntity resourceEntity, Long categoryId, Long profileId) {

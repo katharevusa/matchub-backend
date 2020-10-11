@@ -7,6 +7,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.JoinRequestEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.exception.CompleteProjectException;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
@@ -77,12 +78,13 @@ public interface ProjectService {
     public JoinRequestEntity createJoinRequest(Long projectId, Long profileId) throws ProjectNotFoundException, JoinProjectException;
 
     public Page<ProjectEntity> retrieveProjectBySDGIds(List<Long> sdgId, Pageable pageable) throws ProjectNotFoundException;
-    
+
     public List<ProjectEntity> getOwnedProjects(Long userId);
 
     public List<ProjectEntity> getProjectsByListOfIds(List<Long> ids) throws ProjectNotFoundException;
-    
+
     public void completeProject(Long projectId, Long profileId) throws CompleteProjectException;
 
-
+    public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, String country, ProjectStatusEnum status, Pageable pageable);
+    
 }

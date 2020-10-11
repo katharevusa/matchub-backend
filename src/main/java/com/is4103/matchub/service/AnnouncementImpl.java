@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
+import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.util.ArrayList;
 
 /**
@@ -35,6 +36,9 @@ public class AnnouncementImpl implements AnnouncementService {
 
     @Autowired
     ProjectEntityRepository projectEntityRepository;
+    
+    @Autowired
+    FirebaseService firebaseService;
 
     // create project public announcement, only by project owners, associate with project, notify project followers
     @Override
@@ -102,6 +106,19 @@ public class AnnouncementImpl implements AnnouncementService {
         
         //Incomplete: notify project teammembers and project owners       
         newAnnouncementEntity = announcementEntityRepository.save(newAnnouncementEntity);
+        
+        SendNotificationsToUsersVO sendNotificationsToUsersVO = new SendNotificationsToUsersVO();
+        sendNotificationsToUsersVO.setTitle(newAnnouncementEntity.getTitle());
+        sendNotificationsToUsersVO.setBody(newAnnouncementEntity.getContent());
+        sendNotificationsToUsersVO.setType(newAnnouncementEntity.getType().toString());
+        sendNotificationsToUsersVO.setImage("");
+        List<String> uuids = new ArrayList<>();
+        
+        for(ProfileEntity p: newAnnouncementEntity.getNotifiedUsers()){
+           uuids.add(p.getUuid().toString());
+        }     
+        sendNotificationsToUsersVO.setUuids(uuids);
+        firebaseService.sendNotificationsToUsers(sendNotificationsToUsersVO);
         return newAnnouncementEntity;
     }
     
