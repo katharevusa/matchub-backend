@@ -36,6 +36,7 @@ import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -303,23 +304,99 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Page<ProjectEntity> searchProjectByKeywords(String keyword, Pageable pageable) {
         String[] keywords = keyword.split(" ");
-        
+
         Set<ProjectEntity> temp = new HashSet<>();
-        
-        for(String s : keywords){
+
+        for (String s : keywords) {
             temp.addAll(projectEntityRepository.searchByKeywords(s));
         }
-        
-       List<ProjectEntity> projects = new ArrayList();
-       for (ProjectEntity p : temp) {
-          projects.add(p);
-       }
+
+        List<ProjectEntity> projects = new ArrayList();
+        for (ProjectEntity p : temp) {
+            projects.add(p);
+        }
 
         Long start = pageable.getOffset();
         Long end = (start + pageable.getPageSize()) > projects.size() ? projects.size() : (start + pageable.getPageSize());
         Page<ProjectEntity> pages = new PageImpl<ProjectEntity>(projects.subList(start.intValue(), end.intValue()), pageable, projects.size());
 
         return pages;
+    }
+
+    @Override
+    public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, String country, ProjectStatusEnum status, Pageable pageable) {
+        // first search by keywords
+       
+        
+        List<ProjectEntity> initProjects = new ArrayList();
+        if (keyword.equals("")) {
+            System.err.println("key word is null");
+            initProjects = projectEntityRepository.findAll();
+        } else {
+            String[] keywords = keyword.split(" ");
+            Set<ProjectEntity> temp = new HashSet<>();
+            for (String s : keywords) {
+                temp.addAll(projectEntityRepository.searchByKeywords(s));
+            }
+
+            for (ProjectEntity p : temp) {
+                initProjects.add(p);
+            }
+        }
+        // filter by country
+        List<ProjectEntity> resultFilterByCountry = new ArrayList();
+        if (!country.equals("")) {
+            for (ProjectEntity p : initProjects) {
+                if (p.getCountry().toLowerCase().equals(country.toLowerCase())) {
+                    resultFilterByCountry.add(p);
+                }
+            }
+        } else {
+            System.err.println("country is null");
+            resultFilterByCountry = initProjects;
+        }
+       
+
+        // filter by status
+        List<ProjectEntity> resultFilterByStatus = new ArrayList();
+        if (status != null) {
+            for (ProjectEntity p : resultFilterByCountry) {
+                if (p.getProjStatus() == status) {
+                    resultFilterByStatus.add(p);
+                }
+            }
+        } else {
+            resultFilterByStatus = resultFilterByCountry;
+        }
+
+    
+        List<ProjectEntity> resultFilterBySDGs = new ArrayList();
+          if (!sdgIds.isEmpty()) {
+            for (ProjectEntity p : resultFilterByStatus) {
+                System.err.println("P "+p.getProjectId());
+                boolean contain = false;
+                for (SDGEntity s : p.getSdgs()) {
+                    System.out.println("HAHA" +s.getSdgId());
+                    if (sdgIds.contains(s.getSdgId())) {
+                        System.err.println(" contain"+ s.getSdgId());
+                        contain = true;
+                    }
+                }
+                if (contain==true) {
+                    resultFilterBySDGs.add(p);
+                }
+            }
+        } else {
+            System.err.println("sdg is null");
+            resultFilterBySDGs = resultFilterByStatus;
+        }
+
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > resultFilterBySDGs.size() ? resultFilterBySDGs.size() : (start + pageable.getPageSize());
+        Page<ProjectEntity> pages = new PageImpl<ProjectEntity>(resultFilterBySDGs.subList(start.intValue(), end.intValue()), pageable, resultFilterBySDGs.size());
+
+        return pages;
+
     }
 
     @Override
