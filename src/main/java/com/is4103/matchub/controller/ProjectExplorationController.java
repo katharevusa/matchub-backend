@@ -44,8 +44,8 @@ public class ProjectExplorationController {
 
     // global search for projects with filtering 
     @RequestMapping(method = RequestMethod.GET, value = "/projectGlobalSearch")
-    public Page<ProjectEntity> projectGlobalSearch(@RequestParam(value = "keywords", defaultValue ="") String keywords, @RequestParam(value = "sdgIds", defaultValue ="") List sdgIds, @RequestParam(value = "country", defaultValue = "") String country,  ProjectStatusEnum status, Pageable pageable) {
-
+    public Page<ProjectEntity> projectGlobalSearch(@RequestParam(value = "keywords", defaultValue ="") String keywords, @RequestParam(value = "sdgIds", defaultValue ="") List<Long> sdgIds, @RequestParam(value = "country", defaultValue = "") String country,  ProjectStatusEnum status, Pageable pageable) {
+        
         return projectService.projectGlobalSearch(keywords, sdgIds, country, status, pageable);
     }
 

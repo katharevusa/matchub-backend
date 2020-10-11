@@ -369,7 +369,9 @@ public class ProjectServiceImpl implements ProjectService {
             resultFilterByStatus = resultFilterByCountry;
         }
 
-    
+        // filter by sdgs
+        System.err.println("sdgIds:"+sdgIds.toString());
+        System.err.println("sdgIds.contains(4);"+sdgIds.contains(4L));
         List<ProjectEntity> resultFilterBySDGs = new ArrayList();
           if (!sdgIds.isEmpty()) {
             for (ProjectEntity p : resultFilterByStatus) {
