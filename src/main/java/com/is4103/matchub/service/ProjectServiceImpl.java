@@ -36,11 +36,12 @@ import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -302,12 +303,17 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Page<ProjectEntity> searchProjectByKeywords(String keyword, Pageable pageable) {
         String[] keywords = keyword.split(" ");
-        System.err.println("keywords: " + Arrays.toString(keywords));
-
-        List<ProjectEntity> projects = new ArrayList();
-        for (String s : keywords) {
-            projects.addAll(projectEntityRepository.searchByKeywords(s));
+        
+        Set<ProjectEntity> temp = new HashSet<>();
+        
+        for(String s : keywords){
+            temp.addAll(projectEntityRepository.searchByKeywords(s));
         }
+        
+       List<ProjectEntity> projects = new ArrayList();
+       for (ProjectEntity p : temp) {
+          projects.add(p);
+       }
 
         Long start = pageable.getOffset();
         Long end = (start + pageable.getPageSize()) > projects.size() ? projects.size() : (start + pageable.getPageSize());

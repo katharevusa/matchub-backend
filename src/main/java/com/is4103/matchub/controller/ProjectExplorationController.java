@@ -42,6 +42,9 @@ public class ProjectExplorationController {
         return projectService.searchProjectByKeywords(keywords, pageable);
     }
     
+    // global search for projects with filtering 
+    
+    
     @RequestMapping(method = RequestMethod.GET, value = "/getAllProjects")
     Page<ProjectEntity> getAllProjects(Pageable pageable) {
         return projectService.getAllProjects(pageable);
