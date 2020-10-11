@@ -50,8 +50,8 @@ public class BadgeEntity {
     @NotNull
     private String badgeTitle;
 
-    @Column(nullable = false)
-    @NotNull
+    @Column(nullable = true)
+//    @NotNull
     private String icon;
 
     @ManyToMany(fetch = FetchType.LAZY)
