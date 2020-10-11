@@ -13,6 +13,7 @@ import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.vo.ResourceVO;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -55,5 +56,7 @@ public interface ResourceService {
     public List<ResourceEntity> getResourcesByListOfId(List<Long> ids) throws ResourceNotFoundException;
     
     public Page<ResourceEntity> searchResourceByKeywords(String keyword, Pageable pageable);
+    
+    public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTime, String endTime, Pageable pageable);
 
 }

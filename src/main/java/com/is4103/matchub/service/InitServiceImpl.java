@@ -480,7 +480,7 @@ public class InitServiceImpl implements InitService {
 
     public void initResources() {
 //1
-        ResourceEntity bread = new ResourceEntity("Bread", "Free Bread", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
+        ResourceEntity bread = new ResourceEntity("Bread", "Food Free Bread", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
         bread.setResourceProfilePic("https://localhost:8443/api/v1/files/init/resource_bread.jpg");
         bread.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_bread.jpg");
         bread.getPhotos().add("https://localhost:8443/api/v1/files/init/bread2.jpg");

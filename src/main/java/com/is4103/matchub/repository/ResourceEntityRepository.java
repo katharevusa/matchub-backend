@@ -6,6 +6,7 @@
 package com.is4103.matchub.repository;
 
 import com.is4103.matchub.entity.ResourceEntity;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +36,7 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
             countQuery = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%")
     Page<ResourceEntity> getResourcesByKeyword(String keyword, Pageable pageable);
     
-    
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%")      
+    List<ResourceEntity> getResourcesByKeyword(String keyword);
 
 }
