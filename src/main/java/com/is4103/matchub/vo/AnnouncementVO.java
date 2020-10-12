@@ -22,15 +22,11 @@ public class AnnouncementVO {
 
     @NotNull
     private String title;
-
+    
     @NotNull
     private String content;
   
     private Long projectId;
-
-    private Long taskId;
-
-    private Long postId;
     
     private Long creatorId;
     
@@ -38,22 +34,7 @@ public class AnnouncementVO {
     //******************** Need to take care *****************
     private List<Long> notifiedUserId = new ArrayList<>();
 
-    public void createAnnouncement(AnnouncementEntity entity, AnnouncementTypeEnum type) {
-        entity.setTitle(this.title);
-        entity.setContent(this.content);
-        entity.setTimestamp(LocalDateTime.now());
-
-        if(projectId != null){
-            entity.setProjectId(this.projectId);
-        }
-        if(taskId != null){
-            entity.setTaskId(taskId);
-        }
-        if(postId != null){
-            entity.setPostId(this.postId);
-        }
-
-    }
+ 
     
     public void createProjectPublicAnnouncement(AnnouncementEntity entity)throws NullPointerException{   
         entity.setTitle(this.title);
@@ -72,6 +53,8 @@ public class AnnouncementVO {
         entity.setProjectId(this.projectId);
         entity.setCreatorId(this.creatorId);   
     }
+    
+    
    
 
 }

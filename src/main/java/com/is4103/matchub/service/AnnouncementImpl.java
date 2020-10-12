@@ -8,6 +8,7 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.AnnouncementEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.CreateAnnouncementException;
 import com.is4103.matchub.exception.DeleteAnnouncementException;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
+import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.util.ArrayList;
 
@@ -39,6 +41,9 @@ public class AnnouncementImpl implements AnnouncementService {
     
     @Autowired
     FirebaseService firebaseService;
+    
+    @Autowired
+    ResourceRequestEntityRepository resourceRequestEntityRepository;
 
     // create project public announcement, only by project owners, associate with project, notify project followers
     @Override
@@ -105,7 +110,7 @@ public class AnnouncementImpl implements AnnouncementService {
         }
         
         //Incomplete: notify project teammembers and project owners       
-        newAnnouncementEntity = announcementEntityRepository.save(newAnnouncementEntity);
+        newAnnouncementEntity = announcementEntityRepository.saveAndFlush(newAnnouncementEntity);
         
         SendNotificationsToUsersVO sendNotificationsToUsersVO = new SendNotificationsToUsersVO();
         sendNotificationsToUsersVO.setTitle(newAnnouncementEntity.getTitle());
@@ -167,6 +172,7 @@ public class AnnouncementImpl implements AnnouncementService {
     
     @Override
     public void deleteAnAnnouncementForUser(Long announcementId, Long userId){
+        System.err.println("deleteAnAnnouncementForUser:"+announcementId );
         AnnouncementEntity announcement = announcementEntityRepository.findById(announcementId).get();
         ProfileEntity user = profileEntityRepository.findById(userId).get();         
         user.getAnnouncements().remove(announcement);
@@ -197,5 +203,21 @@ public class AnnouncementImpl implements AnnouncementService {
         }
 
     }
-
+    @Override
+    public void createNormalNotification(AnnouncementEntity announcementEntity){
+        // create notification
+        SendNotificationsToUsersVO sendNotificationsToUsersVO = new SendNotificationsToUsersVO();
+        sendNotificationsToUsersVO.setTitle(announcementEntity.getTitle());
+        sendNotificationsToUsersVO.setBody(announcementEntity.getContent());
+        sendNotificationsToUsersVO.setType(announcementEntity.getType().toString());
+        sendNotificationsToUsersVO.setImage("");
+        List<String> uuids = new ArrayList<>();
+        
+        for(ProfileEntity p: announcementEntity.getNotifiedUsers()){
+           uuids.add(p.getUuid().toString());
+        }     
+        sendNotificationsToUsersVO.setUuids(uuids);
+        firebaseService.sendNotificationsToUsers(sendNotificationsToUsersVO);
+    }
+    
 }

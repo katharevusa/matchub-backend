@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.AnnouncementEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.JoinRequestEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
@@ -27,6 +28,7 @@ import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UpdateProjectException;
 import com.is4103.matchub.exception.UpvoteProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
+import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.JoinRequestEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
@@ -77,6 +79,9 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private FirebaseService firebaseService;
+    
+    @Autowired
+    private  AnnouncementEntityRepository announcementEntityRepository;
 
     @Override
     public ProjectEntity createProject(ProjectCreateVO vo) {
@@ -254,8 +259,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         projectEntityRepository.saveAndFlush(project);
-
-        // Incomplete: give notifications
+     
     }
 
     // manually complete project for early completion of project, reputation point and review should be given
@@ -326,8 +330,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, String country, ProjectStatusEnum status, Pageable pageable) {
         // first search by keywords
-       
-        
+    
         List<ProjectEntity> initProjects = new ArrayList();
         if (keyword.equals("")) {
             System.err.println("key word is null");
@@ -744,7 +747,7 @@ public class ProjectServiceImpl implements ProjectService {
         joinRequest.setRequestor(requestor);
         requestor.getJoinRequests().add(joinRequest);
 
-        // make anouncement to project owners 
+        
         // yet to create actual entity (before sending notification)
         List<String> projectOwnerUuids = new ArrayList<>();
         for (ProfileEntity owner : project.getProjectOwners()) {
@@ -759,7 +762,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         String title = "Join Project Request";
-        String body = requestorName + " has applied to join your " + project.getProjectTitle() + " project.";
+        String body = requestorName + " has applied to join your '" + project.getProjectTitle() + "' project.";
 
         SendNotificationsToUsersVO notificationVO = new SendNotificationsToUsersVO(
                 projectOwnerUuids,
@@ -769,8 +772,24 @@ public class ProjectServiceImpl implements ProjectService {
                 ""
         );
         firebaseService.sendNotificationsToUsers(notificationVO);
+        joinRequest = joinRequestEntityRepository.saveAndFlush(joinRequest);
+        // // make anouncement to project owners 
+        List<ProfileEntity> projectOwners = project.getProjectOwners();
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle(notificationVO.getTitle());
+        announcementEntity.setContent(notificationVO.getBody());
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.JOIN_PROJ_REQUEST);
+        announcementEntity.setJoinRequestId(joinRequest.getJoinRequestId());
+        
+        // association
+        announcementEntity.getNotifiedUsers().addAll(projectOwners);
+        for (ProfileEntity p : projectOwners) {
+            p.getAnnouncements().add(announcementEntity);
+        }
+        announcementEntityRepository.saveAndFlush(announcementEntity);
 
-        return joinRequestEntityRepository.saveAndFlush(joinRequest);
+        return joinRequest ;
     }
 
     @Override

@@ -5,17 +5,23 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.AnnouncementEntity;
+import com.is4103.matchub.entity.IndividualEntity;
+import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.PostNotFoundException;
 import com.is4103.matchub.exception.UnableToDeletePostException;
 import com.is4103.matchub.exception.UpdatePostException;
 import com.is4103.matchub.exception.UserNotFoundException;
+import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.PostEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.vo.PostVO;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,6 +45,12 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private AttachmentService attachmentService;
+    
+    @Autowired
+    private AnnouncementService announcementService;
+    
+    @Autowired
+    private  AnnouncementEntityRepository announcementEntityRepository;
 
     @Transactional
     @Override
@@ -56,7 +68,38 @@ public class PostServiceImpl implements PostService {
         newPost = postEntityRepository.saveAndFlush(newPost);
         //set associations
         profile.getPosts().add(newPost);
+        
+    
+        // create announcement (notify profile follower)
+        List<ProfileEntity> follower = new ArrayList<>();
+        
+        for(Long p :profile.getFollowers()){
+            follower.add(profileEntityRepository.findById(p).get());          
+        }
+        
+        String profileName = "";
+        if (profile instanceof IndividualEntity) {
+            profileName = ((IndividualEntity) profile).getFirstName() + " " + ((IndividualEntity) profile).getLastName();
+        } else if (profile instanceof OrganisationEntity) {
+            profileName = ((OrganisationEntity) profile).getOrganizationName();
+        }
+        
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle("New Post From Your Following User");
+        announcementEntity.setContent("Hurry! Check out "+profileName+"'s new post!");
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.NEW_POST);
+        announcementEntity.setPostId(newPost.getPostId());
+        // association
+        announcementEntity.getNotifiedUsers().addAll(follower);
+        for (ProfileEntity p : follower) {
+            p.getAnnouncements().add(announcementEntity);
+        }
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
 
+        // create notification         
+        announcementService.createNormalNotification(announcementEntity);
+        
         return newPost;
     }
 

@@ -6,10 +6,12 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.AnnouncementEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.DeleteOrganisationVerificationDocumentException;
 import com.is4103.matchub.exception.DeleteProfilePictureException;
 import com.is4103.matchub.exception.UserNotFoundException;
@@ -26,6 +28,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.IndividualEntityRepository;
 import com.is4103.matchub.repository.OrganisationEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
@@ -48,6 +51,8 @@ import com.is4103.matchub.vo.ChangePasswordVO;
 import java.util.List;
 import com.is4103.matchub.vo.DeleteFilesVO;
 import com.is4103.matchub.vo.GetAccountsByUuidVO;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
@@ -92,6 +97,12 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private OrganisationEntityRepository organisationEntityRepository;
+    
+    @Autowired
+    private AnnouncementService announcementService;
+    
+    @Autowired
+    private AnnouncementEntityRepository announcementEntityRepository;
 
     @Transactional
     @Override
@@ -283,7 +294,30 @@ public class UserServiceImpl implements UserService {
 
             //update toFollowProfile followers
             toFollowProfile.getFollowers().add(accountId);
-            profileEntityRepository.save(toFollowProfile);
+            profile = profileEntityRepository.saveAndFlush(toFollowProfile);
+
+            // create announcement (notify profile follower)
+            String profileName = "";
+            if (profile instanceof IndividualEntity) {
+                profileName = ((IndividualEntity) profile).getFirstName() + " " + ((IndividualEntity) profile).getLastName();
+            } else if (profile instanceof OrganisationEntity) {
+                profileName = ((OrganisationEntity) profile).getOrganizationName();
+            }
+
+            AnnouncementEntity announcementEntity = new AnnouncementEntity();
+            announcementEntity.setTitle("New Follower");
+            announcementEntity.setContent(profileName + " just followed you.");
+            announcementEntity.setTimestamp(LocalDateTime.now());
+            announcementEntity.setType(AnnouncementTypeEnum.NEW_PROFILE_FOLLOWER);
+
+            // association
+            announcementEntity.getNotifiedUsers().add(toFollowProfile);
+            toFollowProfile.getAnnouncements().add(announcementEntity);
+
+            announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+            // create notification         
+            announcementService.createNormalNotification(announcementEntity);
 
             return profile;
         } else {

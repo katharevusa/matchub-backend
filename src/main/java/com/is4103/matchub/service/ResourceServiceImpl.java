@@ -400,7 +400,7 @@ public class ResourceServiceImpl implements ResourceService {
             throw new ResourceNotFoundException("Resource not exist");
         }
         ResourceEntity resource = resourceOptional.get();
-
+        
         if (!resource.getResourceOwnerId().equals(terminatorId)) {
             throw new TerminateResourceException("Only resource owner can terminate this resource");
         }
