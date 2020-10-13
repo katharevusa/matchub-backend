@@ -23,7 +23,7 @@ public interface IndividualEntityRepository extends JpaRepository<IndividualEnti
             countQuery = "SELECT COUNT(i) FROM IndividualEntity i")
     Page<IndividualEntity> findAll(Pageable pageable);
 
-    @Query(value = "SELECT i FROM IndividualEntity i WHERE i.firstName LIKE %?1% OR i.lastName LIKE %?1% OR i.email LIKE %?1%",
-            countQuery = "SELECT COUNT(i) FROM IndividualEntity i WHERE i.firstName LIKE %?1% OR i.lastName LIKE %?1% OR i.email LIKE %?1%")
+    @Query(value = "SELECT i FROM IndividualEntity i WHERE i.firstName LIKE %?1% OR i.lastName LIKE %?1% OR i.email LIKE %?1% OR CONCAT(i.firstName, ' ', i.lastName) LIKE %?1% OR CONCAT(i.lastName, ' ', i.firstName) LIKE %?1%",
+            countQuery = "SELECT COUNT(i) FROM IndividualEntity i WHERE i.firstName LIKE %?1% OR i.lastName LIKE %?1% OR i.email LIKE %?1% OR CONCAT(i.firstName, ' ', i.lastName) LIKE %?1% OR CONCAT(i.lastName, ' ', i.firstName) LIKE %?1%")
     Page<IndividualEntity> searchIndividuals(String search, Pageable pageable);
 }

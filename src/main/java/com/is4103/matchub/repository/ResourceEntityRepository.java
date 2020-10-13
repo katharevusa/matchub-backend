@@ -6,6 +6,7 @@
 package com.is4103.matchub.repository;
 
 import com.is4103.matchub.entity.ResourceEntity;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,17 +25,18 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
 //    List<ResourceEntity> getAvailableResourcesOfAccount(ProfileEntity profile);
     
    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true ",
-            countQuery = "SELECT r FROM ResourceEntity r WHERE r.available = true")
+            countQuery = "SELECT COUNT(r) FROM ResourceEntity r WHERE r.available = true")
     Page<ResourceEntity> getAllAvailableResources(Pageable pageable);
     
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceOwnerId = :profileId ",
-            countQuery = "SELECT r FROM ResourceEntity r WHERE r.resourceOwnerId = :profileId")
+            countQuery = "SELECT COUNT(r) FROM ResourceEntity r WHERE r.resourceOwnerId = :profileId")
     Page<ResourceEntity> getHostedResources( Long profileId, Pageable pageable);
     
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%",
-            countQuery = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%")
+            countQuery = "SELECT COUNT(r) FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%")
     Page<ResourceEntity> getResourcesByKeyword(String keyword, Pageable pageable);
     
-    
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%")      
+    List<ResourceEntity> getResourcesByKeyword(String keyword);
 
 }

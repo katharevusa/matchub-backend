@@ -22,6 +22,8 @@ public interface ProjectEntityRepository extends JpaRepository<ProjectEntity, Lo
     @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projectTitle LIKE %?1% OR pe.projectDescription LIKE %?1% OR pe.country LIKE %?1%",
             countQuery = "SELECT COUNT(pe) FROM ProjectEntity pe WHERE pe.projectTitle LIKE %?1% OR pe.projectDescription LIKE %?1% OR pe.country LIKE %?1%")
     List<ProjectEntity> searchByKeywords(String search);
+    
+    
 
     @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.ACTIVE ",
             countQuery = "SELECT COUNT(pe) FROM ProjectEntity pe WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.ACTIVE")
