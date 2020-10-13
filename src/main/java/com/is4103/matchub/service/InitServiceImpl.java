@@ -175,8 +175,8 @@ public class InitServiceImpl implements InitService {
         ikjun.setCountry("South Korea");
         ikjun.setCity("Seoul");
         ikjun.setProfilePhoto("https://localhost:8443/api/v1/files/init/ikjun.jpeg");
-        ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3), Long.valueOf(9), Long.valueOf(10))));
-        ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9), Long.valueOf(10))));
+        ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
+        ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
 
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
@@ -208,7 +208,7 @@ public class InitServiceImpl implements InitService {
         sophia.setCity("Quebec");
         sophia.setProfilePhoto("https://localhost:8443/api/v1/files/init/sophia.jpg");
         sophia.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3))));
-        sophia.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(7))));
+        sophia.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(7), Long.valueOf(11))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         sophia.setSdgs(sdgs);
@@ -235,7 +235,7 @@ public class InitServiceImpl implements InitService {
         genc.setCountry("Canada");
         genc.setCity("Toronto");
         genc.setProfilePhoto("https://localhost:8443/api/v1/files/init/genc.jpg");
-        genc.setFollowing(new HashSet<>(Arrays.asList(sophia.getAccountId(), Long.valueOf(9))));
+        genc.setFollowing(new HashSet<>(Arrays.asList(sophia.getAccountId(), Long.valueOf(9), Long.valueOf(11))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         genc.setSdgs(sdgs);
@@ -262,7 +262,7 @@ public class InitServiceImpl implements InitService {
         networkForGood.setCountry("United States");
         networkForGood.setCity("Washington");
         networkForGood.setProfilePhoto("https://localhost:8443/api/v1/files/init/networkforgood.png");
-        networkForGood.setFollowing(new HashSet<>(Arrays.asList(alexLow.getAccountId(), ikjun.getAccountId(), Long.valueOf(9))));
+        networkForGood.setFollowing(new HashSet<>(Arrays.asList(alexLow.getAccountId(), ikjun.getAccountId(), Long.valueOf(9), Long.valueOf(11))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(2)));
@@ -326,8 +326,8 @@ public class InitServiceImpl implements InitService {
         kfem.setCountry("South Korea");
         kfem.setCity("Seoul");
         kfem.setProfilePhoto("https://localhost:8443/api/v1/files/init/kfem.png");
-        kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId())));
-        kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId())));
+        kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId(), Long.valueOf(11))));
+        kfem.setFollowers(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId(), Long.valueOf(11))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(6)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
