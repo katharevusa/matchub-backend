@@ -6,10 +6,14 @@
 package com.is4103.matchub.service;
 
 import static com.google.cloud.storage.Storage.GetHmacKeyOption.projectId;
+import com.is4103.matchub.entity.AnnouncementEntity;
+import com.is4103.matchub.entity.IndividualEntity;
+import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.enumeration.RequestorEnum;
@@ -17,12 +21,15 @@ import com.is4103.matchub.exception.CreateResourceRequestException;
 import com.is4103.matchub.exception.DeleteResourceRequestException;
 import com.is4103.matchub.exception.ResourceRequestNotFoundException;
 import com.is4103.matchub.exception.RespondToResourceRequestException;
+import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
+import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import static io.grpc.internal.ConscryptLoader.isPresent;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,15 +56,19 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
     @Autowired
     ProfileEntityRepository profileEntityRepository;
-    
-    
+
+    @Autowired
+    AnnouncementEntityRepository announcementEntityRepository;
+
+    @Autowired
+    FirebaseService firebaseService;
+
+    @Autowired
+    AnnouncementService announcementService;
 
     // create resource request: Project owner initiate request (projectownerId, projectId, resourceId, unitsRequired
     @Override
     public ResourceRequestEntity createResourceRequestProjectOwner(ResourceRequestCreateVO vo) throws CreateResourceRequestException {
-        
-        
-        
         if (!resourceEntityRepository.findById(vo.getResourceId()).isPresent()) {
             throw new CreateResourceRequestException("Unable to create resource request: resource not found");
         }
@@ -67,9 +78,9 @@ public class ResourceRequestImpl implements ResourceRequestService {
             throw new CreateResourceRequestException("Unable to create resource request: project not found");
         }
         ProjectEntity project = projectEntityRepository.findById(vo.getProjectId()).get();
-        
+
         // Only active project can recieving resource request
-        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
+        if (project.getProjStatus() != ProjectStatusEnum.ACTIVE) {
             throw new CreateResourceRequestException("Sorry action is only allowed for activated projects");
         }
 
@@ -85,7 +96,7 @@ public class ResourceRequestImpl implements ResourceRequestService {
         if (resourceRequestEntityRepository.searchResourceRequestProjectByProjectAndResourceOnHold(project.getProjectId(), resource.getResourceId(), RequestStatusEnum.ON_HOLD).isPresent()) {
             throw new CreateResourceRequestException("There exits one request between resource and project with status on_hold, please make a decision before creating a new request");
         }
-        
+
         if (resource.getMatchedProjectId() != null) {
             throw new CreateResourceRequestException("This resource is already matched to another project");
         }
@@ -98,7 +109,25 @@ public class ResourceRequestImpl implements ResourceRequestService {
         vo.createResourceRequestProjectOwner(resourceRequest);
         project.getListOfRequests().add(resourceRequest);
         resource.getListOfRequests().add(resourceRequest);
-        return resourceRequestEntityRepository.saveAndFlush(resourceRequest);
+        resourceRequest = resourceRequestEntityRepository.saveAndFlush(resourceRequest);
+
+        // create announcement (notify resource owner)
+        ProfileEntity resourceOwner = profileEntityRepository.findById(resource.getResourceOwnerId()).get();
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle("Project '"+project.getProjectTitle()+"' wants your resource "+resource.getResourceName());
+        announcementEntity.setContent(resourceRequest.getMessage());
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.REQUEST_FOR_RESOURCE);
+        announcementEntity.setResourceRequestId(resourceRequest.getRequestId());
+        // association
+        announcementEntity.getNotifiedUsers().add(resourceOwner);
+        resourceOwner.getAnnouncements().add(announcementEntity);
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification
+        announcementService.createNormalNotification(announcementEntity);
+
+        return resourceRequest;
 
     }
 
@@ -119,10 +148,10 @@ public class ResourceRequestImpl implements ResourceRequestService {
             throw new CreateResourceRequestException("Unable to create resource request: requestor not found");
         }
 
-        if(project.getProjStatus()!=ProjectStatusEnum.ACTIVE){
+        if (project.getProjStatus() != ProjectStatusEnum.ACTIVE) {
             throw new CreateResourceRequestException("Sorry action is only allowed for activated projects");
         }
-        
+
         if (!resource.getResourceOwnerId().equals(vo.getRequestorId())) {
             throw new CreateResourceRequestException("Unable to create resource request: can only create request for owned resource");
         }
@@ -145,8 +174,36 @@ public class ResourceRequestImpl implements ResourceRequestService {
         vo.createResourceRequestResourceOwner(resourceRequest);
         project.getListOfRequests().add(resourceRequest);
         resource.getListOfRequests().add(resourceRequest);
-        return resourceRequestEntityRepository.saveAndFlush(resourceRequest);
+        resourceRequest = resourceRequestEntityRepository.saveAndFlush(resourceRequest);
 
+        // create announcement (notify project owner)
+        List<ProfileEntity> projectOwners = project.getProjectOwners();
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        ProfileEntity resourceOwner = profileEntityRepository.findById(resource.getResourceOwnerId()).get();
+        String resourceOwnerName = "";
+        if (resourceOwner instanceof IndividualEntity) {
+            resourceOwnerName = ((IndividualEntity) resourceOwner).getFirstName() + " " + ((IndividualEntity) resourceOwner).getLastName();
+        } else if (resourceOwner instanceof OrganisationEntity) {
+            resourceOwnerName = ((OrganisationEntity) resourceOwner).getOrganizationName();
+        }
+        
+        
+        announcementEntity.setTitle(resourceOwnerName+" wants to donate '"+resource.getResourceName()+"' to your project '"+project.getProjectTitle()+"'.");
+        announcementEntity.setContent(resourceRequest.getMessage());
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.DONATE_TO_PROJECT);
+        announcementEntity.setResourceRequestId(resourceRequest.getRequestId());
+        // association
+        announcementEntity.getNotifiedUsers().addAll(projectOwners);
+        for (ProfileEntity p : projectOwners) {
+            p.getAnnouncements().add(announcementEntity);
+        }
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification         
+        announcementService.createNormalNotification(announcementEntity);
+
+        return resourceRequest;
 
     }
 
@@ -165,7 +222,7 @@ public class ResourceRequestImpl implements ResourceRequestService {
         if (!request.getRequestorId().equals(terminatorId)) {
             throw new DeleteResourceRequestException("Unable to delete resource request: only request creator can delete request");
         }
-        // only project with on_hold status can be deleted
+        // only resource request with on_hold status can be deleted
         if (request.getStatus() != RequestStatusEnum.ON_HOLD) {
             throw new DeleteResourceRequestException("Unable to delete resource request: only request with status on_hold can be deleted");
         }
@@ -174,6 +231,33 @@ public class ResourceRequestImpl implements ResourceRequestService {
         ProjectEntity project = projectEntityRepository.findById(request.getProjectId()).get();
         resource.getListOfRequests().remove(request);
         project.getListOfRequests().remove(request);
+
+//        // create announcement (notify project owner)
+//        List<ProfileEntity> notifiedUsers = new ArrayList<>();
+//        if (request.getRequestorEnum() == RequestorEnum.PROJECT_OWNER) {
+//            //notify resource owner
+//            notifiedUsers.add(profileEntityRepository.findById(resource.getResourceOwnerId()).get());
+//        } else {
+//            notifiedUsers.addAll(project.getProjectOwners());
+//            //notify project owners
+//        }
+//
+//        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+//        announcementEntity.setTitle("One resource request has been terminated");
+//        announcementEntity.setContent("project title: " + project.getProjectTitle() + "\n" + "resource name: " + resource.getResourceName());
+//        announcementEntity.setTimestamp(LocalDateTime.now());
+//        announcementEntity.setType(AnnouncementTypeEnum.DELETE_RESOURCE_REQUEST);
+//        
+//
+//        // association
+//        announcementEntity.getNotifiedUsers().addAll(notifiedUsers);
+//        for (ProfileEntity p : notifiedUsers) {
+//            p.getAnnouncements().add(announcementEntity);
+//        }
+//        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+//
+//        // create notification         
+//        announcementService.createNormalNotification(announcementEntity);
 
         resourceRequestEntityRepository.delete(request);
 
@@ -226,19 +310,18 @@ public class ResourceRequestImpl implements ResourceRequestService {
         }
 
         //Only resource request with ON_HOLD status can change status
-        if(request.getStatus()!=RequestStatusEnum.ON_HOLD){
-            throw new RespondToResourceRequestException("This resource request is "+ request.getStatus()+". Status can not be changed");
+        if (request.getStatus() != RequestStatusEnum.ON_HOLD) {
+            throw new RespondToResourceRequestException("This resource request is " + request.getStatus() + ". Status can not be changed");
         }
-        
-        
+
         //response true: accept request
         if (response == true) {
             request.setStatus(RequestStatusEnum.ACCEPTED);
             resource.setMatchedProjectId(request.getProjectId());
             resource.setAvailable(Boolean.FALSE);
             //reject the rest resource request
-            for(ResourceRequestEntity r: resource.getListOfRequests()){
-                if(!r.getRequestId().equals(requestId)){
+            for (ResourceRequestEntity r : resource.getListOfRequests()) {
+                if (!r.getRequestId().equals(requestId)) {
                     r.setStatus(RequestStatusEnum.REJECTED);
                 }
             }
@@ -247,7 +330,64 @@ public class ResourceRequestImpl implements ResourceRequestService {
             //response false: decline request
             request.setStatus(RequestStatusEnum.REJECTED);
         }
-        return resourceRequestEntityRepository.saveAndFlush(request);
+
+        request = resourceRequestEntityRepository.saveAndFlush(request);
+
+        // create announcement (notify project owner)
+        List<ProfileEntity> notifiedUsers = new ArrayList<>();
+        if (request.getRequestorEnum() == RequestorEnum.PROJECT_OWNER) {
+
+            //notify project owners
+            notifiedUsers.addAll(project.getProjectOwners());
+
+        } else {
+            //notify resource owner
+            notifiedUsers.add(profileEntityRepository.findById(resource.getResourceOwnerId()).get());
+        }
+
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setResourceRequestId(request.getRequestId());
+
+        if (request.getRequestorEnum() == RequestorEnum.PROJECT_OWNER) {
+            // resource request
+            if (request.getStatus() == RequestStatusEnum.ACCEPTED) {
+                announcementEntity.setTitle("Resource Request ACCEPTED ");
+                announcementEntity.setContent("Your request for resource '" + resource.getResourceName() + "' for project '" + project.getProjectTitle() + "' has been approved");
+                announcementEntity.setType(AnnouncementTypeEnum.RESOURCE_REQUEST_ACCEPTED);
+
+            } else {
+                announcementEntity.setTitle("Resource Request REJECTED ");
+                announcementEntity.setContent("Your request for resource '" + resource.getResourceName() + "' for project '" + project.getProjectTitle() + "' has been declined");
+                announcementEntity.setType(AnnouncementTypeEnum.RESOURCE_REQUEST_REJECTED);
+            }
+
+        } else {
+            // resource donation request
+            if (request.getStatus() == RequestStatusEnum.ACCEPTED) {
+                announcementEntity.setTitle("Resource Donation ACCEPTED ");
+                announcementEntity.setContent("Your donation of resource '" + resource.getResourceName() + "' to project '" + project.getProjectTitle() + "' has been accepted");
+                announcementEntity.setType(AnnouncementTypeEnum.RESOURCE_DONATION_ACCEPTED);
+
+            } else {
+                announcementEntity.setTitle("Resource Donation REJECTED ");
+                announcementEntity.setContent("Your donation of resource '" + resource.getResourceName() + "' to project '" + project.getProjectTitle() + "' has been rejected");
+                announcementEntity.setType(AnnouncementTypeEnum.RESOURCE_DONATION_REJECTED);
+            }
+
+        }
+
+        // association
+        announcementEntity.getNotifiedUsers().addAll(notifiedUsers);
+        for (ProfileEntity p : notifiedUsers) {
+            p.getAnnouncements().add(announcementEntity);
+        }
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification         
+        announcementService.createNormalNotification(announcementEntity);
+
+        return request;
 
     }
 

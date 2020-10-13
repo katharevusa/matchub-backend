@@ -63,6 +63,7 @@ public class AnnouncementEntity {
     @Column(nullable = true)
     private Long taskId;
 
+    
     @Column(nullable = true)
     private Long postId;
 
@@ -75,6 +76,15 @@ public class AnnouncementEntity {
    
     @Column(nullable = true)
     private Long creatorId;
+    
+    @Column(nullable = true)
+    private Long resourceId;
+    
+    @Column(nullable = true)
+    private Long resourceRequestId;
+    
+    @Column(nullable = true)
+    private Long joinRequestId;
 
     public AnnouncementEntity(String title, String content, LocalDateTime timestamp, AnnouncementTypeEnum type) {
         this.title = title;
@@ -82,7 +92,5 @@ public class AnnouncementEntity {
         this.timestamp = timestamp;
         this.type = type;
     }
-
-  
 
 }

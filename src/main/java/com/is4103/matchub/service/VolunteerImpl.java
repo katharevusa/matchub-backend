@@ -5,16 +5,22 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.AnnouncementEntity;
+import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.JoinRequestEntity;
+import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.JoinRequestStatusEnum;
 import com.is4103.matchub.exception.LeaveProjectException;
 import com.is4103.matchub.exception.RemoveTeamMemberException;
 import com.is4103.matchub.exception.RespondToJoinProjectRequestException;
+import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.JoinRequestEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +40,12 @@ public class VolunteerImpl implements VolunteerService {
 
     @Autowired
     JoinRequestEntityRepository joinRequestEntityRepository;
+
+    @Autowired
+    AnnouncementService announcementService;
+
+    @Autowired
+    AnnouncementEntityRepository announcementEntityRepository;
 
     @Override
     public List<ProfileEntity> getWholeProjectGroup(Long projectId) {
@@ -82,12 +94,33 @@ public class VolunteerImpl implements VolunteerService {
             ProfileEntity requestor = request.getRequestor();
             project.getTeamMembers().add(request.getRequestor());
             requestor.getProjectsJoined().add(project);
-            //notify user
 
         } else {
             request.setStatus(JoinRequestStatusEnum.REJECTED);
-            //notify user
+
         }
+        //create announcement
+        ProfileEntity notifier = request.getRequestor();
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle("Response to your join request");
+        if (request.getStatus() == JoinRequestStatusEnum.ACCEPTED) {
+            announcementEntity.setContent("Your request to join project '" + project.getProjectTitle() + "' has been approved.");
+            announcementEntity.setType(AnnouncementTypeEnum.ACCEPT_JOIN_REQUEST);
+        } else {
+            announcementEntity.setContent("Your join request to project '" + project.getProjectTitle() + "' has been rejected.");
+            announcementEntity.setType(AnnouncementTypeEnum.REJECT_JOIN_REQUEST);
+        }
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setResourceId(requestId);
+
+        // association
+        announcementEntity.getNotifiedUsers().add(notifier);
+        notifier.getAnnouncements().add(announcementEntity);
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification         
+        announcementService.createNormalNotification(announcementEntity);
+
         return joinRequestEntityRepository.saveAndFlush(request);
 
     }
@@ -114,7 +147,23 @@ public class VolunteerImpl implements VolunteerService {
             }
         }
         projectEntityRepository.flush();
+
+        //create announcement
+        ProfileEntity notifier = memberToDelete;
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle("Remove Notification");
+        announcementEntity.setContent("You have been removed from project '" + project.getProjectTitle() + "'.");
+        announcementEntity.setType(AnnouncementTypeEnum.REMOVE_MEMBER);
+        announcementEntity.setTimestamp(LocalDateTime.now());
         
+
+        // association
+        announcementEntity.getNotifiedUsers().add(notifier);
+        notifier.getAnnouncements().add(announcementEntity);
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification         
+        announcementService.createNormalNotification(announcementEntity);
 
     }
 
@@ -125,7 +174,6 @@ public class VolunteerImpl implements VolunteerService {
         ProfileEntity memberToLeave = profileEntityRepository.findById(memberId).get();
         ProjectEntity project = projectEntityRepository.findById(projectId).get();
 
-       
         project.getTeamMembers().remove(memberToLeave);
         memberToLeave.getProjectsJoined().remove(project);
         // The join request status will become REJECTED   
@@ -133,7 +181,31 @@ public class VolunteerImpl implements VolunteerService {
         joinRequests.stream().filter((j) -> (j.getRequestor().getAccountId().equals(memberId))).forEachOrdered((j) -> {
             j.setStatus(JoinRequestStatusEnum.REJECTED);
         });
-        
+
+        // create announcement (notify project owners)
+        String memberToLeaveName = "";
+        if (memberToLeave instanceof IndividualEntity) {
+            memberToLeaveName = ((IndividualEntity) memberToLeave).getFirstName() + " " + ((IndividualEntity) memberToLeave).getLastName();
+        } else if (memberToLeave instanceof OrganisationEntity) {
+            memberToLeaveName = ((OrganisationEntity) memberToLeave).getOrganizationName();
+        }
+
+        List<ProfileEntity> projectOwners = project.getProjectOwners();
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle("Teammember Left Project");
+        announcementEntity.setContent("Teammember " + memberToLeaveName + "has left project '" + project.getProjectTitle()+"'.");
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.LEAVE_PROJECT);
+
+        // association
+        announcementEntity.getNotifiedUsers().addAll(projectOwners);
+        for (ProfileEntity p : projectOwners) {
+            p.getAnnouncements().add(announcementEntity);
+        }
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification         
+        announcementService.createNormalNotification(announcementEntity);
         projectEntityRepository.flush();
 
     }

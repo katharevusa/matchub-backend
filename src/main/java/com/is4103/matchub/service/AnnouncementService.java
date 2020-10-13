@@ -36,4 +36,6 @@ public interface AnnouncementService {
     public List<AnnouncementEntity> viewProjectPublicAnnouncements(Long projectId);   
     
     public AnnouncementEntity createProjectPublicAnnouncement(AnnouncementVO newAnnouncementVO) throws CreateAnnouncementException;
+    
+    public void createNormalNotification(AnnouncementEntity announcementEntity);
 }
