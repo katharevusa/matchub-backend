@@ -1062,74 +1062,74 @@ public class InitServiceImpl implements InitService {
         ProjectEntity project5 = projectEntityRepository.findById(5L).get();
         
         
-        ProfileEntity user1 = profileEntityRepository.findById(1L).get();
         ProfileEntity user2 = profileEntityRepository.findById(2L).get();
+        ProfileEntity user3 = profileEntityRepository.findById(3L).get();
         ProfileEntity user4 = profileEntityRepository.findById(4L).get();
         ProfileEntity user5 = profileEntityRepository.findById(5L).get();
-         ProfileEntity user7 = profileEntityRepository.findById(7L).get();
+        ProfileEntity user7 = profileEntityRepository.findById(7L).get();
          
        // every user follows project 1
-        project1.getProjectFollowers().add(user1);
         project1.getProjectFollowers().add(user2);
+        project1.getProjectFollowers().add(user3);
         project1.getProjectFollowers().add(user4);
         project1.getProjectFollowers().add(user5);
         project1.getProjectFollowers().add(user7);
         
-        user1.getProjectsFollowing().add(project1);
         user2.getProjectsFollowing().add(project1);
+        user3.getProjectsFollowing().add(project1);
         user4.getProjectsFollowing().add(project1);
         user5.getProjectsFollowing().add(project1);
         user7.getProjectsFollowing().add(project1);
         
         // every user follows project 2
-        project2.getProjectFollowers().add(user1);
         project2.getProjectFollowers().add(user2);
+        project2.getProjectFollowers().add(user3);
         project2.getProjectFollowers().add(user4);
         project2.getProjectFollowers().add(user5);
         project2.getProjectFollowers().add(user7);
         
-        user1.getProjectsFollowing().add(project2);
         user2.getProjectsFollowing().add(project2);
+        user3.getProjectsFollowing().add(project2);
         user4.getProjectsFollowing().add(project2);
         user5.getProjectsFollowing().add(project2);
         user7.getProjectsFollowing().add(project2);
         
         
         // every user follows project 3
-        project3.getProjectFollowers().add(user1);
         project3.getProjectFollowers().add(user2);
+        project3.getProjectFollowers().add(user3);
         project3.getProjectFollowers().add(user4);
         project3.getProjectFollowers().add(user5);
         project3.getProjectFollowers().add(user7);
         
-        user1.getProjectsFollowing().add(project3);
         user2.getProjectsFollowing().add(project3);
+        user3.getProjectsFollowing().add(project3);
         user4.getProjectsFollowing().add(project3);
         user5.getProjectsFollowing().add(project3);
         user7.getProjectsFollowing().add(project3);
         
         // every user follows project 4
-        project4.getProjectFollowers().add(user1);
         project4.getProjectFollowers().add(user2);
+        project4.getProjectFollowers().add(user3);
         project4.getProjectFollowers().add(user4);
         project4.getProjectFollowers().add(user5);
         project4.getProjectFollowers().add(user7);
         
-        user1.getProjectsFollowing().add(project4);
         user2.getProjectsFollowing().add(project4);
+        user3.getProjectsFollowing().add(project4);
         user4.getProjectsFollowing().add(project4);
         user5.getProjectsFollowing().add(project4);
         user7.getProjectsFollowing().add(project4);
         
         // every user follows project 5
-        project5.getProjectFollowers().add(user1);
         project5.getProjectFollowers().add(user2);
+        project5.getProjectFollowers().add(user3);
         project5.getProjectFollowers().add(user4);
         project5.getProjectFollowers().add(user5);
         project5.getProjectFollowers().add(user7);
         
-        user1.getProjectsFollowing().add(project5);
         user2.getProjectsFollowing().add(project5);
+        user3.getProjectsFollowing().add(project5);
         user4.getProjectsFollowing().add(project5);
         user5.getProjectsFollowing().add(project5);
         user7.getProjectsFollowing().add(project5);

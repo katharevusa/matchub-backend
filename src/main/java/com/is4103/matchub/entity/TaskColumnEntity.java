@@ -43,6 +43,8 @@ public class TaskColumnEntity {
     @NotNull
     private String columnDescription;
     
+    @Column(nullable = false)
+    @NotNull
     private Long kanbanBoardId;
     
     @OneToMany(mappedBy = "taskColumn")
