@@ -90,9 +90,13 @@ public abstract class ProfileEntity extends AccountEntity {
     private List<ProjectEntity> projectsJoined = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-//    @JsonIgnoreProperties("projectOwners")
     @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
     private List<ProjectEntity> projectsOwned = new ArrayList<>();
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"projectFollowers","joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
+    private List<ProjectEntity> projectsFollowing = new ArrayList<>();
+    
 
     @OneToMany(mappedBy = "requestor")
     private List<JoinRequestEntity> joinRequests = new ArrayList<>();
