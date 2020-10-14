@@ -5,10 +5,14 @@
  */
 package com.is4103.matchub.service;
 
+import org.springframework.stereotype.Service;
+
 /**
  *
  * @author longluqian
  */
+@Service
 public class TaskColumnServiceImpl implements TaskColumnService{
+    //create taskColumn
     
 }

@@ -13,7 +13,6 @@ import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
-import com.is4103.matchub.exception.ProjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -90,9 +89,11 @@ public class InitServiceImpl implements InitService {
         initCommunityBadges();
 
         //join request 
-
         initJoinRequest();
 
+        
+        // init project follower 
+        initProjectFollower();
     }
 
     private void initUsers() {
@@ -138,8 +139,7 @@ public class InitServiceImpl implements InitService {
         Set<String> skillsets = new HashSet<>(Arrays.asList("Good Communication Skills", "Leadership Skills", "Project Management Skills", "Professional Painter"));
         alexLow.setSkillSet(skillsets);
 
-        alexLow.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(1))));
-
+       
         alexLow.setCountryCode("+65");
         alexLow.setPhoneNumber("91234567");
         alexLow.setCountry("Singapore");
@@ -168,8 +168,7 @@ public class InitServiceImpl implements InitService {
         skillsets = new HashSet<>(Arrays.asList("Singing", "Playing the Guitar", "Trilingual", "General Surgery (GS)", "Verified First Aider"));
         ikjun.setSkillSet(skillsets);
 
-        ikjun.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(1))));
-
+        
         ikjun.setCountryCode("+82");
         ikjun.setPhoneNumber("011-465-9876");
         ikjun.setCountry("South Korea");
@@ -200,7 +199,6 @@ public class InitServiceImpl implements InitService {
         skillsets = new HashSet<>(Arrays.asList("Social Worker for Gender Equality"));
         sophia.setSkillSet(skillsets);
 
-        sophia.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2))));
 
         sophia.setCountryCode("+1");
         sophia.setPhoneNumber("604 598 5235");
@@ -286,7 +284,6 @@ public class InitServiceImpl implements InitService {
         skillsets = new HashSet<>(Arrays.asList("Hiking", "Nature Lover", "Pet Lover", "Verified First Aider"));
         songhwa.setSkillSet(skillsets);
 
-        songhwa.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(5), Long.valueOf(6), Long.valueOf(7))));
 
         songhwa.setCountryCode("+82");
         songhwa.setPhoneNumber("012-456-4321");
@@ -352,7 +349,6 @@ public class InitServiceImpl implements InitService {
         skillsets = new HashSet<>(Arrays.asList("Painting", "Drawing"));
         jeongha.setSkillSet(skillsets);
 
-        jeongha.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(5), Long.valueOf(6), Long.valueOf(7))));
 
         jeongha.setCountryCode("+82");
         jeongha.setPhoneNumber("022-179-4100");
@@ -381,8 +377,6 @@ public class InitServiceImpl implements InitService {
         billy.setProfileDescription("Teaching Makes A Difference");
         skillsets = new HashSet<>(Arrays.asList("Teaching", "Economist"));
         billy.setSkillSet(skillsets);
-
-        billy.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(5), Long.valueOf(6), Long.valueOf(7))));
 
         billy.setCountryCode("+65");
         billy.setPhoneNumber("90004321");
@@ -758,7 +752,7 @@ public class InitServiceImpl implements InitService {
         projectEntity10.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity10);
         /* end of project badge */
-        
+
         ProjectEntity projectEntity11 = new ProjectEntity("Protect endangered zebras in Kenya", "The Grevy's zebra (Equus grevyi) is one of Africa's most endangered large mammals. They are a separate species of zebra, distinct from the widely-recognized common zebra (or plains zebra) through their large, fluffy ears, white belly, and comparatively thinner black stripes. Once distributed across the horn of Africa, 92% of the remaining Grevy’s zebra are now only found in Kenya, with a few small isolated populations in Ethiopia.", "Kenya", LocalDateTime.parse("2019-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity11.getSdgs().add(sustainableCities);
         projectEntity11.setUpvotes(35);
@@ -775,7 +769,7 @@ public class InitServiceImpl implements InitService {
         projectEntity11.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity11);
         /* end of project badge */
-        
+
         ProjectEntity projectEntity12 = new ProjectEntity("Close the gap in eye health for Indigenous Australians", "For decades, Aboriginal and Torres Strait Lander people have experienced low health outcomes than non-indigenous Australians. Today, there’s still a ten-year gap in life expectancy. Poor eye health and a lack of easy access to services play a part in this.", "Australia", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity12.getSdgs().add(goodHealth);
         projectEntity12.setUpvotes(35);
@@ -792,7 +786,7 @@ public class InitServiceImpl implements InitService {
         projectEntity12.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity12);
         /* end of project badge */
-        
+
         ProjectEntity projectEntity13 = new ProjectEntity("Build School Toilets for Nepal", "Building School-Friendly Toilets for Girls in Nepal.", "Nepal", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity13.getSdgs().add(goodHealth);
         projectEntity13.setUpvotes(35);
@@ -1042,14 +1036,14 @@ public class InitServiceImpl implements InitService {
         badgeEntityRepository.save(fiveYears);
     }
 
-    public void initJoinRequest() {
+    private void initJoinRequest() {
         try {
             projectService.createJoinRequest(3L, 4L);
             projectService.createJoinRequest(3L, 6L);
         } catch (Exception e) {
             System.err.println("Error in init join request");
         }
-        
+
         try {
             projectService.createJoinRequest(13L, 11L);
             projectService.createJoinRequest(13L, 12L);
@@ -1057,6 +1051,90 @@ public class InitServiceImpl implements InitService {
             System.err.println("Error in init join request");
         }
 
+    }
+    
+    
+    private void initProjectFollower(){
+        ProjectEntity project1 = projectEntityRepository.findById(1L).get();
+        ProjectEntity project2 = projectEntityRepository.findById(2L).get();
+        ProjectEntity project3 = projectEntityRepository.findById(3L).get();
+        ProjectEntity project4 = projectEntityRepository.findById(4L).get();
+        ProjectEntity project5 = projectEntityRepository.findById(5L).get();
+        
+        
+        ProfileEntity user1 = profileEntityRepository.findById(1L).get();
+        ProfileEntity user2 = profileEntityRepository.findById(2L).get();
+        ProfileEntity user4 = profileEntityRepository.findById(4L).get();
+        ProfileEntity user5 = profileEntityRepository.findById(5L).get();
+         ProfileEntity user7 = profileEntityRepository.findById(7L).get();
+         
+       // every user follows project 1
+        project1.getProjectFollowers().add(user1);
+        project1.getProjectFollowers().add(user2);
+        project1.getProjectFollowers().add(user4);
+        project1.getProjectFollowers().add(user5);
+        project1.getProjectFollowers().add(user7);
+        
+        user1.getProjectsFollowing().add(project1);
+        user2.getProjectsFollowing().add(project1);
+        user4.getProjectsFollowing().add(project1);
+        user5.getProjectsFollowing().add(project1);
+        user7.getProjectsFollowing().add(project1);
+        
+        // every user follows project 2
+        project2.getProjectFollowers().add(user1);
+        project2.getProjectFollowers().add(user2);
+        project2.getProjectFollowers().add(user4);
+        project2.getProjectFollowers().add(user5);
+        project2.getProjectFollowers().add(user7);
+        
+        user1.getProjectsFollowing().add(project2);
+        user2.getProjectsFollowing().add(project2);
+        user4.getProjectsFollowing().add(project2);
+        user5.getProjectsFollowing().add(project2);
+        user7.getProjectsFollowing().add(project2);
+        
+        
+        // every user follows project 3
+        project3.getProjectFollowers().add(user1);
+        project3.getProjectFollowers().add(user2);
+        project3.getProjectFollowers().add(user4);
+        project3.getProjectFollowers().add(user5);
+        project3.getProjectFollowers().add(user7);
+        
+        user1.getProjectsFollowing().add(project3);
+        user2.getProjectsFollowing().add(project3);
+        user4.getProjectsFollowing().add(project3);
+        user5.getProjectsFollowing().add(project3);
+        user7.getProjectsFollowing().add(project3);
+        
+        // every user follows project 4
+        project4.getProjectFollowers().add(user1);
+        project4.getProjectFollowers().add(user2);
+        project4.getProjectFollowers().add(user4);
+        project4.getProjectFollowers().add(user5);
+        project4.getProjectFollowers().add(user7);
+        
+        user1.getProjectsFollowing().add(project4);
+        user2.getProjectsFollowing().add(project4);
+        user4.getProjectsFollowing().add(project4);
+        user5.getProjectsFollowing().add(project4);
+        user7.getProjectsFollowing().add(project4);
+        
+        // every user follows project 5
+        project5.getProjectFollowers().add(user1);
+        project5.getProjectFollowers().add(user2);
+        project5.getProjectFollowers().add(user4);
+        project5.getProjectFollowers().add(user5);
+        project5.getProjectFollowers().add(user7);
+        
+        user1.getProjectsFollowing().add(project5);
+        user2.getProjectsFollowing().add(project5);
+        user4.getProjectsFollowing().add(project5);
+        user5.getProjectsFollowing().add(project5);
+        user7.getProjectsFollowing().add(project5);
+         
+        
     }
 
 }

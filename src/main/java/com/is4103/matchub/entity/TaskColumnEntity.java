@@ -43,12 +43,17 @@ public class TaskColumnEntity {
     @NotNull
     private String columnDescription;
     
+    private Long kanbanBoardId;
+    
     @OneToMany(mappedBy = "taskColumn")
     private List<TaskEntity> listOfTasks = new ArrayList<>();
+    
+    
 
-    public TaskColumnEntity(String columnTitle, String columnDescription) {
+    public TaskColumnEntity(String columnTitle, String columnDescription, Long kanbanBoardId) {
         this.columnTitle = columnTitle;
         this.columnDescription = columnDescription;
+        this.kanbanBoardId = kanbanBoardId;
     }
     
     

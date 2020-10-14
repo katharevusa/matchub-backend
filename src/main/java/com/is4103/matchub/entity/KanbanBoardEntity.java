@@ -51,7 +51,7 @@ public class KanbanBoardEntity {
     @NotNull
     private Long projectId;
 
-    @OneToMany(mappedBy = "kanbanBoard")
+    @OneToMany
     private List<TaskColumnEntity> taskColumns = new ArrayList<>();
 
     public KanbanBoardEntity(String kanbanBoardTitle, String kanbanBoardDescription) {

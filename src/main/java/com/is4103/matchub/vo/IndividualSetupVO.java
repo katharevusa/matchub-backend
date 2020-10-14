@@ -70,8 +70,8 @@ public class IndividualSetupVO {
 
         //convert array to set
         Set<Long> longSet = new HashSet<>(Arrays.asList(this.projectFollowing));
-        individual.getProjectFollowing().clear();
-        individual.setProjectFollowing(longSet);
+//        individual.getProjectFollowing().clear();
+//        individual.setProjectFollowing(longSet);
         
         individual.setGenderEnum(GenderEnum.valueOf(this.genderEnum));
 

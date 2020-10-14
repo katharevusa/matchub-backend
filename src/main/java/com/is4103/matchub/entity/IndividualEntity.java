@@ -35,8 +35,6 @@ public class IndividualEntity extends ProfileEntity {
     @Column(nullable = true, length = 1000)
     private String profileDescription;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Long> projectFollowing = new HashSet<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<String> skillSet = new HashSet<>();
