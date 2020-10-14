@@ -107,6 +107,9 @@ public class ResourceEntity {
     @Column(nullable = true)
     private Long matchedProjectId;
     
+    @Column(nullable = true)
+    private String country;
+    
 
     public ResourceEntity(String resourceName, String resourceDescription, Long resourceCategoryId, Long resourceOwnerId, Integer units) {
         this.resourceName = resourceName;

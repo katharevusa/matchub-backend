@@ -84,13 +84,7 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
-    public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTimeStr, String endTimeStr, Pageable pageable){
-       
-        
-        
-        
-        
-        
+    public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTimeStr, String endTimeStr, String country, Pageable pageable){       
         List<ResourceEntity> initResource = new ArrayList();
         if (keyword.equals("")) {
             System.err.println("key word is null");
@@ -169,11 +163,24 @@ public class ResourceServiceImpl implements ResourceService {
             resultFilterByEndDate = resultFilterByStartDate;
         }
         
+        //filter by country
+        List<ResourceEntity> resultFilterByCountry = new ArrayList();
+        if(!country.equals("")){
+            for(ResourceEntity r : resultFilterByEndDate){
+                if(r.getCountry().equals(country)){
+                    resultFilterByCountry.add(r);
+                }
+            } 
+        }else{
+            resultFilterByCountry = resultFilterByEndDate;
+        }
+        
+        
        
         
         Long start = pageable.getOffset();
-        Long end = (start + pageable.getPageSize()) > resultFilterByEndDate.size() ? resultFilterByEndDate.size() : (start + pageable.getPageSize());
-        Page<ResourceEntity> pages = new PageImpl<ResourceEntity>(resultFilterByEndDate.subList(start.intValue(), end.intValue()), pageable, resultFilterByEndDate.size());
+        Long end = (start + pageable.getPageSize()) > resultFilterByCountry.size() ? resultFilterByCountry.size() : (start + pageable.getPageSize());
+        Page<ResourceEntity> pages = new PageImpl<ResourceEntity>(resultFilterByCountry.subList(start.intValue(), end.intValue()), pageable, resultFilterByCountry.size());
 
         return pages;
     }

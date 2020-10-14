@@ -41,6 +41,8 @@ public class ResourceVO {
     
     private LocalDateTime endTime;
     
+    private String country;
+    
    
     @NotNull(message = "Resource category can not be null")
     private Long resourceCategoryId;
@@ -61,6 +63,9 @@ public class ResourceVO {
         newResource.setResourceCategoryId(this.resourceCategoryId);
         newResource.setResourceOwnerId(this.resourceOwnerId);
         newResource.setUnits(this.units);
+        if(this.country!=null){
+            newResource.setCountry(country);
+        }
     }
     
     public void updateResource(ResourceEntity newResource){
@@ -70,6 +75,9 @@ public class ResourceVO {
         newResource.setEndTime(this.endTime);
         newResource.setResourceCategoryId(this.resourceCategoryId);
         newResource.setUnits(this.units);
+        if(this.country!=null){
+            newResource.setCountry(country);
+        }
         
     }
    
