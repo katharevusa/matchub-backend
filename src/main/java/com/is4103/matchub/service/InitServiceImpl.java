@@ -470,10 +470,10 @@ public class InitServiceImpl implements InitService {
         ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation", "All Transportation Resources", 1, 1, "hour");
         resourceCategoryService.createResourceCategory(transportationCategory);
 
-        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Eductaion", "All Education Resources", 1, 5, "set");
+        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Education", "All Education Resources", 1, 5, "set");
         resourceCategoryService.createResourceCategory(educationCategory);
 
-        ResourceCategoryEntity clothCategory = new ResourceCategoryEntity("clothes", "All clothes Resources", 1, 5, "piece");
+        ResourceCategoryEntity clothCategory = new ResourceCategoryEntity("Clothes", "All clothes Resources", 1, 5, "piece");
         resourceCategoryService.createResourceCategory(clothCategory);
 
     }

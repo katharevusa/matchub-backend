@@ -9,12 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,9 +42,17 @@ public class KanbanBoardEntity {
     @Column(nullable = false)
     @NotNull
     private String kanbanBoardDescription;
+    
+    @NotNull
+    @Column(name = "channelUid", updatable = false, nullable = false, unique = true)
+    private String channelUid;
+    
+    @Column(nullable = false)
+    @NotNull
+    private Long projectId;
 
     @OneToMany(mappedBy = "kanbanBoard")
-    private List<MilestoneEntity> milestones = new ArrayList<>();
+    private List<TaskColumnEntity> taskColumns = new ArrayList<>();
 
     public KanbanBoardEntity(String kanbanBoardTitle, String kanbanBoardDescription) {
         this.kanbanBoardTitle = kanbanBoardTitle;

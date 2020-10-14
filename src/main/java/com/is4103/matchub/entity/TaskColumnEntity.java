@@ -5,16 +5,14 @@
  */
 package com.is4103.matchub.entity;
 
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,31 +21,36 @@ import lombok.NoArgsConstructor;
 
 /**
  *
- * @author ngjin
+ * @author longluqian
  */
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MessageEntity {
-
+public class TaskColumnEntity {
+    
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long messageId;
-
+    private Long taskColumnId;
+    
     @Column(nullable = false)
     @NotNull
-    private String messageContent;
-
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    private String columnTitle;
+    
+    @Column(nullable = false)
     @NotNull
-    private LocalDateTime timestamp;
+    private String columnDescription;
+    
+    @OneToMany(mappedBy = "taskColumn")
+    private List<TaskEntity> listOfTasks = new ArrayList<>();
 
-    public MessageEntity(String messageContent, LocalDateTime timestamp) {
-        this.messageContent = messageContent;
-        this.timestamp = timestamp;
+    public TaskColumnEntity(String columnTitle, String columnDescription) {
+        this.columnTitle = columnTitle;
+        this.columnDescription = columnDescription;
     }
-
+    
+    
+    
 }
