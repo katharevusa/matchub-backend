@@ -47,8 +47,6 @@ public class ChannelEntity {
     @NotNull
     private String channelDescription;
 
-    @OneToMany
-    private List<MessageEntity> messages = new ArrayList<>();
     
     @ManyToMany
     private List<ProfileEntity> channelMembers = new ArrayList<>();

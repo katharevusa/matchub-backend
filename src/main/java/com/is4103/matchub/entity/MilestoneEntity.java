@@ -45,12 +45,12 @@ public class MilestoneEntity {
     @NotNull
     private String description;
 
-    @OneToMany(mappedBy = "milestone")
-    private List<TaskEntity> tasks = new ArrayList<>();
-
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private KanbanBoardEntity kanbanBoard;
+//    @OneToMany(mappedBy = "milestone")
+//    private List<TaskEntity> tasks = new ArrayList<>();
+//
+//    @ManyToOne(optional = false)
+//    @JoinColumn(nullable = false)
+//    private KanbanBoardEntity kanbanBoard;
 
     public MilestoneEntity(String title, String description) {
         this.title = title;

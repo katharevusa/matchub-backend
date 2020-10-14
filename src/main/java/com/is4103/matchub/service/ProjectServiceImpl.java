@@ -782,6 +782,7 @@ public class ProjectServiceImpl implements ProjectService {
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.JOIN_PROJ_REQUEST);
         announcementEntity.setJoinRequestId(joinRequest.getJoinRequestId());
+        announcementEntity.setProjectId(projectId);
 
         // association
         announcementEntity.getNotifiedUsers().addAll(projectOwners);

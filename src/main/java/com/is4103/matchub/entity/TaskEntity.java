@@ -8,9 +8,12 @@ package com.is4103.matchub.entity;
 import com.is4103.matchub.enumeration.TaskStatusEnum;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -52,32 +55,36 @@ public class TaskEntity {
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @NotNull
-    private LocalDateTime expectedStartTime;
+    private LocalDateTime createdTime;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @NotNull
-    private LocalDateTime expectedEndTime;
-
-    @Column(nullable = false)
-    @NotNull
-    private TaskStatusEnum statusEnum;
+    private LocalDateTime expectedDeadline;
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    private MilestoneEntity milestone;
+    private TaskColumnEntity taskColumn;
+
+    //Key: filename, Value = docPath
+    @ElementCollection
+    private Map<String, String> documents = new HashMap<>();
+
+    //Key: label, Value = colour
+    @ElementCollection
+    private Map<String, String> labelAndColour = new HashMap<>();
+
+    @Column(nullable = true)
+    private Long taskLeaderId;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    private List<ProfileEntity> profiles = new ArrayList<>();
+    private List<ProfileEntity> taskdoers = new ArrayList<>();
 
-    @OneToMany
-    private List<DocumentEntity> documents = new ArrayList<>();
-
-    public TaskEntity(String taskTitle, String taskDescription, LocalDateTime expectedStartTime, LocalDateTime expectedEndTime, TaskStatusEnum statusEnum) {
+    public TaskEntity(String taskTitle, String taskDescription, LocalDateTime createdTime, LocalDateTime expectedDeadline) {
         this.taskTitle = taskTitle;
         this.taskDescription = taskDescription;
-        this.expectedStartTime = expectedStartTime;
-        this.expectedEndTime = expectedEndTime;
-        this.statusEnum = statusEnum;
+        this.createdTime = createdTime;
+        this.expectedDeadline = expectedDeadline;
     }
 
+    
 }
