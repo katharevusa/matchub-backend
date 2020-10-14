@@ -220,4 +220,25 @@ public class AnnouncementImpl implements AnnouncementService {
         firebaseService.sendNotificationsToUsers(sendNotificationsToUsersVO);
     }
     
+    
+    @Override
+    public void readAllAnnouncements(Long userId){
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+        for(AnnouncementEntity a : user.getAnnouncements()){
+            if(!a.getViewedUserIds().contains(userId)){
+                a.getViewedUserIds().add(userId);
+                announcementEntityRepository.saveAndFlush(a);
+            }
+            
+        }    
+        
+    }
+    
+    @Override
+    public void clearAllAnnouncemnents(Long userId){
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+        user.setAnnouncements(new ArrayList<>());
+        profileEntityRepository.saveAndFlush(user);   
+    }
+    
 }

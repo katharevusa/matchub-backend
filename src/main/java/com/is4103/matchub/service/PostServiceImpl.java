@@ -90,6 +90,8 @@ public class PostServiceImpl implements PostService {
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.NEW_POST);
         announcementEntity.setPostId(newPost.getPostId());
+        announcementEntity.setNewFollowerAndNewPosterProfileId(profile.getAccountId());
+        announcementEntity.setNewFollowerAndNewPosterUUID(profile.getUuid());
         // association
         announcementEntity.getNotifiedUsers().addAll(follower);
         for (ProfileEntity p : follower) {
