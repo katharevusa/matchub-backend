@@ -592,6 +592,13 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getSdgs().add(poverty);
         projectEntity3.getSdgs().add(zeroHunger);
         projectEntity3.setUpvotes(25);
+        
+        //relatedResources
+        List<String> relatedResources = new ArrayList<>();
+        relatedResources.add("Water");
+        relatedResources.add("Location");
+        projectEntity3.setRelatedResources(relatedResources);
+        
         projectEntity3.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity3.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project3.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/project3.jpg");

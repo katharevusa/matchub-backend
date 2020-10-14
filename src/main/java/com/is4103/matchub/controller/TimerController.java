@@ -5,8 +5,12 @@
  */
 package com.is4103.matchub.controller;
 
+import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.service.MatchingService;
+import com.is4103.matchub.service.MatchingServiceImpl;
 import com.is4103.matchub.service.TimerService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +32,9 @@ public class TimerController {
     @Autowired
     MatchingService matchingService;
 
+    @Autowired
+    MatchingServiceImpl matchingServiceImpl;
+
     //manually trigger the long service award 
     @RequestMapping(method = RequestMethod.POST, value = "/executeLongServiceAwardDemo/{accountId}/{noOfYears}")
     public String executeLongServiceAwardDemo(@PathVariable("accountId") Long accountId, @PathVariable("noOfYears") Integer noOfYears) {
@@ -36,7 +43,12 @@ public class TimerController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/ws4j")
     public void ws4j(@RequestParam("word1") String word1, @RequestParam("word2") String word2) {
-        matchingService.runWS4J(word1, word2);
+        matchingServiceImpl.runWS4J(word1, word2);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendResources/{projectId}")
+    public List<ResourceEntity> recommendResources(@PathVariable("projectId") Long projectId) throws ProjectNotFoundException {
+        return matchingService.recommendResources(projectId);
     }
 
 }

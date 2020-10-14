@@ -5,11 +5,15 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.exception.ProjectNotFoundException;
+import java.util.List;
+
 /**
  *
  * @author ngjin
  */
 public interface MatchingService {
 
-    void runWS4J(String w1, String w2);
+    List<ResourceEntity> recommendResources(Long projectId) throws ProjectNotFoundException;
 }
