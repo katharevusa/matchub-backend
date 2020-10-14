@@ -172,7 +172,7 @@ public class InitServiceImpl implements InitService {
 
         ikjun.setCountryCode("+82");
         ikjun.setPhoneNumber("011-465-9876");
-        ikjun.setCountry("South Korea");
+        ikjun.setCountry("Korea, Republic of South Korea");
         ikjun.setCity("Seoul");
         ikjun.setProfilePhoto("https://localhost:8443/api/v1/files/init/ikjun.jpeg");
         ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
@@ -290,7 +290,7 @@ public class InitServiceImpl implements InitService {
 
         songhwa.setCountryCode("+82");
         songhwa.setPhoneNumber("012-456-4321");
-        songhwa.setCountry("South Korea");
+        songhwa.setCountry("Korea, Republic of South Korea");
         songhwa.setCity("Seoul");
         songhwa.setProfilePhoto("https://localhost:8443/api/v1/files/init/songhwa.jpg");
         songhwa.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(10))));
@@ -323,7 +323,7 @@ public class InitServiceImpl implements InitService {
         kfem.setKahs(new HashSet<>(Arrays.asList(ikjun.getAccountId())));
         kfem.setCountryCode("+82");
         kfem.setPhoneNumber("02-735-7000");
-        kfem.setCountry("South Korea");
+        kfem.setCountry("Korea, Republic of South Korea");
         kfem.setCity("Seoul");
         kfem.setProfilePhoto("https://localhost:8443/api/v1/files/init/kfem.png");
         kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId(), Long.valueOf(11))));
@@ -356,7 +356,7 @@ public class InitServiceImpl implements InitService {
 
         jeongha.setCountryCode("+82");
         jeongha.setPhoneNumber("022-179-4100");
-        jeongha.setCountry("South Korea");
+        jeongha.setCountry("Korea, Republic of South Korea");
         jeongha.setCity("Seoul");
         jeongha.setProfilePhoto("https://localhost:8443/api/v1/files/init/jeongha.jpg");
         jeongha.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(10))));
