@@ -57,6 +57,6 @@ public interface ResourceService {
     
     public Page<ResourceEntity> searchResourceByKeywords(String keyword, Pageable pageable);
     
-    public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTime, String endTime, Pageable pageable);
+    public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTime, String endTime, String country, Pageable pageable);
 
 }

@@ -6,11 +6,13 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.JoinRequestEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.exception.CompleteProjectException;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
+import com.is4103.matchub.exception.FollowProjectException;
 import com.is4103.matchub.exception.JoinProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.RevokeDownvoteException;
@@ -24,7 +26,6 @@ import java.io.IOException;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -86,5 +87,13 @@ public interface ProjectService {
     public void completeProject(Long projectId, Long profileId) throws CompleteProjectException;
 
     public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, String country, ProjectStatusEnum status, Pageable pageable);
+
+    public void UnfollowProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException;
     
+    public List<ProjectEntity> getListOfFollowingProjectsByUserId(Long userId) throws UserNotFoundException;
+    
+    public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId)throws ProjectNotFoundException;
+    
+    public ProjectEntity followProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException;
+
 }

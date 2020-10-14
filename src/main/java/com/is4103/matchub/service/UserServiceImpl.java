@@ -309,6 +309,8 @@ public class UserServiceImpl implements UserService {
             announcementEntity.setContent(profileName + " just followed you.");
             announcementEntity.setTimestamp(LocalDateTime.now());
             announcementEntity.setType(AnnouncementTypeEnum.NEW_PROFILE_FOLLOWER);
+            announcementEntity.setNewFollowerAndNewPosterProfileId(accountId);
+            announcementEntity.setNewFollowerAndNewPosterUUID(profile.getUuid());
 
             // association
             announcementEntity.getNotifiedUsers().add(toFollowProfile);

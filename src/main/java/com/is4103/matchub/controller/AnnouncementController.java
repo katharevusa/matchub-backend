@@ -90,5 +90,15 @@ public class AnnouncementController {
          announcement.viewAnnouncement(announcementId, viewerId);
     }
     
+    //clear all announcements
+    @RequestMapping(method = RequestMethod.DELETE, value = "/clearAllAnnouncementsForUser")
+    public void clearAllAnnouncementsForUser( @RequestParam(value = "userId",required = true) Long userId){
+        announcement.clearAllAnnouncemnents(userId);
+    }
+    // read all announcements
+    @RequestMapping(method = RequestMethod.PUT, value = "/viewAllAnnouncements")
+    public void viewAllAnnouncements(@RequestParam(value = "userId",required = true) Long userId){
+         announcement.readAllAnnouncements(userId);
+    }
     
 }

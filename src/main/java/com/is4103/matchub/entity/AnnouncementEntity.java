@@ -10,6 +10,7 @@ import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -85,6 +86,12 @@ public class AnnouncementEntity {
     
     @Column(nullable = true)
     private Long joinRequestId;
+    
+    @Column(nullable = true)
+    private UUID newFollowerAndNewPosterUUID;
+    
+    @Column(nullable = true)
+    private Long newFollowerAndNewPosterProfileId;
 
     public AnnouncementEntity(String title, String content, LocalDateTime timestamp, AnnouncementTypeEnum type) {
         this.title = title;

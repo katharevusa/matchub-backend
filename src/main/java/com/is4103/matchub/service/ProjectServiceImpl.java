@@ -20,6 +20,7 @@ import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.exception.CompleteProjectException;
 import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
+import com.is4103.matchub.exception.FollowProjectException;
 import com.is4103.matchub.exception.JoinProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.RevokeDownvoteException;
@@ -38,7 +39,6 @@ import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -79,9 +79,12 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Autowired
     private FirebaseService firebaseService;
-    
+
     @Autowired
-    private  AnnouncementEntityRepository announcementEntityRepository;
+    private AnnouncementEntityRepository announcementEntityRepository;
+
+    @Autowired
+    private AnnouncementService announcementService;
 
     @Override
     public ProjectEntity createProject(ProjectCreateVO vo) {
@@ -259,7 +262,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         projectEntityRepository.saveAndFlush(project);
-     
+
     }
 
     // manually complete project for early completion of project, reputation point and review should be given
@@ -330,7 +333,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, String country, ProjectStatusEnum status, Pageable pageable) {
         // first search by keywords
-    
+
         List<ProjectEntity> initProjects = new ArrayList();
         if (keyword.equals("")) {
             System.err.println("key word is null");
@@ -358,7 +361,6 @@ public class ProjectServiceImpl implements ProjectService {
             System.err.println("country is null");
             resultFilterByCountry = initProjects;
         }
-       
 
         // filter by status
         List<ProjectEntity> resultFilterByStatus = new ArrayList();
@@ -373,21 +375,21 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         // filter by sdgs
-        System.err.println("sdgIds:"+sdgIds.toString());
-        System.err.println("sdgIds.contains(4);"+sdgIds.contains(4L));
+        System.err.println("sdgIds:" + sdgIds.toString());
+        System.err.println("sdgIds.contains(4);" + sdgIds.contains(4L));
         List<ProjectEntity> resultFilterBySDGs = new ArrayList();
-          if (!sdgIds.isEmpty()) {
+        if (!sdgIds.isEmpty()) {
             for (ProjectEntity p : resultFilterByStatus) {
-                System.err.println("P "+p.getProjectId());
+                System.err.println("P " + p.getProjectId());
                 boolean contain = false;
                 for (SDGEntity s : p.getSdgs()) {
-                    System.out.println("HAHA" +s.getSdgId());
+                    System.out.println("HAHA" + s.getSdgId());
                     if (sdgIds.contains(s.getSdgId())) {
-                        System.err.println(" contain"+ s.getSdgId());
+                        System.err.println(" contain" + s.getSdgId());
                         contain = true;
                     }
                 }
-                if (contain==true) {
+                if (contain == true) {
                     resultFilterBySDGs.add(p);
                 }
             }
@@ -747,7 +749,6 @@ public class ProjectServiceImpl implements ProjectService {
         joinRequest.setRequestor(requestor);
         requestor.getJoinRequests().add(joinRequest);
 
-        
         // yet to create actual entity (before sending notification)
         List<String> projectOwnerUuids = new ArrayList<>();
         for (ProfileEntity owner : project.getProjectOwners()) {
@@ -781,7 +782,7 @@ public class ProjectServiceImpl implements ProjectService {
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.JOIN_PROJ_REQUEST);
         announcementEntity.setJoinRequestId(joinRequest.getJoinRequestId());
-        
+
         // association
         announcementEntity.getNotifiedUsers().addAll(projectOwners);
         for (ProfileEntity p : projectOwners) {
@@ -789,7 +790,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
         announcementEntityRepository.saveAndFlush(announcementEntity);
 
-        return joinRequest ;
+        return joinRequest;
     }
 
     @Override
@@ -808,6 +809,107 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return listOfProjects;
 
+    }
+
+    @Override
+    public ProjectEntity followProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException {
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        Optional<ProfileEntity> profOptional = profileEntityRepository.findById(followerId);
+
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Unable to follow: Project not exist");
+        }
+
+        if (!profOptional.isPresent()) {
+            throw new UserNotFoundException("Unable to follow: User not found");
+        }
+
+        ProjectEntity project = projectOptional.get();
+        ProfileEntity follower = profOptional.get();
+        if (project.getProjectFollowers().contains(follower)) {
+            throw new FollowProjectException("You are already following this project!");
+        }
+
+        project.getProjectFollowers().add(follower);
+        follower.getProjectsFollowing().add(project);
+        project = projectEntityRepository.saveAndFlush(project);
+        profileEntityRepository.saveAndFlush(follower);
+
+        //announce project owners
+        String followerName = "";
+        if (follower instanceof IndividualEntity) {
+            followerName = ((IndividualEntity) follower).getFirstName() + " " + ((IndividualEntity) follower).getLastName();
+        } else if (follower instanceof OrganisationEntity) {
+            followerName = ((OrganisationEntity) follower).getOrganizationName();
+        }
+
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle("New Project Follower");
+        announcementEntity.setContent("Your project '" + project.getProjectTitle() + "' has a new follower '" + followerName + "'.");
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.NEW_PROJECT_FOLLOWER);
+        announcementEntity.setNewFollowerAndNewPosterProfileId(followerId);
+        announcementEntity.setNewFollowerAndNewPosterUUID(follower.getUuid());
+        // association
+        announcementEntity.getNotifiedUsers().addAll(project.getProjectOwners());
+        for (ProfileEntity p : project.getProjectOwners()) {
+            p.getAnnouncements().add(announcementEntity);
+        }
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification         
+        announcementService.createNormalNotification(announcementEntity);
+
+        return project;
+    }
+
+    @Override
+    public void UnfollowProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException {
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        Optional<ProfileEntity> profOptional = profileEntityRepository.findById(followerId);
+
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Unable to unfollow project: Project not exist");
+        }
+
+        if (!profOptional.isPresent()) {
+            throw new UserNotFoundException("Unable to unfollow project: User not found");
+        }
+
+        ProjectEntity project = projectOptional.get();
+        ProfileEntity follower = profOptional.get();
+        if (!project.getProjectFollowers().contains(follower)) {
+            throw new FollowProjectException("You have already unfollowed this project!");
+        }
+
+        project.getProjectFollowers().remove(follower);
+        follower.getProjectsFollowing().remove(project);
+        projectEntityRepository.saveAndFlush(project);
+        profileEntityRepository.saveAndFlush(follower);
+
+    }
+
+    @Override
+    public List<ProjectEntity> getListOfFollowingProjectsByUserId(Long userId) throws UserNotFoundException {
+        Optional<ProfileEntity> profOptional = profileEntityRepository.findById(userId);
+        if (!profOptional.isPresent()) {
+            throw new UserNotFoundException("Unable to get following projects: User not found");
+        }
+
+        ProfileEntity user = profOptional.get();
+        return user.getProjectsFollowing();
+
+    }
+    
+    @Override 
+    public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId)throws ProjectNotFoundException{
+        Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
+        if (!projectOptional.isPresent()) {
+            throw new ProjectNotFoundException("Unable to get project follower: Project not exist");
+        }
+
+        ProjectEntity project = projectOptional.get();
+        return project.getProjectFollowers();
     }
 
 }
