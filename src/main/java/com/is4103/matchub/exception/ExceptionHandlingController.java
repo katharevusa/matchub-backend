@@ -506,4 +506,15 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+    
+      @ExceptionHandler(value = FollowProjectException.class)
+    public ResponseEntity<ExceptionResponse> followProjectException(FollowProjectException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Error following project");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    
+    }
 }

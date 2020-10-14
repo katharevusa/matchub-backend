@@ -143,6 +143,11 @@ public class ProjectEntity {
     @ManyToMany
     @JsonIgnoreProperties({"hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> teamMembers = new ArrayList<>();
+    
+    @ManyToMany
+    @JsonIgnoreProperties({"projectsFollowing","hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
+    private List<ProfileEntity> projectFollowers = new ArrayList<>();
+    
 
     @OneToMany(mappedBy = "project")
     private List<ChannelEntity> channels = new ArrayList<>();

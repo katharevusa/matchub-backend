@@ -61,24 +61,23 @@ public class ResourceController {
     Page<ResourceEntity> getAllResources(Pageable pageable) {
         return resourceService.getAllResources(pageable);
     }
-    
+
     // resource global search method
     // if availabillity is empty, will not be filtered by availibility
     // startTime - endTime: those resource within this time range + resource with no start & end time will be returned
     @RequestMapping(method = RequestMethod.GET, value = "/resourceGlobalSearch")
-    public Page<ResourceEntity> resourceGlobalSearch(@RequestParam(value = "keywords", defaultValue ="")String keywords, @RequestParam(value = "categoryIds", defaultValue ="") List<Long> categoryIds, @RequestParam(value = "availability") Boolean availability,@RequestParam(value = "startTime", defaultValue = "") String startTime,@RequestParam(value = "endTime",defaultValue = "") String endTime, Pageable pageable) {  
-        System.err.println("keywords:"+keywords);
-        System.err.println("categoryIds"+categoryIds.toString());
-        System.err.println("availability"+availability);
-        System.err.println("startTime"+startTime);
-        System.err.println("endTime"+endTime);
-        return resourceService.resourceGlobalSearch(keywords, categoryIds, availability, startTime, endTime, pageable);
+    public Page<ResourceEntity> resourceGlobalSearch(@RequestParam(value = "keywords", defaultValue = "") String keywords, @RequestParam(value = "categoryIds", defaultValue = "") List<Long> categoryIds, @RequestParam(value = "availability") Boolean availability, @RequestParam(value = "startTime", defaultValue = "") String startTime, @RequestParam(value = "endTime", defaultValue = "") String endTime, @RequestParam(value = "country", defaultValue = "") String country, Pageable pageable) {
+        System.err.println("keywords:" + keywords);
+        System.err.println("categoryIds" + categoryIds.toString());
+        System.err.println("availability" + availability);
+        System.err.println("startTime" + startTime);
+        System.err.println("endTime" + endTime);
+        return resourceService.resourceGlobalSearch(keywords, categoryIds, availability, startTime, endTime, country, pageable);
     }
-    
-    
+
     //get list of resources by list of resource ids
     @RequestMapping(method = RequestMethod.GET, value = "/getListOfResourcesByIds")
-    List<ResourceEntity> getListOfResourcesByIds(List<Long> ids) throws ResourceNotFoundException{
+    List<ResourceEntity> getListOfResourcesByIds(List<Long> ids) throws ResourceNotFoundException {
         return resourceService.getResourcesByListOfId(ids);
     }
 
@@ -92,9 +91,9 @@ public class ResourceController {
     Page<ResourceEntity> getHostedResources(Pageable pageable, Long profileId) {
         return resourceService.getHostedResources(profileId, pageable);
     }
-    
+
     // get resource by keywords
-     @RequestMapping(method = RequestMethod.GET, value = "/searchResourceByKeywords")
+    @RequestMapping(method = RequestMethod.GET, value = "/searchResourceByKeywords")
     public Page<ResourceEntity> searchResourceByKeywords(String keyword, Pageable pageable) {
         return resourceService.searchResourceByKeywords(keyword, pageable);
     }
@@ -103,9 +102,9 @@ public class ResourceController {
     public ResourceEntity updateResourceProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, @RequestParam("resourceId") Long resourceId) throws ResourceNotFoundException {
         return resourceService.setResourceProfilePic(resourceId, profilePic);
     }
-    
-     @RequestMapping(method = RequestMethod.DELETE, value = "/updateResource/deleteProfilePic")
-    public ResourceEntity deleteResourceProfilePic(@RequestParam(value = "resourceId") Long resourceId) throws ResourceNotFoundException,UpdateResourceException,IOException{
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/updateResource/deleteProfilePic")
+    public ResourceEntity deleteResourceProfilePic(@RequestParam(value = "resourceId") Long resourceId) throws ResourceNotFoundException, UpdateResourceException, IOException {
         return resourceService.deleteResourceProfilePic(resourceId);
     }
 
@@ -114,9 +113,9 @@ public class ResourceController {
     public ResourceEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, @RequestParam("resourceId") Long resourceId) throws ResourceNotFoundException {
         return resourceService.uploadPhotos(resourceId, photos);
     }
-    
-     @RequestMapping(method = RequestMethod.DELETE, value = "/updateResource/deletePhotos")
-    public ResourceEntity deletePhotos(@RequestParam(value = "resourceId") Long resourceId, @RequestParam(value = "photosToDelete") String[] photosToDelete ) throws ResourceNotFoundException,UpdateResourceException,IOException{
+
+    @RequestMapping(method = RequestMethod.DELETE, value = "/updateResource/deletePhotos")
+    public ResourceEntity deletePhotos(@RequestParam(value = "resourceId") Long resourceId, @RequestParam(value = "photosToDelete") String[] photosToDelete) throws ResourceNotFoundException, UpdateResourceException, IOException {
         return resourceService.deletePhotos(resourceId, photosToDelete);
     }
 
@@ -124,9 +123,9 @@ public class ResourceController {
     public ResourceEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, @RequestParam(value = "resourceId") Long resourceId) throws ResourceNotFoundException {
         return resourceService.uploadDocuments(resourceId, documents);
     }
-    
+
     @RequestMapping(method = RequestMethod.DELETE, value = "/updateResource/deleteDocuments")
-    public ResourceEntity deleteDocuments(@RequestParam(value = "resourceId") Long resourceId, @RequestParam(value = "docsToDelete") String[] docsToDelete ) throws ResourceNotFoundException,UpdateResourceException,IOException{
+    public ResourceEntity deleteDocuments(@RequestParam(value = "resourceId") Long resourceId, @RequestParam(value = "docsToDelete") String[] docsToDelete) throws ResourceNotFoundException, UpdateResourceException, IOException {
         return resourceService.deleteDocuments(resourceId, docsToDelete);
     }
 
@@ -135,6 +134,4 @@ public class ResourceController {
         return resourceService.terminateResource(resourceId, terminatorId);
     }
 
-    
- 
 }

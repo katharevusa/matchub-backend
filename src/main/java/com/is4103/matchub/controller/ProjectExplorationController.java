@@ -6,9 +6,11 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.JoinRequestEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.exception.DownvoteProjectException;
+import com.is4103.matchub.exception.FollowProjectException;
 import com.is4103.matchub.exception.JoinProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.RevokeDownvoteException;
@@ -98,5 +100,28 @@ public class ProjectExplorationController {
     public JoinRequestEntity createJoinRequest(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "profileId", required = true) Long profileId) throws ProjectNotFoundException, JoinProjectException {
         return projectService.createJoinRequest(projectId, profileId);
     }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "/UnfollowProject")
+    public void UnfollowProject(@RequestParam(value = "followerId", required = true)Long followerId,@RequestParam(value = "projectId", required = true) Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException{
+     projectService.UnfollowProject(followerId, projectId);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getListOfFollowingProjectsByUserId")
+    public List<ProjectEntity> getListOfFollowingProjectsByUserId(@RequestParam(value = "userId", required = true)Long userId) throws UserNotFoundException{
+       return  projectService.getListOfFollowingProjectsByUserId(userId);
+        
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getListOfFollowerByProjectId")
+    public List<ProfileEntity> getListOfFollowerByProjectId(@RequestParam(value = "projectId", required = true)Long projectId)throws ProjectNotFoundException{
+        return projectService.getListOfFollowerByProjectId(projectId);
+    }
+    
+    @RequestMapping(method = RequestMethod.PUT, value = "/followProject")
+    public ProjectEntity followProject(@RequestParam(value = "followerId", required = true)Long followerId, @RequestParam(value = "projectId", required = true)Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException{
+        return projectService.followProject(followerId, projectId);
+    }
+
+    
 
 }
