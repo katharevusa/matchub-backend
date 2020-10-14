@@ -21,7 +21,6 @@ public class MatchubApplication extends AsyncConfigurerSupport {
     public static void main(String[] args) throws IOException {
         IMAGE_DIR = new File(".").getCanonicalPath() + "/build/resources/main/files/";
         SpringApplication.run(MatchubApplication.class, args);
-        Wordnet.run();
     }
 
     @Bean

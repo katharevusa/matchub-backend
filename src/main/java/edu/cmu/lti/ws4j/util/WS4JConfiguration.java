@@ -11,7 +11,7 @@ final public class WS4JConfiguration {
     @Value("${proj.relative.path}/similarity.conf")
     private String CONF;
 
-//	private final static String CONF = "/similarity.conf";
+//	private final static String CONF = "similarity.conf";
 //    private final String CONF = "" + projRelativePath + "/similarity.conf";
     private static final WS4JConfiguration instance = new WS4JConfiguration();
     private Properties p;
