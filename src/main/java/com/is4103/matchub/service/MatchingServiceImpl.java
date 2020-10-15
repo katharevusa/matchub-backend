@@ -290,7 +290,7 @@ public class MatchingServiceImpl implements MatchingService {
         //loop through all active projects
         for (int x = 0; x < activeProjects.size() && !matched; x++) {
             ProjectEntity project = activeProjects.get(x);
-            
+
             //get project related resources
             List<String> projectKeywords = project.getRelatedResources();
 
@@ -316,8 +316,8 @@ public class MatchingServiceImpl implements MatchingService {
                             && resource.getCountry().equals(project.getCountry())) {
                         score += 1;
                     }
-                    recommendations.add(new MatchingScore(score, resource));
-                    System.out.println("Added: " + resource.getResourceName());
+                    recommendations.add(new MatchingScore(score, project));
+                    System.out.println("Added: " + project.getProjectTitle());
                 }
             }
             matched = false;
@@ -337,7 +337,7 @@ public class MatchingServiceImpl implements MatchingService {
 
         return recommendations;
     }
-    
+
     @Override
     public Page<ProjectEntity> recommendProjectsAsPageable(Long resourceId, Pageable pageable) throws ResourceNotFoundException {
         List<ProjectEntity> resultsList = this.recommendProjects(resourceId);
@@ -363,14 +363,16 @@ public class MatchingServiceImpl implements MatchingService {
         Collections.sort(results, new MatchingScoreComparator());
 
         //return only a list of resources in the sorted order
-        for (int i = 0; i < 6; i++) {
-            recommendations.add(results.get(i).getResource());
+        if (results.size() > 6) {
+            for (int i = 0; i < 6; i++) {
+                recommendations.add(results.get(i).getResource());
+            }
+            System.out.print("Sorted keywords order: ");
+            for (ResourceEntity r : recommendations) {
+                System.out.print(r.getResourceName() + " ");
+            }
+            System.out.println();
         }
-        System.out.print("Sorted keywords order: ");
-        for (ResourceEntity r : recommendations) {
-            System.out.print(r.getResourceName() + " ");
-        }
-        System.out.println();
 
         return recommendations;
     }
@@ -389,14 +391,16 @@ public class MatchingServiceImpl implements MatchingService {
         Collections.sort(results, new MatchingScoreComparator());
 
         //return only a list of resources in the sorted order
-        for (int i = 0; i < 6; i++) {
-            recommendations.add(results.get(i).getProject());
+        if (results.size() > 6) {
+            for (int i = 0; i < 6; i++) {
+                recommendations.add(results.get(i).getProject());
+            }
+            System.out.print("Sorted keywords order: ");
+            for (ProjectEntity p : recommendations) {
+                System.out.print(p.getProjectTitle() + " ");
+            }
+            System.out.println();
         }
-        System.out.print("Sorted keywords order: ");
-        for (ProjectEntity p : recommendations) {
-            System.out.print(p.getProjectTitle() + " ");
-        }
-        System.out.println();
 
         return recommendations;
     }
