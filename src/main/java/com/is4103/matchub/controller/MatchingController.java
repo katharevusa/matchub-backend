@@ -5,8 +5,10 @@
  */
 package com.is4103.matchub.controller;
 
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.service.MatchingService;
 import com.is4103.matchub.service.MatchingServiceImpl;
 import java.util.List;
@@ -37,16 +39,26 @@ public class MatchingController {
     public void ws4j(@RequestParam("word1") String word1, @RequestParam("word2") String word2) {
         matchingServiceImpl.runWS4J(word1, word2);
     }
-    
+
     // for web
     @RequestMapping(method = RequestMethod.GET, value = "/recommendResources/list/{projectId}")
     public List<ResourceEntity> recommendListOfResources(@PathVariable("projectId") Long projectId) throws ProjectNotFoundException {
         return matchingService.recommendResources(projectId);
     }
-    
+
     //for mobile
     @RequestMapping(method = RequestMethod.GET, value = "/recommendResources/pageable/{projectId}")
     public Page<ResourceEntity> recommendPageableOfResources(@PathVariable("projectId") Long projectId, Pageable pageable) throws ProjectNotFoundException {
         return matchingService.recommendResourcesAsPageable(projectId, pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendProjects/list/{resourceId}")
+    public List<ProjectEntity> recommendListOfProjects(@PathVariable("resourceId") Long resourceId) throws ResourceNotFoundException {
+        return matchingService.recommendProjects(resourceId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendProjects/pageable/{resourceId}")
+    public Page<ProjectEntity> recommendPageableOfProjects(@PathVariable("resourceId") Long resourceId, Pageable pageable) throws ResourceNotFoundException {
+        return matchingService.recommendProjectsAsPageable(resourceId, pageable);
     }
 }
