@@ -596,7 +596,7 @@ public class InitServiceImpl implements InitService {
         //relatedResources
         List<String> relatedResources = new ArrayList<>();
         relatedResources.add("Water");
-        relatedResources.add("Location");
+        relatedResources.add("Fabric");
         projectEntity3.setRelatedResources(relatedResources);
         
         projectEntity3.setProjStatus(ProjectStatusEnum.ACTIVE);
