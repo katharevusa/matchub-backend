@@ -552,6 +552,14 @@ public class InitServiceImpl implements InitService {
         projectEntity1.getSdgs().add(poverty);
         projectEntity1.getSdgs().add(zeroHunger);
         projectEntity1.setUpvotes(21);
+        
+        //relatedResources
+        List<String> relatedResources = new ArrayList<>();
+        relatedResources.add("Phone");
+        relatedResources.add("Desktop");
+        relatedResources.add("Tablet");
+        projectEntity1.setRelatedResources(relatedResources);
+        
         projectEntity1.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity1.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project1.jpg");
         projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/project1.jpg");
@@ -572,6 +580,12 @@ public class InitServiceImpl implements InitService {
         projectEntity2.getSdgs().add(genderEquality);
         projectEntity2.getSdgs().add(qualityEducation);
         projectEntity2.setUpvotes(23);
+        
+        //relatedResources
+         relatedResources = new ArrayList<>();
+        relatedResources.add("Food");
+        projectEntity2.setRelatedResources(relatedResources);
+        
         projectEntity2.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity2.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project2.jpg");
         projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/project2.jpg");
@@ -594,8 +608,8 @@ public class InitServiceImpl implements InitService {
         projectEntity3.setUpvotes(25);
         
         //relatedResources
-        List<String> relatedResources = new ArrayList<>();
-        relatedResources.add("Fresh Water");
+         relatedResources = new ArrayList<>();
+        relatedResources.add("Water");
         relatedResources.add("Library");
         projectEntity3.setRelatedResources(relatedResources);
         
