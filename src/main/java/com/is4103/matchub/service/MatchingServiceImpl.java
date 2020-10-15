@@ -87,7 +87,7 @@ public class MatchingServiceImpl implements MatchingService {
 
         return s;
     }
-    
+
     //using path
     public static double calculatePathSimilarity(String word1, String word2) {
         WS4JConfiguration.getInstance().setMFS(true);
@@ -144,13 +144,8 @@ public class MatchingServiceImpl implements MatchingService {
         //Results List
         List<MatchingScore> recommendations = new ArrayList<>();
 
-        //Get the preprocessed List of String (Project Keywords)
-        List<String> projectKeywords = preprocessProjectKeywords(project);
-        System.out.print("preprocess project keywords: ");
-        for (String s : projectKeywords) {
-            System.out.print(s + " ");
-        }
-        System.out.println();
+        //Get the List of String (Project Keywords)
+        List<String> projectKeywords = project.getRelatedResources();
 
         //find the list of available resources 
         List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResources();
@@ -161,41 +156,32 @@ public class MatchingServiceImpl implements MatchingService {
         //loop through all the available resources
         for (int x = 0; x < availableResources.size() && !matched; x++) {
             ResourceEntity resource = availableResources.get(x);
-
-            //Get the preprocessed List of String (Resource Keywords)
-            List<String> resourceKeywords = preprocessResourceKeywords(resource);
-            System.out.print("preprocess resource keywords: ");
-            for (String s : resourceKeywords) {
-                System.out.print(s + " ");
-            }
-            System.out.println();
+            String resourceKeyword = resource.getResourceName();
 
             //run ws4j algo word for word for each resource keyword to each project keyword 
             for (int i = 0; i < projectKeywords.size() && !matched; i++) {
-                for (int j = 0; j < resourceKeywords.size() && !matched; j++) {
-                    double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeyword);
+                double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeyword);
 
-                    //threshold of 70%
-                    if (wupscore >= 0.70 || (pathscore != 0.0 && pathscore < 0.20)) {
-                        matched = true;
-                        
-                        double score = 0.0;
-                        
-                        if (wupscore < 0.7) {
-                            score = 1 - pathscore;
-                        } else {
-                            score = wupscore;
-                        }
-                        
-                        //check the Country 
-                        if ((resource.getCountry() != null && project.getCountry() != null)
-                                && resource.getCountry().equals(project.getCountry())) {
-                            score += 1;
-                        }
-                        recommendations.add(new MatchingScore(score, resource));
-                        System.out.println("Added: " + resource.getResourceName());
+                //threshold of 70%
+                if (wupscore >= 0.70 ||(pathscore != 0.0 && pathscore < 0.12)) {
+                    matched = true;
+
+                    double score = 0.0;
+
+                    if (wupscore < 0.7) {
+                        score = 1 - pathscore;
+                    } else {
+                        score = wupscore;
                     }
+
+                    //check the Country 
+                    if ((resource.getCountry() != null && project.getCountry() != null)
+                            && resource.getCountry().equals(project.getCountry())) {
+                        score += 1;
+                    }
+                    recommendations.add(new MatchingScore(score, resource));
+                    System.out.println("Added: " + resource.getResourceName());
                 }
             }
             matched = false;
@@ -205,6 +191,76 @@ public class MatchingServiceImpl implements MatchingService {
 
     }
 
+    // *************** preprocess word by word method ***************
+//    @Override
+//    public List<ResourceEntity> recommendResources(Long projectId) throws ProjectNotFoundException {
+//        //find the project first
+//        ProjectEntity project = projectService.retrieveProjectById(projectId);
+//        System.out.println("Found project");
+//
+//        //Results List
+//        List<MatchingScore> recommendations = new ArrayList<>();
+//
+//        //Get the preprocessed List of String (Project Keywords)
+//        List<String> projectKeywords = preprocessProjectKeywords(project);
+//        System.out.print("preprocess project keywords: ");
+//        for (String s : projectKeywords) {
+//            System.out.print(s + " ");
+//        }
+//        System.out.println();
+//
+//        //find the list of available resources 
+//        List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResources();
+//        System.out.println("total avail resources: " + availableResources.size());
+//
+//        Boolean matched = false;
+//
+//        //loop through all the available resources
+//        for (int x = 0; x < availableResources.size() && !matched; x++) {
+//            ResourceEntity resource = availableResources.get(x);
+//
+//            //Get the preprocessed List of String (Resource Keywords)
+//            List<String> resourceKeywords = preprocessResourceKeywords(resource);
+//            System.out.print("preprocess resource keywords: ");
+//            for (String s : resourceKeywords) {
+//                System.out.print(s + " ");
+//            }
+//            System.out.println();
+//
+//            //run ws4j algo word for word for each resource keyword to each project keyword 
+//            for (int i = 0; i < projectKeywords.size() && !matched; i++) {
+//                for (int j = 0; j < resourceKeywords.size() && !matched; j++) {
+//                    double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+//                    double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+//
+//                    //threshold of 70%
+//                    if (wupscore >= 0.70 || (pathscore != 0.0 && pathscore < 0.20)) {
+//                        matched = true;
+//                        
+//                        double score = 0.0;
+//                        
+//                        if (wupscore < 0.7) {
+//                            score = 1 - pathscore;
+//                        } else {
+//                            score = wupscore;
+//                        }
+//                        
+//                        //check the Country 
+//                        if ((resource.getCountry() != null && project.getCountry() != null)
+//                                && resource.getCountry().equals(project.getCountry())) {
+//                            score += 1;
+//                        }
+//                        recommendations.add(new MatchingScore(score, resource));
+//                        System.out.println("Added: " + resource.getResourceName());
+//                    }
+//                }
+//            }
+//            matched = false;
+//        }
+//
+//        return sortResourceRecommendations(recommendations);
+//
+//    }
     @Override
     public Page<ResourceEntity> recommendResourcesAsPageable(Long projectId, Pageable pageable) throws ProjectNotFoundException {
         List<ResourceEntity> resultsList = this.recommendResources(projectId);
@@ -255,16 +311,16 @@ public class MatchingServiceImpl implements MatchingService {
 
         //custom sorting based on score 
         Collections.sort(results, new MatchingScoreComparator());
+        
+        //return only a list of resources in the sorted order
+        for (int i = 0; i < 6; i++) {
+            recommendations.add(results.get(i).getResource());
+        }
         System.out.print("Sorted keywords order: ");
-        for (MatchingScore ms : results) {
-            System.out.print(ms.getResource().getResourceName() + " ");
+        for (ResourceEntity r  : recommendations) {
+            System.out.print(r.getResourceName() + " ");
         }
         System.out.println();
-
-        //return only a list of resources in the sorted order
-        for (MatchingScore ms : results) {
-            recommendations.add(ms.getResource());
-        }
 
         return recommendations;
     }
