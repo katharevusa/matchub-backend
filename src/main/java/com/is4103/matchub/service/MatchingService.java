@@ -8,6 +8,8 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  *
@@ -16,4 +18,7 @@ import java.util.List;
 public interface MatchingService {
 
     List<ResourceEntity> recommendResources(Long projectId) throws ProjectNotFoundException;
+
+    Page<ResourceEntity> recommendResourcesAsPageable(Long projectId, Pageable pageable) throws ProjectNotFoundException;
+
 }

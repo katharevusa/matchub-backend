@@ -29,26 +29,10 @@ public class TimerController {
     @Autowired
     TimerService timerService;
 
-    @Autowired
-    MatchingService matchingService;
-
-    @Autowired
-    MatchingServiceImpl matchingServiceImpl;
-
     //manually trigger the long service award 
     @RequestMapping(method = RequestMethod.POST, value = "/executeLongServiceAwardDemo/{accountId}/{noOfYears}")
     public String executeLongServiceAwardDemo(@PathVariable("accountId") Long accountId, @PathVariable("noOfYears") Integer noOfYears) {
         return timerService.longServiceAwardDemo(accountId, noOfYears);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/ws4j")
-    public void ws4j(@RequestParam("word1") String word1, @RequestParam("word2") String word2) {
-        matchingServiceImpl.runWS4J(word1, word2);
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/recommendResources/{projectId}")
-    public List<ResourceEntity> recommendResources(@PathVariable("projectId") Long projectId) throws ProjectNotFoundException {
-        return matchingService.recommendResources(projectId);
     }
 
 }
