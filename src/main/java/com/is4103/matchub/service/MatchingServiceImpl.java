@@ -159,8 +159,8 @@ public class MatchingServiceImpl implements MatchingService {
                 for (int j = 0; j < resourceKeywords.size() && !matched; j++) {
                     double score = MatchingServiceImpl.calculateSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
-                    //threshold of 65%
-                    if (score >= 0.65) {
+                    //threshold of 70%
+                    if (score >= 0.70) {
                         matched = true;
                         //check the Country 
                         if ((resource.getCountry() != null && project.getCountry() != null)
@@ -223,7 +223,7 @@ public class MatchingServiceImpl implements MatchingService {
         List<ResourceEntity> recommendations = new ArrayList<>();
         System.out.print("original keywords order: ");
         for (MatchingScore ms : results) {
-            System.out.print(ms.getResource().getResourceName() + " ");
+            System.out.print(ms.getResource().getResourceName() + ", score: " + ms.getScore() + " ");
         }
         System.out.println();
 
