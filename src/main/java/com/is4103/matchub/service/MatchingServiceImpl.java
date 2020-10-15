@@ -73,14 +73,30 @@ public class MatchingServiceImpl implements MatchingService {
     }
 
     //using WuPalmer
-    public static double calculateSimilarity(String word1, String word2) {
+    public static double calculateWupSimilarity(String word1, String word2) {
         WS4JConfiguration.getInstance().setMFS(true);
 
         long t0 = System.currentTimeMillis();
-        System.out.println("START WS4J ALGO *************** - " + word1 + " & " + word2);
+        System.out.println("START WUP Similarity ALGO *************** - " + word1 + " & " + word2);
 
         double s = rcs[3].calcRelatednessOfWords(word1, word2);
         System.out.println(rcs[3].getClass().getName() + "\t" + s);
+
+        long t1 = System.currentTimeMillis();
+        System.out.println("Done in " + (t1 - t0) + " msec.");
+
+        return s;
+    }
+    
+    //using path
+    public static double calculatePathSimilarity(String word1, String word2) {
+        WS4JConfiguration.getInstance().setMFS(true);
+
+        long t0 = System.currentTimeMillis();
+        System.out.println("START PATH Similarity ALGO *************** - " + word1 + " & " + word2);
+
+        double s = rcs[7].calcRelatednessOfWords(word1, word2);
+        System.out.println(rcs[7].getClass().getName() + "\t" + s);
 
         long t1 = System.currentTimeMillis();
         System.out.println("Done in " + (t1 - t0) + " msec.");
@@ -157,11 +173,21 @@ public class MatchingServiceImpl implements MatchingService {
             //run ws4j algo word for word for each resource keyword to each project keyword 
             for (int i = 0; i < projectKeywords.size() && !matched; i++) {
                 for (int j = 0; j < resourceKeywords.size() && !matched; j++) {
-                    double score = MatchingServiceImpl.calculateSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
                     //threshold of 70%
-                    if (score >= 0.70) {
+                    if (wupscore >= 0.70 || (pathscore != 0.0 && pathscore < 0.20)) {
                         matched = true;
+                        
+                        double score = 0.0;
+                        
+                        if (wupscore < 0.7) {
+                            score = 1 - pathscore;
+                        } else {
+                            score = wupscore;
+                        }
+                        
                         //check the Country 
                         if ((resource.getCountry() != null && project.getCountry() != null)
                                 && resource.getCountry().equals(project.getCountry())) {
