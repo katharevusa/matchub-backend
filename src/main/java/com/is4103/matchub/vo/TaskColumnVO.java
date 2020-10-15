@@ -28,6 +28,8 @@ public class TaskColumnVO {
     @NotNull
     private Long kanbanBoardId;
     
+    private Long columnId;
+    
     public void createNewTaskColumn(TaskColumnEntity newTaskColumn){
         newTaskColumn.setColumnDescription(this.columnDescription);
         newTaskColumn.setColumnTitle(this.columnTitle);

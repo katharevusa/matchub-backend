@@ -78,6 +78,10 @@ public class TaskEntity {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<ProfileEntity> taskdoers = new ArrayList<>();
+    
+    
+    @OneToMany
+    private List<CommentEntity> comments = new ArrayList<>();
 
     public TaskEntity(String taskTitle, String taskDescription, LocalDateTime createdTime, LocalDateTime expectedDeadline) {
         this.taskTitle = taskTitle;
