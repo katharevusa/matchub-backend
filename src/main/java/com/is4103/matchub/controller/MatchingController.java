@@ -35,6 +35,7 @@ public class MatchingController {
     @Autowired
     MatchingServiceImpl matchingServiceImpl;
 
+    //for testing purposes only
     @RequestMapping(method = RequestMethod.GET, value = "/ws4j")
     public void ws4j(@RequestParam("word1") String word1, @RequestParam("word2") String word2) {
         matchingServiceImpl.runWS4J(word1, word2);
@@ -52,11 +53,13 @@ public class MatchingController {
         return matchingService.recommendResourcesAsPageable(projectId, pageable);
     }
 
+    // for web
     @RequestMapping(method = RequestMethod.GET, value = "/recommendProjects/list/{resourceId}")
     public List<ProjectEntity> recommendListOfProjects(@PathVariable("resourceId") Long resourceId) throws ResourceNotFoundException {
         return matchingService.recommendProjects(resourceId);
     }
 
+    //for mobile
     @RequestMapping(method = RequestMethod.GET, value = "/recommendProjects/pageable/{resourceId}")
     public Page<ProjectEntity> recommendPageableOfProjects(@PathVariable("resourceId") Long resourceId, Pageable pageable) throws ResourceNotFoundException {
         return matchingService.recommendProjectsAsPageable(resourceId, pageable);
