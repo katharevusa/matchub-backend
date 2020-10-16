@@ -361,6 +361,10 @@ public class MatchingServiceImpl implements MatchingService {
 
         //custom sorting based on score 
         Collections.sort(results, new MatchingScoreComparator());
+        
+        if (results.size() == 1) {
+            recommendations.add(results.get(0).getResource());
+        }
 
         //return only a list of resources in the sorted order
         if (results.size() > 6) {
