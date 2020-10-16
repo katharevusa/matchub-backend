@@ -523,7 +523,7 @@ public class InitServiceImpl implements InitService {
         ResourceEntity turtleFood = new ResourceEntity("Turtle Food", "Some free turtle food for free donation ", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 150);
         turtleFood.setResourceProfilePic("https://localhost:8443/api/v1/files/init/turtleFood.jpg");
         turtleFood.getPhotos().add("https://localhost:8443/api/v1/files/init/turtleFood.jpg");
-        turtleFood.setCountry("Indonesia");
+        turtleFood.setCountry("Panama");
         resourceService.createResource(turtleFood, 1L, 9L);
 
         //8      
@@ -554,12 +554,40 @@ public class InitServiceImpl implements InitService {
         cereal.setCountry("Malawi");
         resourceService.createResource(cereal, 1L, 7L);
         
-        //10
+        //12
         ResourceEntity banana = new ResourceEntity("Banana", "Bananas", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 20);
         banana.setResourceProfilePic("https://localhost:8443/api/v1/files/init/banana.jpg");
         banana.getPhotos().add("https://localhost:8443/api/v1/files/init/banana.jpg");
         banana.setCountry("Malawi");
         resourceService.createResource(banana, 1L, 7L);
+        
+        //13
+        ResourceEntity bedframe = new ResourceEntity("Bedframe", "50 bedframes", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 50);
+        bedframe.setResourceProfilePic("https://localhost:8443/api/v1/files/init/bedframe.jpg");
+        bedframe.getPhotos().add("https://localhost:8443/api/v1/files/init/bedframe.jpg");
+        bedframe.setCountry("Cambodia");
+        resourceService.createResource(bedframe, 2L, 4L);
+        
+        //14
+        ResourceEntity door = new ResourceEntity("Door", "50 Wooden doors with doorknots", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 50);
+        door.setResourceProfilePic("https://localhost:8443/api/v1/files/init/door.jpg");
+        door.getPhotos().add("https://localhost:8443/api/v1/files/init/door.jpg");
+        door.setCountry("Cambodia");
+        resourceService.createResource(door, 2L, 4L);
+        
+        //15
+        ResourceEntity detergent = new ResourceEntity("Detergent", "75 bottles of detergent (1kg per bottle) safe for use", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 75);
+        detergent.setResourceProfilePic("https://localhost:8443/api/v1/files/init/detergent.jpg");
+        detergent.getPhotos().add("https://localhost:8443/api/v1/files/init/detergent.jpg");
+        detergent.setCountry("Pakistan");
+        resourceService.createResource(detergent, 3L, 6L);
+        
+        //16
+        ResourceEntity dustbin = new ResourceEntity("Dustbin", "60 new dustbins", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 60);
+        dustbin.setResourceProfilePic("https://localhost:8443/api/v1/files/init/dustbin.jpg");
+        dustbin.getPhotos().add("https://localhost:8443/api/v1/files/init/dustbin.jpg");
+        dustbin.setCountry("Indonesia");
+        resourceService.createResource(dustbin, 3L, 6L);
 
     }
 
@@ -660,6 +688,13 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getSdgs().add(qualityEducation);
         projectEntity4.getSdgs().add(goodHealth);
         projectEntity4.setUpvotes(23);
+        
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Bed");
+        relatedResources.add("Wood");
+        projectEntity4.setRelatedResources(relatedResources);
+        
         projectEntity4.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity4.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project4.jpg");
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/project4.jpg");
@@ -677,10 +712,16 @@ public class InitServiceImpl implements InitService {
         projectEntityRepository.save(projectEntity4);
         /* end of project badge */
 
-        ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Papua New Guinea", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Cambodia", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
+        ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Pakistan", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Pakistan", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
         projectEntity5.getSdgs().add(cleanWater);
         projectEntity5.getSdgs().add(goodHealth);
         projectEntity5.setUpvotes(25);
+        
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Soap");
+        projectEntity5.setRelatedResources(relatedResources);
+        
         projectEntity5.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity5.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project5.png");
         projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/project5.png");
@@ -702,6 +743,12 @@ public class InitServiceImpl implements InitService {
         projectEntity6.getSdgs().add(climateAction);
         projectEntity6.getSdgs().add(sustainableCities);
         projectEntity6.setUpvotes(50);
+        
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Turtle Food");
+        projectEntity6.setRelatedResources(relatedResources);
+        
         projectEntity6.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity6.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project6.jpg");
         projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/project6.jpg");
@@ -731,6 +778,13 @@ public class InitServiceImpl implements InitService {
         projectEntity7.getSdgs().add(climateAction);
         projectEntity7.getSdgs().add(sustainableCities);
         projectEntity7.setUpvotes(30);
+        
+         //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Trash Bin");
+        projectEntity7.setRelatedResources(relatedResources);
+        
+        
         projectEntity7.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity7.getSdgs().add(responsibleConsumption);
         projectEntity7.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project7.jpg");
