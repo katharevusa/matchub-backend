@@ -90,7 +90,6 @@ public class InitServiceImpl implements InitService {
         initCommunityBadges();
 
         //join request 
-
         initJoinRequest();
 
     }
@@ -534,6 +533,34 @@ public class InitServiceImpl implements InitService {
         clothes.setCountry("Australia");
         resourceService.createResource(clothes, 7L, 9L);
 
+        //9   
+        ResourceEntity dictionary = new ResourceEntity("Dictionary", "100 used english dictionaries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
+        dictionary.setResourceProfilePic("https://localhost:8443/api/v1/files/init/dictionary.jpg");
+        dictionary.getPhotos().add("https://localhost:8443/api/v1/files/init/dictionary.jpg");
+        dictionary.setCountry("Cambodia");
+        resourceService.createResource(dictionary, 6L, 4L);
+
+        //10
+        ResourceEntity charger = new ResourceEntity("Charger", "50 Available Laptop Chargers", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 50);
+        charger.setResourceProfilePic("https://localhost:8443/api/v1/files/init/charger.jpg");
+        charger.getPhotos().add("https://localhost:8443/api/v1/files/init/charger.jpg");
+        charger.setCountry("Bangladesh");
+        resourceService.createResource(charger, 4L, 9L);
+        
+        //11
+        ResourceEntity cereal = new ResourceEntity("Cereal", "Healthy cereal for donation", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
+        cereal.setResourceProfilePic("https://localhost:8443/api/v1/files/init/cereal.jpg");
+        cereal.getPhotos().add("https://localhost:8443/api/v1/files/init/cereal.jpg");
+        cereal.setCountry("Malawi");
+        resourceService.createResource(cereal, 1L, 7L);
+        
+        //10
+        ResourceEntity banana = new ResourceEntity("Banana", "Bananas", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 20);
+        banana.setResourceProfilePic("https://localhost:8443/api/v1/files/init/banana.jpg");
+        banana.getPhotos().add("https://localhost:8443/api/v1/files/init/banana.jpg");
+        banana.setCountry("Malawi");
+        resourceService.createResource(banana, 1L, 7L);
+
     }
 
     public void initProjects() {
@@ -552,14 +579,14 @@ public class InitServiceImpl implements InitService {
         projectEntity1.getSdgs().add(poverty);
         projectEntity1.getSdgs().add(zeroHunger);
         projectEntity1.setUpvotes(21);
-        
+
         //relatedResources
         List<String> relatedResources = new ArrayList<>();
         relatedResources.add("Phone");
         relatedResources.add("Desktop");
         relatedResources.add("Tablet");
         projectEntity1.setRelatedResources(relatedResources);
-        
+
         projectEntity1.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity1.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project1.jpg");
         projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/project1.jpg");
@@ -580,12 +607,12 @@ public class InitServiceImpl implements InitService {
         projectEntity2.getSdgs().add(genderEquality);
         projectEntity2.getSdgs().add(qualityEducation);
         projectEntity2.setUpvotes(23);
-        
+
         //relatedResources
-         relatedResources = new ArrayList<>();
+        relatedResources = new ArrayList<>();
         relatedResources.add("Food");
         projectEntity2.setRelatedResources(relatedResources);
-        
+
         projectEntity2.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity2.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project2.jpg");
         projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/project2.jpg");
@@ -606,13 +633,13 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getSdgs().add(poverty);
         projectEntity3.getSdgs().add(zeroHunger);
         projectEntity3.setUpvotes(25);
-        
+
         //relatedResources
-         relatedResources = new ArrayList<>();
+        relatedResources = new ArrayList<>();
         relatedResources.add("Water");
         relatedResources.add("Library");
         projectEntity3.setRelatedResources(relatedResources);
-        
+
         projectEntity3.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity3.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project3.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/project3.jpg");
@@ -779,7 +806,7 @@ public class InitServiceImpl implements InitService {
         projectEntity10.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity10);
         /* end of project badge */
-        
+
         ProjectEntity projectEntity11 = new ProjectEntity("Protect endangered zebras in Kenya", "The Grevy's zebra (Equus grevyi) is one of Africa's most endangered large mammals. They are a separate species of zebra, distinct from the widely-recognized common zebra (or plains zebra) through their large, fluffy ears, white belly, and comparatively thinner black stripes. Once distributed across the horn of Africa, 92% of the remaining Grevy’s zebra are now only found in Kenya, with a few small isolated populations in Ethiopia.", "Kenya", LocalDateTime.parse("2019-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity11.getSdgs().add(sustainableCities);
         projectEntity11.setUpvotes(35);
@@ -796,7 +823,7 @@ public class InitServiceImpl implements InitService {
         projectEntity11.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity11);
         /* end of project badge */
-        
+
         ProjectEntity projectEntity12 = new ProjectEntity("Close the gap in eye health for Indigenous Australians", "For decades, Aboriginal and Torres Strait Lander people have experienced low health outcomes than non-indigenous Australians. Today, there’s still a ten-year gap in life expectancy. Poor eye health and a lack of easy access to services play a part in this.", "Australia", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity12.getSdgs().add(goodHealth);
         projectEntity12.setUpvotes(35);
@@ -813,7 +840,7 @@ public class InitServiceImpl implements InitService {
         projectEntity12.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity12);
         /* end of project badge */
-        
+
         ProjectEntity projectEntity13 = new ProjectEntity("Build School Toilets for Nepal", "Building School-Friendly Toilets for Girls in Nepal.", "Nepal", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity13.getSdgs().add(goodHealth);
         projectEntity13.setUpvotes(35);
@@ -1070,7 +1097,7 @@ public class InitServiceImpl implements InitService {
         } catch (Exception e) {
             System.err.println("Error in init join request");
         }
-        
+
         try {
             projectService.createJoinRequest(13L, 11L);
             projectService.createJoinRequest(13L, 12L);
