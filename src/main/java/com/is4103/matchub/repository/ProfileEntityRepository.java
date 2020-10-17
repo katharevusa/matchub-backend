@@ -6,6 +6,7 @@
 package com.is4103.matchub.repository;
 
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.entity.ProjectEntity;
 import java.util.List;
 import java.util.Set;
 import org.springframework.data.domain.Page;
@@ -116,6 +117,27 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "sdg.sdgId IN :sdgIds")
     Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("country") String country, @Param("sdgIds") Long[] sdgIds, Pageable pageable);
 
+    @Query(value = "SELECT pe FROM ProfileEntity pe "
+            + "WHERE pe.accountId <> ?1 AND "
+            + "pe.accountId NOT IN ?2 AND "
+            + "pe.country = ?3",
+            countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe "
+            + "WHERE pe.accountId <> ?1 AND "
+            + "pe.accountId NOT IN ?2 AND "
+            + "pe.country = ?3")
+    Page<ProfileEntity> recommendProfiles(Long id, Set<Long> followingIds, String country, Pageable pageable);
+
+    @Query(value = "SELECT pe FROM ProfileEntity pe JOIN pe.projectsJoined project "
+            + "WHERE pe.accountId <> ?1 "
+            + "AND pe.accountId NOT IN ?2 "
+            + "AND (pe.country = ?3 OR "
+            + "project IN ?4)",
+            countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe JOIN pe.projectsJoined project "
+            + "WHERE pe.accountId <> ?1 "
+            + "AND pe.accountId NOT IN ?2 "
+            + "AND (pe.country = ?3 OR "
+            + "project IN ?4)")
+    Page<ProfileEntity> recommendProfiles(Long id, Set<Long> followingIds, String country, List<ProjectEntity> projs, Pageable pageable);
     //dont know why this doesnt work 
 //    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe JOIN pe.sdgs sdg "
 //            + "WHERE (pe.email LIKE %:search% OR "
