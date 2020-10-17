@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
@@ -54,9 +55,9 @@ public interface ResourceService {
     public ResourceEntity deleteResourceProfilePic(Long resourceId) throws ResourceNotFoundException, UpdateResourceException, IOException;
 
     public List<ResourceEntity> getResourcesByListOfId(List<Long> ids) throws ResourceNotFoundException;
-    
+
     public Page<ResourceEntity> searchResourceByKeywords(String keyword, Pageable pageable);
-    
+
     public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTime, String endTime, String country, Pageable pageable);
 
 }

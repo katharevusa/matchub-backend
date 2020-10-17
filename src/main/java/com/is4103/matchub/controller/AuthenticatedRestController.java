@@ -5,6 +5,7 @@ import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.FirebaseService;
 import com.is4103.matchub.service.UserService;
@@ -139,6 +140,11 @@ public class AuthenticatedRestController {
     @RequestMapping(method = RequestMethod.POST, value = "/removeFollower")
     AccountEntity removeFollower(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "removeFollowerId") Long removeFollowerId) {
         return userService.removeFollower(accountId, removeFollowerId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/saveResource")
+    AccountEntity saveResource(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "resourceId") Long resourceId) throws ResourceNotFoundException {
+        return userService.saveResource(accountId, resourceId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateIndividual/updateProfilePic/{uuid}")

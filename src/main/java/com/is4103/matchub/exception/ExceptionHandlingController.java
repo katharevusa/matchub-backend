@@ -506,8 +506,8 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-      @ExceptionHandler(value = FollowProjectException.class)
+
+    @ExceptionHandler(value = FollowProjectException.class)
     public ResponseEntity<ExceptionResponse> followProjectException(FollowProjectException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error following project");
@@ -515,10 +515,10 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-       @ExceptionHandler(value = KanbanBoardNotFoundException.class)
+
+    @ExceptionHandler(value = KanbanBoardNotFoundException.class)
     public ResponseEntity<ExceptionResponse> kanbanBoardNotFoundException(KanbanBoardNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error retrieving kanban board");
@@ -526,8 +526,18 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
     
-    
+    @ExceptionHandler(value = UnableToSaveResourceException.class)
+    public ResponseEntity<ExceptionResponse> unableToSaveResourceException(UnableToSaveResourceException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to save resource.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+
+    }
+
 }
