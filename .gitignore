@@ -33,5 +33,8 @@ nbactions.xml
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### exclude WS4J DB ###
+src/main/resources/wnjpn.db
+
 ### VS Code ###
 .vscode/
