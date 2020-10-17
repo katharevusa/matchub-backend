@@ -358,35 +358,6 @@ public class MatchingServiceImpl implements MatchingService {
             recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
         }
 
-//        Optional<OrganisationEntity> organisation = organisationEntityRepository.findOrgansationOfProfile(accountId);
-//        if (organisation.isPresent()) {
-//            Set<Long> employees = organisation.get().getEmployees();
-//
-//            //people in the same organisation but not in the followingIds
-//            for (Long i : followingIds) {
-//                if (employees.contains(i)) {
-//                    employees.remove(i);
-//                }
-//            }
-//
-//            List<ProfileEntity> results = recommendations.getContent();
-//
-//            for (ProfileEntity p : results) {
-//                if (employees.contains(p.getAccountId())) {
-//                    employees.remove(p.getAccountId());
-//                }
-//            }
-//
-//            for (Long i : employees) {
-//                ProfileEntity p = profileEntityRepository.findById(i).get();
-//                results.add(p);
-//            }
-//
-//            //convert back into a pagable 
-//            Long start = pageable.getOffset();
-//            Long end = (start + pageable.getPageSize()) > results.size() ? results.size() : (start + pageable.getPageSize());
-//            recommendations = new PageImpl<ProfileEntity>(results.subList(start.intValue(), end.intValue()), pageable, results.size());
-//        }
         return recommendations;
     }
 
