@@ -8,8 +8,10 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.KanbanBoardEntity;
 import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.entity.TaskEntity;
+import com.is4103.matchub.exception.UpdateColumnException;
 import com.is4103.matchub.repository.KanbanBoardEntityRepository;
 import com.is4103.matchub.repository.TaskColumnEntityRepository;
+import com.is4103.matchub.vo.ChannelDetailsVO;
 import com.is4103.matchub.vo.TaskColumnVO;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,15 +32,22 @@ public class TaskColumnServiceImpl implements TaskColumnService{
     @Autowired
     KanbanBoardEntityRepository kanbanBoardEntityRepository;
     
+    @Autowired
+    FirebaseService firebaseService;
+    
     @Override 
-    public KanbanBoardEntity createNewColumn(TaskColumnVO vo){
-        
-        // checking only channel admins can create column 
-        
+    public KanbanBoardEntity createNewColumn(TaskColumnVO vo)throws UpdateColumnException{
         TaskColumnEntity newTaskColumn = new TaskColumnEntity();
         vo.createNewTaskColumn(newTaskColumn);
-        newTaskColumn = taskColumnEntityRepository.saveAndFlush(newTaskColumn);
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(newTaskColumn.getKanbanBoardId()).get();
+       
+        // checking only channel admins can create column 
+        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
+         if(!channelDetails.getAdminIds().contains(vo.getEditorId())){
+             throw new UpdateColumnException("Only channel admin can create column");
+         }
+        
+        newTaskColumn = taskColumnEntityRepository.saveAndFlush(newTaskColumn);
         kanbanBoardEntity.getTaskColumns().add(newTaskColumn);
         kanbanBoardEntity = kanbanBoardEntityRepository.saveAndFlush(kanbanBoardEntity);
         return kanbanBoardEntity;

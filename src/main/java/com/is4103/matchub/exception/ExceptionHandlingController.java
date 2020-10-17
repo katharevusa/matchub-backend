@@ -563,5 +563,17 @@ public class ExceptionHandlingController {
     
     }
     
+       @ExceptionHandler(value = UpdateColumnException.class)
+    public ResponseEntity<ExceptionResponse> updateColumnException(UpdateColumnException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Error updating column");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    
+    }
+    
+    
      
 }

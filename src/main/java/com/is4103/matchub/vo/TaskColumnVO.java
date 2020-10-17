@@ -30,6 +30,11 @@ public class TaskColumnVO {
     
     private Long columnId;
     
+   
+    private Long editorId;
+    
+   
+    
     public void createNewTaskColumn(TaskColumnEntity newTaskColumn){
         newTaskColumn.setColumnDescription(this.columnDescription);
         newTaskColumn.setColumnTitle(this.columnTitle);
@@ -40,4 +45,6 @@ public class TaskColumnVO {
         taskColumn.setColumnDescription(this.columnDescription);
         taskColumn.setColumnTitle(this.columnTitle);
     }
+  
+   
 }

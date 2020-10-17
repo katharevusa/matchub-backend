@@ -73,9 +73,15 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     BadgeEntityRepository badgeEntityRepository;
+    
+    @Autowired
+    FirebaseService firebaseService;
+    
 
     @Transactional
     public void init() {
+        // testing:
+        
         initSDG();
         initUsers();
         initResourceCategories();
@@ -95,6 +101,7 @@ public class InitServiceImpl implements InitService {
         // init project follower 
         initProjectFollower();
         
+//        firebaseService.getChannelDetails("s");
         
         // init kanbanboard for project 3
     }

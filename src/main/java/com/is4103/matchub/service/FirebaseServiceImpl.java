@@ -20,7 +20,12 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
+import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.FirebaseRuntimeException;
+import com.is4103.matchub.repository.AccountEntityRepository;
+import com.is4103.matchub.vo.ChannelDetailsVO;
+import com.is4103.matchub.vo.ChannelMappingVO;
 import com.is4103.matchub.vo.FirebaseUserPojo;
 import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.io.File;
@@ -30,6 +35,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -38,6 +44,9 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class FirebaseServiceImpl implements FirebaseService {
+
+    @Autowired
+    private AccountEntityRepository accountEntityRepository;
 
     @PostConstruct
     public void initialize() {
@@ -126,4 +135,45 @@ public class FirebaseServiceImpl implements FirebaseService {
             throw new FirebaseRuntimeException(ex.getMessage());
         }
     }
+
+    // get channel admins
+    @Override
+    public ChannelDetailsVO getChannelDetails(String channelUid) {
+        List<Long> admins = new ArrayList<>();
+        List<Long> members = new ArrayList<>();
+        ChannelDetailsVO vo = new ChannelDetailsVO();
+        try {
+            CollectionReference future = FirestoreClient.getFirestore().collection("channels");
+            Query query = future.whereEqualTo("id", channelUid);
+            ApiFuture<QuerySnapshot> querySnapshot = query.get();
+            for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+                ChannelMappingVO channelMappingVO = document.toObject(ChannelMappingVO.class);
+                System.out.println("channelMappingVO"+channelMappingVO);
+                System.out.println("get admins:"+ channelMappingVO.getAdmins());
+                System.out.println("get members:"+ channelMappingVO.getMembers());
+                for (String s : channelMappingVO.getAdmins()) {
+                    AccountEntity user = accountEntityRepository.findByUuid(UUID.fromString(s)).get();
+                    admins.add(user.getAccountId());
+                }
+
+                for (String s : channelMappingVO.getMembers()) {
+                    AccountEntity user = accountEntityRepository.findByUuid(UUID.fromString(s)).get();
+                    members.add(user.getAccountId());
+                }
+
+                AccountEntity creator = accountEntityRepository.findByUuid(UUID.fromString(channelMappingVO.getCreatedBy())).get();
+                vo.setAdminIds(admins);
+                vo.setMemberIds(members);
+                vo.setCreatorId(creator.getAccountId());
+                System.out.println("****" + vo.toString());
+                return vo;
+            }
+
+        } catch (InterruptedException | ExecutionException ex) {
+            System.err.println("error when getting channel details " + ex.getMessage());
+        }
+
+        return vo;
+    }
+
 }

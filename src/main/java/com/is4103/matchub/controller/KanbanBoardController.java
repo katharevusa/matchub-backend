@@ -13,6 +13,7 @@ import com.is4103.matchub.exception.CreateTaskException;
 import com.is4103.matchub.exception.DeleteTaskException;
 import com.is4103.matchub.exception.KanbanBoardNotFoundException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.UpdateColumnException;
 import com.is4103.matchub.exception.UpdateTaskException;
 import com.is4103.matchub.service.KanbanBoardService;
 import com.is4103.matchub.service.TaskColumnService;
@@ -54,12 +55,6 @@ public class KanbanBoardController {
 
     }
 
-    // this update is only for kanbanboard title, descriptions only
-    @RequestMapping(method = RequestMethod.POST, value = "/updateKanbanBoard")
-    public KanbanBoardEntity updateKanbanBoard(KanbanBoardVO vo) {
-        return kanbanBoardService.updateKanbanBoard(vo);
-
-    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getKanbanBoardByKanbanBoardId")
     public KanbanBoardEntity getKanbanBoardByKanbanBoardId(@RequestParam(value = "kanbanBoardId", required = true) Long kanbanBoardId) throws KanbanBoardNotFoundException {
@@ -68,7 +63,7 @@ public class KanbanBoardController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getKanbanBoardByChannelUid")
-    public KanbanBoardEntity getKanbanBoardByChannelUid(@RequestParam(value = "ChannelUId", required = true) String ChannelUId) throws KanbanBoardNotFoundException {
+    public KanbanBoardEntity getKanbanBoardByChannelUid(@RequestParam(value = "channelUId", required = true) String ChannelUId) throws KanbanBoardNotFoundException {
         return kanbanBoardService.getKanbanBoardByChannelUid(ChannelUId);
 
     }
@@ -81,7 +76,7 @@ public class KanbanBoardController {
 //****************************** Column Methods Below *************************
 
     @RequestMapping(method = RequestMethod.POST, value = "/createNewColumn")
-    public KanbanBoardEntity createNewColumn(TaskColumnVO vo) {
+    public KanbanBoardEntity createNewColumn(TaskColumnVO vo) throws UpdateColumnException{
         return taskColumnService.createNewColumn(vo);
     }
 
