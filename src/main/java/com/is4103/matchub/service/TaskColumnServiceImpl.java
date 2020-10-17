@@ -92,6 +92,22 @@ public class TaskColumnServiceImpl implements TaskColumnService{
     }
     
     
+    @Override 
+    public KanbanBoardEntity rearrangeColumn(Long kanbanBoardId, List<Long> columnIdSequence){
+        KanbanBoardEntity kanbanBoard = kanbanBoardEntityRepository.findById(kanbanBoardId).get();   
+        kanbanBoard.setTaskColumns(new ArrayList<>());
+        for(Long columnId : columnIdSequence){
+            kanbanBoard.getTaskColumns().add(taskColumnEntityRepository.findById(columnId).get());
+            
+        }
+       kanbanBoard = kanbanBoardEntityRepository.saveAndFlush(kanbanBoard);
+        
+        return kanbanBoard;
+        
+        
+    }
+    
+    
     
     
     

@@ -25,5 +25,7 @@ public interface TaskColumnService {
     public TaskColumnEntity getColumnByColumnId(Long columnId);
     
     public List<TaskColumnEntity> getColumnsByKanbanBoardId(Long kanbanBoardId);
+    
+    public KanbanBoardEntity rearrangeColumn(Long kanbanBoardId, List<Long> columnIdSequence);
 
 }

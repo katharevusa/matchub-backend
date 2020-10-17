@@ -94,6 +94,9 @@ public class InitServiceImpl implements InitService {
         
         // init project follower 
         initProjectFollower();
+        
+        
+        // init kanbanboard for project 3
     }
 
     private void initUsers() {

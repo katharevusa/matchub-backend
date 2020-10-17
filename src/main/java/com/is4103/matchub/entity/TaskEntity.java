@@ -49,8 +49,7 @@ public class TaskEntity {
     @NotNull
     private String taskTitle;
 
-    @Column(nullable = false)
-    @NotNull
+    @Column(nullable = true) 
     private String taskDescription;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
@@ -79,7 +78,9 @@ public class TaskEntity {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private List<ProfileEntity> taskdoers = new ArrayList<>();
     
-    
+    @NotNull
+    private Long taskCreatorId;
+   
     @OneToMany
     private List<CommentEntity> comments = new ArrayList<>();
 
