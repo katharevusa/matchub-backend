@@ -17,9 +17,13 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface TaskEntityRepository extends JpaRepository<TaskEntity, Long> {
 
-    @Query("SELECT distinct t FROM TaskEntity t "
-            + "JOIN t.profiles p "
-            + "WHERE t.statusEnum <> com.is4103.matchub.enumeration.TaskStatusEnum.COMPLETED "
-            + "AND p.accountId = :id")
-    List<TaskEntity> getIncompleteTasksOfAccount(Long id);
+//    @Query("SELECT distinct t FROM TaskEntity t "
+//            + "JOIN t.profiles p "
+//            + "WHERE t.statusEnum <> com.is4103.matchub.enumeration.TaskStatusEnum.COMPLETED "
+//            + "AND p.accountId = :id")
+//    List<TaskEntity> getIncompleteTasksOfAccount(Long id);
+    
+    
+   
 }
+

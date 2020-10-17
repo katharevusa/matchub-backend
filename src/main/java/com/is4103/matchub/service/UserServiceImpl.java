@@ -598,16 +598,16 @@ public class UserServiceImpl implements UserService {
         if (account instanceof IndividualEntity) {
             IndividualEntity i = (IndividualEntity) account;
 
-            //account cannot be deleted if it has incomplete tasks, reviews given
-            if (taskEntityRepository.getIncompleteTasksOfAccount(accountId).size() > 0
+            //account cannot be deleted if it has task assigned, reviews given
+            if (i.getTasks().size() > 0
                     || reviewEntityRepository.getReviewsGivenByAccountId(accountId).size() > 0) {
                 deleteAccount = false;
             }
         } else {
             OrganisationEntity o = (OrganisationEntity) account;
 
-            //account cannot be deleted if it has incomplete tasks, reviews given
-            if (taskEntityRepository.getIncompleteTasksOfAccount(accountId).size() > 0
+            //account cannot be deleted if it has task assigned, reviews given
+            if (o.getTasks().size() > 0
                     || reviewEntityRepository.getReviewsGivenByAccountId(accountId).size() > 0) {
                 deleteAccount = false;
             }

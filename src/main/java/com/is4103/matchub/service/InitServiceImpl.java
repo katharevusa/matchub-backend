@@ -13,7 +13,6 @@ import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
-import com.is4103.matchub.exception.ProjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -92,6 +91,9 @@ public class InitServiceImpl implements InitService {
         //join request 
         initJoinRequest();
 
+        
+        // init project follower 
+        initProjectFollower();
     }
 
     private void initUsers() {
@@ -137,8 +139,7 @@ public class InitServiceImpl implements InitService {
         Set<String> skillsets = new HashSet<>(Arrays.asList("Good Communication Skills", "Leadership Skills", "Project Management Skills", "Professional Painter"));
         alexLow.setSkillSet(skillsets);
 
-        alexLow.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(1))));
-
+       
         alexLow.setCountryCode("+65");
         alexLow.setPhoneNumber("91234567");
         alexLow.setCountry("Singapore");
@@ -167,8 +168,7 @@ public class InitServiceImpl implements InitService {
         skillsets = new HashSet<>(Arrays.asList("Singing", "Playing the Guitar", "Trilingual", "General Surgery (GS)", "Verified First Aider"));
         ikjun.setSkillSet(skillsets);
 
-        ikjun.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(1))));
-
+        
         ikjun.setCountryCode("+82");
         ikjun.setPhoneNumber("011-465-9876");
         ikjun.setCountry("Korea, Republic of South Korea");
@@ -199,7 +199,6 @@ public class InitServiceImpl implements InitService {
         skillsets = new HashSet<>(Arrays.asList("Social Worker for Gender Equality"));
         sophia.setSkillSet(skillsets);
 
-        sophia.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2))));
 
         sophia.setCountryCode("+1");
         sophia.setPhoneNumber("604 598 5235");
@@ -285,7 +284,6 @@ public class InitServiceImpl implements InitService {
         skillsets = new HashSet<>(Arrays.asList("Hiking", "Nature Lover", "Pet Lover", "Verified First Aider"));
         songhwa.setSkillSet(skillsets);
 
-        songhwa.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(5), Long.valueOf(6), Long.valueOf(7))));
 
         songhwa.setCountryCode("+82");
         songhwa.setPhoneNumber("012-456-4321");
@@ -351,7 +349,6 @@ public class InitServiceImpl implements InitService {
         skillsets = new HashSet<>(Arrays.asList("Painting", "Drawing"));
         jeongha.setSkillSet(skillsets);
 
-        jeongha.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(5), Long.valueOf(6), Long.valueOf(7))));
 
         jeongha.setCountryCode("+82");
         jeongha.setPhoneNumber("022-179-4100");
@@ -380,8 +377,6 @@ public class InitServiceImpl implements InitService {
         billy.setProfileDescription("Teaching Makes A Difference");
         skillsets = new HashSet<>(Arrays.asList("Teaching", "Economist"));
         billy.setSkillSet(skillsets);
-
-        billy.setProjectFollowing(new HashSet<>(Arrays.asList(Long.valueOf(2), Long.valueOf(5), Long.valueOf(6), Long.valueOf(7))));
 
         billy.setCountryCode("+65");
         billy.setPhoneNumber("90004321");
@@ -469,10 +464,10 @@ public class InitServiceImpl implements InitService {
         ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation", "All Transportation Resources", 1, 1, "hour");
         resourceCategoryService.createResourceCategory(transportationCategory);
 
-        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Eductaion", "All Education Resources", 1, 5, "set");
+        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Education", "All Education Resources", 1, 5, "set");
         resourceCategoryService.createResourceCategory(educationCategory);
 
-        ResourceCategoryEntity clothCategory = new ResourceCategoryEntity("clothes", "All clothes Resources", 1, 5, "piece");
+        ResourceCategoryEntity clothCategory = new ResourceCategoryEntity("Clothes", "All clothes Resources", 1, 5, "piece");
         resourceCategoryService.createResourceCategory(clothCategory);
 
     }
@@ -1215,7 +1210,7 @@ public class InitServiceImpl implements InitService {
         badgeEntityRepository.save(fiveYears);
     }
 
-    public void initJoinRequest() {
+    private void initJoinRequest() {
         try {
             projectService.createJoinRequest(3L, 4L);
             projectService.createJoinRequest(3L, 6L);
@@ -1230,6 +1225,90 @@ public class InitServiceImpl implements InitService {
             System.err.println("Error in init join request");
         }
 
+    }
+    
+    
+    private void initProjectFollower(){
+        ProjectEntity project1 = projectEntityRepository.findById(1L).get();
+        ProjectEntity project2 = projectEntityRepository.findById(2L).get();
+        ProjectEntity project3 = projectEntityRepository.findById(3L).get();
+        ProjectEntity project4 = projectEntityRepository.findById(4L).get();
+        ProjectEntity project5 = projectEntityRepository.findById(5L).get();
+        
+        
+        ProfileEntity user2 = profileEntityRepository.findById(2L).get();
+        ProfileEntity user3 = profileEntityRepository.findById(3L).get();
+        ProfileEntity user4 = profileEntityRepository.findById(4L).get();
+        ProfileEntity user5 = profileEntityRepository.findById(5L).get();
+        ProfileEntity user7 = profileEntityRepository.findById(7L).get();
+         
+       // every user follows project 1
+        project1.getProjectFollowers().add(user2);
+        project1.getProjectFollowers().add(user3);
+        project1.getProjectFollowers().add(user4);
+        project1.getProjectFollowers().add(user5);
+        project1.getProjectFollowers().add(user7);
+        
+        user2.getProjectsFollowing().add(project1);
+        user3.getProjectsFollowing().add(project1);
+        user4.getProjectsFollowing().add(project1);
+        user5.getProjectsFollowing().add(project1);
+        user7.getProjectsFollowing().add(project1);
+        
+        // every user follows project 2
+        project2.getProjectFollowers().add(user2);
+        project2.getProjectFollowers().add(user3);
+        project2.getProjectFollowers().add(user4);
+        project2.getProjectFollowers().add(user5);
+        project2.getProjectFollowers().add(user7);
+        
+        user2.getProjectsFollowing().add(project2);
+        user3.getProjectsFollowing().add(project2);
+        user4.getProjectsFollowing().add(project2);
+        user5.getProjectsFollowing().add(project2);
+        user7.getProjectsFollowing().add(project2);
+        
+        
+        // every user follows project 3
+        project3.getProjectFollowers().add(user2);
+        project3.getProjectFollowers().add(user3);
+        project3.getProjectFollowers().add(user4);
+        project3.getProjectFollowers().add(user5);
+        project3.getProjectFollowers().add(user7);
+        
+        user2.getProjectsFollowing().add(project3);
+        user3.getProjectsFollowing().add(project3);
+        user4.getProjectsFollowing().add(project3);
+        user5.getProjectsFollowing().add(project3);
+        user7.getProjectsFollowing().add(project3);
+        
+        // every user follows project 4
+        project4.getProjectFollowers().add(user2);
+        project4.getProjectFollowers().add(user3);
+        project4.getProjectFollowers().add(user4);
+        project4.getProjectFollowers().add(user5);
+        project4.getProjectFollowers().add(user7);
+        
+        user2.getProjectsFollowing().add(project4);
+        user3.getProjectsFollowing().add(project4);
+        user4.getProjectsFollowing().add(project4);
+        user5.getProjectsFollowing().add(project4);
+        user7.getProjectsFollowing().add(project4);
+        
+        // every user follows project 5
+        project5.getProjectFollowers().add(user2);
+        project5.getProjectFollowers().add(user3);
+        project5.getProjectFollowers().add(user4);
+        project5.getProjectFollowers().add(user5);
+        project5.getProjectFollowers().add(user7);
+        
+        user2.getProjectsFollowing().add(project5);
+        user3.getProjectsFollowing().add(project5);
+        user4.getProjectsFollowing().add(project5);
+        user5.getProjectsFollowing().add(project5);
+        user7.getProjectsFollowing().add(project5);
+         
+        
     }
 
 }
