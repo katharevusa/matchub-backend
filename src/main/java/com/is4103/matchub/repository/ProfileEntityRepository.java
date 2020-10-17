@@ -127,7 +127,7 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "pe.country = ?3")
     Page<ProfileEntity> recommendProfiles(Long id, Set<Long> followingIds, String country, Pageable pageable);
 
-    @Query(value = "SELECT pe FROM ProfileEntity pe JOIN pe.projectsJoined project "
+    @Query(value = "SELECT pe FROM ProfileEntity pe JOIN pe.projectsFollowing project "
             + "WHERE pe.accountId <> ?1 "
             + "AND pe.accountId NOT IN ?2 "
             + "AND (pe.country = ?3 OR "

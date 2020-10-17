@@ -349,13 +349,13 @@ public class MatchingServiceImpl implements MatchingService {
 
         String country = profile.getCountry();
         Set<Long> followingIds = profile.getFollowing();
-        List<ProjectEntity> projectsJoined = profile.getProjectsJoined();
+        List<ProjectEntity> projectsFollowing = profile.getProjectsFollowing();
 
-        if (projectsJoined.isEmpty()) {
+        if (projectsFollowing.isEmpty()) {
             recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, pageable);
         } else {
-            //get profiles with same country + same project joined 
-            recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, projectsJoined, pageable);
+            //get profiles with same country + same project that profile is following 
+            recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
         }
 
 //        Optional<OrganisationEntity> organisation = organisationEntityRepository.findOrgansationOfProfile(accountId);
