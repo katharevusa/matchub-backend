@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.is4103.matchub.enumeration.CommentTypeEnum;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,6 +45,10 @@ public class CommentEntity {
     @Column(nullable = false)
     @NotNull
     private Long accountId;
+    
+    @Column(nullable = false)
+    @NotNull
+    private CommentTypeEnum commentType;
 
     public CommentEntity(String content, LocalDateTime timeCreated, Long accountId) {
         this.content = content;

@@ -5,10 +5,28 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.KanbanBoardEntity;
+import com.is4103.matchub.entity.TaskColumnEntity;
+import com.is4103.matchub.exception.UpdateColumnException;
+import com.is4103.matchub.vo.TaskColumnVO;
+import java.util.List;
+
 /**
  *
  * @author longluqian
  */
 public interface TaskColumnService {
+
+    public KanbanBoardEntity createNewColumn(TaskColumnVO vo) throws UpdateColumnException;
+
+    public KanbanBoardEntity updateColumn(TaskColumnVO vo);
+
+    public KanbanBoardEntity deleteColumn(Long columnId);
     
+    public TaskColumnEntity getColumnByColumnId(Long columnId);
+    
+    public List<TaskColumnEntity> getColumnsByKanbanBoardId(Long kanbanBoardId);
+    
+    public KanbanBoardEntity rearrangeColumn(Long kanbanBoardId, List<Long> columnIdSequence);
+
 }
