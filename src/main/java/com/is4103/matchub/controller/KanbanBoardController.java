@@ -25,7 +25,9 @@ import com.is4103.matchub.vo.TaskVO;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,7 +52,7 @@ public class KanbanBoardController {
     TaskService taskService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/createKanbanBoard")
-    public KanbanBoardEntity createKanbanBoard(KanbanBoardVO vo) {
+    public KanbanBoardEntity createKanbanBoard(@Valid @RequestBody KanbanBoardVO vo) {
         return kanbanBoardService.createKanbanBoard(vo);
 
     }
@@ -76,13 +78,13 @@ public class KanbanBoardController {
 //****************************** Column Methods Below *************************
 
     @RequestMapping(method = RequestMethod.POST, value = "/createNewColumn")
-    public KanbanBoardEntity createNewColumn(TaskColumnVO vo) throws UpdateColumnException{
+    public KanbanBoardEntity createNewColumn(@Valid @RequestBody TaskColumnVO vo) throws UpdateColumnException{
         return taskColumnService.createNewColumn(vo);
     }
 
     // update only column title and decription
     @RequestMapping(method = RequestMethod.PUT, value = "/updateColumn")
-    public KanbanBoardEntity updateColumn(TaskColumnVO vo) {
+    public KanbanBoardEntity updateColumn(@Valid @RequestBody TaskColumnVO vo) {
         return taskColumnService.updateColumn(vo);
     }
 
@@ -110,12 +112,12 @@ public class KanbanBoardController {
 
     // basic information 
     @RequestMapping(method = RequestMethod.POST, value = "/createTask")
-    public TaskEntity createTask(TaskVO vo) throws CreateTaskException {
+    public TaskEntity createTask(@Valid @RequestBody TaskVO vo) throws CreateTaskException {
         return taskService.createTask(vo);
     }
 
     // update basic informations: Title/description/leaderId
-    public TaskEntity updateTask(TaskVO vo) throws UpdateTaskException {
+    public TaskEntity updateTask(@Valid @RequestBody TaskVO vo) throws UpdateTaskException {
         return taskService.updateTask(vo);
     }
 
@@ -146,7 +148,7 @@ public class KanbanBoardController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/addCommentToTask")
-    public TaskEntity addCommentToTask(@RequestParam(value = "taskId", required = true)Long taskId, CommentVO vo) throws UpdateTaskException {
+    public TaskEntity addCommentToTask(@RequestParam(value = "taskId", required = true)Long taskId,@Valid @RequestBody CommentVO vo) throws UpdateTaskException {
         return taskService.addCommentToTask(taskId, vo);
     }
 
