@@ -52,7 +52,7 @@ public class ProjectController {
     //Update project does not contain the photos upload, call separate photo upload method
     @RequestMapping(method = RequestMethod.PUT, value = "/updateProject")
     ProjectEntity updateProjectById(@Valid @RequestBody ProjectCreateVO vo,
-            @RequestParam(value = "updaterId", defaultValue = "") Long updaterId, @RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException, UpdateProjectException {
+            @RequestParam(value = "updaterId", required = true) Long updaterId, @RequestParam(value = "projectId", required = true) Long projectId) throws ProjectNotFoundException, UpdateProjectException {
 
         return projectService.updateProject(vo, updaterId, projectId);
 
@@ -60,51 +60,51 @@ public class ProjectController {
 
     //Get a project based on the projectId
     @RequestMapping(method = RequestMethod.GET, value = "/getProject")
-    ProjectEntity getProjectById(@RequestParam(value = "projectId", defaultValue = "") Long projectId) throws ProjectNotFoundException {
+    ProjectEntity getProjectById(@RequestParam(value = "projectId", required = true) Long projectId) throws ProjectNotFoundException {
         return projectService.retrieveProjectById(projectId);
     }
 
     //Get a list of joined projects (profile id)
     @RequestMapping(method = RequestMethod.GET, value = "/getJoinedProjects")
-    List<ProjectEntity> getJoinedProjects(@RequestParam(value = "profileId", defaultValue = "") Long profileId) throws UserNotFoundException {
+    List<ProjectEntity> getJoinedProjects(@RequestParam(value = "profileId", required = true) Long profileId) throws UserNotFoundException {
         return projectService.getJoinedProjects(profileId);
     }
 
     //Get a list of self-created projects (profile id)
     @RequestMapping(method = RequestMethod.GET, value = "/getCreatedProjects")
-    List<ProjectEntity> getCreatedProjects(@RequestParam(value = "profileId", defaultValue = "") Long profileId) throws UserNotFoundException {
+    List<ProjectEntity> getCreatedProjects(@RequestParam(value = "profileId", required = true) Long profileId) throws UserNotFoundException {
         return projectService.getCreatedProjects(profileId);
     }
 
     //terminate a project ( project id, terminator id)
     @RequestMapping(method = RequestMethod.PUT, value = "/terminateProject")
-    void terminateProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId, @RequestParam(value = "profileId", defaultValue = "") Long profileId) throws TerminateProjectException {
+    void terminateProject(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "profileId",required = true) Long profileId) throws TerminateProjectException {
         projectService.terminateProject(projectId, profileId);
     }
     
     @RequestMapping(method = RequestMethod.PUT, value = "/completeProject")
-    void completeProject(@RequestParam(value = "projectId", defaultValue = "") Long projectId, @RequestParam(value = "profileId", defaultValue = "") Long profileId) throws CompleteProjectException {
+    void completeProject(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "profileId", required = true) Long profileId) throws CompleteProjectException {
         projectService.completeProject(projectId, profileId);
     }
     
 
     // get a list of owned projects
     @RequestMapping(method = RequestMethod.GET, value = "/getOwnedProjects")
-    List<ProjectEntity> getOwnedProjects(Long userId) {
+    List<ProjectEntity> getOwnedProjects(@RequestParam(value = "userId", required = true)Long userId) {
         return projectService.getOwnedProjects(userId);
     }
     
     // get a list of projects by list of project ids
      @RequestMapping(method = RequestMethod.GET, value = "/getProjectsByListOfIds")
-    List<ProjectEntity> getProjectsByListOfIds(List<Long> ids) throws ProjectNotFoundException{
+    List<ProjectEntity> getProjectsByListOfIds(@RequestParam(value = "ids", required = true)List<Long> ids) throws ProjectNotFoundException{
         return projectService.getProjectsByListOfIds(ids);
     }
     
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProject")
     void deleteProject(
-            @RequestParam(value = "projectId", defaultValue = "") Long projectId,
-            @RequestParam(value = "updaterId", defaultValue = "") Long updaterId) throws DeleteProjectException {
+            @RequestParam(value = "projectId", required = true) Long projectId,
+            @RequestParam(value = "updaterId", required = true) Long updaterId) throws DeleteProjectException {
         projectService.deleteProject(projectId, updaterId);
 
     }

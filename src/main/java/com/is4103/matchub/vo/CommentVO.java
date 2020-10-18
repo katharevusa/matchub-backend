@@ -9,11 +9,13 @@ import com.is4103.matchub.entity.CommentEntity;
 import com.is4103.matchub.enumeration.CommentTypeEnum;
 import java.time.LocalDateTime;
 import javax.validation.constraints.NotNull;
+import lombok.Data;
 
 /**
  *
  * @author longluqian
  */
+@Data
 public class CommentVO {
  
     @NotNull(message = "Comment content can not be null")

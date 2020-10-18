@@ -21,7 +21,10 @@ import com.is4103.matchub.repository.TaskColumnEntityRepository;
 import com.is4103.matchub.repository.TaskEntityRepository;
 import com.is4103.matchub.vo.ChannelDetailsVO;
 import com.is4103.matchub.vo.CommentVO;
-import com.is4103.matchub.vo.TaskVO;
+import com.is4103.matchub.vo.CreateTaskVO;
+import com.is4103.matchub.vo.RearrangeTaskVO;
+import com.is4103.matchub.vo.UpdateLabelVO;
+import com.is4103.matchub.vo.UpdateTaskVO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,13 +57,13 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private CommentEntityRepository commentEntityRepository;
-    
+
     @Autowired
     private FirebaseService firebaseService;
 
 //Create Channel Tasks
     @Override
-    public TaskEntity createTask(TaskVO vo) throws CreateTaskException {
+    public TaskEntity createTask(CreateTaskVO vo) throws CreateTaskException {
 
         //check if creator is channel admin
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(vo.getKanbanboardId()).get();
@@ -68,8 +71,6 @@ public class TaskServiceImpl implements TaskService {
         if (!channelDetails.getAdminIds().contains(vo.getTaskCreatorOrEditorId())) {
             throw new CreateTaskException("Only channel admin can create task");
         }
-        
-
         //create new task
         TaskEntity task = new TaskEntity();
         vo.createTask(task);
@@ -78,22 +79,10 @@ public class TaskServiceImpl implements TaskService {
         TaskColumnEntity taskColumn = taskColumnEntityRepository.findById(vo.getTaskColumnId()).get();
         task.setTaskColumn(taskColumn);
 
-        // add taskdoer to task
-        for (Long taskDoerId : vo.getTaskdoers()) {
-            ProfileEntity taskDoer = profileEntityRepository.findById(taskDoerId).get();
-            task.getTaskdoers().add(taskDoer);
-        }
-
-        task = taskEntityRepository.saveAndFlush(task);
-
         // add task to task column
         taskColumn.getListOfTasks().add(task);
 
-        // add task to taskdoer
-        for (Long taskDoerId : vo.getTaskdoers()) {
-            ProfileEntity taskDoer = profileEntityRepository.findById(taskDoerId).get();
-            taskDoer.getTasks().add(task);
-        }
+        task = taskEntityRepository.saveAndFlush(task);
         taskColumnEntityRepository.flush();
         return task;
     }
@@ -106,7 +95,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskEntity> getTasksByKanbanBoardId(String channelUId) {
+    public List<TaskEntity> getTasksByChannelUID(String channelUId) {
         List<TaskEntity> tasks = new ArrayList<>();
         KanbanBoardEntity kanbanboard = kanbanBoardEntityRepository.findByChannelUId(channelUId).get();
         for (TaskColumnEntity tc : kanbanboard.getTaskColumns()) {
@@ -125,7 +114,7 @@ public class TaskServiceImpl implements TaskService {
 
     //Update Tasks
     @Override
-    public TaskEntity updateTask(TaskVO vo) throws UpdateTaskException {
+    public TaskEntity updateTask(UpdateTaskVO vo) throws UpdateTaskException {
         //Check: channel admins can update task
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(vo.getKanbanboardId()).get();
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
@@ -144,7 +133,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskEntity updateTaskDoers(List<Long> newTaskDoerList, Long taskId, Long updatorId, Long kanbanBoardId) throws UpdateTaskException {
 
-        // only channel admin or  can update task doers
+        // only channel admin can update task doers
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
         if (!channelDetails.getAdminIds().contains(updatorId)) {
@@ -162,15 +151,13 @@ public class TaskServiceImpl implements TaskService {
         for (Long taskDoerId : newTaskDoerList) {
             ProfileEntity taskDoer = profileEntityRepository.findById(taskDoerId).get();
             task.getTaskdoers().add(taskDoer);
-        }
-
-        // add task to taskdoer
-        for (Long taskDoerId : newTaskDoerList) {
-            ProfileEntity taskDoer = profileEntityRepository.findById(taskDoerId).get();
             taskDoer.getTasks().add(task);
         }
-        task = taskEntityRepository.saveAndFlush(task);
+
         profileEntityRepository.flush();
+
+        task = taskEntityRepository.saveAndFlush(task);
+        System.out.println("Reach here ");
         return task;
     }
 
@@ -178,14 +165,11 @@ public class TaskServiceImpl implements TaskService {
     public TaskColumnEntity deleteTask(Long taskId, Long deletorId, Long kanbanBoardId) throws IOException, DeleteTaskException {
 
         // Incomplete : only channel admin can update task doers
-        
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
         if (!channelDetails.getAdminIds().contains(deletorId)) {
             throw new DeleteTaskException("Only channel admin can delete task");
-        } 
-        
-        
+        }      
         TaskEntity task = taskEntityRepository.findById(taskId).get();
 
         // remove task from column
@@ -234,14 +218,17 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override //Move task around
-    public KanbanBoardEntity rearrangeTasks(Map<Long, List<Long>> columnIdAndTaskIdSequence, Long kanbanboardId, Long arrangerId) throws RearrangeTaskException {
+    public KanbanBoardEntity rearrangeTasks(RearrangeTaskVO vo) throws RearrangeTaskException {
         // incomplete check : only channel admins and task leader can move the task around
 //        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).get();
 //        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
 //        if (!channelDetails.getAdminIds().contains(arrangerId)) {
 //            throw new RearrangeTaskException("Only channel admin can delete task");
 //        } 
-   
+        Map<Long, List<Long>> columnIdAndTaskIdSequence = vo.getColumnIdAndTaskIdSequence();
+        Long kanbanboardId = vo.getKanbanBoardId();
+        Long arrangerId = vo.getArrangerId();
+
         for (Map.Entry<Long, List<Long>> entry : columnIdAndTaskIdSequence.entrySet()) {
             TaskColumnEntity column = taskColumnEntityRepository.findById(entry.getKey()).get();
             column.setListOfTasks(new ArrayList<>());
@@ -294,7 +281,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskEntity updateLabel(Map<String, String> labelAndColour, Long taskId) {
+    public TaskEntity updateLabel(UpdateLabelVO vo) {
+        Map<String, String> labelAndColour = vo.getLabelAndColour();
+        Long taskId = vo.getTaskId();
         TaskEntity task = taskEntityRepository.findById(taskId).get();
         task.setLabelAndColour(labelAndColour);
         return taskEntityRepository.saveAndFlush(task);
@@ -344,7 +333,5 @@ public class TaskServiceImpl implements TaskService {
         return taskEntityRepository.saveAndFlush(task);
 
     }
-    
-    
-    
+
 }

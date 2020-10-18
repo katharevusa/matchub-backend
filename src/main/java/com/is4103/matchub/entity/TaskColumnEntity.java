@@ -5,7 +5,6 @@
  */
 package com.is4103.matchub.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -14,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -53,6 +53,7 @@ public class TaskColumnEntity {
     private boolean isDone = false;
     
     @OneToMany(mappedBy = "taskColumn")
+    @OrderColumn
     private List<TaskEntity> listOfTasks = new ArrayList<>();
     
     

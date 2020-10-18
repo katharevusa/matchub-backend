@@ -13,6 +13,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,6 +45,7 @@ public class KanbanBoardEntity {
     private Long projectId;
 
     @OneToMany
+    @OrderColumn
     private List<TaskColumnEntity> taskColumns = new ArrayList<>();
 
 
