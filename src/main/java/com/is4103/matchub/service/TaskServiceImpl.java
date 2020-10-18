@@ -56,7 +56,7 @@ public class TaskServiceImpl implements TaskService {
 
 //Create Channel Tasks
     @Override
-    public TaskEntity createTask(TaskVO vo) throws CreateTaskException{
+    public TaskEntity createTask(TaskVO vo) throws CreateTaskException {
 
         //Incomplete:  check if creator is channel admin
         ProfileEntity creator = profileEntityRepository.findById(vo.getTaskCreatorId()).get();
@@ -96,6 +96,18 @@ public class TaskServiceImpl implements TaskService {
         return taskColumn.getListOfTasks();
     }
 
+    @Override
+    public List<TaskEntity> getTasksByKanbanBoardId(String channelUId) {
+        List<TaskEntity> tasks = new ArrayList<>();
+        KanbanBoardEntity kanbanboard = kanbanBoardEntityRepository.findByChannelUId(channelUId).get();
+        for (TaskColumnEntity tc : kanbanboard.getTaskColumns()) {
+            tasks.addAll(tc.getListOfTasks());
+        }
+
+        return tasks;
+
+    }
+
     //View a Particular Tasks
     @Override
     public TaskEntity getTaskById(Long taskId) {
@@ -104,7 +116,7 @@ public class TaskServiceImpl implements TaskService {
 
     //Update Tasks
     @Override
-    public TaskEntity updateTask(TaskVO vo) throws  UpdateTaskException{
+    public TaskEntity updateTask(TaskVO vo) throws UpdateTaskException {
         //Incomplete:  check if creator is channel admin
         ProfileEntity creator = profileEntityRepository.findById(vo.getTaskCreatorId()).get();
 
@@ -117,7 +129,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskEntity updateTaskDoers(List<Long> newTaskDoerList, Long taskId, Long updatorId) throws UpdateTaskException{
+    public TaskEntity updateTaskDoers(List<Long> newTaskDoerList, Long taskId, Long updatorId) throws UpdateTaskException {
 
         // Incomplete : only channel admin can update task doers
         TaskEntity task = taskEntityRepository.findById(taskId).get();
@@ -196,7 +208,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override //Move task around
-    public KanbanBoardEntity rearrangeTasks(Map<Long, List<Long>> columnIdAndTaskIdSequence, Long kanbanboardId, Long arrangerId)throws UpdateTaskException{
+    public KanbanBoardEntity rearrangeTasks(Map<Long, List<Long>> columnIdAndTaskIdSequence, Long kanbanboardId, Long arrangerId) throws UpdateTaskException {
         // incomplete check : only channel admins and task leader can move the task around
 
         for (Map.Entry<Long, List<Long>> entry : columnIdAndTaskIdSequence.entrySet()) {
@@ -223,7 +235,7 @@ public class TaskServiceImpl implements TaskService {
 
     //Add comments to task
     @Override
-    public TaskEntity addCommentToTask(Long taskId, CommentVO vo)throws UpdateTaskException{
+    public TaskEntity addCommentToTask(Long taskId, CommentVO vo) throws UpdateTaskException {
         CommentEntity newComment = new CommentEntity();
         vo.createTaskComment(newComment);
         newComment = commentEntityRepository.saveAndFlush(newComment);
@@ -234,7 +246,7 @@ public class TaskServiceImpl implements TaskService {
     //Delete task comments
 
     @Override
-    public TaskEntity deleteTaskComment(Long taskId, Long commentId) throws UpdateTaskException{
+    public TaskEntity deleteTaskComment(Long taskId, Long commentId) throws UpdateTaskException {
         CommentEntity comment = commentEntityRepository.findById(commentId).get();
         TaskEntity task = taskEntityRepository.findById(taskId).get();
         task.getComments().remove(comment);
@@ -243,25 +255,22 @@ public class TaskServiceImpl implements TaskService {
     }
 
     // get list of comments by taskId  
-    
-    @Override 
-    public List<CommentEntity> getListOfCommentsByTaskId(Long taskId){
+    @Override
+    public List<CommentEntity> getListOfCommentsByTaskId(Long taskId) {
         TaskEntity task = taskEntityRepository.findById(taskId).get();
         return task.getComments();
-        
+
     }
-    
+
     @Override
-    public TaskEntity updateLabel(Map<String, String> labelAndColour, Long taskId){
+    public TaskEntity updateLabel(Map<String, String> labelAndColour, Long taskId) {
         TaskEntity task = taskEntityRepository.findById(taskId).get();
         task.setLabelAndColour(labelAndColour);
         return taskEntityRepository.saveAndFlush(task);
     }
-    
-    
-    
+
     @Override
-    public TaskEntity uploadDocuments(Long taskId, MultipartFile[] documents)  {
+    public TaskEntity uploadDocuments(Long taskId, MultipartFile[] documents) {
         TaskEntity task = taskEntityRepository.findById(taskId).get();
         for (MultipartFile photo : documents) {
             String path = attachmentService.upload(photo);
@@ -275,7 +284,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskEntity deleteDocuments(Long taskId, String[] docsToDelete) throws IOException,UpdateTaskException{
+    public TaskEntity deleteDocuments(Long taskId, String[] docsToDelete) throws IOException, UpdateTaskException {
         TaskEntity task = taskEntityRepository.findById(taskId).get();
         Map<String, String> hashmap = task.getDocuments();
 

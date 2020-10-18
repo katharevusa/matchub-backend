@@ -50,6 +50,8 @@ public interface TaskService {
      public TaskEntity uploadDocuments(Long taskId, MultipartFile[] documents);
      
      public TaskEntity deleteDocuments(Long taskId, String[] docsToDelete) throws IOException,UpdateTaskException;
+     
+     public List<TaskEntity> getTasksByKanbanBoardId(String channelUId);
    
          
     

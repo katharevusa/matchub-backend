@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.KanbanBoardEntity;
 import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.entity.TaskEntity;
 import com.is4103.matchub.exception.CreateTaskException;
+import com.is4103.matchub.exception.DeleteTaskColumnException;
 import com.is4103.matchub.exception.DeleteTaskException;
 import com.is4103.matchub.exception.KanbanBoardNotFoundException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
@@ -19,6 +20,7 @@ import com.is4103.matchub.service.KanbanBoardService;
 import com.is4103.matchub.service.TaskColumnService;
 import com.is4103.matchub.service.TaskService;
 import com.is4103.matchub.vo.CommentVO;
+import com.is4103.matchub.vo.DeleteColumnVO;
 import com.is4103.matchub.vo.KanbanBoardVO;
 import com.is4103.matchub.vo.TaskColumnVO;
 import com.is4103.matchub.vo.TaskVO;
@@ -84,14 +86,14 @@ public class KanbanBoardController {
 
     // update only column title and decription
     @RequestMapping(method = RequestMethod.PUT, value = "/updateColumn")
-    public KanbanBoardEntity updateColumn(@Valid @RequestBody TaskColumnVO vo) {
+    public KanbanBoardEntity updateColumn(@Valid @RequestBody TaskColumnVO vo)throws UpdateColumnException{
         return taskColumnService.updateColumn(vo);
     }
 
     // it's a PUT method with updated kanbanboard returned
     @RequestMapping(method = RequestMethod.PUT, value = "/deleteColumn")
-    public KanbanBoardEntity deleteColumn(@RequestParam(value = "columnId", required = true) Long columnId) {
-        return taskColumnService.deleteColumn(columnId);
+    public KanbanBoardEntity deleteColumn(@Valid @RequestBody DeleteColumnVO vo)throws DeleteTaskColumnException{
+        return taskColumnService.deleteColumn(vo);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getColumnByColumnId")
@@ -105,8 +107,8 @@ public class KanbanBoardController {
 
     }
     @RequestMapping(method = RequestMethod.PUT, value = "/rearrangeColumn")
-     public KanbanBoardEntity rearrangeColumn(Long kanbanBoardId, List<Long> columnIdSequence){
-         return taskColumnService.rearrangeColumn(kanbanBoardId, columnIdSequence);
+     public KanbanBoardEntity rearrangeColumn(Long kanbanBoardId, List<Long> columnIdSequence, Long editorId) throws UpdateColumnException{
+         return taskColumnService.rearrangeColumn(kanbanBoardId, columnIdSequence, editorId);
      }
     //****************************** Task Methods Below *************************
 
@@ -124,6 +126,11 @@ public class KanbanBoardController {
     @RequestMapping(method = RequestMethod.GET, value = "/getTasksByColumnId")
     public List<TaskEntity> getTasksByColumnId(@RequestParam(value = "columnId", required = true)Long columnId) {
         return taskService.getTasksByColumnId(columnId);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getTasksByKanbanBoardId")
+    public List<TaskEntity> getTasksByKanbanBoardId(String channelUid){
+        return taskService.getTasksByKanbanBoardId(channelUid);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getTaskById")
