@@ -10,6 +10,7 @@ import com.is4103.matchub.exception.KanbanBoardNotFoundException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.vo.KanbanBoardVO;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -24,5 +25,7 @@ public interface KanbanBoardService {
     public KanbanBoardEntity getKanbanBoardByChannelUid(String Uid) throws KanbanBoardNotFoundException;
     
     public List<KanbanBoardEntity> getAllKanbanBoardByProjectId(Long projectId)throws ProjectNotFoundException;
+    
+    public Map<String, String> getAllLabelsByKanbanBoardId(Long kanbanBoardId);
 
 }

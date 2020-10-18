@@ -11,6 +11,7 @@ import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.entity.TaskEntity;
 import com.is4103.matchub.exception.CreateTaskException;
 import com.is4103.matchub.exception.DeleteTaskException;
+import com.is4103.matchub.exception.RearrangeTaskException;
 import com.is4103.matchub.exception.UpdateTaskException;
 import com.is4103.matchub.vo.CommentVO;
 import com.is4103.matchub.vo.TaskVO;
@@ -33,12 +34,12 @@ public interface TaskService {
 
     public TaskEntity updateTask(TaskVO vo) throws UpdateTaskException;
 
-    public TaskEntity updateTaskDoers(List<Long> newTaskDoerList, Long taskId, Long updatorId) throws UpdateTaskException;
+    public TaskEntity updateTaskDoers(List<Long> newTaskDoerList, Long taskId, Long updatorId, Long kanbanBoardId) throws UpdateTaskException;
 
-    public TaskColumnEntity deleteTask(Long taskId, Long deletorId) throws IOException, DeleteTaskException;
+       public TaskColumnEntity deleteTask(Long taskId, Long deletorId, Long kanbanBoardId) throws IOException, DeleteTaskException;
     
-     public KanbanBoardEntity rearrangeTasks(Map<Long, List<Long>> columnIdAndTaskIdSequence, Long kanbanboardId, Long arrangerId)throws UpdateTaskException;
-     
+     public KanbanBoardEntity rearrangeTasks(Map<Long, List<Long>> columnIdAndTaskIdSequence, Long kanbanboardId, Long arrangerId) throws RearrangeTaskException;
+      
      public TaskEntity addCommentToTask(Long taskId, CommentVO vo)throws UpdateTaskException;
      
      public TaskEntity deleteTaskComment(Long taskId, Long commentId) throws UpdateTaskException;
