@@ -47,6 +47,10 @@ public class TaskColumnEntity {
     @NotNull
     private Long kanbanBoardId;
     
+    @Column(nullable = false)
+    @NotNull
+    private boolean isDone = false;
+    
     @OneToMany(mappedBy = "taskColumn")
     private List<TaskEntity> listOfTasks = new ArrayList<>();
     

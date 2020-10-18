@@ -19,8 +19,6 @@ public interface KanbanBoardService {
 
     public KanbanBoardEntity createKanbanBoard(KanbanBoardVO vo);
 
-    public KanbanBoardEntity updateKanbanBoard(KanbanBoardVO vo);
-
     public KanbanBoardEntity getKanbanBoardByKanbanBoardId(Long id) throws KanbanBoardNotFoundException;
 
     public KanbanBoardEntity getKanbanBoardByChannelUid(String Uid) throws KanbanBoardNotFoundException;

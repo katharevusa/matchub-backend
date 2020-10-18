@@ -35,14 +35,6 @@ public class KanbanBoardEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long kanbanBoardId;
 
-    @Column(nullable = false)
-    @NotNull
-    private String kanbanBoardTitle;
-
-    @Column(nullable = false)
-    @NotNull
-    private String kanbanBoardDescription;
-    
     @NotNull
     @Column(name = "channelUid", updatable = false, nullable = false, unique = true)
     private String channelUid;
@@ -54,9 +46,5 @@ public class KanbanBoardEntity {
     @OneToMany
     private List<TaskColumnEntity> taskColumns = new ArrayList<>();
 
-    public KanbanBoardEntity(String kanbanBoardTitle, String kanbanBoardDescription) {
-        this.kanbanBoardTitle = kanbanBoardTitle;
-        this.kanbanBoardDescription = kanbanBoardDescription;
-    }
 
 }

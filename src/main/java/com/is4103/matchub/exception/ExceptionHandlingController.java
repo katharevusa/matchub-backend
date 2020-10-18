@@ -530,4 +530,50 @@ public class ExceptionHandlingController {
     }
     
     
+       @ExceptionHandler(value = UpdateTaskException.class)
+    public ResponseEntity<ExceptionResponse> updateTaskException(UpdateTaskException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Error updating task");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    
+    }
+    
+       @ExceptionHandler(value = CreateTaskException.class)
+    public ResponseEntity<ExceptionResponse> createTaskException(CreateTaskException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Error creating task");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    
+    }
+    
+       @ExceptionHandler(value = DeleteTaskException.class)
+    public ResponseEntity<ExceptionResponse> deleteTaskException(DeleteTaskException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Error creating task");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    
+    }
+    
+       @ExceptionHandler(value = UpdateColumnException.class)
+    public ResponseEntity<ExceptionResponse> updateColumnException(UpdateColumnException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Error updating column");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    
+    }
+    
+    
+     
 }

@@ -14,7 +14,7 @@ public interface AccountEntityRepository extends JpaRepository<AccountEntity, Lo
 
     Optional<AccountEntity> findByEmail(String email);
 
-//    @Query(value = "SELECT ae FROM AccountEntity ae WHERE blob_uuid LIKE %:uuid%")
+
     Optional<AccountEntity> findByUuid(UUID uuid);
 
     @Query(value = "SELECT DISTINCT a FROM AccountEntity a",

@@ -10,9 +10,12 @@ import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.exception.KanbanBoardNotFoundException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.UpdateColumnException;
 import com.is4103.matchub.repository.KanbanBoardEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
+import com.is4103.matchub.repository.TaskColumnEntityRepository;
 import com.is4103.matchub.vo.KanbanBoardVO;
+import com.is4103.matchub.vo.TaskColumnVO;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,20 +33,52 @@ public class KanbanBoardServiceImpl implements KanbanBoardService {
     
     @Autowired
     private ProjectEntityRepository projectEntityRepository;
+    
+    @Autowired
+    private TaskColumnEntityRepository taskColumnEntityRepository;
+    
+    
+ 
 
     @Override
     public KanbanBoardEntity createKanbanBoard(KanbanBoardVO vo) {
         KanbanBoardEntity kanbanBoard = new KanbanBoardEntity();
         vo.createNewKanbanBoard(kanbanBoard);
-        return kanbanBoardEntityRepository.saveAndFlush(kanbanBoard);
+        kanbanBoard = kanbanBoardEntityRepository.saveAndFlush(kanbanBoard);
+        System.out.println("*****"+kanbanBoard);
+        
+        // init new default columns
+        TaskColumnEntity newColumn = new TaskColumnEntity();
+        newColumn.setColumnTitle("New");
+        newColumn.setColumnDescription("All new tasks");
+        newColumn.setKanbanBoardId(kanbanBoard.getKanbanBoardId());
+        newColumn = taskColumnEntityRepository.saveAndFlush(newColumn);
+        kanbanBoard.getTaskColumns().add(newColumn);
+        
+        
+        TaskColumnEntity inProgressColumn = new TaskColumnEntity();
+        inProgressColumn.setColumnTitle("In progress");
+        inProgressColumn.setColumnDescription("All in progress tasks");
+        inProgressColumn.setKanbanBoardId(kanbanBoard.getKanbanBoardId());
+        inProgressColumn = taskColumnEntityRepository.saveAndFlush(inProgressColumn);
+        kanbanBoard.getTaskColumns().add(inProgressColumn);
+        
+        
+        TaskColumnEntity doneColumn = new TaskColumnEntity();
+        doneColumn.setColumnTitle("Done");
+        doneColumn.setColumnDescription("All done tasks. There is only one column with done status for one kanban board.");
+        doneColumn.setKanbanBoardId(kanbanBoard.getKanbanBoardId());
+        doneColumn.setDone(true);
+        doneColumn = taskColumnEntityRepository.saveAndFlush(doneColumn);
+        kanbanBoard.getTaskColumns().add(doneColumn);
+        
+       return kanbanBoardEntityRepository.saveAndFlush(kanbanBoard);
+        
+        
+        
     }
 
-    @Override
-    public KanbanBoardEntity updateKanbanBoard(KanbanBoardVO vo) {
-        KanbanBoardEntity kanbanBoard = new KanbanBoardEntity();
-        vo.updateNewKanbanBoard(kanbanBoard);
-        return kanbanBoardEntityRepository.saveAndFlush(kanbanBoard);
-    }
+   
 
     @Override
     public KanbanBoardEntity getKanbanBoardByKanbanBoardId(Long id) throws KanbanBoardNotFoundException {
