@@ -47,8 +47,10 @@ public class TaskVO {
     private List<Long> taskdoers = new ArrayList<>();
     
     @NotNull(message = "Task creator Id can not be null")
-    private Long taskCreatorId;
+    private Long taskCreatorOrEditorId;
     
+    @NotNull(message = "Kanban Board Id can not be null")
+    private Long kanbanboardId;
     
     public void createTask(TaskEntity newTask){
         newTask.setTaskTitle(this.taskTitle);
@@ -57,7 +59,7 @@ public class TaskVO {
         }
         newTask.setTaskDescription(this.taskDescription);
         newTask.setCreatedTime(LocalDateTime.now());
-        newTask.setTaskCreatorId(this.taskCreatorId);
+        newTask.setTaskCreatorId(this.taskCreatorOrEditorId);
         if(expectedDeadline!=null){
             newTask.setExpectedDeadline(this.expectedDeadline);          
         }
