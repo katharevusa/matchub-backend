@@ -140,6 +140,7 @@ public class TaskColumnServiceImpl implements TaskColumnService {
 
         KanbanBoardEntity kanbanBoard = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
         kanbanBoard.setTaskColumns(new ArrayList<>());
+        
         for (Long columnId : columnIdSequence) {
             kanbanBoard.getTaskColumns().add(taskColumnEntityRepository.findById(columnId).get());
 

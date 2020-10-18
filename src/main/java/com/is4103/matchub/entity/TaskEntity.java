@@ -78,6 +78,7 @@ public class TaskEntity {
     private Long taskLeaderId;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JsonIgnoreProperties({"tasks"})
     private List<ProfileEntity> taskdoers = new ArrayList<>();
     
     @NotNull
