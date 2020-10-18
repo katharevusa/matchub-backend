@@ -8,6 +8,7 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.KanbanBoardEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.TaskColumnEntity;
+import com.is4103.matchub.entity.TaskEntity;
 import com.is4103.matchub.exception.KanbanBoardNotFoundException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.UpdateColumnException;
@@ -16,8 +17,11 @@ import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.TaskColumnEntityRepository;
 import com.is4103.matchub.vo.KanbanBoardVO;
 import com.is4103.matchub.vo.TaskColumnVO;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -124,5 +128,23 @@ public class KanbanBoardServiceImpl implements KanbanBoardService {
         return list;
         
     }
+    
+    @Override
+    public Map<String, String> getAllLabelsByKanbanBoardId(Long kanbanBoardId){
+        Map<String, String> labelAndColour = new HashMap<>();
+        KanbanBoardEntity kanbanBoard = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
+        for(TaskColumnEntity t : kanbanBoard.getTaskColumns()){
+            for(TaskEntity te : t.getListOfTasks()){
+                for(Map.Entry<String, String> i : labelAndColour.entrySet()){
+                    if(!labelAndColour.containsKey(i.getKey())){
+                        labelAndColour.put(i.getKey(), i.getValue());
+                    }
+                }
+            }
+        }
+        
+        return labelAndColour;
+    }
+            
 
 }

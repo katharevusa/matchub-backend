@@ -583,5 +583,29 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
 
     }
+    
+       @ExceptionHandler(value = DeleteTaskColumnException.class)
+    public ResponseEntity<ExceptionResponse> deleteTaskColumnException(DeleteTaskColumnException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Error deleting task column");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    
+    }
+    
+       @ExceptionHandler(value = RearrangeTaskException.class)
+    public ResponseEntity<ExceptionResponse> rearrangeTaskException(RearrangeTaskException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Error rearrange task");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    
+    }
+    
+    
 
 }

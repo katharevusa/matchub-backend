@@ -10,22 +10,27 @@ import com.is4103.matchub.entity.KanbanBoardEntity;
 import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.entity.TaskEntity;
 import com.is4103.matchub.exception.CreateTaskException;
+import com.is4103.matchub.exception.DeleteTaskColumnException;
 import com.is4103.matchub.exception.DeleteTaskException;
 import com.is4103.matchub.exception.KanbanBoardNotFoundException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.RearrangeTaskException;
 import com.is4103.matchub.exception.UpdateColumnException;
 import com.is4103.matchub.exception.UpdateTaskException;
 import com.is4103.matchub.service.KanbanBoardService;
 import com.is4103.matchub.service.TaskColumnService;
 import com.is4103.matchub.service.TaskService;
 import com.is4103.matchub.vo.CommentVO;
+import com.is4103.matchub.vo.DeleteColumnVO;
 import com.is4103.matchub.vo.KanbanBoardVO;
 import com.is4103.matchub.vo.TaskColumnVO;
 import com.is4103.matchub.vo.TaskVO;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,11 +55,10 @@ public class KanbanBoardController {
     TaskService taskService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/createKanbanBoard")
-    public KanbanBoardEntity createKanbanBoard(KanbanBoardVO vo) {
+    public KanbanBoardEntity createKanbanBoard(@Valid @RequestBody KanbanBoardVO vo) {
         return kanbanBoardService.createKanbanBoard(vo);
 
     }
-
 
     @RequestMapping(method = RequestMethod.GET, value = "/getKanbanBoardByKanbanBoardId")
     public KanbanBoardEntity getKanbanBoardByKanbanBoardId(@RequestParam(value = "kanbanBoardId", required = true) Long kanbanBoardId) throws KanbanBoardNotFoundException {
@@ -73,23 +77,28 @@ public class KanbanBoardController {
         return kanbanBoardService.getAllKanbanBoardByProjectId(projectId);
 
     }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllLabelsByKanbanBoardId")
+    public Map<String, String> getAllLabelsByKanbanBoardId(@RequestParam(value = "kanbanBoardId", required = true)Long kanbanBoardId){
+        return kanbanBoardService.getAllLabelsByKanbanBoardId(kanbanBoardId);
+    }
 //****************************** Column Methods Below *************************
 
     @RequestMapping(method = RequestMethod.POST, value = "/createNewColumn")
-    public KanbanBoardEntity createNewColumn(TaskColumnVO vo) throws UpdateColumnException{
+    public KanbanBoardEntity createNewColumn(@Valid @RequestBody TaskColumnVO vo) throws UpdateColumnException {
         return taskColumnService.createNewColumn(vo);
     }
 
     // update only column title and decription
     @RequestMapping(method = RequestMethod.PUT, value = "/updateColumn")
-    public KanbanBoardEntity updateColumn(TaskColumnVO vo) {
+    public KanbanBoardEntity updateColumn(@Valid @RequestBody TaskColumnVO vo) throws UpdateColumnException {
         return taskColumnService.updateColumn(vo);
     }
 
     // it's a PUT method with updated kanbanboard returned
     @RequestMapping(method = RequestMethod.PUT, value = "/deleteColumn")
-    public KanbanBoardEntity deleteColumn(@RequestParam(value = "columnId", required = true) Long columnId) {
-        return taskColumnService.deleteColumn(columnId);
+    public KanbanBoardEntity deleteColumn(@Valid @RequestBody DeleteColumnVO vo) throws DeleteTaskColumnException {
+        return taskColumnService.deleteColumn(vo);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getColumnByColumnId")
@@ -102,77 +111,84 @@ public class KanbanBoardController {
         return taskColumnService.getColumnsByKanbanBoardId(kanbanBoardId);
 
     }
+
     @RequestMapping(method = RequestMethod.PUT, value = "/rearrangeColumn")
-     public KanbanBoardEntity rearrangeColumn(Long kanbanBoardId, List<Long> columnIdSequence){
-         return taskColumnService.rearrangeColumn(kanbanBoardId, columnIdSequence);
-     }
+    public KanbanBoardEntity rearrangeColumn(Long kanbanBoardId, List<Long> columnIdSequence, Long editorId) throws UpdateColumnException {
+        return taskColumnService.rearrangeColumn(kanbanBoardId, columnIdSequence, editorId);
+    }
     //****************************** Task Methods Below *************************
 
     // basic information 
     @RequestMapping(method = RequestMethod.POST, value = "/createTask")
-    public TaskEntity createTask(TaskVO vo) throws CreateTaskException {
+    public TaskEntity createTask(@Valid @RequestBody TaskVO vo) throws CreateTaskException {
         return taskService.createTask(vo);
     }
 
     // update basic informations: Title/description/leaderId
-    public TaskEntity updateTask(TaskVO vo) throws UpdateTaskException {
+    public TaskEntity updateTask(@Valid @RequestBody TaskVO vo) throws UpdateTaskException {
         return taskService.updateTask(vo);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getTasksByColumnId")
-    public List<TaskEntity> getTasksByColumnId(@RequestParam(value = "columnId", required = true)Long columnId) {
+    public List<TaskEntity> getTasksByColumnId(@RequestParam(value = "columnId", required = true) Long columnId) {
         return taskService.getTasksByColumnId(columnId);
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/getTasksByKanbanBoardId")
+    public List<TaskEntity> getTasksByKanbanBoardId(String channelUid) {
+        return taskService.getTasksByKanbanBoardId(channelUid);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/getTaskById")
-    public TaskEntity getTaskById(@RequestParam(value = "taskId", required = true)Long taskId) {
+    public TaskEntity getTaskById(@RequestParam(value = "taskId", required = true) Long taskId) {
         return taskService.getTaskById(taskId);
 
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateTaskDoers")
-    public TaskEntity updateTaskDoers(@RequestParam(value = "newTaskDoerList", required = true)List<Long> newTaskDoerList, @RequestParam(value = "taskId", required = true)Long taskId,@RequestParam(value = "updatorId", required = true) Long updatorId) throws UpdateTaskException {
-        return taskService.updateTaskDoers(newTaskDoerList, taskId, updatorId);
+    public TaskEntity updateTaskDoers(@RequestParam(value = "newTaskDoerList", required = true) List<Long> newTaskDoerList, @RequestParam(value = "taskId", required = true) Long taskId, @RequestParam(value = "updatorId", required = true) Long updatorId, @RequestParam(value = "kanbanBoard", required = true) Long kanbanBoard) throws UpdateTaskException {
+        return taskService.updateTaskDoers(newTaskDoerList, taskId, updatorId, kanbanBoard);
+
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/deleteTask")
-    public TaskColumnEntity deleteTask(@RequestParam(value = "taskId", required = true)Long taskId,@RequestParam(value = "deletorId", required = true) Long deletorId) throws IOException, DeleteTaskException {
-        return taskService.deleteTask(taskId, deletorId);
+    public TaskColumnEntity deleteTask(@RequestParam(value = "taskId", required = true) Long taskId, @RequestParam(value = "deletorId", required = true) Long deletorId,@RequestParam(value = "kanbanBoardId", required = true) Long kanbanBoardId ) throws IOException, DeleteTaskException {
+        return taskService.deleteTask(taskId, deletorId, kanbanBoardId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/rearrangeTasks")
-    public KanbanBoardEntity rearrangeTasks(Map<Long, List<Long>> columnIdAndTaskIdSequence, @RequestParam(value = "kanbanBoardId", required = true)Long kanbanBoardId,@RequestParam(value = "arrangerId", required = true) Long arrangerId) throws UpdateTaskException {
+    public KanbanBoardEntity rearrangeTasks(Map<Long, List<Long>> columnIdAndTaskIdSequence, @RequestParam(value = "kanbanBoardId", required = true) Long kanbanBoardId, @RequestParam(value = "arrangerId", required = true) Long arrangerId) throws RearrangeTaskException {
         return taskService.rearrangeTasks(columnIdAndTaskIdSequence, kanbanBoardId, arrangerId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/addCommentToTask")
-    public TaskEntity addCommentToTask(@RequestParam(value = "taskId", required = true)Long taskId, CommentVO vo) throws UpdateTaskException {
+    public TaskEntity addCommentToTask(@RequestParam(value = "taskId", required = true) Long taskId, @Valid @RequestBody CommentVO vo) throws UpdateTaskException {
         return taskService.addCommentToTask(taskId, vo);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/deleteTaskComment")
-    public TaskEntity deleteTaskComment(@RequestParam(value = "taskId", required = true)Long taskId,@RequestParam(value = "commentId", required = true) Long commentId) throws UpdateTaskException {
+    public TaskEntity deleteTaskComment(@RequestParam(value = "taskId", required = true) Long taskId, @RequestParam(value = "commentId", required = true) Long commentId) throws UpdateTaskException {
         return taskService.deleteTaskComment(taskId, commentId);
 
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/getListOfCommentsByTaskId")
-    public List<CommentEntity> getListOfCommentsByTaskId(@RequestParam(value = "taskId", required = true)Long taskId) {
+    public List<CommentEntity> getListOfCommentsByTaskId(@RequestParam(value = "taskId", required = true) Long taskId) {
         return taskService.getListOfCommentsByTaskId(taskId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateLabel")
-    public TaskEntity updateLabel(Map<String, String> labelAndColour,@RequestParam(value = "taskId", required = true) Long taskId) {
+    public TaskEntity updateLabel(Map<String, String> labelAndColour, @RequestParam(value = "taskId", required = true) Long taskId) {
         return taskService.updateLabel(labelAndColour, taskId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/uploadDocuments")
-    public TaskEntity uploadDocuments(@RequestParam(value = "taskId", required = true)Long taskId, MultipartFile[] documents) {
+    public TaskEntity uploadDocuments(@RequestParam(value = "taskId", required = true) Long taskId, MultipartFile[] documents) {
         return taskService.uploadDocuments(taskId, documents);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/deleteDocuments")
-    public TaskEntity deleteDocuments(@RequestParam(value = "taskId", required = true)Long taskId, String[] docsToDelete) throws IOException, UpdateTaskException {
+    public TaskEntity deleteDocuments(@RequestParam(value = "taskId", required = true) Long taskId, String[] docsToDelete) throws IOException, UpdateTaskException {
         return taskService.deleteDocuments(taskId, docsToDelete);
     }
 }

@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.is4103.matchub.enumeration.TaskStatusEnum;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -62,6 +63,7 @@ public class TaskEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
+    @JsonIgnoreProperties({"listOfTasks"})
     private TaskColumnEntity taskColumn;
 
     //Key: filename, Value = docPath
