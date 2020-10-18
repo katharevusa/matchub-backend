@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
@@ -24,6 +25,8 @@ public interface MatchingService {
     Page<ResourceEntity> recommendResourcesAsPageable(Long projectId, Pageable pageable) throws ProjectNotFoundException;
 
     List<ProjectEntity> recommendProjects(Long resourceId) throws ResourceNotFoundException;
+
+    Page<ProfileEntity> recommendProfiles(Long profileId, Pageable pageable);
 
     Page<ProjectEntity> recommendProjectsAsPageable(Long resourceId, Pageable pageable) throws ResourceNotFoundException;
 

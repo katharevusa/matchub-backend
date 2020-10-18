@@ -4,6 +4,7 @@ import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.vo.IndividualCreateVO;
 import com.is4103.matchub.vo.IndividualSetupVO;
 import com.is4103.matchub.vo.IndividualUpdateVO;
@@ -41,6 +42,8 @@ public interface UserService {
     AccountEntity unfollowProfile(Long accountId, Long unfollowId);
 
     AccountEntity removeFollower(Long accountId, Long removeFollowerId);
+
+    ProfileEntity saveResource(Long resourceId, Long accountId) throws ResourceNotFoundException;
 
 //    UserVO getAccount(Long id);
 //    UserVO getAccount(String username);

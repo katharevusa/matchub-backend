@@ -51,9 +51,8 @@ public abstract class ProfileEntity extends AccountEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> following = new HashSet<>();
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Long> savedResourceIds = new HashSet<>();
-
+//    @ElementCollection(fetch = FetchType.EAGER)
+//    private Set<Long> savedResourceIds = new HashSet<>();
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> upvotedProjectIds = new HashSet<>();
 
@@ -78,6 +77,11 @@ public abstract class ProfileEntity extends AccountEntity {
     @JsonIgnoreProperties({"listOfRequests", "listOfComments"})
     private List<ResourceEntity> hostedResources = new ArrayList<>();
 
+    //new association added
+    @OneToMany
+    @JsonIgnoreProperties({"listOfRequests", "listOfComments"})
+    private List<ResourceEntity> savedResources = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projects"})
     private List<SDGEntity> sdgs = new ArrayList<>();
@@ -92,11 +96,10 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
     private List<ProjectEntity> projectsOwned = new ArrayList<>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"projectFollowers","joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
+    @JsonIgnoreProperties({"projectFollowers", "joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
     private List<ProjectEntity> projectsFollowing = new ArrayList<>();
-    
 
     @OneToMany(mappedBy = "requestor")
     private List<JoinRequestEntity> joinRequests = new ArrayList<>();

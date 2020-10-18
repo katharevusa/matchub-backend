@@ -5,12 +5,17 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.OrganisationEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.helper.MatchingScore;
 import com.is4103.matchub.helper.MatchingScoreComparator;
+import com.is4103.matchub.repository.OrganisationEntityRepository;
+import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
@@ -30,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -57,6 +64,12 @@ public class MatchingServiceImpl implements MatchingService {
 
     @Autowired
     private ResourceCategoryEntityRepository resourceCategoryEntityRepository;
+
+    @Autowired
+    private ProfileEntityRepository profileEntityRepository;
+
+    @Autowired
+    private OrganisationEntityRepository organisationEntityRepository;
 
     private static ILexicalDatabase db = new NictWordNet();
 
@@ -328,6 +341,27 @@ public class MatchingServiceImpl implements MatchingService {
     }
 
     @Override
+    public Page<ProfileEntity> recommendProfiles(Long accountId, Pageable pageable) {
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        Page<ProfileEntity> recommendations;
+
+        String country = profile.getCountry();
+        Set<Long> followingIds = profile.getFollowing();
+        List<ProjectEntity> projectsFollowing = profile.getProjectsFollowing();
+
+        if (projectsFollowing.isEmpty()) {
+            recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, pageable);
+        } else {
+            //get profiles with same country + same project that profile is following 
+            recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
+        }
+
+        return recommendations;
+    }
+
+    @Override
     public Page<ResourceEntity> recommendResourcesAsPageable(Long projectId, Pageable pageable) throws ProjectNotFoundException {
         List<ResourceEntity> resultsList = this.recommendResources(projectId);
 
@@ -361,7 +395,7 @@ public class MatchingServiceImpl implements MatchingService {
 
         //custom sorting based on score 
         Collections.sort(results, new MatchingScoreComparator());
-        
+
         if (results.size() == 1) {
             recommendations.add(results.get(0).getResource());
         }

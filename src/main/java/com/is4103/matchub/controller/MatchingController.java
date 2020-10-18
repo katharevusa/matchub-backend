@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.controller;
 
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
@@ -63,5 +64,10 @@ public class MatchingController {
     @RequestMapping(method = RequestMethod.GET, value = "/recommendProjects/pageable/{resourceId}")
     public Page<ProjectEntity> recommendPageableOfProjects(@PathVariable("resourceId") Long resourceId, Pageable pageable) throws ResourceNotFoundException {
         return matchingService.recommendProjectsAsPageable(resourceId, pageable);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendProfiles/{accountId}")
+    public Page<ProfileEntity> recommendProfiles(@PathVariable("accountId") Long accountId, Pageable pageable) {
+        return matchingService.recommendProfiles(accountId, pageable);
     }
 }
