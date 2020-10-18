@@ -21,7 +21,8 @@ import com.is4103.matchub.repository.TaskColumnEntityRepository;
 import com.is4103.matchub.repository.TaskEntityRepository;
 import com.is4103.matchub.vo.ChannelDetailsVO;
 import com.is4103.matchub.vo.CommentVO;
-import com.is4103.matchub.vo.TaskVO;
+import com.is4103.matchub.vo.CreateTaskVO;
+import com.is4103.matchub.vo.UpdateTaskVO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class TaskServiceImpl implements TaskService {
 
 //Create Channel Tasks
     @Override
-    public TaskEntity createTask(TaskVO vo) throws CreateTaskException {
+    public TaskEntity createTask(CreateTaskVO vo) throws CreateTaskException {
 
         //check if creator is channel admin
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(vo.getKanbanboardId()).get();
@@ -78,22 +79,13 @@ public class TaskServiceImpl implements TaskService {
         TaskColumnEntity taskColumn = taskColumnEntityRepository.findById(vo.getTaskColumnId()).get();
         task.setTaskColumn(taskColumn);
 
-        // add taskdoer to task
-        for (Long taskDoerId : vo.getTaskdoers()) {
-            ProfileEntity taskDoer = profileEntityRepository.findById(taskDoerId).get();
-            task.getTaskdoers().add(taskDoer);
-        }
-
-        task = taskEntityRepository.saveAndFlush(task);
+       
 
         // add task to task column
         taskColumn.getListOfTasks().add(task);
-
-        // add task to taskdoer
-        for (Long taskDoerId : vo.getTaskdoers()) {
-            ProfileEntity taskDoer = profileEntityRepository.findById(taskDoerId).get();
-            taskDoer.getTasks().add(task);
-        }
+        
+        
+        task = taskEntityRepository.saveAndFlush(task);
         taskColumnEntityRepository.flush();
         return task;
     }
@@ -106,7 +98,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskEntity> getTasksByKanbanBoardId(String channelUId) {
+    public List<TaskEntity> getTasksByChannelUID(String channelUId) {
         List<TaskEntity> tasks = new ArrayList<>();
         KanbanBoardEntity kanbanboard = kanbanBoardEntityRepository.findByChannelUId(channelUId).get();
         for (TaskColumnEntity tc : kanbanboard.getTaskColumns()) {
@@ -125,7 +117,7 @@ public class TaskServiceImpl implements TaskService {
 
     //Update Tasks
     @Override
-    public TaskEntity updateTask(TaskVO vo) throws UpdateTaskException {
+    public TaskEntity updateTask(UpdateTaskVO vo) throws UpdateTaskException {
         //Check: channel admins can update task
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(vo.getKanbanboardId()).get();
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());

@@ -804,7 +804,7 @@ public class ProjectServiceImpl implements ProjectService {
                 project = projectOptional.get();
                 listOfProjects.add(project);
             } else {
-                throw new ProjectNotFoundException("Resource is not found");
+                throw new ProjectNotFoundException("Project is not found");
             }
 
         }

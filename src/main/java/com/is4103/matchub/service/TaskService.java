@@ -14,7 +14,8 @@ import com.is4103.matchub.exception.DeleteTaskException;
 import com.is4103.matchub.exception.RearrangeTaskException;
 import com.is4103.matchub.exception.UpdateTaskException;
 import com.is4103.matchub.vo.CommentVO;
-import com.is4103.matchub.vo.TaskVO;
+import com.is4103.matchub.vo.CreateTaskVO;
+import com.is4103.matchub.vo.UpdateTaskVO;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +27,13 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface TaskService {
 
-    public TaskEntity createTask(TaskVO vo) throws CreateTaskException;
+    public TaskEntity createTask(CreateTaskVO vo) throws CreateTaskException;
 
     public List<TaskEntity> getTasksByColumnId(Long columnId);
 
     public TaskEntity getTaskById(Long taskId);
 
-    public TaskEntity updateTask(TaskVO vo) throws UpdateTaskException;
+    public TaskEntity updateTask(UpdateTaskVO vo) throws UpdateTaskException;
 
     public TaskEntity updateTaskDoers(List<Long> newTaskDoerList, Long taskId, Long updatorId, Long kanbanBoardId) throws UpdateTaskException;
 
@@ -52,7 +53,7 @@ public interface TaskService {
      
      public TaskEntity deleteDocuments(Long taskId, String[] docsToDelete) throws IOException,UpdateTaskException;
      
-     public List<TaskEntity> getTasksByKanbanBoardId(String channelUId);
+     public List<TaskEntity> getTasksByChannelUID(String channelUId);
    
          
     
