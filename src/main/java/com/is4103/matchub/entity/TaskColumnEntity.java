@@ -40,9 +40,6 @@ public class TaskColumnEntity {
     @NotNull
     private String columnTitle;
     
-    @Column(nullable = false)
-    @NotNull
-    private String columnDescription;
     
     @Column(nullable = false)
     @NotNull
@@ -60,7 +57,7 @@ public class TaskColumnEntity {
 
     public TaskColumnEntity(String columnTitle, String columnDescription, Long kanbanBoardId) {
         this.columnTitle = columnTitle;
-        this.columnDescription = columnDescription;
+        
         this.kanbanBoardId = kanbanBoardId;
     }
     

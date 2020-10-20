@@ -228,4 +228,12 @@ public class KanbanBoardController {
     public TaskEntity deleteDocuments(@RequestParam(value = "taskId", required = true) Long taskId, String[] docsToDelete) throws IOException, UpdateTaskException {
         return taskService.deleteDocuments(taskId, docsToDelete);
     }
+    
+    @RequestMapping(method = RequestMethod.PUT, value = "/updateTaskStatus")
+    public TaskEntity updateTaskStatus(
+            @RequestParam(value = "taskId", required = true) Long taskId, 
+            @RequestParam(value = "oldColumnId", required = true) Long oldColumnId,
+            @RequestParam(value = "newColumnId", required = true) Long newColumnId){
+        return taskService.updateTaskStatus(taskId, oldColumnId, newColumnId);
+    }
 }

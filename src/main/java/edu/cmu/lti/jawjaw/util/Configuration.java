@@ -42,7 +42,7 @@ public class Configuration {
         InputStream stream = null;
         try {
 //            stream = Configuration.class.getResourceAsStream(CONF);
-            File file = new File("C:\\JavaLibraries\\config\\jawjaw.conf");
+            File file = new File("/Users/longluqian/Desktop/Notes/2020sem2/Capstone/jawjaw.conf");
             stream = new FileInputStream(file);
 
             p = new Properties();

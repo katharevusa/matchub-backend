@@ -54,7 +54,7 @@ public class KanbanBoardServiceImpl implements KanbanBoardService {
         // init new default columns
         TaskColumnEntity newColumn = new TaskColumnEntity();
         newColumn.setColumnTitle("New");
-        newColumn.setColumnDescription("All new tasks");
+       
         newColumn.setKanbanBoardId(kanbanBoard.getKanbanBoardId());
         newColumn = taskColumnEntityRepository.saveAndFlush(newColumn);
         kanbanBoard.getTaskColumns().add(newColumn);
@@ -62,7 +62,7 @@ public class KanbanBoardServiceImpl implements KanbanBoardService {
         
         TaskColumnEntity inProgressColumn = new TaskColumnEntity();
         inProgressColumn.setColumnTitle("In progress");
-        inProgressColumn.setColumnDescription("All in progress tasks");
+       
         inProgressColumn.setKanbanBoardId(kanbanBoard.getKanbanBoardId());
         inProgressColumn = taskColumnEntityRepository.saveAndFlush(inProgressColumn);
         kanbanBoard.getTaskColumns().add(inProgressColumn);
@@ -70,7 +70,7 @@ public class KanbanBoardServiceImpl implements KanbanBoardService {
         
         TaskColumnEntity doneColumn = new TaskColumnEntity();
         doneColumn.setColumnTitle("Done");
-        doneColumn.setColumnDescription("All done tasks. There is only one column with done status for one kanban board.");
+        
         doneColumn.setKanbanBoardId(kanbanBoard.getKanbanBoardId());
         doneColumn.setDone(true);
         doneColumn = taskColumnEntityRepository.saveAndFlush(doneColumn);
