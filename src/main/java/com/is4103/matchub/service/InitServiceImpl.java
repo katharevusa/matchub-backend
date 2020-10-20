@@ -1035,6 +1035,7 @@ public class InitServiceImpl implements InitService {
 
         ProfileEntity ikjun = profileEntityRepository.findById(Long.valueOf(5)).get();
         reviewForIkjun.setReviewReceiver(ikjun);
+        ikjun.getReviewsReceived().add(reviewForIkjun);
         reviewEntityRepository.save(reviewForIkjun);
 
         //do another review for songhwa
@@ -1043,6 +1044,7 @@ public class InitServiceImpl implements InitService {
         reviewForSonghwa.setProject(completedProject);
 
         reviewForSonghwa.setReviewReceiver(songhwa);
+        songhwa.getReviewsReceived().add(reviewForSonghwa);
         reviewEntityRepository.save(reviewForSonghwa);
 
         /* create project badge for completed project */
