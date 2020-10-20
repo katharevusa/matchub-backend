@@ -159,9 +159,7 @@ public class KanbanBoardController {
         return taskService.updateLabel(updateLabelVO);
 
     }
-    
-    
-
+ 
     @RequestMapping(method = RequestMethod.GET, value = "/getTasksByColumnId")
     public List<TaskEntity> getTasksByColumnId(@RequestParam(value = "columnId", required = true) Long columnId) {
         return taskService.getTasksByColumnId(columnId);

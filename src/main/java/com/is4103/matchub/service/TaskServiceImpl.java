@@ -133,7 +133,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskEntity updateTaskDoers(List<Long> newTaskDoerList, Long taskId, Long updatorId, Long kanbanBoardId) throws UpdateTaskException {
 
-        // only channel admin can update task doers
+     //    only channel admin can update task doers
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
         if (!channelDetails.getAdminIds().contains(updatorId)) {
@@ -220,11 +220,11 @@ public class TaskServiceImpl implements TaskService {
     @Override //Move task around
     public KanbanBoardEntity rearrangeTasks(RearrangeTaskVO vo) throws RearrangeTaskException {
         // incomplete check : only channel admins and task leader can move the task around
-//        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).get();
-//        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
-//        if (!channelDetails.getAdminIds().contains(arrangerId)) {
-//            throw new RearrangeTaskException("Only channel admin can delete task");
-//        } 
+        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(vo.getKanbanBoardId()).get();
+        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
+        if (!channelDetails.getAdminIds().contains(vo.getArrangerId())) {
+            throw new RearrangeTaskException("Only channel admin can delete task");
+        } 
         Map<Long, List<Long>> columnIdAndTaskIdSequence = vo.getColumnIdAndTaskIdSequence();
         Long kanbanboardId = vo.getKanbanBoardId();
         Long arrangerId = vo.getArrangerId();

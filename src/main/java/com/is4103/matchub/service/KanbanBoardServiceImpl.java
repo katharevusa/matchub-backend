@@ -135,7 +135,7 @@ public class KanbanBoardServiceImpl implements KanbanBoardService {
         KanbanBoardEntity kanbanBoard = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
         for(TaskColumnEntity t : kanbanBoard.getTaskColumns()){
             for(TaskEntity te : t.getListOfTasks()){
-                for(Map.Entry<String, String> i : labelAndColour.entrySet()){
+                for(Map.Entry<String, String> i : te.getLabelAndColour().entrySet()){
                     if(!labelAndColour.containsKey(i.getKey())){
                         labelAndColour.put(i.getKey(), i.getValue());
                     }
