@@ -21,8 +21,7 @@ public class TaskColumnVO {
     private String columnTitle;
     
    
-    @NotNull
-    private String columnDescription;
+
     
     
     @NotNull
@@ -36,13 +35,13 @@ public class TaskColumnVO {
    
     
     public void createNewTaskColumn(TaskColumnEntity newTaskColumn){
-        newTaskColumn.setColumnDescription(this.columnDescription);
+       
         newTaskColumn.setColumnTitle(this.columnTitle);
         newTaskColumn.setKanbanBoardId(kanbanBoardId);
     }
     
     public void updateTaskColumn(TaskColumnEntity taskColumn){
-        taskColumn.setColumnDescription(this.columnDescription);
+     
         taskColumn.setColumnTitle(this.columnTitle);
     }
   

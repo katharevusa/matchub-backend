@@ -56,6 +56,8 @@ public interface TaskService {
      public TaskEntity deleteDocuments(Long taskId, String[] docsToDelete) throws IOException,UpdateTaskException;
      
      public List<TaskEntity> getTasksByChannelUID(String channelUId);
+     
+     public TaskEntity updateTaskStatus(Long taskId, Long oldColumnId, Long newColumnId);
    
          
     

@@ -19,6 +19,6 @@ public class UpdateLabelVO {
 
     Map<String, String> labelAndColour;
 
-    @NotNull(message = "Task id can not be null.")          
+    
     Long taskId;
 }
