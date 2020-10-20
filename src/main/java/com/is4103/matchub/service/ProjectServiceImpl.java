@@ -598,6 +598,11 @@ public class ProjectServiceImpl implements ProjectService {
 
         ProjectEntity project = projectOptional.get();
         ProfileEntity profile = profOptional.get();
+
+        //******* user needs to have sufficient rep points in order to perform the downvote action
+//        if (profile.getReputationPoints() < 50) {
+//            throw new DownvoteProjectException("Unable to downvote: Account does not have sufficient rep points to downvote");
+//        }
         if (profile.getDownvotedProjectIds().contains(projectId)) {
             throw new DownvoteProjectException("Upable to downvote project: You have already downvoted this project");
         }
@@ -901,9 +906,9 @@ public class ProjectServiceImpl implements ProjectService {
         return user.getProjectsFollowing();
 
     }
-    
-    @Override 
-    public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId)throws ProjectNotFoundException{
+
+    @Override
+    public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Unable to get project follower: Project not exist");
