@@ -506,8 +506,8 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-      @ExceptionHandler(value = FollowProjectException.class)
+
+    @ExceptionHandler(value = FollowProjectException.class)
     public ResponseEntity<ExceptionResponse> followProjectException(FollowProjectException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error following project");
@@ -515,10 +515,10 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-       @ExceptionHandler(value = KanbanBoardNotFoundException.class)
+
+    @ExceptionHandler(value = KanbanBoardNotFoundException.class)
     public ResponseEntity<ExceptionResponse> kanbanBoardNotFoundException(KanbanBoardNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error retrieving kanban board");
@@ -526,11 +526,21 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-    
-       @ExceptionHandler(value = UpdateTaskException.class)
+
+    @ExceptionHandler(value = UnableToSaveResourceException.class)
+    public ResponseEntity<ExceptionResponse> unableToSaveResourceException(UnableToSaveResourceException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to save resource.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler(value = UpdateTaskException.class)
     public ResponseEntity<ExceptionResponse> updateTaskException(UpdateTaskException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error updating task");
@@ -538,10 +548,10 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-       @ExceptionHandler(value = CreateTaskException.class)
+
+    @ExceptionHandler(value = CreateTaskException.class)
     public ResponseEntity<ExceptionResponse> createTaskException(CreateTaskException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error creating task");
@@ -549,10 +559,10 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-       @ExceptionHandler(value = DeleteTaskException.class)
+
+    @ExceptionHandler(value = DeleteTaskException.class)
     public ResponseEntity<ExceptionResponse> deleteTaskException(DeleteTaskException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error creating task");
@@ -560,10 +570,10 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-       @ExceptionHandler(value = UpdateColumnException.class)
+
+    @ExceptionHandler(value = UpdateColumnException.class)
     public ResponseEntity<ExceptionResponse> updateColumnException(UpdateColumnException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error updating column");
@@ -571,7 +581,7 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
     
        @ExceptionHandler(value = DeleteTaskColumnException.class)
@@ -597,5 +607,5 @@ public class ExceptionHandlingController {
     }
     
     
-     
+
 }

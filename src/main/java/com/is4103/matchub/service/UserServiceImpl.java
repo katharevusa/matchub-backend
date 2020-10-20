@@ -10,14 +10,17 @@ import com.is4103.matchub.entity.AnnouncementEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.DeleteOrganisationVerificationDocumentException;
 import com.is4103.matchub.exception.DeleteProfilePictureException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.exception.EmailExistException;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.UnableToFollowProfileException;
 import com.is4103.matchub.exception.UnableToRemoveFollowerException;
+import com.is4103.matchub.exception.UnableToSaveResourceException;
 import com.is4103.matchub.exception.UnableToUnfollowProfileException;
 import com.is4103.matchub.exception.UpdateProfileException;
 import com.is4103.matchub.exception.UploadOrganisationVerificationDocException;
@@ -97,10 +100,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private OrganisationEntityRepository organisationEntityRepository;
-    
+
     @Autowired
     private AnnouncementService announcementService;
-    
+
     @Autowired
     private AnnouncementEntityRepository announcementEntityRepository;
 
@@ -381,6 +384,28 @@ public class UserServiceImpl implements UserService {
                     + accountId + ") is unable to remove follower with accountId: " + removeFollowerId
                     + " because it is not in your followers list");
         }
+    }
+
+    @Override
+    public ProfileEntity saveResource(Long accountId, Long resourceId) throws ResourceNotFoundException {
+        //find the profile 
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        //find the resource 
+        ResourceEntity resourceToBeSaved = resourceEntityRepository.findById(resourceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resource Id " + resourceId + " is not found"));
+
+        if (profile.getSavedResources().contains(resourceToBeSaved)) {
+            throw new UnableToSaveResourceException("Unble to save resource: You have previously saved this resource");
+        }
+
+        //associate unidirectionally
+        profile.getSavedResources().add(resourceToBeSaved);
+        profileEntityRepository.saveAndFlush(profile);
+
+        return profile;
+
     }
 
 //    @Override

@@ -43,5 +43,8 @@ public interface ProjectEntityRepository extends JpaRepository<ProjectEntity, Lo
     @Query(value = "SELECT pe FROM ProjectEntity pe JOIN pe.teamMembers tm JOIN pe.projectOwners po WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.COMPLETED "
             + "AND ((tm.accountId = :accountId) OR (po.accountId = :accountId))")
     List<ProjectEntity> getCompletedProjectsByAccountId(Long accountId);
+    
+    @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.ACTIVE")
+    List<ProjectEntity> getAllActiveProjects();
 
 }

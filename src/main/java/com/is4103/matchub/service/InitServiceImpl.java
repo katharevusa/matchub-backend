@@ -181,11 +181,11 @@ public class InitServiceImpl implements InitService {
         
         ikjun.setCountryCode("+82");
         ikjun.setPhoneNumber("011-465-9876");
-        ikjun.setCountry("South Korea");
+        ikjun.setCountry("Korea, Republic of South Korea");
         ikjun.setCity("Seoul");
         ikjun.setProfilePhoto("https://localhost:8443/api/v1/files/init/ikjun.jpeg");
-        ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3), Long.valueOf(9), Long.valueOf(10))));
-        ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9), Long.valueOf(10))));
+        ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
+        ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
 
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
@@ -216,7 +216,7 @@ public class InitServiceImpl implements InitService {
         sophia.setCity("Quebec");
         sophia.setProfilePhoto("https://localhost:8443/api/v1/files/init/sophia.jpg");
         sophia.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3))));
-        sophia.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(7))));
+        sophia.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(7), Long.valueOf(11))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         sophia.setSdgs(sdgs);
@@ -243,7 +243,7 @@ public class InitServiceImpl implements InitService {
         genc.setCountry("Canada");
         genc.setCity("Toronto");
         genc.setProfilePhoto("https://localhost:8443/api/v1/files/init/genc.jpg");
-        genc.setFollowing(new HashSet<>(Arrays.asList(sophia.getAccountId(), Long.valueOf(9))));
+        genc.setFollowing(new HashSet<>(Arrays.asList(sophia.getAccountId(), Long.valueOf(9), Long.valueOf(11))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         genc.setSdgs(sdgs);
@@ -270,7 +270,7 @@ public class InitServiceImpl implements InitService {
         networkForGood.setCountry("United States");
         networkForGood.setCity("Washington");
         networkForGood.setProfilePhoto("https://localhost:8443/api/v1/files/init/networkforgood.png");
-        networkForGood.setFollowing(new HashSet<>(Arrays.asList(alexLow.getAccountId(), ikjun.getAccountId(), Long.valueOf(9))));
+        networkForGood.setFollowing(new HashSet<>(Arrays.asList(alexLow.getAccountId(), ikjun.getAccountId(), Long.valueOf(9), Long.valueOf(11))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(2)));
@@ -297,7 +297,7 @@ public class InitServiceImpl implements InitService {
 
         songhwa.setCountryCode("+82");
         songhwa.setPhoneNumber("012-456-4321");
-        songhwa.setCountry("South Korea");
+        songhwa.setCountry("Korea, Republic of South Korea");
         songhwa.setCity("Seoul");
         songhwa.setProfilePhoto("https://localhost:8443/api/v1/files/init/songhwa.jpg");
         songhwa.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(10))));
@@ -330,11 +330,11 @@ public class InitServiceImpl implements InitService {
         kfem.setKahs(new HashSet<>(Arrays.asList(ikjun.getAccountId())));
         kfem.setCountryCode("+82");
         kfem.setPhoneNumber("02-735-7000");
-        kfem.setCountry("South Korea");
+        kfem.setCountry("Korea, Republic of South Korea");
         kfem.setCity("Seoul");
         kfem.setProfilePhoto("https://localhost:8443/api/v1/files/init/kfem.png");
-        kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId())));
-        kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId())));
+        kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId(), Long.valueOf(11))));
+        kfem.setFollowers(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId(), Long.valueOf(11))));
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(6)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
@@ -362,7 +362,7 @@ public class InitServiceImpl implements InitService {
 
         jeongha.setCountryCode("+82");
         jeongha.setPhoneNumber("022-179-4100");
-        jeongha.setCountry("South Korea");
+        jeongha.setCountry("Korea, Republic of South Korea");
         jeongha.setCity("Seoul");
         jeongha.setProfilePhoto("https://localhost:8443/api/v1/files/init/jeongha.jpg");
         jeongha.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(10))));
@@ -522,13 +522,13 @@ public class InitServiceImpl implements InitService {
         ResourceEntity lamp = new ResourceEntity("Lamp", "Would like to donate 100 lamps for free to help the needy ", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
         lamp.setResourceProfilePic("https://localhost:8443/api/v1/files/init/lampResource.jpg");
         lamp.getPhotos().add("https://localhost:8443/api/v1/files/init/lampResource.jpg");
-        lamp.setCountry("Cambodia");
+        lamp.setCountry("Peru");
         resourceService.createResource(lamp, 4L, 9L);
         //7     
         ResourceEntity turtleFood = new ResourceEntity("Turtle Food", "Some free turtle food for free donation ", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 150);
         turtleFood.setResourceProfilePic("https://localhost:8443/api/v1/files/init/turtleFood.jpg");
         turtleFood.getPhotos().add("https://localhost:8443/api/v1/files/init/turtleFood.jpg");
-        turtleFood.setCountry("Indonesia");
+        turtleFood.setCountry("Panama");
         resourceService.createResource(turtleFood, 1L, 9L);
 
         //8      
@@ -537,6 +537,97 @@ public class InitServiceImpl implements InitService {
         clothes.getPhotos().add("https://localhost:8443/api/v1/files/init/clothes.jpg");
         clothes.setCountry("Australia");
         resourceService.createResource(clothes, 7L, 9L);
+
+        //9   
+        ResourceEntity dictionary = new ResourceEntity("Dictionary", "100 used english dictionaries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
+        dictionary.setResourceProfilePic("https://localhost:8443/api/v1/files/init/dictionary.jpg");
+        dictionary.getPhotos().add("https://localhost:8443/api/v1/files/init/dictionary.jpg");
+        dictionary.setCountry("Cambodia");
+        resourceService.createResource(dictionary, 6L, 4L);
+
+        //10
+        ResourceEntity charger = new ResourceEntity("Charger", "50 Available Laptop Chargers", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 50);
+        charger.setResourceProfilePic("https://localhost:8443/api/v1/files/init/charger.jpg");
+        charger.getPhotos().add("https://localhost:8443/api/v1/files/init/charger.jpg");
+        charger.setCountry("Bangladesh");
+        resourceService.createResource(charger, 4L, 9L);
+
+        //11
+        ResourceEntity cereal = new ResourceEntity("Cereal", "Healthy cereal for donation", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
+        cereal.setResourceProfilePic("https://localhost:8443/api/v1/files/init/cereal.jpg");
+        cereal.getPhotos().add("https://localhost:8443/api/v1/files/init/cereal.jpg");
+        cereal.setCountry("Malawi");
+        resourceService.createResource(cereal, 1L, 7L);
+
+        //12
+        ResourceEntity banana = new ResourceEntity("Banana", "Bananas", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 20);
+        banana.setResourceProfilePic("https://localhost:8443/api/v1/files/init/banana.jpg");
+        banana.getPhotos().add("https://localhost:8443/api/v1/files/init/banana.jpg");
+        banana.setCountry("Malawi");
+        resourceService.createResource(banana, 1L, 7L);
+
+        //13
+        ResourceEntity bedframe = new ResourceEntity("Bedframe", "50 bedframes", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 50);
+        bedframe.setResourceProfilePic("https://localhost:8443/api/v1/files/init/bedframe.jpg");
+        bedframe.getPhotos().add("https://localhost:8443/api/v1/files/init/bedframe.jpg");
+        bedframe.setCountry("Cambodia");
+        resourceService.createResource(bedframe, 2L, 4L);
+
+        //14
+        ResourceEntity door = new ResourceEntity("Door", "50 Wooden doors with doorknots", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 50);
+        door.setResourceProfilePic("https://localhost:8443/api/v1/files/init/door.jpg");
+        door.getPhotos().add("https://localhost:8443/api/v1/files/init/door.jpg");
+        door.setCountry("Cambodia");
+        resourceService.createResource(door, 2L, 4L);
+
+        //15
+        ResourceEntity detergent = new ResourceEntity("Detergent", "75 bottles of detergent (1kg per bottle) safe for use", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 75);
+        detergent.setResourceProfilePic("https://localhost:8443/api/v1/files/init/detergent.jpg");
+        detergent.getPhotos().add("https://localhost:8443/api/v1/files/init/detergent.jpg");
+        detergent.setCountry("Pakistan");
+        resourceService.createResource(detergent, 3L, 6L);
+
+        //16
+        ResourceEntity dustbin = new ResourceEntity("Dustbin", "60 new dustbins", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 60);
+        dustbin.setResourceProfilePic("https://localhost:8443/api/v1/files/init/dustbin.jpg");
+        dustbin.getPhotos().add("https://localhost:8443/api/v1/files/init/dustbin.jpg");
+        dustbin.setCountry("Indonesia");
+        resourceService.createResource(dustbin, 3L, 6L);
+
+        //17
+        ResourceEntity torchlight = new ResourceEntity("Torchlight", "25 torchlight with batteries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 25);
+        torchlight.setResourceProfilePic("https://localhost:8443/api/v1/files/init/torchlight.jpg");
+        torchlight.getPhotos().add("https://localhost:8443/api/v1/files/init/torchlight.jpg");
+        torchlight.setCountry("Peru");
+        resourceService.createResource(torchlight, 4L, 10L);
+
+        //18
+        ResourceEntity pacifier = new ResourceEntity("Pacifier", "200 brand new pacifiers", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
+        pacifier.setResourceProfilePic("https://localhost:8443/api/v1/files/init/pacifier.jpg");
+        pacifier.getPhotos().add("https://localhost:8443/api/v1/files/init/pacifier.jpg");
+        pacifier.setCountry("Indonesia");
+        resourceService.createResource(pacifier, 4L, 5L);
+
+        //19
+        ResourceEntity vege = new ResourceEntity("Vegetable", "10kg of fresh vegetables", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
+        vege.setResourceProfilePic("https://localhost:8443/api/v1/files/init/vegetable.jpg");
+        vege.getPhotos().add("https://localhost:8443/api/v1/files/init/vegetable.jpg");
+        vege.setCountry("Kenya");
+        resourceService.createResource(vege, 1L, 6L);
+
+        //20
+        ResourceEntity glasses = new ResourceEntity("Glasses", "240 used glasses frame", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 240);
+        glasses.setResourceProfilePic("https://localhost:8443/api/v1/files/init/glasses.jpg");
+        glasses.getPhotos().add("https://localhost:8443/api/v1/files/init/glasses.jpg");
+        glasses.setCountry("Australia");
+        resourceService.createResource(glasses, 4L, 11L);
+
+        //21
+        ResourceEntity toiletpaper = new ResourceEntity("Toilet Paper", "200kg of toilet paper", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
+        toiletpaper.setResourceProfilePic("https://localhost:8443/api/v1/files/init/toiletpaper.jpg");
+        toiletpaper.getPhotos().add("https://localhost:8443/api/v1/files/init/toiletpaper.jpg");
+        toiletpaper.setCountry("Nepal");
+        resourceService.createResource(toiletpaper, 3L, 5L);
 
     }
 
@@ -556,6 +647,14 @@ public class InitServiceImpl implements InitService {
         projectEntity1.getSdgs().add(poverty);
         projectEntity1.getSdgs().add(zeroHunger);
         projectEntity1.setUpvotes(21);
+
+        //relatedResources
+        List<String> relatedResources = new ArrayList<>();
+        relatedResources.add("Phone");
+        relatedResources.add("Desktop");
+        relatedResources.add("Tablet");
+        projectEntity1.setRelatedResources(relatedResources);
+
         projectEntity1.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity1.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project1.jpg");
         projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/project1.jpg");
@@ -576,6 +675,12 @@ public class InitServiceImpl implements InitService {
         projectEntity2.getSdgs().add(genderEquality);
         projectEntity2.getSdgs().add(qualityEducation);
         projectEntity2.setUpvotes(23);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Food");
+        projectEntity2.setRelatedResources(relatedResources);
+
         projectEntity2.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity2.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project2.jpg");
         projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/project2.jpg");
@@ -596,6 +701,13 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getSdgs().add(poverty);
         projectEntity3.getSdgs().add(zeroHunger);
         projectEntity3.setUpvotes(25);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Water");
+        relatedResources.add("Library");
+        projectEntity3.setRelatedResources(relatedResources);
+
         projectEntity3.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity3.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project3.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/project3.jpg");
@@ -616,6 +728,13 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getSdgs().add(qualityEducation);
         projectEntity4.getSdgs().add(goodHealth);
         projectEntity4.setUpvotes(23);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Bed");
+        relatedResources.add("Wood");
+        projectEntity4.setRelatedResources(relatedResources);
+
         projectEntity4.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity4.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project4.jpg");
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/project4.jpg");
@@ -633,10 +752,16 @@ public class InitServiceImpl implements InitService {
         projectEntityRepository.save(projectEntity4);
         /* end of project badge */
 
-        ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Papua New Guinea", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Cambodia", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
+        ProjectEntity projectEntity5 = new ProjectEntity("Promote inclusive access to water, sanitation and hygiene in Pakistan", "The project aims to support improvement in the delivery of more inclusive, equitable and sustainable access to water, sanitation and hygiene (WASH) services ", "Pakistan", LocalDateTime.parse("2020-12-05T11:50:55"), LocalDateTime.parse("2021-03-05T11:50:55"));
         projectEntity5.getSdgs().add(cleanWater);
         projectEntity5.getSdgs().add(goodHealth);
         projectEntity5.setUpvotes(25);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Soap");
+        projectEntity5.setRelatedResources(relatedResources);
+
         projectEntity5.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity5.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project5.png");
         projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/project5.png");
@@ -658,6 +783,12 @@ public class InitServiceImpl implements InitService {
         projectEntity6.getSdgs().add(climateAction);
         projectEntity6.getSdgs().add(sustainableCities);
         projectEntity6.setUpvotes(50);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Turtle Food");
+        projectEntity6.setRelatedResources(relatedResources);
+
         projectEntity6.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity6.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project6.jpg");
         projectEntity6.getPhotos().add("https://localhost:8443/api/v1/files/init/project6.jpg");
@@ -687,6 +818,12 @@ public class InitServiceImpl implements InitService {
         projectEntity7.getSdgs().add(climateAction);
         projectEntity7.getSdgs().add(sustainableCities);
         projectEntity7.setUpvotes(30);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Trash Bin");
+        projectEntity7.setRelatedResources(relatedResources);
+
         projectEntity7.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity7.getSdgs().add(responsibleConsumption);
         projectEntity7.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project7.jpg");
@@ -710,6 +847,12 @@ public class InitServiceImpl implements InitService {
         projectEntity8.getSdgs().add(qualityEducation);
         projectEntity8.getSdgs().add(goodHealth);
         projectEntity8.setUpvotes(23);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Lamp");
+        projectEntity8.setRelatedResources(relatedResources);
+
         projectEntity8.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity8.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project8.jpg");
         projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/project8.jpg");
@@ -730,6 +873,12 @@ public class InitServiceImpl implements InitService {
         projectEntity9.getSdgs().add(qualityEducation);
         projectEntity9.getSdgs().add(goodHealth);
         projectEntity9.setUpvotes(30);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Milk");
+        projectEntity9.setRelatedResources(relatedResources);
+
         projectEntity9.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity9.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project9profile.jpg");
         projectEntity9.getPhotos().add("https://localhost:8443/api/v1/files/init/project9photo1.jpg");
@@ -749,6 +898,12 @@ public class InitServiceImpl implements InitService {
         projectEntity10.getSdgs().add(poverty);
         projectEntity10.getSdgs().add(qualityEducation);
         projectEntity10.setUpvotes(35);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Laptop");
+        projectEntity10.setRelatedResources(relatedResources);
+
         projectEntity10.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity10.setProjectProfilePic("https://localhost:8443/api/v1/files/init/project10profile.jpg");
         projectEntity10.getPhotos().add("https://localhost:8443/api/v1/files/init/project10photo1.jpg");
@@ -766,6 +921,12 @@ public class InitServiceImpl implements InitService {
         ProjectEntity projectEntity11 = new ProjectEntity("Protect endangered zebras in Kenya", "The Grevy's zebra (Equus grevyi) is one of Africa's most endangered large mammals. They are a separate species of zebra, distinct from the widely-recognized common zebra (or plains zebra) through their large, fluffy ears, white belly, and comparatively thinner black stripes. Once distributed across the horn of Africa, 92% of the remaining Grevy’s zebra are now only found in Kenya, with a few small isolated populations in Ethiopia.", "Kenya", LocalDateTime.parse("2019-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity11.getSdgs().add(sustainableCities);
         projectEntity11.setUpvotes(35);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Grass");
+        projectEntity11.setRelatedResources(relatedResources);
+
         projectEntity11.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity11.setProjectProfilePic("https://localhost:8443/api/v1/files/init/zebra.jpeg");
         projectEntity11.getPhotos().add("https://localhost:8443/api/v1/files/init/zebra1.jpeg");
@@ -783,6 +944,12 @@ public class InitServiceImpl implements InitService {
         ProjectEntity projectEntity12 = new ProjectEntity("Close the gap in eye health for Indigenous Australians", "For decades, Aboriginal and Torres Strait Lander people have experienced low health outcomes than non-indigenous Australians. Today, there’s still a ten-year gap in life expectancy. Poor eye health and a lack of easy access to services play a part in this.", "Australia", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity12.getSdgs().add(goodHealth);
         projectEntity12.setUpvotes(35);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Spectacles");
+        projectEntity12.setRelatedResources(relatedResources);
+
         projectEntity12.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity12.setProjectProfilePic("https://localhost:8443/api/v1/files/init/eye.jpg");
         projectEntity12.getPhotos().add("https://localhost:8443/api/v1/files/init/eye1.jpg");
@@ -800,6 +967,13 @@ public class InitServiceImpl implements InitService {
         ProjectEntity projectEntity13 = new ProjectEntity("Build School Toilets for Nepal", "Building School-Friendly Toilets for Girls in Nepal.", "Nepal", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity13.getSdgs().add(goodHealth);
         projectEntity13.setUpvotes(35);
+
+        //relatedResources
+        relatedResources = new ArrayList<>();
+        relatedResources.add("Disinfectant");
+        relatedResources.add("Cleanser");
+        projectEntity13.setRelatedResources(relatedResources);
+
         projectEntity13.setProjStatus(ProjectStatusEnum.ACTIVE);
         projectEntity13.setProjectProfilePic("https://localhost:8443/api/v1/files/init/toilet.jpg");
         projectEntity13.getPhotos().add("https://localhost:8443/api/v1/files/init/toilet1.jpg");
