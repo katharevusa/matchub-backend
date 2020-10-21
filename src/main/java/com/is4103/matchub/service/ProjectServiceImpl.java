@@ -571,6 +571,9 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectEntity project = projectOptional.get();
         Integer upvote = project.getUpvotes() + 1;
         project.setUpvotes(upvote);
+        
+        //newly added to keep track of poolpoints
+        project.setProjectPoolPoints(100 + project.getUpvotes());
 
         //activate project once reaches 20
         if (project.getUpvotes() >= 20) {
@@ -620,6 +623,10 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         project.setUpvotes(project.getUpvotes() - 1);
+        
+        //newly added to keep track of poolpoints
+        project.setProjectPoolPoints(100 + project.getUpvotes());
+        
         profile.getDownvotedProjectIds().add(projectId);
         project = projectEntityRepository.saveAndFlush(project);
 
