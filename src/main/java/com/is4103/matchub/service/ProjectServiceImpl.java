@@ -306,6 +306,8 @@ public class ProjectServiceImpl implements ProjectService {
         // Incomplete: reputation points, reviews, badge should be started
         /* trigger the issueProjectBadge method */
         badgeService.issueProjectBadge(project);
+        
+        //*************include notification to send to project owners & teamMembers to leave reviews
     }
 
     @Override
