@@ -6,6 +6,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.IndividualEntity;
+import com.is4103.matchub.entity.OrganisationEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,4 +17,6 @@ import org.springframework.data.domain.Pageable;
 public interface LeaderboardService {
 
     Page<IndividualEntity> individualLeaderboard(Pageable pageable);
+
+    Page<OrganisationEntity> organisationalLeaderboard(Pageable pageable);
 }

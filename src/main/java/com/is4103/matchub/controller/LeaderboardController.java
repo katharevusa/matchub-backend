@@ -6,6 +6,7 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.IndividualEntity;
+import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.service.LeaderboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,5 +29,10 @@ public class LeaderboardController {
     @RequestMapping(method = RequestMethod.GET, value = "/individualLeaderboard")
     Page<IndividualEntity> individualLeaderboard(Pageable pageable) {
         return leaderboardService.individualLeaderboard(pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/organisationalLeaderboard")
+    Page<OrganisationEntity> organisationalLeaderboard(Pageable pageable) {
+        return leaderboardService.organisationalLeaderboard(pageable);
     }
 }
