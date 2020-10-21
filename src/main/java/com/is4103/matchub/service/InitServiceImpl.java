@@ -8,11 +8,14 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
+import com.is4103.matchub.enumeration.RequestStatusEnum;
+import com.is4103.matchub.enumeration.RequestorEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
+import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import java.math.BigDecimal;
@@ -76,6 +80,9 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     FirebaseService firebaseService;
+    
+    @Autowired
+    ResourceRequestEntityRepository resourceRequestEntityRepository;
 
     @Transactional
     public void init() {
@@ -621,6 +628,16 @@ public class InitServiceImpl implements InitService {
         toiletpaper.setCountry("Nepal");
         resourceService.createResource(toiletpaper, 3L, 5L);
 
+        //22
+        //*********** for rep points testing 
+        ResourceEntity testing = new ResourceEntity("testing", "testing", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
+        testing.setResourceProfilePic("https://img.jakpost.net/c/2020/09/08/2020_09_08_103888_1599536848._large.jpg");
+        testing.getPhotos().add("https://img.jakpost.net/c/2020/09/08/2020_09_08_103888_1599536848._large.jpg");
+        testing.setCountry("Korea, Republic of South Korea");
+        testing.setAvailable(false);
+        testing.setMatchedProjectId(Long.valueOf(14));
+        resourceService.createResource(testing, 3L, 5L);
+
     }
 
     public void initProjects() {
@@ -1031,9 +1048,9 @@ public class InitServiceImpl implements InitService {
         ProjectEntity completedProject = new ProjectEntity("Time To Clean Up Hangang River", projDesc, "South Korea", LocalDateTime.parse("2018-06-05T11:45:55"), LocalDateTime.parse("2020-02-26T10:25:55"));
         completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
         completedProject.setUpvotes(45);
-        
+
         completedProject.setProjectPoolPoints(145);
-        
+
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/timeToCleanUpHangang.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/timeToCleanUpHangang1.jpg");
         completedProject.setProjectProfilePic("https://localhost:8443/api/v1/files/init/timeToCleanUpHangang.jpg");
@@ -1084,6 +1101,14 @@ public class InitServiceImpl implements InitService {
 
         profileEntityRepository.save(ikjun);
         profileEntityRepository.save(songhwa);
+
+        //associate resources 
+        ResourceRequestEntity rr1 = new ResourceRequestEntity(Long.valueOf(5), Long.valueOf(22), completedProject.getProjectId(), 10, "Testing testing");
+        rr1.setRequestCreationTime(LocalDateTime.of(2020, Month.MARCH, 17, 11, 15));
+        rr1.setRequestorEnum(RequestorEnum.RESOURCE_OWNER);
+        rr1.setStatus(RequestStatusEnum.ACCEPTED);
+        resourceRequestEntityRepository.saveAndFlush(rr1);
+        
         /* end of completed project 1 */
 
  /* start of completed project 2 */
@@ -1097,9 +1122,9 @@ public class InitServiceImpl implements InitService {
         completedProject = new ProjectEntity("Recycle Clothes Movement", projDesc, "Singapore", LocalDateTime.parse("2018-07-07T11:45:55"), LocalDateTime.parse("2020-03-28T10:25:55"));
         completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
         completedProject.setUpvotes(55);
-        
+
         completedProject.setProjectPoolPoints(155);
-        
+
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/recycleClothes.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/recycleClothes1.jpg");
         completedProject.setProjectProfilePic("https://localhost:8443/api/v1/files/init/recycleClothes.jpg");
@@ -1137,9 +1162,9 @@ public class InitServiceImpl implements InitService {
         completedProject = new ProjectEntity("End violence Against Women", projDesc, "India", LocalDateTime.parse("2017-02-07T11:45:55"), LocalDateTime.parse("2019-12-28T10:25:55"));
         completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
         completedProject.setUpvotes(36);
-        
+
         completedProject.setUpvotes(136);
-        
+
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/genderEqualityIndia.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/genderEqualityIndia1.jpg");
         completedProject.setProjectProfilePic("https://localhost:8443/api/v1/files/init/genderEqualityIndia.jpg");
@@ -1180,9 +1205,9 @@ public class InitServiceImpl implements InitService {
         completedProject = new ProjectEntity("Education For All", projDesc, "Liberia", LocalDateTime.parse("2015-02-07T11:45:55"), LocalDateTime.parse("2018-11-20T10:25:55"));
         completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
         completedProject.setUpvotes(60);
-        
+
         completedProject.setUpvotes(160);
-        
+
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll1.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll2.jpg");
