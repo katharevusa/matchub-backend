@@ -18,7 +18,7 @@ import org.springframework.data.jpa.repository.Query;
  * @author ngjin
  */
 public interface IndividualEntityRepository extends JpaRepository<IndividualEntity, Long> {
-    
+
     @Query(value = "SELECT DISTINCT i FROM IndividualEntity i",
             countQuery = "SELECT COUNT(i) FROM IndividualEntity i")
     Page<IndividualEntity> findAll(Pageable pageable);
@@ -26,4 +26,8 @@ public interface IndividualEntityRepository extends JpaRepository<IndividualEnti
     @Query(value = "SELECT i FROM IndividualEntity i WHERE i.firstName LIKE %?1% OR i.lastName LIKE %?1% OR i.email LIKE %?1% OR CONCAT(i.firstName, ' ', i.lastName) LIKE %?1% OR CONCAT(i.lastName, ' ', i.firstName) LIKE %?1%",
             countQuery = "SELECT COUNT(i) FROM IndividualEntity i WHERE i.firstName LIKE %?1% OR i.lastName LIKE %?1% OR i.email LIKE %?1% OR CONCAT(i.firstName, ' ', i.lastName) LIKE %?1% OR CONCAT(i.lastName, ' ', i.firstName) LIKE %?1%")
     Page<IndividualEntity> searchIndividuals(String search, Pageable pageable);
+
+    @Query(value = "SELECT i FROM IndividualEntity i ORDER BY i.reputationPoints DESC",
+            countQuery = "SELECT COUNT(i) FROM IndividualEntity i ORDER BY i.reputationPoints DESC")
+    Page<IndividualEntity> individualLeaderboard(Pageable pageable);
 }
