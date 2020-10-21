@@ -41,4 +41,11 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%")
     List<ResourceEntity> getResourcesByKeyword(String keyword);
 
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = ?1",
+            countQuery = "SELECT COUNT(r) FROM ResourceEntity r WHERE r.matchedProjectId = ?1")
+    Page<ResourceEntity> getResourcesByProject(Long projectId, Pageable pageable);
+
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = ?1")
+    List<ResourceEntity> getResourcesByProject(Long projectId);
+
 }
