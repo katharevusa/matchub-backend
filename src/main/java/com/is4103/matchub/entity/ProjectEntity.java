@@ -75,8 +75,6 @@ public class ProjectEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endDate;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Long> userFollowers = new HashSet<>();
 
     @Column(nullable = false)
     @NotNull
