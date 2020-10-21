@@ -606,6 +606,18 @@ public class ExceptionHandlingController {
     
     }
     
+     
+       @ExceptionHandler(value = DeleteCommentException.class)
+    public ResponseEntity<ExceptionResponse> deleteCommentException(DeleteCommentException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Error deleting comment");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    
+    }
+    
     
 
 }
