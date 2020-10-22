@@ -97,4 +97,6 @@ public interface ProjectService {
     public ProjectEntity followProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException;
 
     Page<ProjectEntity> getFollowingProjectsByAccountId(Long accountId, Pageable pageable);
+
+    ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException;
 }

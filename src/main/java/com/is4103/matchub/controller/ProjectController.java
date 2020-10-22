@@ -149,4 +149,9 @@ public class ProjectController {
         return projectService.deleteDocuments(projectId, docsToDelete);
     }
 
+    @RequestMapping(method = RequestMethod.PUT, value = "/addProjectOwner")
+    public ProjectEntity addProjectOwner(@RequestParam(value = "projOwnerId") Long projOwnerId, @RequestParam(value = "projOwnerToAddId") Long projOwnerToAddId, @RequestParam(value = "projectId") Long projectId) throws ProjectNotFoundException {
+        return projectService.addProjectOwner(projOwnerId, projOwnerToAddId, projectId);
+    }
+
 }

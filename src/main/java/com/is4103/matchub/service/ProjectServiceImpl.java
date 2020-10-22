@@ -26,6 +26,7 @@ import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.RevokeDownvoteException;
 import com.is4103.matchub.exception.RevokeUpvoteException;
 import com.is4103.matchub.exception.TerminateProjectException;
+import com.is4103.matchub.exception.UnableToAddProjectOwnerException;
 import com.is4103.matchub.exception.UpdateProjectException;
 import com.is4103.matchub.exception.UpvoteProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
@@ -840,6 +841,39 @@ public class ProjectServiceImpl implements ProjectService {
         Page<ProjectEntity> page = new PageImpl<ProjectEntity>(projects.subList(start.intValue(), end.intValue()), pageable, projects.size());
 
         return page;
+    }
+
+    @Override
+    public ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException {
+
+        ProfileEntity projOwnerProfile = profileEntityRepository.findById(projOwner)
+                .orElseThrow(() -> new UserNotFoundException(projOwner));
+
+        ProfileEntity projOwnerToAddProfile = profileEntityRepository.findById(projOwnerToAdd)
+                .orElseThrow(() -> new UserNotFoundException(projOwnerToAdd));
+
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Project " + projectId + " cannot be found."));
+
+        //check if action is authorised
+        if (!project.getProjectOwners().contains(projOwnerProfile)) {
+            throw new UnableToAddProjectOwnerException("Unable to add new project owner "
+                    + "into project: account must be a project owner to perform this action");
+        }
+
+        //check if profile to add is already a projectOwner 
+        if (project.getProjectOwners().contains(projOwnerToAddProfile)) {
+            throw new UnableToAddProjectOwnerException("Unable to add new project owner "
+                    + "into project: account is already a project owner.");
+        }
+
+        project.getProjectOwners().add(projOwnerToAddProfile);
+        project = projectEntityRepository.saveAndFlush(project);
+
+        projOwnerToAddProfile.getProjectsOwned().add(project);
+        profileEntityRepository.saveAndFlush(projOwnerToAddProfile);
+
+        return project;
     }
 
     @Override

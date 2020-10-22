@@ -639,4 +639,15 @@ public class ExceptionHandlingController {
 
     }
 
+    @ExceptionHandler(value = UnableToAddProjectOwnerException.class)
+    public ResponseEntity<ExceptionResponse> unableToAddProjectOwnerException(UnableToAddProjectOwnerException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable To Add Project Owner.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+
+    }
+
 }
