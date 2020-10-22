@@ -140,6 +140,16 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 
+        //check if the project exists
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + projectId + " not found."));
+
+        //check if profile is a projectOwner of the specified project
+        if (!project.getProjectOwners().contains(profile)) {
+            throw new UnableToSpotlightException("Unable to spotlight project: account " + accountId
+                    + " is not authorised to spotlight project as he/she is not a project owner of project " + projectId);
+        }
+
         //check if profile has sufficient rep points to perform a spotlight 
         if (profile.getReputationPoints() < 200) {
             throw new UnableToSpotlightException("Unable to spotlight project: account " + accountId
@@ -151,10 +161,6 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
             throw new UnableToSpotlightException("Unable to spotlight project: account " + accountId
                     + " does not have any more spotlight chances left");
         }
-
-        //check if the project exists
-        ProjectEntity project = projectEntityRepository.findById(projectId)
-                .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + projectId + " not found."));
 
         if (project.getSpotlight() == true) {
             throw new UnableToSpotlightException("Unable to spotlight project: Cannot spotlight a "
