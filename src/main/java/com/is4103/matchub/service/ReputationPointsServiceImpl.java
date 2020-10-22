@@ -156,6 +156,11 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
         ProjectEntity project = projectEntityRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + projectId + " not found."));
 
+        if (project.getSpotlight() == true) {
+            throw new UnableToSpotlightException("Unable to spotlight project: Cannot spotlight a "
+                    + "project that is currently spotlighted");
+        }
+
         //set project spotlight attributes
         project.setSpotlight(true);
 
