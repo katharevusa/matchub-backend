@@ -76,6 +76,7 @@ public class ProjectEntity {
     private LocalDateTime endDate;
 
 
+
     @Column(nullable = false)
     @NotNull
     private ProjectStatusEnum projStatus = ProjectStatusEnum.ON_HOLD;
