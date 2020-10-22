@@ -265,6 +265,21 @@ public class ResourceServiceImpl implements ResourceService {
     }
 
     @Override
+    public Page<ResourceEntity> getSavedResourcesByAccountId(Long accountId, Pageable pageable) {
+
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        List<ResourceEntity> resources = profile.getSavedResources();
+
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > resources.size() ? resources.size() : (start + pageable.getPageSize());
+        Page<ResourceEntity> page = new PageImpl<ResourceEntity>(resources.subList(start.intValue(), end.intValue()), pageable, resources.size());
+
+        return page;
+    }
+
+    @Override
     public Page<ResourceEntity> searchResourceByKeywords(String keyword, Pageable pageable) {
         return resourceEntityRepository.getResourcesByKeyword(keyword, pageable);
     }

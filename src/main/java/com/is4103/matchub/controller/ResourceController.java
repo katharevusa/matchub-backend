@@ -20,6 +20,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -79,6 +80,11 @@ public class ResourceController {
     @RequestMapping(method = RequestMethod.GET, value = "/getListOfResourcesByIds")
     List<ResourceEntity> getListOfResourcesByIds(@RequestParam(value = "ids") List<Long> ids) throws ResourceNotFoundException {
         return resourceService.getResourcesByListOfId(ids);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getSavedResourcesByAccountId/{accountId}")
+    Page<ResourceEntity> getSavedResourcesByAccountId(@PathVariable("accountId") Long accountId, Pageable pageable) {
+        return resourceService.getSavedResourcesByAccountId(accountId, pageable);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceById")
