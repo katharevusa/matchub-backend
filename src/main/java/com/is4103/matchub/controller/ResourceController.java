@@ -77,7 +77,7 @@ public class ResourceController {
 
     //get list of resources by list of resource ids
     @RequestMapping(method = RequestMethod.GET, value = "/getListOfResourcesByIds")
-    List<ResourceEntity> getListOfResourcesByIds(List<Long> ids) throws ResourceNotFoundException {
+    List<ResourceEntity> getListOfResourcesByIds(@RequestParam(value = "ids") List<Long> ids) throws ResourceNotFoundException {
         return resourceService.getResourcesByListOfId(ids);
     }
 
