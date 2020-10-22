@@ -113,6 +113,8 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                 project.setProjectPoolPoints(project.getProjectPoolPoints() - additionalPoints);
                 project = projectEntityRepository.saveAndFlush(project);
 
+                checkPointsToAwardSpotlightChances(resourceDonor);
+
             } else { //award base points to resources if not found in HashMap
 
                 //find the base points 
@@ -129,8 +131,11 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                 resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
 
                 System.out.println("Awarded points to resource donor (basepoints): " + basePoints);
+
+                checkPointsToAwardSpotlightChances(resourceDonor);
             }
         }
+
     }
 
     @Override
@@ -233,6 +238,14 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
         profile = profileEntityRepository.saveAndFlush(profile);
 
         return resource;
+    }
+
+    private void checkPointsToAwardSpotlightChances(ProfileEntity profile) {
+        if (profile.getReputationPoints() > 200) {
+
+            profile.setSpotlightChances(profile.getSpotlightChances() + 5);
+            profileEntityRepository.saveAndFlush(profile);
+        }
     }
 
 }
