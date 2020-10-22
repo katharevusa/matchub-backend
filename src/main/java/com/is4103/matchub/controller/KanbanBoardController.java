@@ -21,6 +21,7 @@ import com.is4103.matchub.service.KanbanBoardService;
 import com.is4103.matchub.service.TaskColumnService;
 import com.is4103.matchub.service.TaskService;
 import com.is4103.matchub.vo.CommentVO;
+import com.is4103.matchub.vo.CreateFullTaskVO;
 import com.is4103.matchub.vo.DeleteColumnVO;
 import com.is4103.matchub.vo.KanbanBoardVO;
 import com.is4103.matchub.vo.TaskColumnVO;
@@ -28,6 +29,7 @@ import com.is4103.matchub.vo.CreateTaskVO;
 import com.is4103.matchub.vo.RearrangeTaskVO;
 import com.is4103.matchub.vo.UpdateLabelVO;
 import com.is4103.matchub.vo.UpdateTaskVO;
+import com.is4103.matchub.vo.UpdateFullTaskVO;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -131,13 +133,36 @@ public class KanbanBoardController {
 
     // create full task
     @RequestMapping(method = RequestMethod.POST, value = "/createFullTask")
-    public TaskEntity createFullTask(@Valid @RequestBody CreateTaskVO vo,
-            @RequestParam(value = "newTaskDoerList", required = true) List<Long> newTaskDoerList,
-            @RequestBody @Valid UpdateLabelVO updateLabelVO) throws CreateTaskException, UpdateTaskException {
+    public TaskEntity createFullTask(@Valid @RequestBody CreateFullTaskVO createFullTaskVO) throws CreateTaskException, UpdateTaskException {
 
-        TaskEntity task = taskService.createTask(vo);
-        taskService.updateTaskDoers(newTaskDoerList, task.getTaskId(), vo.getTaskCreatorOrEditorId(), vo.getKanbanboardId());
+        // create initial task
+        CreateTaskVO createTaskVO = new CreateTaskVO();
+        createTaskVO.setTaskTitle(createFullTaskVO.getTaskTitle());
+        if (createFullTaskVO.getTaskDescription() != null) {
+            createTaskVO.setTaskDescription(createFullTaskVO.getTaskDescription());
+        }
+
+        if (createFullTaskVO.getExpectedDeadline() != null) {
+            createTaskVO.setExpectedDeadline(createFullTaskVO.getExpectedDeadline());
+        }
+
+        if (createFullTaskVO.getTaskLeaderId() != null) {
+            createTaskVO.setTaskLeaderId(createFullTaskVO.getTaskLeaderId());
+        }
+
+        createTaskVO.setTaskColumnId(createFullTaskVO.getTaskColumnId());
+        createTaskVO.setTaskCreatorOrEditorId(createFullTaskVO.getTaskCreatorOrEditorId());
+        createTaskVO.setKanbanboardId(createFullTaskVO.getKanbanboardId());
+
+        TaskEntity task = taskService.createTask(createTaskVO);
+        // update task doers
+        taskService.updateTaskDoers(createFullTaskVO.getNewTaskDoerList(), task.getTaskId(), createFullTaskVO.getTaskCreatorOrEditorId(), createFullTaskVO.getKanbanboardId());
+
+        // update task labels
+        UpdateLabelVO updateLabelVO = new UpdateLabelVO();
+        updateLabelVO.setLabelAndColour(createFullTaskVO.getLabelAndColour());
         updateLabelVO.setTaskId(task.getTaskId());
+
         return taskService.updateLabel(updateLabelVO);
 
     }
@@ -147,19 +172,23 @@ public class KanbanBoardController {
     public TaskEntity updateTask(@Valid @RequestBody UpdateTaskVO vo) throws UpdateTaskException {
         return taskService.updateTask(vo);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/updateFullTask")
-    public TaskEntity updateFullTask(@Valid @RequestBody UpdateTaskVO vo,
-            @RequestParam(value = "newTaskDoerList", defaultValue = "") List<Long> newTaskDoerList,
-            @RequestBody @Valid UpdateLabelVO updateLabelVO) throws UpdateTaskException {
+    public TaskEntity updateFullTask(@RequestBody @Valid UpdateFullTaskVO updateFullTaskVO) throws UpdateTaskException {
+        UpdateTaskVO updateTaskVO = new UpdateTaskVO();
+        updateFullTaskVO.updateTask(updateTaskVO);
 
-        TaskEntity task = taskService.updateTask(vo);
-        taskService.updateTaskDoers(newTaskDoerList, task.getTaskId(), vo.getTaskCreatorOrEditorId(), vo.getKanbanboardId());
+        TaskEntity task = taskService.updateTask(updateTaskVO);
+        taskService.updateTaskDoers(updateFullTaskVO.getNewTaskDoerList(), task.getTaskId(), updateFullTaskVO.getTaskCreatorOrEditorId(), updateFullTaskVO.getKanbanboardId());
+
+        // update task labels
+        UpdateLabelVO updateLabelVO = new UpdateLabelVO();
+        updateLabelVO.setLabelAndColour(updateFullTaskVO.getLabelAndColour());
         updateLabelVO.setTaskId(task.getTaskId());
-        return taskService.updateLabel(updateLabelVO);
 
+        return taskService.updateLabel(updateLabelVO);
     }
- 
+
     @RequestMapping(method = RequestMethod.GET, value = "/getTasksByColumnId")
     public List<TaskEntity> getTasksByColumnId(@RequestParam(value = "columnId", required = true) Long columnId) {
         return taskService.getTasksByColumnId(columnId);
@@ -228,12 +257,12 @@ public class KanbanBoardController {
     public TaskEntity deleteDocuments(@RequestParam(value = "taskId", required = true) Long taskId, String[] docsToDelete) throws IOException, UpdateTaskException {
         return taskService.deleteDocuments(taskId, docsToDelete);
     }
-    
+
     @RequestMapping(method = RequestMethod.PUT, value = "/updateTaskStatus")
     public TaskEntity updateTaskStatus(
-            @RequestParam(value = "taskId", required = true) Long taskId, 
+            @RequestParam(value = "taskId", required = true) Long taskId,
             @RequestParam(value = "oldColumnId", required = true) Long oldColumnId,
-            @RequestParam(value = "newColumnId", required = true) Long newColumnId){
+            @RequestParam(value = "newColumnId", required = true) Long newColumnId) {
         return taskService.updateTaskStatus(taskId, oldColumnId, newColumnId);
     }
 }

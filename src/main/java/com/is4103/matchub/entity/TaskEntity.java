@@ -57,8 +57,7 @@ public class TaskEntity {
     @NotNull
     private LocalDateTime createdTime;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    @NotNull
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime expectedDeadline;
 
     @ManyToOne(optional = false)
