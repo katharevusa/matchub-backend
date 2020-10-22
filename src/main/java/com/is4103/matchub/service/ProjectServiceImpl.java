@@ -307,7 +307,7 @@ public class ProjectServiceImpl implements ProjectService {
         // Incomplete: reputation points, reviews, badge should be started
         /* trigger the issueProjectBadge method */
         badgeService.issueProjectBadge(project);
-        
+
         //*************include notification to send to project owners & teamMembers to leave reviews
     }
 
@@ -574,7 +574,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectEntity project = projectOptional.get();
         Integer upvote = project.getUpvotes() + 1;
         project.setUpvotes(upvote);
-        
+
         //newly added to keep track of poolpoints
         project.setProjectPoolPoints(100 + project.getUpvotes());
 
@@ -626,10 +626,10 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         project.setUpvotes(project.getUpvotes() - 1);
-        
+
         //newly added to keep track of poolpoints
         project.setProjectPoolPoints(100 + project.getUpvotes());
-        
+
         profile.getDownvotedProjectIds().add(projectId);
         project = projectEntityRepository.saveAndFlush(project);
 
@@ -825,6 +825,21 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return listOfProjects;
 
+    }
+
+    @Override
+    public Page<ProjectEntity> getFollowingProjectsByAccountId(Long accountId, Pageable pageable) {
+
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        List<ProjectEntity> projects = profile.getProjectsFollowing();
+
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > projects.size() ? projects.size() : (start + pageable.getPageSize());
+        Page<ProjectEntity> page = new PageImpl<ProjectEntity>(projects.subList(start.intValue(), end.intValue()), pageable, projects.size());
+
+        return page;
     }
 
     @Override
