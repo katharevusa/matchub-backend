@@ -162,6 +162,7 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                     + " does not have any more spotlight chances left");
         }
 
+        //check if project is currently spotlighted
         if (project.getSpotlight() == true) {
             throw new UnableToSpotlightException("Unable to spotlight project: Cannot spotlight a "
                     + "project that is currently spotlighted");
@@ -181,6 +182,57 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
         profile = profileEntityRepository.saveAndFlush(profile);
 
         return project;
+    }
+
+    @Override
+    public ResourceEntity spotlightResource(Long resourceId, Long accountId) throws ResourceNotFoundException {
+
+        //check if profile exists
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        //check if resource exist6s
+        ResourceEntity resource = resourceEntityRepository.findById(resourceId)
+                .orElseThrow(() -> new ResourceNotFoundException("ResourceId: " + resourceId + " not found."));
+
+        //check if profile is the rosourceOwner
+        if (!resource.getResourceOwnerId().equals(accountId)) {
+            throw new UnableToSpotlightException("Unable to spotlight resource: account " + accountId
+                    + " is not authorised to spotlight resource as he/she is not the resource owner");
+        }
+
+        //check if profile has sufficient rep points to perform a spotlight 
+        if (profile.getReputationPoints() < 200) {
+            throw new UnableToSpotlightException("Unable to spotlight resource: account " + accountId
+                    + " does not have sufficient reputation points to spotlight");
+        }
+
+        //check if profile has sufficient spotlight chances 
+        if (profile.getSpotlightChances() == 0) {
+            throw new UnableToSpotlightException("Unable to spotlight resource: account " + accountId
+                    + " does not have any more spotlight chances left");
+        }
+
+        //check if resource is currently spotlighted
+        if (resource.getSpotlight() == true) {
+            throw new UnableToSpotlightException("Unable to spotlight resource: Cannot spotlight a "
+                    + "resource that is currently spotlighted");
+        }
+
+        //set resource spotlight attributes
+        resource.setSpotlight(true);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endTime = now.plusDays(1);
+        resource.setSpotlightEndTime(endTime);
+
+        resource = resourceEntityRepository.saveAndFlush(resource);
+
+        //deduct 1 spotlight chance away from account
+        profile.setSpotlightChances(profile.getSpotlightChances() - 1);
+        profile = profileEntityRepository.saveAndFlush(profile);
+
+        return resource;
     }
 
 }
