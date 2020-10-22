@@ -5,9 +5,9 @@
  */
 package com.is4103.matchub.service;
 
-import com.is4103.matchub.entity.ReviewEntity;
+import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
-import com.is4103.matchub.vo.ReviewCreateVO;
+import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -15,11 +15,10 @@ import org.springframework.data.domain.Pageable;
  *
  * @author ngjin
  */
-public interface ReviewService {
+public interface ReputationPointsService {
 
-    Page<ReviewEntity> getReviewsReceivedByAccountId(Long id, Pageable pageable);
+    Page<ResourceEntity> getResourceOfProject(Long projectId, Pageable pageable) throws ProjectNotFoundException;
 
-    Page<ReviewEntity> getReviewsGivenByAccountId(Long id, Pageable pageable);
+    void issuePointsToResourceDonors(IssuePointsToResourceDonorsVO vo) throws ProjectNotFoundException;
 
-    ReviewEntity createReview(ReviewCreateVO vo) throws ProjectNotFoundException;
 }

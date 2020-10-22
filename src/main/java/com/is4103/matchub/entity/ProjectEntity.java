@@ -84,6 +84,11 @@ public class ProjectEntity {
     @Column(nullable = false)
     @NotNull
     private Integer upvotes = 0;
+    
+    //****** newly added for Rep points 
+    @Column(nullable = false)
+    @NotNull
+    private Integer projectPoolPoints = 100 + this.upvotes;
 
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> relatedResources = new ArrayList<>();
