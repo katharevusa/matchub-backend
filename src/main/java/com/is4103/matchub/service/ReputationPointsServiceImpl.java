@@ -12,12 +12,15 @@ import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.UnableToRewardRepPointsException;
+import com.is4103.matchub.exception.UnableToSpotlightException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +131,45 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                 System.out.println("Awarded points to resource donor (basepoints): " + basePoints);
             }
         }
+    }
+
+    @Override
+    public ProjectEntity spotlightProject(Long projectId, Long accountId) throws ProjectNotFoundException {
+
+        //check if profile exists
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        //check if profile has sufficient rep points to perform a spotlight 
+        if (profile.getReputationPoints() < 200) {
+            throw new UnableToSpotlightException("Unable to spotlight project: account " + accountId
+                    + " does not have sufficient reputation points to spotlight");
+        }
+
+        //check if profile has sufficient spotlight chances 
+        if (profile.getSpotlightChances() == 0) {
+            throw new UnableToSpotlightException("Unable to spotlight project: account " + accountId
+                    + " does not have any more spotlight chances left");
+        }
+
+        //check if the project exists
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + projectId + " not found."));
+
+        //set project spotlight attributes
+        project.setSpotlight(true);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endTime = now.plusDays(1);
+        project.setSpotlightEndTime(endTime);
+
+        project = projectEntityRepository.saveAndFlush(project);
+
+        //deduct 1 spotlight chance away from account
+        profile.setSpotlightChances(profile.getSpotlightChances() - 1);
+        profile = profileEntityRepository.saveAndFlush(profile);
+
+        return project;
     }
 
 }

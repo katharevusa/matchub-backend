@@ -617,4 +617,15 @@ public class ExceptionHandlingController {
 
     }
 
+    @ExceptionHandler(value = UnableToSpotlightException.class)
+    public ResponseEntity<ExceptionResponse> unableToSpotlightException(UnableToSpotlightException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable To Spotlight.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+
+    }
+
 }
