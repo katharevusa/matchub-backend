@@ -6,18 +6,22 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AnnouncementEntity;
+import com.is4103.matchub.entity.CommentEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
+import com.is4103.matchub.exception.DeleteCommentException;
 import com.is4103.matchub.exception.PostNotFoundException;
 import com.is4103.matchub.exception.UnableToDeletePostException;
 import com.is4103.matchub.exception.UpdatePostException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.AnnouncementEntityRepository;
+import com.is4103.matchub.repository.CommentEntityRepository;
 import com.is4103.matchub.repository.PostEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
+import com.is4103.matchub.vo.CommentVO;
 import com.is4103.matchub.vo.PostVO;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -51,6 +55,9 @@ public class PostServiceImpl implements PostService {
     
     @Autowired
     private  AnnouncementEntityRepository announcementEntityRepository;
+    
+    @Autowired
+    private CommentEntityRepository commentEntityRepository;
 
     @Transactional
     @Override
@@ -209,5 +216,32 @@ public class PostServiceImpl implements PostService {
             throw new UnableToDeletePostException("Unable to delete post because account: " + postCreatorId
                     + " is not the owner of the post to be deleted.");
         }
+    }
+    
+    
+    @Override
+    public PostEntity addComment(CommentVO newCommentVO, Long postId){
+        
+        CommentEntity newComment = new CommentEntity();
+        newCommentVO.createPostComment(newComment);
+        PostEntity post = postEntityRepository.findById(postId).get();
+       
+        newComment= commentEntityRepository.saveAndFlush(newComment);
+        post.getListOfComments().add(newComment);
+      return  postEntityRepository.saveAndFlush(post);    
+    }
+    
+    @Override
+    public PostEntity deleteComment(Long commentId, Long postId, Long deletorId)throws DeleteCommentException{
+        
+        PostEntity post = postEntityRepository.findById(postId).get();
+        CommentEntity comment = commentEntityRepository.findById(commentId).get();
+       if(!comment.getAccountId().equals( deletorId) && !post.getPostCreator().getAccountId().equals(deletorId)){
+           throw new DeleteCommentException("Only post owner and comment creator can delete comment for this post");
+       }
+        
+        post.getListOfComments().remove(comment);
+        commentEntityRepository.delete(comment);
+      return  postEntityRepository.saveAndFlush(post);    
     }
 }
