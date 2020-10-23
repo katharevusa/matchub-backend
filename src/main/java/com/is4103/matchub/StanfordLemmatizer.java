@@ -1,5 +1,5 @@
 
-package com.is4103.matchub.helper;
+package com.is4103.matchub;
 
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
