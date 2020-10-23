@@ -26,6 +26,7 @@ import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.RevokeDownvoteException;
 import com.is4103.matchub.exception.RevokeUpvoteException;
 import com.is4103.matchub.exception.TerminateProjectException;
+import com.is4103.matchub.exception.UnableToAddProjectOwnerException;
 import com.is4103.matchub.exception.UpdateProjectException;
 import com.is4103.matchub.exception.UpvoteProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
@@ -152,6 +153,7 @@ public class ProjectServiceImpl implements ProjectService {
                         oldProject.setCountry(vo.getCountry());
                         oldProject.setStartDate(vo.getStartDate());
                         oldProject.setEndDate(vo.getEndDate());
+                        oldProject.setRelatedResources(vo.getRelatedResources());
 
                         //remove the old association： remove project from sdgs
                         for (SDGEntity sdg : oldProject.getSdgs()) {
@@ -306,6 +308,8 @@ public class ProjectServiceImpl implements ProjectService {
         // Incomplete: reputation points, reviews, badge should be started
         /* trigger the issueProjectBadge method */
         badgeService.issueProjectBadge(project);
+
+        //*************include notification to send to project owners & teamMembers to leave reviews
     }
 
     @Override
@@ -572,6 +576,9 @@ public class ProjectServiceImpl implements ProjectService {
         Integer upvote = project.getUpvotes() + 1;
         project.setUpvotes(upvote);
 
+        //newly added to keep track of poolpoints
+        project.setProjectPoolPoints(100 + project.getUpvotes());
+
         //activate project once reaches 20
         if (project.getUpvotes() >= 20) {
             project.setProjStatus(ProjectStatusEnum.ACTIVE);
@@ -598,6 +605,11 @@ public class ProjectServiceImpl implements ProjectService {
 
         ProjectEntity project = projectOptional.get();
         ProfileEntity profile = profOptional.get();
+
+        //******* user needs to have sufficient rep points in order to perform the downvote action
+//        if (profile.getReputationPoints() < 50) {
+//            throw new DownvoteProjectException("Unable to downvote: Account does not have sufficient rep points to downvote");
+//        }
         if (profile.getDownvotedProjectIds().contains(projectId)) {
             throw new DownvoteProjectException("Upable to downvote project: You have already downvoted this project");
         }
@@ -615,6 +627,10 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         project.setUpvotes(project.getUpvotes() - 1);
+
+        //newly added to keep track of poolpoints
+        project.setProjectPoolPoints(100 + project.getUpvotes());
+
         profile.getDownvotedProjectIds().add(projectId);
         project = projectEntityRepository.saveAndFlush(project);
 
@@ -813,6 +829,54 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public Page<ProjectEntity> getFollowingProjectsByAccountId(Long accountId, Pageable pageable) {
+
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        List<ProjectEntity> projects = profile.getProjectsFollowing();
+
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > projects.size() ? projects.size() : (start + pageable.getPageSize());
+        Page<ProjectEntity> page = new PageImpl<ProjectEntity>(projects.subList(start.intValue(), end.intValue()), pageable, projects.size());
+
+        return page;
+    }
+
+    @Override
+    public ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException {
+
+        ProfileEntity projOwnerProfile = profileEntityRepository.findById(projOwner)
+                .orElseThrow(() -> new UserNotFoundException(projOwner));
+
+        ProfileEntity projOwnerToAddProfile = profileEntityRepository.findById(projOwnerToAdd)
+                .orElseThrow(() -> new UserNotFoundException(projOwnerToAdd));
+
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Project " + projectId + " cannot be found."));
+
+        //check if action is authorised
+        if (!project.getProjectOwners().contains(projOwnerProfile)) {
+            throw new UnableToAddProjectOwnerException("Unable to add new project owner "
+                    + "into project: account must be a project owner to perform this action");
+        }
+
+        //check if profile to add is already a projectOwner 
+        if (project.getProjectOwners().contains(projOwnerToAddProfile)) {
+            throw new UnableToAddProjectOwnerException("Unable to add new project owner "
+                    + "into project: account is already a project owner.");
+        }
+
+        project.getProjectOwners().add(projOwnerToAddProfile);
+        project = projectEntityRepository.saveAndFlush(project);
+
+        projOwnerToAddProfile.getProjectsOwned().add(project);
+        profileEntityRepository.saveAndFlush(projOwnerToAddProfile);
+
+        return project;
+    }
+
+    @Override
     public ProjectEntity followProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         Optional<ProfileEntity> profOptional = profileEntityRepository.findById(followerId);
@@ -901,9 +965,9 @@ public class ProjectServiceImpl implements ProjectService {
         return user.getProjectsFollowing();
 
     }
-    
-    @Override 
-    public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId)throws ProjectNotFoundException{
+
+    @Override
+    public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Unable to get project follower: Project not exist");

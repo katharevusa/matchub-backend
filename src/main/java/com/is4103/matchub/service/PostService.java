@@ -6,6 +6,8 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.PostEntity;
+import com.is4103.matchub.exception.DeleteCommentException;
+import com.is4103.matchub.vo.CommentVO;
 import com.is4103.matchub.vo.PostVO;
 import java.io.IOException;
 import org.springframework.data.domain.Page;
@@ -31,4 +33,8 @@ public interface PostService {
     PostEntity deletePhotos(Long postId, String[] photosToDelete) throws IOException;
 
     void deletePost(Long postId, Long postCreatorId) throws IOException;
+    
+    public PostEntity deleteComment(Long commentId, Long postId, Long deletorId)throws DeleteCommentException;
+    
+    public PostEntity addComment(CommentVO newCommentVO, Long postId);
 }

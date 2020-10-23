@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.vo;
 
+import java.util.HashMap;
 import java.util.Map;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -17,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Data
 public class UpdateLabelVO {
 
-    Map<String, String> labelAndColour;
+    Map<String, String> labelAndColour = new HashMap<>();
 
-    @NotNull(message = "Task id can not be null.")          
+    
     Long taskId;
 }

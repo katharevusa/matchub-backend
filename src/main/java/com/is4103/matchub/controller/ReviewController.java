@@ -6,11 +6,15 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ReviewEntity;
+import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.service.ReviewService;
+import com.is4103.matchub.vo.ReviewCreateVO;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,10 +34,15 @@ public class ReviewController {
     Page<ReviewEntity> reviewsReceived(@PathVariable("accountId") Long accountId, Pageable pageable) {
         return reviewService.getReviewsReceivedByAccountId(accountId, pageable);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "profilewall/reviewsGiven/{accountId}")
     Page<ReviewEntity> reviewsGiven(@PathVariable("accountId") Long accountId, Pageable pageable) {
         return reviewService.getReviewsGivenByAccountId(accountId, pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/createReview")
+    ReviewEntity createReview(@Valid @RequestBody ReviewCreateVO createVO) throws ProjectNotFoundException {
+        return reviewService.createReview(createVO);
     }
 
 }

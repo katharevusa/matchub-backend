@@ -5,8 +5,11 @@
  */
 package com.is4103.matchub.vo;
 
-import com.is4103.matchub.entity.TaskEntity;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -15,7 +18,7 @@ import lombok.Data;
  * @author longluqian
  */
 @Data
-public class UpdateTaskVO {
+public class UpdateFullTaskVO {
 
     @NotNull(message = "Task Id can not be null")
     private Long taskId;
@@ -34,15 +37,19 @@ public class UpdateTaskVO {
     @NotNull(message = "Kanban Board Id can not be null")
     private Long kanbanboardId;
 
-    public void updateTask(TaskEntity newTask) {
+    List<Long> newTaskDoerList = new ArrayList<>();
 
-        newTask.setTaskTitle(this.taskTitle);
-
-        newTask.setTaskDescription(this.taskDescription);
-
-        newTask.setExpectedDeadline(this.expectedDeadline);
-
-        newTask.setTaskLeaderId(this.taskLeaderId);
-
+    Map<String, String> labelAndColour = new HashMap<>();
+    
+    
+    public void updateTask(UpdateTaskVO newVO){
+        newVO.setTaskId(taskId);
+        newVO.setTaskTitle(taskTitle);
+        newVO.setTaskDescription(taskDescription);
+        newVO.setTaskLeaderId(taskLeaderId);
+        newVO.setExpectedDeadline(expectedDeadline);
+        newVO.setTaskCreatorOrEditorId(taskCreatorOrEditorId);
+        newVO.setKanbanboardId(kanbanboardId);
+                
     }
 }

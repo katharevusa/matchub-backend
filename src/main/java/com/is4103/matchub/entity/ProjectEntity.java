@@ -6,7 +6,6 @@
 package com.is4103.matchub.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import java.time.LocalDateTime;
@@ -76,8 +75,7 @@ public class ProjectEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endDate;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    private Set<Long> userFollowers = new HashSet<>();
+
 
     @Column(nullable = false)
     @NotNull
@@ -86,6 +84,11 @@ public class ProjectEntity {
     @Column(nullable = false)
     @NotNull
     private Integer upvotes = 0;
+    
+    //****** newly added for Rep points 
+    @Column(nullable = false)
+    @NotNull
+    private Integer projectPoolPoints = 100 + this.upvotes;
 
     @ElementCollection(fetch = FetchType.LAZY)
     private List<String> relatedResources = new ArrayList<>();
