@@ -5,8 +5,10 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,5 +22,9 @@ public interface ReputationPointsService {
     Page<ResourceEntity> getResourceOfProject(Long projectId, Pageable pageable) throws ProjectNotFoundException;
 
     void issuePointsToResourceDonors(IssuePointsToResourceDonorsVO vo) throws ProjectNotFoundException;
+
+    ProjectEntity spotlightProject(Long projectId, Long accountId) throws ProjectNotFoundException;
+
+    ResourceEntity spotlightResource(Long resourceId, Long accountId) throws ResourceNotFoundException;
 
 }

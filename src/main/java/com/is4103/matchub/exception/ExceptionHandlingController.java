@@ -617,9 +617,18 @@ public class ExceptionHandlingController {
 
     }
 
-    
-     
-       @ExceptionHandler(value = DeleteCommentException.class)
+    @ExceptionHandler(value = UnableToSpotlightException.class)
+    public ResponseEntity<ExceptionResponse> unableToSpotlightException(UnableToSpotlightException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable To Spotlight.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler(value = DeleteCommentException.class)
     public ResponseEntity<ExceptionResponse> deleteCommentException(DeleteCommentException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error deleting comment");
@@ -627,8 +636,18 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-    
+
+    @ExceptionHandler(value = UnableToAddProjectOwnerException.class)
+    public ResponseEntity<ExceptionResponse> unableToAddProjectOwnerException(UnableToAddProjectOwnerException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable To Add Project Owner.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+
+    }
+
 }

@@ -12,12 +12,15 @@ import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.UnableToRewardRepPointsException;
+import com.is4103.matchub.exception.UnableToSpotlightException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +113,8 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                 project.setProjectPoolPoints(project.getProjectPoolPoints() - additionalPoints);
                 project = projectEntityRepository.saveAndFlush(project);
 
+                checkPointsToAwardSpotlightChances(resourceDonor);
+
             } else { //award base points to resources if not found in HashMap
 
                 //find the base points 
@@ -126,7 +131,120 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                 resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
 
                 System.out.println("Awarded points to resource donor (basepoints): " + basePoints);
+
+                checkPointsToAwardSpotlightChances(resourceDonor);
             }
+        }
+
+    }
+
+    @Override
+    public ProjectEntity spotlightProject(Long projectId, Long accountId) throws ProjectNotFoundException {
+
+        //check if profile exists
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        //check if the project exists
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + projectId + " not found."));
+
+        //check if profile is a projectOwner of the specified project
+        if (!project.getProjectOwners().contains(profile)) {
+            throw new UnableToSpotlightException("Unable to spotlight project: account " + accountId
+                    + " is not authorised to spotlight project as he/she is not a project owner of project " + projectId);
+        }
+
+        //check if profile has sufficient rep points to perform a spotlight 
+        if (profile.getReputationPoints() < 200) {
+            throw new UnableToSpotlightException("Unable to spotlight project: account " + accountId
+                    + " does not have sufficient reputation points to spotlight");
+        }
+
+        //check if profile has sufficient spotlight chances 
+        if (profile.getSpotlightChances() == 0) {
+            throw new UnableToSpotlightException("Unable to spotlight project: account " + accountId
+                    + " does not have any more spotlight chances left");
+        }
+
+        //check if project is currently spotlighted
+        if (project.getSpotlight() == true) {
+            throw new UnableToSpotlightException("Unable to spotlight project: Cannot spotlight a "
+                    + "project that is currently spotlighted");
+        }
+
+        //set project spotlight attributes
+        project.setSpotlight(true);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endTime = now.plusDays(1);
+        project.setSpotlightEndTime(endTime);
+
+        project = projectEntityRepository.saveAndFlush(project);
+
+        //deduct 1 spotlight chance away from account
+        profile.setSpotlightChances(profile.getSpotlightChances() - 1);
+        profile = profileEntityRepository.saveAndFlush(profile);
+
+        return project;
+    }
+
+    @Override
+    public ResourceEntity spotlightResource(Long resourceId, Long accountId) throws ResourceNotFoundException {
+
+        //check if profile exists
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        //check if resource exist6s
+        ResourceEntity resource = resourceEntityRepository.findById(resourceId)
+                .orElseThrow(() -> new ResourceNotFoundException("ResourceId: " + resourceId + " not found."));
+
+        //check if profile is the rosourceOwner
+        if (!resource.getResourceOwnerId().equals(accountId)) {
+            throw new UnableToSpotlightException("Unable to spotlight resource: account " + accountId
+                    + " is not authorised to spotlight resource as he/she is not the resource owner");
+        }
+
+        //check if profile has sufficient rep points to perform a spotlight 
+        if (profile.getReputationPoints() < 200) {
+            throw new UnableToSpotlightException("Unable to spotlight resource: account " + accountId
+                    + " does not have sufficient reputation points to spotlight");
+        }
+
+        //check if profile has sufficient spotlight chances 
+        if (profile.getSpotlightChances() == 0) {
+            throw new UnableToSpotlightException("Unable to spotlight resource: account " + accountId
+                    + " does not have any more spotlight chances left");
+        }
+
+        //check if resource is currently spotlighted
+        if (resource.getSpotlight() == true) {
+            throw new UnableToSpotlightException("Unable to spotlight resource: Cannot spotlight a "
+                    + "resource that is currently spotlighted");
+        }
+
+        //set resource spotlight attributes
+        resource.setSpotlight(true);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endTime = now.plusDays(1);
+        resource.setSpotlightEndTime(endTime);
+
+        resource = resourceEntityRepository.saveAndFlush(resource);
+
+        //deduct 1 spotlight chance away from account
+        profile.setSpotlightChances(profile.getSpotlightChances() - 1);
+        profile = profileEntityRepository.saveAndFlush(profile);
+
+        return resource;
+    }
+
+    private void checkPointsToAwardSpotlightChances(ProfileEntity profile) {
+        if (profile.getReputationPoints() > 200) {
+
+            profile.setSpotlightChances(profile.getSpotlightChances() + 5);
+            profileEntityRepository.saveAndFlush(profile);
         }
     }
 

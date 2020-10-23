@@ -6,6 +6,7 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
@@ -42,6 +43,16 @@ public class ReputationPointsController {
     @RequestMapping(method = RequestMethod.PUT, value = "/issuePointsToResourceDonors")
     void issuePointsToResourceDonors(@Valid @RequestBody IssuePointsToResourceDonorsVO vo) throws ProjectNotFoundException {
         reputationPointsService.issuePointsToResourceDonors(vo);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/spotlightProject/{projectId}/{accountId}")
+    ProjectEntity spotlightProject(@PathVariable("projectId") Long projectId, @PathVariable("accountId") Long accountId) throws ProjectNotFoundException {
+        return reputationPointsService.spotlightProject(projectId, accountId);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/spotlightResource/{resourceId}/{accountId}")
+    ResourceEntity spotlightResource(@PathVariable("resourceId") Long resourceId, @PathVariable("accountId") Long accountId) throws ResourceNotFoundException {
+        return reputationPointsService.spotlightResource(resourceId, accountId);
     }
 
 }

@@ -26,6 +26,7 @@ import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.RevokeDownvoteException;
 import com.is4103.matchub.exception.RevokeUpvoteException;
 import com.is4103.matchub.exception.TerminateProjectException;
+import com.is4103.matchub.exception.UnableToAddProjectOwnerException;
 import com.is4103.matchub.exception.UpdateProjectException;
 import com.is4103.matchub.exception.UpvoteProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
@@ -307,7 +308,7 @@ public class ProjectServiceImpl implements ProjectService {
         // Incomplete: reputation points, reviews, badge should be started
         /* trigger the issueProjectBadge method */
         badgeService.issueProjectBadge(project);
-        
+
         //*************include notification to send to project owners & teamMembers to leave reviews
     }
 
@@ -574,7 +575,7 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectEntity project = projectOptional.get();
         Integer upvote = project.getUpvotes() + 1;
         project.setUpvotes(upvote);
-        
+
         //newly added to keep track of poolpoints
         project.setProjectPoolPoints(100 + project.getUpvotes());
 
@@ -626,10 +627,10 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         project.setUpvotes(project.getUpvotes() - 1);
-        
+
         //newly added to keep track of poolpoints
         project.setProjectPoolPoints(100 + project.getUpvotes());
-        
+
         profile.getDownvotedProjectIds().add(projectId);
         project = projectEntityRepository.saveAndFlush(project);
 
@@ -825,6 +826,54 @@ public class ProjectServiceImpl implements ProjectService {
         }
         return listOfProjects;
 
+    }
+
+    @Override
+    public Page<ProjectEntity> getFollowingProjectsByAccountId(Long accountId, Pageable pageable) {
+
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        List<ProjectEntity> projects = profile.getProjectsFollowing();
+
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > projects.size() ? projects.size() : (start + pageable.getPageSize());
+        Page<ProjectEntity> page = new PageImpl<ProjectEntity>(projects.subList(start.intValue(), end.intValue()), pageable, projects.size());
+
+        return page;
+    }
+
+    @Override
+    public ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException {
+
+        ProfileEntity projOwnerProfile = profileEntityRepository.findById(projOwner)
+                .orElseThrow(() -> new UserNotFoundException(projOwner));
+
+        ProfileEntity projOwnerToAddProfile = profileEntityRepository.findById(projOwnerToAdd)
+                .orElseThrow(() -> new UserNotFoundException(projOwnerToAdd));
+
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Project " + projectId + " cannot be found."));
+
+        //check if action is authorised
+        if (!project.getProjectOwners().contains(projOwnerProfile)) {
+            throw new UnableToAddProjectOwnerException("Unable to add new project owner "
+                    + "into project: account must be a project owner to perform this action");
+        }
+
+        //check if profile to add is already a projectOwner 
+        if (project.getProjectOwners().contains(projOwnerToAddProfile)) {
+            throw new UnableToAddProjectOwnerException("Unable to add new project owner "
+                    + "into project: account is already a project owner.");
+        }
+
+        project.getProjectOwners().add(projOwnerToAddProfile);
+        project = projectEntityRepository.saveAndFlush(project);
+
+        projOwnerToAddProfile.getProjectsOwned().add(project);
+        profileEntityRepository.saveAndFlush(projOwnerToAddProfile);
+
+        return project;
     }
 
     @Override
