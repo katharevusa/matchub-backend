@@ -207,7 +207,7 @@ public class KanbanBoardController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/updateTaskDoers")
-    public TaskEntity updateTaskDoers(@RequestParam(value = "newTaskDoerList", required = true) List<Long> newTaskDoerList,
+    public TaskEntity updateTaskDoers(@RequestParam(value = "newTaskDoerList", defaultValue = "") List<Long> newTaskDoerList,
             @RequestParam(value = "taskId", required = true) Long taskId,
             @RequestParam(value = "updatorId", required = true) Long updatorId,
             @RequestParam(value = "kanbanBoardId", required = true) Long kanbanBoardId) throws UpdateTaskException {
