@@ -12,6 +12,7 @@ import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.service.ProjectService;
 import com.is4103.matchub.service.ReputationPointsService;
+import com.is4103.matchub.service.ResourceService;
 import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
 import java.util.List;
 import javax.validation.Valid;
@@ -37,6 +38,9 @@ public class ReputationPointsController {
 
     @Autowired
     ProjectService projectService;
+
+    @Autowired
+    ResourceService resourceService;
 
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceOfProject/{projectId}")
     Page<ResourceEntity> getResourceOfProject(@PathVariable("projectId") Long projectId, Pageable pageable) throws ProjectNotFoundException {
@@ -66,6 +70,16 @@ public class ReputationPointsController {
     @RequestMapping(method = RequestMethod.GET, value = "/page/getSpotlightedProjects")
     Page<ProjectEntity> getSpotlightedProjects(Pageable pageable) {
         return projectService.getSpotlightedProjects(pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/list/getSpotlightedResources")
+    List<ResourceEntity> getSpotlightedResources() {
+        return resourceService.getSpotlightedResources();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/page/getSpotlightedResources")
+    Page<ResourceEntity> getSpotlightedResources(Pageable pageable) {
+        return resourceService.getSpotlightedResources(pageable);
     }
 
 }
