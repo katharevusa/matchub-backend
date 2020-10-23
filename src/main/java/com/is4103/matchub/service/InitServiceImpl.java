@@ -80,7 +80,7 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     FirebaseService firebaseService;
-    
+
     @Autowired
     ResourceRequestEntityRepository resourceRequestEntityRepository;
 
@@ -659,6 +659,12 @@ public class InitServiceImpl implements InitService {
 
         projectEntity1.setProjectPoolPoints(121);
 
+        //spotlight project1
+        projectEntity1.setSpotlight(true);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endTime = now.plusDays(1);
+        projectEntity1.setSpotlightEndTime(endTime);
+
         //relatedResources
         List<String> relatedResources = new ArrayList<>();
         relatedResources.add("Phone");
@@ -688,6 +694,12 @@ public class InitServiceImpl implements InitService {
         projectEntity2.setUpvotes(23);
 
         projectEntity2.setProjectPoolPoints(123);
+
+        //spotlight project2
+        projectEntity2.setSpotlight(true);
+        now = LocalDateTime.now();
+        endTime = now.plusDays(1);
+        projectEntity2.setSpotlightEndTime(endTime);
 
         //relatedResources
         relatedResources = new ArrayList<>();
@@ -1108,7 +1120,7 @@ public class InitServiceImpl implements InitService {
         rr1.setRequestorEnum(RequestorEnum.RESOURCE_OWNER);
         rr1.setStatus(RequestStatusEnum.ACCEPTED);
         resourceRequestEntityRepository.saveAndFlush(rr1);
-        
+
         /* end of completed project 1 */
 
  /* start of completed project 2 */
