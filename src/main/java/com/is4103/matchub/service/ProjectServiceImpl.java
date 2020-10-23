@@ -427,6 +427,16 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public List<ProjectEntity> getSpotlightedProjects() {
+        return projectEntityRepository.getSpotlightedProjects();
+    }
+
+    @Override
+    public Page<ProjectEntity> getSpotlightedProjects(Pageable pageable) {
+        return projectEntityRepository.getSpotlightedProjects(pageable);
+    }
+
+    @Override
     public ProjectEntity setProjectProfilePic(Long projectId, String path) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {

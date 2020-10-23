@@ -99,4 +99,8 @@ public interface ProjectService {
     Page<ProjectEntity> getFollowingProjectsByAccountId(Long accountId, Pageable pageable);
 
     ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException;
+
+    List<ProjectEntity> getSpotlightedProjects();
+
+    Page<ProjectEntity> getSpotlightedProjects(Pageable pageable);
 }
