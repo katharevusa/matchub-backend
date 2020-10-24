@@ -40,5 +40,8 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%")
     List<ResourceEntity> getResourcesByKeyword(String keyword);
+ 
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = :projectId ")
+    List<ResourceEntity> getMatchedResourcesByProjectId(Long projectId);
 
 }

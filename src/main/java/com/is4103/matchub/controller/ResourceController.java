@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.controller;
 
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
@@ -133,5 +134,11 @@ public class ResourceController {
     public ResourceEntity terminateResource(@RequestParam(value = "resourceId") Long resourceId, @RequestParam(value = "terminatorId") Long terminatorId) throws ResourceNotFoundException, TerminateResourceException {
         return resourceService.terminateResource(resourceId, terminatorId);
     }
-
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getMatchedResourcesByProjectId")
+    public List<ResourceEntity> getMatchedResourcesByProjectId(@RequestParam(value = "projectId", required = true)Long projectId){
+        return resourceService.getMatchedResourcesByProjectId(projectId);
+    }
+    
+   
 }

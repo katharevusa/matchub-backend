@@ -6,6 +6,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
@@ -15,6 +16,7 @@ import com.is4103.matchub.exception.UnableToSaveResourceException;
 import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
+import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.vo.ResourceVO;
@@ -52,6 +54,9 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Autowired
     AttachmentService attachmentService;
+    
+    @Autowired
+    ProjectEntityRepository projectEntityRepository;
 
     @Override
     public ResourceEntity createResource(ResourceVO vo) throws ResourceCategoryNotFoundException, UserNotFoundException {
@@ -418,5 +423,14 @@ public class ResourceServiceImpl implements ResourceService {
         return resourceEntityRepository.saveAndFlush(resource);
 
     }
+
+    @Override
+    public List<ResourceEntity> getMatchedResourcesByProjectId(Long projectId) {
+        List<ResourceEntity> resources = new ArrayList<>();
+        resources = resourceEntityRepository.getMatchedResourcesByProjectId(projectId);
+        return resources;
+    }
+
+    
 
 }
