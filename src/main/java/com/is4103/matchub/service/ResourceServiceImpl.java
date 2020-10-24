@@ -278,6 +278,16 @@ public class ResourceServiceImpl implements ResourceService {
 
         return page;
     }
+    
+    @Override
+    public List<ResourceEntity> getSpotlightedResources() {
+        return resourceEntityRepository.getSpotlightedResources();
+    }
+    
+    @Override
+    public Page<ResourceEntity> getSpotlightedResources(Pageable pageable) {
+        return resourceEntityRepository.getSpotlightedResources(pageable);
+    }
 
     @Override
     public Page<ResourceEntity> searchResourceByKeywords(String keyword, Pageable pageable) {

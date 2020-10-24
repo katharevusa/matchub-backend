@@ -80,7 +80,7 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     FirebaseService firebaseService;
-    
+
     @Autowired
     ResourceRequestEntityRepository resourceRequestEntityRepository;
 
@@ -488,6 +488,12 @@ public class InitServiceImpl implements InitService {
         bread.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_bread.jpg");
         bread.getPhotos().add("https://localhost:8443/api/v1/files/init/bread2.jpg");
         bread.setCountry("Singapore");
+
+        //spotlight resource1
+        bread.setSpotlight(true);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endTime = now.plusDays(1);
+        bread.setSpotlightEndTime(endTime);
         resourceService.createResource(bread, 1L, 5L);// category id, profileId
 //2
         ResourceEntity classroom = new ResourceEntity("Classroom", "Free classroom", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
@@ -495,6 +501,12 @@ public class InitServiceImpl implements InitService {
         classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_classroom.jpg");
         classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/classroom.jpg");
         classroom.setCountry("Cambodia");
+
+        //spotlight resource2
+        classroom.setSpotlight(true);
+        now = LocalDateTime.now();
+        endTime = now.plusDays(1);
+        classroom.setSpotlightEndTime(endTime);
         resourceService.createResource(classroom, 2L, 5L);
 //3
         ResourceEntity water = new ResourceEntity("Water", "10 Free Bottle Water", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
@@ -659,6 +671,12 @@ public class InitServiceImpl implements InitService {
 
         projectEntity1.setProjectPoolPoints(121);
 
+        //spotlight project1
+        projectEntity1.setSpotlight(true);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endTime = now.plusDays(1);
+        projectEntity1.setSpotlightEndTime(endTime);
+
         //relatedResources
         List<String> relatedResources = new ArrayList<>();
         relatedResources.add("Phone");
@@ -688,6 +706,12 @@ public class InitServiceImpl implements InitService {
         projectEntity2.setUpvotes(23);
 
         projectEntity2.setProjectPoolPoints(123);
+
+        //spotlight project2
+        projectEntity2.setSpotlight(true);
+        now = LocalDateTime.now();
+        endTime = now.plusDays(1);
+        projectEntity2.setSpotlightEndTime(endTime);
 
         //relatedResources
         relatedResources = new ArrayList<>();
@@ -1108,7 +1132,7 @@ public class InitServiceImpl implements InitService {
         rr1.setRequestorEnum(RequestorEnum.RESOURCE_OWNER);
         rr1.setStatus(RequestStatusEnum.ACCEPTED);
         resourceRequestEntityRepository.saveAndFlush(rr1);
-        
+
         /* end of completed project 1 */
 
  /* start of completed project 2 */

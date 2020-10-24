@@ -62,4 +62,7 @@ public interface ResourceService {
 
     public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTime, String endTime, String country, Pageable pageable);
 
+    List<ResourceEntity> getSpotlightedResources();
+
+    Page<ResourceEntity> getSpotlightedResources(Pageable pageable);
 }
