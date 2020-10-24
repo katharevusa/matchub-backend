@@ -37,6 +37,8 @@ public interface ResourceService {
 
     public Page<ResourceEntity> getHostedResources(Long profileId, Pageable pageable);
 
+    Page<ResourceEntity> getSavedResourcesByAccountId(Long accountId, Pageable pageable);
+
     public ResourceEntity createResource(ResourceVO vo) throws ResourceCategoryNotFoundException, UserNotFoundException;
 
     public ResourceEntity updateResource(ResourceVO vo, Long updaterId, Long resourceId) throws ResourceNotFoundException, UpdateResourceException;
@@ -60,7 +62,13 @@ public interface ResourceService {
 
     public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTime, String endTime, String country, Pageable pageable);
 
+
     public List<ResourceEntity> getMatchedResourcesByProjectId(Long projectId);
+
+    public List<ResourceEntity> getSpotlightedResources();
+
+    public Page<ResourceEntity> getSpotlightedResources(Pageable pageable);
+
 }
     
    

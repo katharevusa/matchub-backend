@@ -44,4 +44,18 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = :projectId ")
     List<ResourceEntity> getMatchedResourcesByProjectId(Long projectId);
 
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = ?1",
+            countQuery = "SELECT COUNT(r) FROM ResourceEntity r WHERE r.matchedProjectId = ?1")
+    Page<ResourceEntity> getResourcesByProject(Long projectId, Pageable pageable);
+
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = ?1")
+    List<ResourceEntity> getResourcesByProject(Long projectId);
+
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.spotlight = TRUE ORDER BY r.spotlightEndTime DESC")
+    List<ResourceEntity> getSpotlightedResources();
+
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.spotlight = TRUE ORDER BY r.spotlightEndTime DESC",
+            countQuery = "SELECT COUNT(r) FROM ResourceEntity r WHERE r.spotlight = TRUE ORDER BY r.spotlightEndTime DESC")
+    Page<ResourceEntity> getSpotlightedResources(Pageable pageable);
+
 }

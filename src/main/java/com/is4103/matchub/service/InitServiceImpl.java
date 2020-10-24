@@ -8,11 +8,14 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
+import com.is4103.matchub.enumeration.RequestStatusEnum;
+import com.is4103.matchub.enumeration.RequestorEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
+import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import java.math.BigDecimal;
@@ -73,15 +77,17 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     BadgeEntityRepository badgeEntityRepository;
-    
+
     @Autowired
     FirebaseService firebaseService;
-    
+
+    @Autowired
+    ResourceRequestEntityRepository resourceRequestEntityRepository;
 
     @Transactional
     public void init() {
         // testing:
-        
+
         initSDG();
         initUsers();
         initResourceCategories();
@@ -97,12 +103,10 @@ public class InitServiceImpl implements InitService {
         //join request 
         initJoinRequest();
 
-        
         // init project follower 
         initProjectFollower();
-        
+
 //        firebaseService.getChannelDetails("s");
-        
         // init kanbanboard for project 3
     }
 
@@ -149,7 +153,6 @@ public class InitServiceImpl implements InitService {
         Set<String> skillsets = new HashSet<>(Arrays.asList("Good Communication Skills", "Leadership Skills", "Project Management Skills", "Professional Painter"));
         alexLow.setSkillSet(skillsets);
 
-       
         alexLow.setCountryCode("+65");
         alexLow.setPhoneNumber("91234567");
         alexLow.setCountry("Singapore");
@@ -178,7 +181,6 @@ public class InitServiceImpl implements InitService {
         skillsets = new HashSet<>(Arrays.asList("Singing", "Playing the Guitar", "Trilingual", "General Surgery (GS)", "Verified First Aider"));
         ikjun.setSkillSet(skillsets);
 
-        
         ikjun.setCountryCode("+82");
         ikjun.setPhoneNumber("011-465-9876");
         ikjun.setCountry("Korea, Republic of South Korea");
@@ -208,7 +210,6 @@ public class InitServiceImpl implements InitService {
         sophia.setProfileDescription("Highly Passionate Individual with a love for contributing back to the society!");
         skillsets = new HashSet<>(Arrays.asList("Social Worker for Gender Equality"));
         sophia.setSkillSet(skillsets);
-
 
         sophia.setCountryCode("+1");
         sophia.setPhoneNumber("604 598 5235");
@@ -294,7 +295,6 @@ public class InitServiceImpl implements InitService {
         skillsets = new HashSet<>(Arrays.asList("Hiking", "Nature Lover", "Pet Lover", "Verified First Aider"));
         songhwa.setSkillSet(skillsets);
 
-
         songhwa.setCountryCode("+82");
         songhwa.setPhoneNumber("012-456-4321");
         songhwa.setCountry("Korea, Republic of South Korea");
@@ -358,7 +358,6 @@ public class InitServiceImpl implements InitService {
         jeongha.setProfileDescription("Making the world a better place through creativity");
         skillsets = new HashSet<>(Arrays.asList("Painting", "Drawing"));
         jeongha.setSkillSet(skillsets);
-
 
         jeongha.setCountryCode("+82");
         jeongha.setPhoneNumber("022-179-4100");
@@ -462,19 +461,19 @@ public class InitServiceImpl implements InitService {
         ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food", "All Food-related Resources", 1, 5, "kg");
         resourceCategoryService.createResourceCategory(foodCategory);
 
-        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Space", "All Sapce-related Resources", 1, 5, "hour");
+        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Facilities", "All Sapce-related Resources", 1, 5, "hour");
         resourceCategoryService.createResourceCategory(spaceCategory);
 
         ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural", "All Natural Resources", 1, 5, "kg");
         resourceCategoryService.createResourceCategory(naturalResourceCategory);
 
-        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Device", "All Device-related Resources", 1, 10, "set");
+        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Machinery and Equipment", "All Device-related Resources", 1, 10, "set");
         resourceCategoryService.createResourceCategory(deviceCategory);
 
         ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation", "All Transportation Resources", 1, 1, "hour");
         resourceCategoryService.createResourceCategory(transportationCategory);
 
-        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Education", "All Education Resources", 1, 5, "set");
+        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Education amd Training", "All Education Resources", 1, 5, "set");
         resourceCategoryService.createResourceCategory(educationCategory);
 
         ResourceCategoryEntity clothCategory = new ResourceCategoryEntity("Clothes", "All clothes Resources", 1, 5, "piece");
@@ -489,6 +488,12 @@ public class InitServiceImpl implements InitService {
         bread.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_bread.jpg");
         bread.getPhotos().add("https://localhost:8443/api/v1/files/init/bread2.jpg");
         bread.setCountry("Singapore");
+
+        //spotlight resource1
+        bread.setSpotlight(true);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endTime = now.plusDays(1);
+        bread.setSpotlightEndTime(endTime);
         resourceService.createResource(bread, 1L, 5L);// category id, profileId
 //2
         ResourceEntity classroom = new ResourceEntity("Classroom", "Free classroom", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
@@ -496,6 +501,12 @@ public class InitServiceImpl implements InitService {
         classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_classroom.jpg");
         classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/classroom.jpg");
         classroom.setCountry("Cambodia");
+
+        //spotlight resource2
+        classroom.setSpotlight(true);
+        now = LocalDateTime.now();
+        endTime = now.plusDays(1);
+        classroom.setSpotlightEndTime(endTime);
         resourceService.createResource(classroom, 2L, 5L);
 //3
         ResourceEntity water = new ResourceEntity("Water", "10 Free Bottle Water", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
@@ -629,6 +640,16 @@ public class InitServiceImpl implements InitService {
         toiletpaper.setCountry("Nepal");
         resourceService.createResource(toiletpaper, 3L, 5L);
 
+        //22
+        //*********** for rep points testing 
+        ResourceEntity testing = new ResourceEntity("testing", "testing", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
+        testing.setResourceProfilePic("https://img.jakpost.net/c/2020/09/08/2020_09_08_103888_1599536848._large.jpg");
+        testing.getPhotos().add("https://img.jakpost.net/c/2020/09/08/2020_09_08_103888_1599536848._large.jpg");
+        testing.setCountry("Korea, Republic of South Korea");
+        testing.setAvailable(false);
+        testing.setMatchedProjectId(Long.valueOf(14));
+        resourceService.createResource(testing, 3L, 5L);
+
     }
 
     public void initProjects() {
@@ -647,6 +668,14 @@ public class InitServiceImpl implements InitService {
         projectEntity1.getSdgs().add(poverty);
         projectEntity1.getSdgs().add(zeroHunger);
         projectEntity1.setUpvotes(21);
+
+        projectEntity1.setProjectPoolPoints(121);
+
+        //spotlight project1
+        projectEntity1.setSpotlight(true);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endTime = now.plusDays(1);
+        projectEntity1.setSpotlightEndTime(endTime);
 
         //relatedResources
         List<String> relatedResources = new ArrayList<>();
@@ -676,6 +705,14 @@ public class InitServiceImpl implements InitService {
         projectEntity2.getSdgs().add(qualityEducation);
         projectEntity2.setUpvotes(23);
 
+        projectEntity2.setProjectPoolPoints(123);
+
+        //spotlight project2
+        projectEntity2.setSpotlight(true);
+        now = LocalDateTime.now();
+        endTime = now.plusDays(1);
+        projectEntity2.setSpotlightEndTime(endTime);
+
         //relatedResources
         relatedResources = new ArrayList<>();
         relatedResources.add("Food");
@@ -701,6 +738,8 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getSdgs().add(poverty);
         projectEntity3.getSdgs().add(zeroHunger);
         projectEntity3.setUpvotes(25);
+
+        projectEntity3.setProjectPoolPoints(125);
 
         //relatedResources
         relatedResources = new ArrayList<>();
@@ -728,6 +767,8 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getSdgs().add(qualityEducation);
         projectEntity4.getSdgs().add(goodHealth);
         projectEntity4.setUpvotes(23);
+
+        projectEntity4.setProjectPoolPoints(123);
 
         //relatedResources
         relatedResources = new ArrayList<>();
@@ -757,6 +798,8 @@ public class InitServiceImpl implements InitService {
         projectEntity5.getSdgs().add(goodHealth);
         projectEntity5.setUpvotes(25);
 
+        projectEntity5.setProjectPoolPoints(125);
+
         //relatedResources
         relatedResources = new ArrayList<>();
         relatedResources.add("Soap");
@@ -783,6 +826,8 @@ public class InitServiceImpl implements InitService {
         projectEntity6.getSdgs().add(climateAction);
         projectEntity6.getSdgs().add(sustainableCities);
         projectEntity6.setUpvotes(50);
+
+        projectEntity6.setProjectPoolPoints(150);
 
         //relatedResources
         relatedResources = new ArrayList<>();
@@ -819,6 +864,8 @@ public class InitServiceImpl implements InitService {
         projectEntity7.getSdgs().add(sustainableCities);
         projectEntity7.setUpvotes(30);
 
+        projectEntity7.setProjectPoolPoints(130);
+
         //relatedResources
         relatedResources = new ArrayList<>();
         relatedResources.add("Trash Bin");
@@ -848,6 +895,8 @@ public class InitServiceImpl implements InitService {
         projectEntity8.getSdgs().add(goodHealth);
         projectEntity8.setUpvotes(23);
 
+        projectEntity8.setProjectPoolPoints(123);
+
         //relatedResources
         relatedResources = new ArrayList<>();
         relatedResources.add("Lamp");
@@ -874,6 +923,8 @@ public class InitServiceImpl implements InitService {
         projectEntity9.getSdgs().add(goodHealth);
         projectEntity9.setUpvotes(30);
 
+        projectEntity9.setProjectPoolPoints(130);
+
         //relatedResources
         relatedResources = new ArrayList<>();
         relatedResources.add("Milk");
@@ -899,6 +950,8 @@ public class InitServiceImpl implements InitService {
         projectEntity10.getSdgs().add(qualityEducation);
         projectEntity10.setUpvotes(35);
 
+        projectEntity10.setProjectPoolPoints(135);
+
         //relatedResources
         relatedResources = new ArrayList<>();
         relatedResources.add("Laptop");
@@ -921,6 +974,8 @@ public class InitServiceImpl implements InitService {
         ProjectEntity projectEntity11 = new ProjectEntity("Protect endangered zebras in Kenya", "The Grevy's zebra (Equus grevyi) is one of Africa's most endangered large mammals. They are a separate species of zebra, distinct from the widely-recognized common zebra (or plains zebra) through their large, fluffy ears, white belly, and comparatively thinner black stripes. Once distributed across the horn of Africa, 92% of the remaining Grevy’s zebra are now only found in Kenya, with a few small isolated populations in Ethiopia.", "Kenya", LocalDateTime.parse("2019-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity11.getSdgs().add(sustainableCities);
         projectEntity11.setUpvotes(35);
+
+        projectEntity11.setProjectPoolPoints(135);
 
         //relatedResources
         relatedResources = new ArrayList<>();
@@ -945,6 +1000,8 @@ public class InitServiceImpl implements InitService {
         projectEntity12.getSdgs().add(goodHealth);
         projectEntity12.setUpvotes(35);
 
+        projectEntity12.setProjectPoolPoints(135);
+
         //relatedResources
         relatedResources = new ArrayList<>();
         relatedResources.add("Spectacles");
@@ -967,6 +1024,8 @@ public class InitServiceImpl implements InitService {
         ProjectEntity projectEntity13 = new ProjectEntity("Build School Toilets for Nepal", "Building School-Friendly Toilets for Girls in Nepal.", "Nepal", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
         projectEntity13.getSdgs().add(goodHealth);
         projectEntity13.setUpvotes(35);
+
+        projectEntity13.setProjectPoolPoints(135);
 
         //relatedResources
         relatedResources = new ArrayList<>();
@@ -1013,6 +1072,9 @@ public class InitServiceImpl implements InitService {
         ProjectEntity completedProject = new ProjectEntity("Time To Clean Up Hangang River", projDesc, "South Korea", LocalDateTime.parse("2018-06-05T11:45:55"), LocalDateTime.parse("2020-02-26T10:25:55"));
         completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
         completedProject.setUpvotes(45);
+
+        completedProject.setProjectPoolPoints(145);
+
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/timeToCleanUpHangang.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/timeToCleanUpHangang1.jpg");
         completedProject.setProjectProfilePic("https://localhost:8443/api/v1/files/init/timeToCleanUpHangang.jpg");
@@ -1035,6 +1097,7 @@ public class InitServiceImpl implements InitService {
 
         ProfileEntity ikjun = profileEntityRepository.findById(Long.valueOf(5)).get();
         reviewForIkjun.setReviewReceiver(ikjun);
+        ikjun.getReviewsReceived().add(reviewForIkjun);
         reviewEntityRepository.save(reviewForIkjun);
 
         //do another review for songhwa
@@ -1043,6 +1106,7 @@ public class InitServiceImpl implements InitService {
         reviewForSonghwa.setProject(completedProject);
 
         reviewForSonghwa.setReviewReceiver(songhwa);
+        songhwa.getReviewsReceived().add(reviewForSonghwa);
         reviewEntityRepository.save(reviewForSonghwa);
 
         /* create project badge for completed project */
@@ -1061,6 +1125,14 @@ public class InitServiceImpl implements InitService {
 
         profileEntityRepository.save(ikjun);
         profileEntityRepository.save(songhwa);
+
+        //associate resources 
+        ResourceRequestEntity rr1 = new ResourceRequestEntity(Long.valueOf(5), Long.valueOf(22), completedProject.getProjectId(), 10, "Testing testing");
+        rr1.setRequestCreationTime(LocalDateTime.of(2020, Month.MARCH, 17, 11, 15));
+        rr1.setRequestorEnum(RequestorEnum.RESOURCE_OWNER);
+        rr1.setStatus(RequestStatusEnum.ACCEPTED);
+        resourceRequestEntityRepository.saveAndFlush(rr1);
+
         /* end of completed project 1 */
 
  /* start of completed project 2 */
@@ -1074,6 +1146,9 @@ public class InitServiceImpl implements InitService {
         completedProject = new ProjectEntity("Recycle Clothes Movement", projDesc, "Singapore", LocalDateTime.parse("2018-07-07T11:45:55"), LocalDateTime.parse("2020-03-28T10:25:55"));
         completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
         completedProject.setUpvotes(55);
+
+        completedProject.setProjectPoolPoints(155);
+
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/recycleClothes.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/recycleClothes1.jpg");
         completedProject.setProjectProfilePic("https://localhost:8443/api/v1/files/init/recycleClothes.jpg");
@@ -1111,6 +1186,9 @@ public class InitServiceImpl implements InitService {
         completedProject = new ProjectEntity("End violence Against Women", projDesc, "India", LocalDateTime.parse("2017-02-07T11:45:55"), LocalDateTime.parse("2019-12-28T10:25:55"));
         completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
         completedProject.setUpvotes(36);
+
+        completedProject.setUpvotes(136);
+
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/genderEqualityIndia.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/genderEqualityIndia1.jpg");
         completedProject.setProjectProfilePic("https://localhost:8443/api/v1/files/init/genderEqualityIndia.jpg");
@@ -1151,6 +1229,9 @@ public class InitServiceImpl implements InitService {
         completedProject = new ProjectEntity("Education For All", projDesc, "Liberia", LocalDateTime.parse("2015-02-07T11:45:55"), LocalDateTime.parse("2018-11-20T10:25:55"));
         completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
         completedProject.setUpvotes(60);
+
+        completedProject.setUpvotes(160);
+
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll1.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll2.jpg");
@@ -1236,89 +1317,85 @@ public class InitServiceImpl implements InitService {
         }
 
     }
-    
-    
-    private void initProjectFollower(){
+
+    private void initProjectFollower() {
         ProjectEntity project1 = projectEntityRepository.findById(1L).get();
         ProjectEntity project2 = projectEntityRepository.findById(2L).get();
         ProjectEntity project3 = projectEntityRepository.findById(3L).get();
         ProjectEntity project4 = projectEntityRepository.findById(4L).get();
         ProjectEntity project5 = projectEntityRepository.findById(5L).get();
-        
-        
+
         ProfileEntity user2 = profileEntityRepository.findById(2L).get();
         ProfileEntity user3 = profileEntityRepository.findById(3L).get();
         ProfileEntity user4 = profileEntityRepository.findById(4L).get();
         ProfileEntity user5 = profileEntityRepository.findById(5L).get();
         ProfileEntity user7 = profileEntityRepository.findById(7L).get();
-         
-       // every user follows project 1
+
+        // every user follows project 1
         project1.getProjectFollowers().add(user2);
         project1.getProjectFollowers().add(user3);
         project1.getProjectFollowers().add(user4);
         project1.getProjectFollowers().add(user5);
         project1.getProjectFollowers().add(user7);
-        
+
         user2.getProjectsFollowing().add(project1);
         user3.getProjectsFollowing().add(project1);
         user4.getProjectsFollowing().add(project1);
         user5.getProjectsFollowing().add(project1);
         user7.getProjectsFollowing().add(project1);
-        
+
         // every user follows project 2
         project2.getProjectFollowers().add(user2);
         project2.getProjectFollowers().add(user3);
         project2.getProjectFollowers().add(user4);
         project2.getProjectFollowers().add(user5);
         project2.getProjectFollowers().add(user7);
-        
+
         user2.getProjectsFollowing().add(project2);
         user3.getProjectsFollowing().add(project2);
         user4.getProjectsFollowing().add(project2);
         user5.getProjectsFollowing().add(project2);
         user7.getProjectsFollowing().add(project2);
-        
-        
+
         // every user follows project 3
         project3.getProjectFollowers().add(user2);
         project3.getProjectFollowers().add(user3);
         project3.getProjectFollowers().add(user4);
         project3.getProjectFollowers().add(user5);
         project3.getProjectFollowers().add(user7);
-        
+
         user2.getProjectsFollowing().add(project3);
         user3.getProjectsFollowing().add(project3);
         user4.getProjectsFollowing().add(project3);
         user5.getProjectsFollowing().add(project3);
         user7.getProjectsFollowing().add(project3);
-        
+
         // every user follows project 4
         project4.getProjectFollowers().add(user2);
         project4.getProjectFollowers().add(user3);
         project4.getProjectFollowers().add(user4);
         project4.getProjectFollowers().add(user5);
         project4.getProjectFollowers().add(user7);
-        
+
         user2.getProjectsFollowing().add(project4);
         user3.getProjectsFollowing().add(project4);
         user4.getProjectsFollowing().add(project4);
         user5.getProjectsFollowing().add(project4);
         user7.getProjectsFollowing().add(project4);
-        
+
         // every user follows project 5
         project5.getProjectFollowers().add(user2);
         project5.getProjectFollowers().add(user3);
         project5.getProjectFollowers().add(user4);
         project5.getProjectFollowers().add(user5);
         project5.getProjectFollowers().add(user7);
-        
+
         user2.getProjectsFollowing().add(project5);
         user3.getProjectsFollowing().add(project5);
         user4.getProjectsFollowing().add(project5);
         user5.getProjectsFollowing().add(project5);
         user7.getProjectsFollowing().add(project5);
-         
-        
+
     }
 
 }
