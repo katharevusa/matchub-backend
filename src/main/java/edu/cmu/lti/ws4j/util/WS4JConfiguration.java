@@ -33,7 +33,8 @@ final public class WS4JConfiguration {
         try {
 //            stream = WS4JConfiguration.class.getResourceAsStream(CONF);
 //            System.out.println("CONF: " + CONF);
-            File file = new File("C:\\JavaLibraries\\config\\similarity.conf");
+//            File file = new File("C:\\JavaLibraries\\config\\similarity.conf");
+File file = new File("/Users/kaikai/Documents/school/AY202021/S1/IS4103/matching-algo/similarity.conf");
             stream = new FileInputStream(file);
 
             p = new Properties();

@@ -42,7 +42,8 @@ public class Configuration {
         InputStream stream = null;
         try {
 //            stream = Configuration.class.getResourceAsStream(CONF);
-            File file = new File("C:\\JavaLibraries\\config\\jawjaw.conf");
+//            File file = new File("C:\\JavaLibraries\\config\\jawjaw.conf");
+      File file = new File("/Users/kaikai/Documents/school/AY202021/S1/IS4103/matching-algo/jawjaw.conf");
             stream = new FileInputStream(file);
 
             p = new Properties();
