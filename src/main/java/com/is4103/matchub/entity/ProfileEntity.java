@@ -115,6 +115,7 @@ public abstract class ProfileEntity extends AccountEntity {
     private List<FundPledgeEntity> fundPladges = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"taskdoers"})
     private List<TaskEntity> tasks = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -122,7 +123,6 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ChannelEntity> joinedChannel = new ArrayList<>();
-
 
     public ProfileEntity(String email, String password) {
         super(email, password);

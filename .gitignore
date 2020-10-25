@@ -36,5 +36,9 @@ nbactions.xml
 ### exclude WS4J DB ###
 src/main/resources/wnjpn.db
 
+### exclude absolute paths inside configuration ###
+src/main/java/edu/cmu/lti/ws4j/util/WS4JConfiguration.java
+src/main/java/edu/cmu/lti/jawjaw/util/Configuration.java
+
 ### VS Code ###
 .vscode/

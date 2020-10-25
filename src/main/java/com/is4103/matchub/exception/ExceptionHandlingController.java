@@ -583,8 +583,8 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
 
     }
-    
-       @ExceptionHandler(value = DeleteTaskColumnException.class)
+
+    @ExceptionHandler(value = DeleteTaskColumnException.class)
     public ResponseEntity<ExceptionResponse> deleteTaskColumnException(DeleteTaskColumnException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error deleting task column");
@@ -592,10 +592,10 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-       @ExceptionHandler(value = RearrangeTaskException.class)
+
+    @ExceptionHandler(value = RearrangeTaskException.class)
     public ResponseEntity<ExceptionResponse> rearrangeTaskException(RearrangeTaskException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error rearrange task");
@@ -603,11 +603,32 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-     
-       @ExceptionHandler(value = DeleteCommentException.class)
+
+    @ExceptionHandler(value = UnableToRewardRepPointsException.class)
+    public ResponseEntity<ExceptionResponse> unableToRewardRepPointsException(UnableToRewardRepPointsException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable To Reward Rep Points");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler(value = UnableToSpotlightException.class)
+    public ResponseEntity<ExceptionResponse> unableToSpotlightException(UnableToSpotlightException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable To Spotlight.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler(value = DeleteCommentException.class)
     public ResponseEntity<ExceptionResponse> deleteCommentException(DeleteCommentException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error deleting comment");
@@ -615,10 +636,21 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-        @ExceptionHandler(value = LikePostException.class)
+
+    @ExceptionHandler(value = UnableToAddProjectOwnerException.class)
+    public ResponseEntity<ExceptionResponse> unableToAddProjectOwnerException(UnableToAddProjectOwnerException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable To Add Project Owner.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler(value = LikePostException.class)
     public ResponseEntity<ExceptionResponse> likePostException(LikePostException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Error liking a comment");
@@ -626,9 +658,7 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-    
+
     }
-    
-    
 
 }

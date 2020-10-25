@@ -6,6 +6,8 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ReviewEntity;
+import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.vo.ReviewCreateVO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -18,4 +20,6 @@ public interface ReviewService {
     Page<ReviewEntity> getReviewsReceivedByAccountId(Long id, Pageable pageable);
 
     Page<ReviewEntity> getReviewsGivenByAccountId(Long id, Pageable pageable);
+
+    ReviewEntity createReview(ReviewCreateVO vo) throws ProjectNotFoundException;
 }

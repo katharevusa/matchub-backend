@@ -89,11 +89,18 @@ public interface ProjectService {
     public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, String country, ProjectStatusEnum status, Pageable pageable);
 
     public void UnfollowProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException;
-    
+
     public List<ProjectEntity> getListOfFollowingProjectsByUserId(Long userId) throws UserNotFoundException;
-    
-    public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId)throws ProjectNotFoundException;
-    
+
+    public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId) throws ProjectNotFoundException;
+
     public ProjectEntity followProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException;
 
+    Page<ProjectEntity> getFollowingProjectsByAccountId(Long accountId, Pageable pageable);
+
+    ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException;
+
+    List<ProjectEntity> getSpotlightedProjects();
+
+    Page<ProjectEntity> getSpotlightedProjects(Pageable pageable);
 }

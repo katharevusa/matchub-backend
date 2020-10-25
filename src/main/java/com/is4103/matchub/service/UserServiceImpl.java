@@ -51,14 +51,14 @@ import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
-import java.util.List;
 import com.is4103.matchub.vo.DeleteFilesVO;
-import com.is4103.matchub.vo.GetAccountsByUuidVO;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -297,9 +297,9 @@ public class UserServiceImpl implements UserService {
 
             //update toFollowProfile followers
             toFollowProfile.getFollowers().add(accountId);
-            profile = profileEntityRepository.saveAndFlush(toFollowProfile);
+            toFollowProfile = profileEntityRepository.saveAndFlush(toFollowProfile);
 
-            // create announcement (notify profile follower)
+            // create announcement (notify toFollowProfile)
             String profileName = "";
             if (profile instanceof IndividualEntity) {
                 profileName = ((IndividualEntity) profile).getFirstName() + " " + ((IndividualEntity) profile).getLastName();
@@ -837,13 +837,55 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<ProfileEntity> globalSearchAllUsers(String search, String country, Long[] sdgIds, Pageable pageable) {
+
         Page<ProfileEntity> page;
+
         if (search.isEmpty() && country.isEmpty() && sdgIds.length == 0) {
             page = profileEntityRepository.findAll(pageable);
         } else if (country.isEmpty()) {
             page = profileEntityRepository.globalSearchAllUsers(search, sdgIds, pageable);
+
+            if (page.isEmpty()) {
+                //spilt the keywords
+                search = search.trim();
+                String[] split = search.split(" ");
+
+                Set<ProfileEntity> temp = new HashSet<>();
+
+                for (String s : split) {
+                    temp.addAll(profileEntityRepository.globalSearchAllUsers(s, sdgIds, pageable).toList());
+                }
+
+                //convert set into List
+                List<ProfileEntity> resultsList = new ArrayList<>(temp);
+
+                Long start = pageable.getOffset();
+                Long end = (start + pageable.getPageSize()) > resultsList.size() ? resultsList.size() : (start + pageable.getPageSize());
+                page = new PageImpl<ProfileEntity>(resultsList.subList(start.intValue(), end.intValue()), pageable, resultsList.size());
+
+            }
         } else {
             page = profileEntityRepository.globalSearchAllUsers(search, country, sdgIds, pageable);
+
+            if (page.isEmpty()) {
+                //spilt the keywords
+                search = search.trim();
+                String[] split = search.split(" ");
+
+                Set<ProfileEntity> temp = new HashSet<>();
+
+                for (String s : split) {
+                    temp.addAll(profileEntityRepository.globalSearchAllUsers(s, country, sdgIds, pageable).toList());
+                }
+
+                //convert set into List
+                List<ProfileEntity> resultsList = new ArrayList<>(temp);
+
+                Long start = pageable.getOffset();
+                Long end = (start + pageable.getPageSize()) > resultsList.size() ? resultsList.size() : (start + pageable.getPageSize());
+                page = new PageImpl<ProfileEntity>(resultsList.subList(start.intValue(), end.intValue()), pageable, resultsList.size());
+
+            }
         }
 
         return page;

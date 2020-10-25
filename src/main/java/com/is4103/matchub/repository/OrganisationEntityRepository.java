@@ -25,7 +25,11 @@ public interface OrganisationEntityRepository extends JpaRepository<Organisation
     @Query(value = "SELECT o FROM OrganisationEntity o WHERE o.organizationName LIKE %?1% OR o.email LIKE %?1%",
             countQuery = "SELECT COUNT(o) FROM OrganisationEntity o WHERE o.organizationName LIKE %?1% OR o.email LIKE %?1%")
     Page<OrganisationEntity> searchOrganisations(String search, Pageable pageable);
-    
+
+    @Query(value = "SELECT o FROM OrganisationEntity o ORDER BY o.reputationPoints DESC",
+            countQuery = "SELECT COUNT(o) FROM OrganisationEntity o ORDER BY o.reputationPoints DESC")
+    Page<OrganisationEntity> organisationalLeaderboard(Pageable pageable);
+
 //    @Query(value = "SELECT o FROM OrganisationEntity o WHERE :accountId IN o.employees")
 //    Optional<OrganisationEntity> findOrgansationOfProfile(Long accountId);
 }

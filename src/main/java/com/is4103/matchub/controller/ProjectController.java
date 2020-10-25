@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -64,6 +65,11 @@ public class ProjectController {
         return projectService.retrieveProjectById(projectId);
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/getFollowingProjectsByAccountId/{accountId}")
+    Page<ProjectEntity> getFollowingProjectsByAccountId(@PathVariable("accountId") Long accountId, Pageable pageable) {
+        return projectService.getFollowingProjectsByAccountId(accountId, pageable);
+    }
+
     //Get a list of joined projects (profile id)
     @RequestMapping(method = RequestMethod.GET, value = "/getJoinedProjects")
     List<ProjectEntity> getJoinedProjects(@RequestParam(value = "profileId", required = true) Long profileId) throws UserNotFoundException {
@@ -78,28 +84,26 @@ public class ProjectController {
 
     //terminate a project ( project id, terminator id)
     @RequestMapping(method = RequestMethod.PUT, value = "/terminateProject")
-    void terminateProject(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "profileId",required = true) Long profileId) throws TerminateProjectException {
+    void terminateProject(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "profileId", required = true) Long profileId) throws TerminateProjectException {
         projectService.terminateProject(projectId, profileId);
     }
-    
+
     @RequestMapping(method = RequestMethod.PUT, value = "/completeProject")
     void completeProject(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "profileId", required = true) Long profileId) throws CompleteProjectException {
         projectService.completeProject(projectId, profileId);
     }
-    
 
     // get a list of owned projects
     @RequestMapping(method = RequestMethod.GET, value = "/getOwnedProjects")
-    List<ProjectEntity> getOwnedProjects(@RequestParam(value = "userId", required = true)Long userId) {
+    List<ProjectEntity> getOwnedProjects(@RequestParam(value = "userId", required = true) Long userId) {
         return projectService.getOwnedProjects(userId);
     }
-    
+
     // get a list of projects by list of project ids
-     @RequestMapping(method = RequestMethod.GET, value = "/getProjectsByListOfIds")
-    List<ProjectEntity> getProjectsByListOfIds(@RequestParam(value = "ids", required = true)List<Long> ids) throws ProjectNotFoundException{
+    @RequestMapping(method = RequestMethod.GET, value = "/getProjectsByListOfIds")
+    List<ProjectEntity> getProjectsByListOfIds(@RequestParam(value = "ids", required = true) List<Long> ids) throws ProjectNotFoundException {
         return projectService.getProjectsByListOfIds(ids);
     }
-    
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProject")
     void deleteProject(
@@ -109,8 +113,6 @@ public class ProjectController {
 
     }
 
-    
-
     //upload projectProfilePic
     @RequestMapping(method = RequestMethod.POST, value = "/updateProject/updateProjectProfilePic")
     public ProjectEntity updateProjectProfilePic(@RequestParam(value = "profilePic") MultipartFile profilePic, @RequestParam("projectId") Long projectId) throws ProjectNotFoundException {
@@ -119,9 +121,9 @@ public class ProjectController {
 
         return projectService.setProjectProfilePic(projectId, filePath);
     }
-    
+
     @RequestMapping(method = RequestMethod.DELETE, value = "/updateProject/deleteProfilePic")
-    public ProjectEntity deleteProjectProfilePic(@RequestParam(value = "projectId") Long projectId) throws ProjectNotFoundException,UpdateProjectException,IOException{
+    public ProjectEntity deleteProjectProfilePic(@RequestParam(value = "projectId") Long projectId) throws ProjectNotFoundException, UpdateProjectException, IOException {
         return projectService.deleteProjectProfilePic(projectId);
     }
 
@@ -130,9 +132,10 @@ public class ProjectController {
     public ProjectEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, @RequestParam("projectId") Long projectId) throws ProjectNotFoundException {
         return projectService.uploadPhotos(projectId, photos);
     }
+
     // pass photo full path
     @RequestMapping(method = RequestMethod.DELETE, value = "/updateProject/deletePhotos")
-    public ProjectEntity deletePhotos(@RequestParam(value = "projectId") Long projectId, @RequestParam(value = "photosToDelete") String[] photosToDelete ) throws ProjectNotFoundException,UpdateProjectException,IOException{
+    public ProjectEntity deletePhotos(@RequestParam(value = "projectId") Long projectId, @RequestParam(value = "photosToDelete") String[] photosToDelete) throws ProjectNotFoundException, UpdateProjectException, IOException {
         return projectService.deletePhotos(projectId, photosToDelete);
     }
 
@@ -140,11 +143,15 @@ public class ProjectController {
     public ProjectEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, @RequestParam("projectId") Long projectId) throws ProjectNotFoundException {
         return projectService.uploadDocuments(projectId, documents);
     }
-    
+
     @RequestMapping(method = RequestMethod.DELETE, value = "/updateProject/deleteDocuments")
-    public ProjectEntity deleteDocuments(@RequestParam(value = "projectId") Long projectId, @RequestParam(value = "docsToDelete") String[] docsToDelete ) throws ProjectNotFoundException,UpdateProjectException,IOException{
+    public ProjectEntity deleteDocuments(@RequestParam(value = "projectId") Long projectId, @RequestParam(value = "docsToDelete") String[] docsToDelete) throws ProjectNotFoundException, UpdateProjectException, IOException {
         return projectService.deleteDocuments(projectId, docsToDelete);
     }
-    
- 
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/addProjectOwner")
+    public ProjectEntity addProjectOwner(@RequestParam(value = "projOwnerId") Long projOwnerId, @RequestParam(value = "projOwnerToAddId") Long projOwnerToAddId, @RequestParam(value = "projectId") Long projectId) throws ProjectNotFoundException {
+        return projectService.addProjectOwner(projOwnerId, projOwnerToAddId, projectId);
+    }
+
 }
