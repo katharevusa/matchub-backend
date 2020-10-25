@@ -123,8 +123,6 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ChannelEntity> joinedChannel = new ArrayList<>();
 
-    @OneToMany
-    private List<PostEntity> likedPosts = new ArrayList<>();
 
     public ProfileEntity(String email, String password) {
         super(email, password);

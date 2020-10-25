@@ -340,10 +340,16 @@ public class ProjectServiceImpl implements ProjectService {
             System.err.println("key word is null");
             initProjects = projectEntityRepository.findAll();
         } else {
-            String[] keywords = keyword.split(" ");
-            Set<ProjectEntity> temp = new HashSet<>();
-            for (String s : keywords) {
-                temp.addAll(projectEntityRepository.searchByKeywords(s));
+
+            Set<ProjectEntity> temp = new HashSet<>();  
+            // search the whole keyword, if empty, then split
+            if (projectEntityRepository.searchByKeywords(keyword).isEmpty()) {
+                String[] keywords = keyword.split(" ");
+                for (String s : keywords) {
+                    temp.addAll(projectEntityRepository.searchByKeywords(s));
+                }
+            }else{
+                temp.addAll(projectEntityRepository.searchByKeywords(keyword));
             }
 
             for (ProjectEntity p : temp) {
@@ -902,9 +908,9 @@ public class ProjectServiceImpl implements ProjectService {
         return user.getProjectsFollowing();
 
     }
-    
-    @Override 
-    public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId)throws ProjectNotFoundException{
+
+    @Override
+    public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Unable to get project follower: Project not exist");
@@ -913,7 +919,5 @@ public class ProjectServiceImpl implements ProjectService {
         ProjectEntity project = projectOptional.get();
         return project.getProjectFollowers();
     }
-    
-    
 
 }
