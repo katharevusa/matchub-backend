@@ -11,8 +11,10 @@ import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.DeleteCommentException;
+import com.is4103.matchub.exception.LikePostException;
 import com.is4103.matchub.exception.PostNotFoundException;
 import com.is4103.matchub.exception.UnableToDeletePostException;
 import com.is4103.matchub.exception.UpdatePostException;
@@ -26,6 +28,8 @@ import com.is4103.matchub.vo.PostVO;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -49,15 +53,17 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private AttachmentService attachmentService;
-    
+
     @Autowired
     private AnnouncementService announcementService;
-    
+
     @Autowired
-    private  AnnouncementEntityRepository announcementEntityRepository;
-    
+    private AnnouncementEntityRepository announcementEntityRepository;
+
     @Autowired
     private CommentEntityRepository commentEntityRepository;
+    
+    
 
     @Transactional
     @Override
@@ -75,25 +81,24 @@ public class PostServiceImpl implements PostService {
         newPost = postEntityRepository.saveAndFlush(newPost);
         //set associations
         profile.getPosts().add(newPost);
-        
-    
+
         // create announcement (notify profile follower)
         List<ProfileEntity> follower = new ArrayList<>();
-        
-        for(Long p :profile.getFollowers()){
-            follower.add(profileEntityRepository.findById(p).get());          
+
+        for (Long p : profile.getFollowers()) {
+            follower.add(profileEntityRepository.findById(p).get());
         }
-        
+
         String profileName = "";
         if (profile instanceof IndividualEntity) {
             profileName = ((IndividualEntity) profile).getFirstName() + " " + ((IndividualEntity) profile).getLastName();
         } else if (profile instanceof OrganisationEntity) {
             profileName = ((OrganisationEntity) profile).getOrganizationName();
         }
-        
+
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
         announcementEntity.setTitle("New Post From Your Following User");
-        announcementEntity.setContent("Hurry! Check out "+profileName+"'s new post!");
+        announcementEntity.setContent("Hurry! Check out " + profileName + "'s new post!");
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.NEW_POST);
         announcementEntity.setPostId(newPost.getPostId());
@@ -108,7 +113,7 @@ public class PostServiceImpl implements PostService {
 
         // create notification         
         announcementService.createNormalNotification(announcementEntity);
-        
+
         return newPost;
     }
 
@@ -217,31 +222,145 @@ public class PostServiceImpl implements PostService {
                     + " is not the owner of the post to be deleted.");
         }
     }
-    
-    
+
     @Override
-    public PostEntity addComment(CommentVO newCommentVO, Long postId){
-        
+    public PostEntity addComment(CommentVO newCommentVO, Long postId) {
+
         CommentEntity newComment = new CommentEntity();
         newCommentVO.createPostComment(newComment);
         PostEntity post = postEntityRepository.findById(postId).get();
-       
-        newComment= commentEntityRepository.saveAndFlush(newComment);
+
+        newComment = commentEntityRepository.saveAndFlush(newComment);
         post.getListOfComments().add(newComment);
-      return  postEntityRepository.saveAndFlush(post);    
+        return postEntityRepository.saveAndFlush(post);
+    }
+
+    @Override
+    public PostEntity deleteComment(Long commentId, Long postId, Long deletorId) throws DeleteCommentException {
+
+        PostEntity post = postEntityRepository.findById(postId).get();
+        CommentEntity comment = commentEntityRepository.findById(commentId).get();
+        if (!comment.getAccountId().equals(deletorId) && !post.getPostCreator().getAccountId().equals(deletorId)) {
+            throw new DeleteCommentException("Only post owner and comment creator can delete comment for this post");
+        }
+
+        post.getListOfComments().remove(comment);
+        commentEntityRepository.delete(comment);
+        return postEntityRepository.saveAndFlush(post);
+    }
+
+    @Override
+    public PostEntity likeAPost(Long postId, Long likerId) throws LikePostException {
+        PostEntity post = postEntityRepository.findById(postId).get();
+        if (post.getLikedUsersId().contains(likerId)) {
+            throw new LikePostException("You have already liked this post");
+        }
+        Long oldLikes = post.getLikes();
+        post.setLikes(oldLikes++);
+        post.getLikedUsersId().add(likerId);
+        return postEntityRepository.saveAndFlush(post);
+
+    }
+
+    @Override
+    public PostEntity unLikeAPost(Long postId, Long likerId) throws LikePostException {
+        PostEntity post = postEntityRepository.findById(postId).get();
+        if (!post.getLikedUsersId().contains(likerId)) {
+            throw new LikePostException("You have never liked this post");
+        }
+        Long oldLikes = post.getLikes();
+        post.setLikes(oldLikes--);
+        post.getLikedUsersId().remove(likerId);
+        return postEntityRepository.saveAndFlush(post);
+
+    }
+
+    @Override
+    public List<ProfileEntity> getListOfLikers(Long postId) {
+        PostEntity post = postEntityRepository.findById(postId).get();
+        List<ProfileEntity> listOfLikers = new ArrayList<>();
+        for (Long id : post.getLikedUsersId()) {
+            listOfLikers.add(profileEntityRepository.findById(id).get());
+        }
+
+        return listOfLikers;
+    }
+
+    @Override
+    public List<PostEntity> getFollowingUserPosts(Long userId) {
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+        List<ProfileEntity> listOfFollowingUsers = new ArrayList<>();
+        for (Long id : user.getFollowing()) {
+            listOfFollowingUsers.add(profileEntityRepository.findById(id).get());
+        }
+        List<PostEntity> posts = new ArrayList<>();
+
+        for (ProfileEntity p : listOfFollowingUsers) {
+            posts.addAll(p.getPosts());
+        }
+
+        Collections.sort(posts, new Comparator<PostEntity>() {
+            public int compare(PostEntity o1, PostEntity o2) {
+                return o1.getTimeCreated().compareTo(o2.getTimeCreated());
+            }
+        });
+        
+        return posts;
     }
     
     @Override
-    public PostEntity deleteComment(Long commentId, Long postId, Long deletorId)throws DeleteCommentException{
+    public List<AnnouncementEntity> getFollowingProjectAnnouncements(Long userId){
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+        List<ProjectEntity> listOfFollowingProjects = user.getProjectsFollowing();
+        List<AnnouncementEntity> announcements = new ArrayList<>();
+        for(ProjectEntity p : listOfFollowingProjects){
+           announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
+        }
         
-        PostEntity post = postEntityRepository.findById(postId).get();
-        CommentEntity comment = commentEntityRepository.findById(commentId).get();
-       if(!comment.getAccountId().equals( deletorId) && !post.getPostCreator().getAccountId().equals(deletorId)){
-           throw new DeleteCommentException("Only post owner and comment creator can delete comment for this post");
-       }
+        Collections.sort(announcements, new Comparator<AnnouncementEntity>() {
+            public int compare(AnnouncementEntity o1, AnnouncementEntity o2) {
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
         
-        post.getListOfComments().remove(comment);
-        commentEntityRepository.delete(comment);
-      return  postEntityRepository.saveAndFlush(post);    
+        return announcements;  
     }
+    
+    @Override
+    public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId){
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+        List<ProjectEntity> listOfFollowingProjects = user.getProjectsOwned();
+        List<AnnouncementEntity> announcements = new ArrayList<>();
+        for(ProjectEntity p : listOfFollowingProjects){
+           announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
+        }
+        
+        Collections.sort(announcements, new Comparator<AnnouncementEntity>() {
+            public int compare(AnnouncementEntity o1, AnnouncementEntity o2) {
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+        
+        return announcements;  
+    }
+    
+    @Override
+    public List<AnnouncementEntity> getJoinedProjectAnnouncements(Long userId){
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+        List<ProjectEntity> listOfFollowingProjects = user.getProjectsJoined();
+        List<AnnouncementEntity> announcements = new ArrayList<>();
+        for(ProjectEntity p : listOfFollowingProjects){
+           announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
+        }
+        
+        Collections.sort(announcements, new Comparator<AnnouncementEntity>() {
+            public int compare(AnnouncementEntity o1, AnnouncementEntity o2) {
+                return o1.getTimestamp().compareTo(o2.getTimestamp());
+            }
+        });
+        
+        return announcements;  
+    }
+   
+    // repost
 }
