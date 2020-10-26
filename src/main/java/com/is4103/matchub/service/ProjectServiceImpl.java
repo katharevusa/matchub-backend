@@ -311,6 +311,27 @@ public class ProjectServiceImpl implements ProjectService {
         badgeService.issueProjectBadge(project);
 
         //*************include notification to send to project owners & teamMembers to leave reviews
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle("congratulation, the project "+project.getProjectTitle()+" is officially completed!");
+        announcementEntity.setContent("Don't forget to give reviews and appreciation notes for your lovely teammates, reputations points allocation will also take consideration of those reviews.");
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.PROJECT_COMPLETED);
+        announcementEntity.setProjectId(projectId);
+        // association
+        announcementEntity.getNotifiedUsers().addAll(project.getProjectOwners());
+        announcementEntity.getNotifiedUsers().addAll(project.getTeamMembers());
+        for(ProfileEntity p : project.getProjectOwners()){
+            p.getAnnouncements().add(announcementEntity);
+        }
+        for(ProfileEntity p : project.getTeamMembers()){
+            p.getAnnouncements().add(announcementEntity);
+        }
+        
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+        // create notification
+        announcementService.createNormalNotification(announcementEntity);
+        
+        
     }
 
     @Override

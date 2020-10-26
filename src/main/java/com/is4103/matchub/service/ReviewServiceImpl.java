@@ -105,7 +105,7 @@ public class ReviewServiceImpl implements ReviewService {
         announcementEntity.setTitle("Check out your new review from "+reviewerName+"!");
         announcementEntity.setContent(vo.getContent());
         announcementEntity.setTimestamp(LocalDateTime.now());
-        announcementEntity.setType(AnnouncementTypeEnum.RECEIVING_NEW_REVIEW_);
+        announcementEntity.setType(AnnouncementTypeEnum.RECEIVING_NEW_REVIEW);
         announcementEntity.setReviewId(newReview.getReviewId());
         // association
         announcementEntity.getNotifiedUsers().add(reviewReceiver);
