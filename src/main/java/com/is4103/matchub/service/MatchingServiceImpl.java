@@ -5,7 +5,8 @@
  */
 package com.is4103.matchub.service;
 
-import com.is4103.matchub.entity.OrganisationEntity;
+import com.is4103.matchub.helper.StanfordLemmatizer;
+import com.is4103.matchub.helper.StanfordPartOfSpeech;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
@@ -35,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -70,6 +70,10 @@ public class MatchingServiceImpl implements MatchingService {
 
     @Autowired
     private OrganisationEntityRepository organisationEntityRepository;
+
+    private StanfordLemmatizer stanfordLemmatizer = new StanfordLemmatizer();
+
+    private StanfordPartOfSpeech stanfordPartOfSpeech = new StanfordPartOfSpeech();
 
     private static ILexicalDatabase db = new NictWordNet();
 
@@ -124,51 +128,117 @@ public class MatchingServiceImpl implements MatchingService {
 
         return s;
     }
-//    public static double calculateSimilarity(String word1, String word2) {
-//        
-//        System.out.println("START WS4J ALGO *************** - " + word1 + " & " + word2);
-//        
-//        RelatednessCalculator wup = rcs[3];
-//        List<POS[]> posPairs = wup.getPOSPairs();
-//
-//        double maxScore = -1D;
-//        for (POS[] posPair : posPairs) {
-//            List<Concept> synsets1 = (List<Concept>) db.getAllConcepts(word1, posPair[0].toString());
-//            List<Concept> synsets2 = (List<Concept>) db.getAllConcepts(word2, posPair[1].toString());
-//
-//            for (Concept ss1 : synsets1) {
-//                for (Concept ss2 : synsets2) {
-//
-//                    Relatedness relatedness = wup.calcRelatednessOfSynset(ss1, ss2);
-//                    double score = relatedness.getScore();
-//                    if (score > maxScore) {
-//                        maxScore = score;
-//                    }
-//                    String p1 = ss1.getPos().toString();
-//                    String p2 = ss2.getPos().toString();
-//                }
-//            }
-//        }
-//        if (maxScore == -1D) {
-//            maxScore = 0.0;
-//        }
-//        System.out.println(wup.getClass().getName() + "\t" + maxScore);
-//        return maxScore;
-//    }
+
+    //using res
+    public static double calculateResSimilarity(String word1, String word2) {
+        WS4JConfiguration.getInstance().setMFS(true);
+
+        long t0 = System.currentTimeMillis();
+        System.out.println("START RES Similarity ALGO *************** - " + word1 + " & " + word2);
+
+        double s = rcs[4].calcRelatednessOfWords(word1, word2);
+        System.out.println(rcs[4].getClass().getName() + "\t" + s);
+
+        long t1 = System.currentTimeMillis();
+        System.out.println("Done in " + (t1 - t0) + " msec.");
+
+        return s;
+    }
+
+    private List<String> lemmatiseAndExtractNoun(String input) {
+
+        //lemmatise the input 
+        List<String> lemmatised = stanfordLemmatizer.lemmatize(input);
+
+        String delim = " ";
+        String lemmatisedString = String.join(delim, lemmatised);
+
+        //extract nouns 
+        List<String> extractNouns = stanfordPartOfSpeech.extractNoun(lemmatisedString);
+
+        return extractNouns;
+    }
 
     @Override
-    public List<ResourceEntity> recommendResources(Long projectId) throws ProjectNotFoundException {
+    public List<ResourceEntity> recommendSameCountryResources(Long projectId) throws ProjectNotFoundException {
         //find the project first
         ProjectEntity project = projectService.retrieveProjectById(projectId);
-        System.out.println("Found project");
+        System.out.println("Found project " + projectId);
 
         //Results List
         List<MatchingScore> recommendations = new ArrayList<>();
 
         //Get the List of String (Project Keywords)
         List<String> projectKeywords = project.getRelatedResources();
+        //convert the List into a string 
+        String delim = " ";
+        String projectKeywordsString = String.join(delim, projectKeywords);
 
-        //find the list of available resources 
+        //lemmatise and extract noun of project keywords 
+        projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
+
+        //find the list of available resources in the same country 
+        List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResourcesInCountry(project.getCountry());
+        System.out.println("total avail resources in country " + project.getCountry() + ": " + availableResources.size());
+
+        Boolean matched = false;
+
+        //loop through all the available resources
+        for (int x = 0; x < availableResources.size() && !matched; x++) {
+            ResourceEntity resource = availableResources.get(x);
+            String resourceKeywordString = resource.getResourceName();
+
+            //lemmatise and extract noun of resource 
+            List<String> resourceKeywords = lemmatiseAndExtractNoun(resourceKeywordString);
+
+            //run ws4j algo for each resource keyword to each project keyword 
+            for (int i = 0; i < projectKeywords.size() && !matched; i++) {
+                for (int j = 0; j < resourceKeywords.size() && !matched; j++) {
+
+                    double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    double resscore = MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+
+                    if (wupscore > 0.88) {
+                        matched = true;
+
+                        double score = wupscore + pathscore + resscore;
+
+                        Float f = new Float(score);
+                        if (f.isInfinite()) {
+                            score = 10000;
+                        }
+
+                        recommendations.add(new MatchingScore(score, resource));
+                        System.out.println("Added: " + resource.getResourceName());
+                    }
+                }
+            }
+            matched = false;
+        }
+
+        return sortResourceRecommendations(recommendations);
+    }
+
+    @Override
+    public List<ResourceEntity> recommendResources(Long projectId) throws ProjectNotFoundException {
+        //find the project first
+        ProjectEntity project = projectService.retrieveProjectById(projectId);
+        System.out.println("Found project " + projectId);
+
+        //Results List
+        List<MatchingScore> recommendations = new ArrayList<>();
+
+        //Get the List of String (Project Keywords)
+        List<String> projectKeywords = project.getRelatedResources();
+        //convert the List into a string 
+        String delim = " ";
+        String projectKeywordsString = String.join(delim, projectKeywords);
+
+        //lemmatise and extract noun of project keywords 
+        projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
+
+        //find the list of available resources in the same country 
         List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResources();
         System.out.println("total avail resources: " + availableResources.size());
 
@@ -177,111 +247,107 @@ public class MatchingServiceImpl implements MatchingService {
         //loop through all the available resources
         for (int x = 0; x < availableResources.size() && !matched; x++) {
             ResourceEntity resource = availableResources.get(x);
-            String resourceKeyword = resource.getResourceName();
+            String resourceKeywordString = resource.getResourceName();
+
+            //lemmatise and extract noun of resource 
+            List<String> resourceKeywords = lemmatiseAndExtractNoun(resourceKeywordString);
 
             //run ws4j algo for each resource keyword to each project keyword 
             for (int i = 0; i < projectKeywords.size() && !matched; i++) {
-                double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeyword);
-                double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeyword);
+                for (int j = 0; j < resourceKeywords.size() && !matched; j++) {
 
-                //threshold of 70%
-                if (wupscore >= 0.70 || (pathscore != 0.0 && pathscore < 0.12)) {
-                    matched = true;
+                    double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    double resscore = MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
-                    double score = 0.0;
+                    if (wupscore > 0.88) {
+                        matched = true;
 
-                    if (wupscore < 0.7) {
-                        score = 1 - pathscore;
-                    } else {
-                        score = wupscore;
+                        double score = wupscore + pathscore + resscore;
+
+                        Float f = new Float(score);
+                        if (f.isInfinite()) {
+                            score = 10000;
+                        }
+
+                        recommendations.add(new MatchingScore(score, resource));
+                        System.out.println("Added: " + resource.getResourceName());
                     }
-
-                    //check the Country 
-                    if ((resource.getCountry() != null && project.getCountry() != null)
-                            && resource.getCountry().equals(project.getCountry())) {
-                        score += 1;
-                    }
-                    recommendations.add(new MatchingScore(score, resource));
-                    System.out.println("Added: " + resource.getResourceName());
                 }
             }
             matched = false;
         }
 
         return sortResourceRecommendations(recommendations);
+    }
+
+    @Override
+    public List<ProjectEntity> recommendSameCountryProjects(Long resourceId) throws ResourceNotFoundException {
+        //find the resource first
+        ResourceEntity resource = resourceService.getResourceById(resourceId);
+        System.out.println("Found resource");
+
+        //Results List
+        List<MatchingScore> recommendations = new ArrayList<>();
+
+        //Get the resource name
+        List<String> resourceKeywords = lemmatiseAndExtractNoun(resource.getResourceName());
+
+        //find the list of active projects in country 
+        if (resource.getCountry() != null) {
+            List<ProjectEntity> activeProjects = projectEntityRepository.getAllActiveProjectsInCountry(resource.getCountry());
+            System.out.println("total active projects in country (" + resource.getCountry() + "): " + activeProjects.size());
+
+            Boolean matched = false;
+
+            //loop through all active projects
+            for (int x = 0; x < activeProjects.size() && !matched; x++) {
+                ProjectEntity project = activeProjects.get(x);
+
+                //Get the List of String (Project Keywords)
+                List<String> projectKeywords = project.getRelatedResources();
+                //convert the List into a string 
+                String delim = " ";
+                String projectKeywordsString = String.join(delim, projectKeywords);
+
+                //lemmatise and extract noun of project keywords 
+                projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
+
+                //run ws4j algo for each project keyword to each resource keyword 
+                for (int i = 0; i < resourceKeywords.size() && !matched; i++) {
+                    for (int j = 0; j < projectKeywords.size() && !matched; j++) {
+
+                        double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
+                        double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
+                        double resscore = MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
+
+                        if (wupscore > 0.88) {
+                            matched = true;
+
+                            double score = wupscore + pathscore + resscore;
+
+                            Float f = new Float(score);
+                            if (f.isInfinite()) {
+                                score = 10000;
+                            }
+
+                            recommendations.add(new MatchingScore(score, resource));
+                            System.out.println("Added: " + resource.getResourceName());
+                        }
+                    }
+                }
+                matched = false;
+            }
+
+            return sortProjectRecommendations(recommendations);
+
+        } else {//resource does not have country specified
+            System.out.println("Resource does not have country specified");
+            return new ArrayList<ProjectEntity>();
+        }
 
     }
 
-    // *************** preprocess word by word method ***************
-//    @Override
-//    public List<ResourceEntity> recommendResources(Long projectId) throws ProjectNotFoundException {
-//        //find the project first
-//        ProjectEntity project = projectService.retrieveProjectById(projectId);
-//        System.out.println("Found project");
-//
-//        //Results List
-//        List<MatchingScore> recommendations = new ArrayList<>();
-//
-//        //Get the preprocessed List of String (Project Keywords)
-//        List<String> projectKeywords = preprocessProjectKeywords(project);
-//        System.out.print("preprocess project keywords: ");
-//        for (String s : projectKeywords) {
-//            System.out.print(s + " ");
-//        }
-//        System.out.println();
-//
-//        //find the list of available resources 
-//        List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResources();
-//        System.out.println("total avail resources: " + availableResources.size());
-//
-//        Boolean matched = false;
-//
-//        //loop through all the available resources
-//        for (int x = 0; x < availableResources.size() && !matched; x++) {
-//            ResourceEntity resource = availableResources.get(x);
-//
-//            //Get the preprocessed List of String (Resource Keywords)
-//            List<String> resourceKeywords = preprocessResourceKeywords(resource);
-//            System.out.print("preprocess resource keywords: ");
-//            for (String s : resourceKeywords) {
-//                System.out.print(s + " ");
-//            }
-//            System.out.println();
-//
-//            //run ws4j algo word for word for each resource keyword to each project keyword 
-//            for (int i = 0; i < projectKeywords.size() && !matched; i++) {
-//                for (int j = 0; j < resourceKeywords.size() && !matched; j++) {
-//                    double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-//                    double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-//
-//                    //threshold of 70%
-//                    if (wupscore >= 0.70 || (pathscore != 0.0 && pathscore < 0.20)) {
-//                        matched = true;
-//                        
-//                        double score = 0.0;
-//                        
-//                        if (wupscore < 0.7) {
-//                            score = 1 - pathscore;
-//                        } else {
-//                            score = wupscore;
-//                        }
-//                        
-//                        //check the Country 
-//                        if ((resource.getCountry() != null && project.getCountry() != null)
-//                                && resource.getCountry().equals(project.getCountry())) {
-//                            score += 1;
-//                        }
-//                        recommendations.add(new MatchingScore(score, resource));
-//                        System.out.println("Added: " + resource.getResourceName());
-//                    }
-//                }
-//            }
-//            matched = false;
-//        }
-//
-//        return sortResourceRecommendations(recommendations);
-//
-//    }
     @Override
     public List<ProjectEntity> recommendProjects(Long resourceId) throws ResourceNotFoundException {
         //find the resource first
@@ -292,7 +358,9 @@ public class MatchingServiceImpl implements MatchingService {
         List<MatchingScore> recommendations = new ArrayList<>();
 
         //Get the resource name
-        String resourceKeyword = resource.getResourceName();
+        List<String> resourceKeywords = lemmatiseAndExtractNoun(resource.getResourceName());
+
+        System.out.println("Here*********");
 
         //find the list of active projects
         List<ProjectEntity> activeProjects = projectEntityRepository.getAllActiveProjects();
@@ -304,33 +372,36 @@ public class MatchingServiceImpl implements MatchingService {
         for (int x = 0; x < activeProjects.size() && !matched; x++) {
             ProjectEntity project = activeProjects.get(x);
 
-            //get project related resources
+            //Get the List of String (Project Keywords)
             List<String> projectKeywords = project.getRelatedResources();
+            //convert the List into a string 
+            String delim = " ";
+            String projectKeywordsString = String.join(delim, projectKeywords);
+
+            //lemmatise and extract noun of project keywords 
+            projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
 
             //run ws4j algo for each project keyword to each resource keyword 
-            for (int i = 0; i < projectKeywords.size() && !matched; i++) {
-                double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeyword);
-                double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeyword);
+            for (int i = 0; i < resourceKeywords.size() && !matched; i++) {
+                for (int j = 0; j < projectKeywords.size() && !matched; j++) {
 
-                //threshold of 70%
-                if (wupscore >= 0.70 || (pathscore != 0.0 && pathscore < 0.12)) {
-                    matched = true;
+                    double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
+                    double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
+                    double resscore = MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
 
-                    double score = 0.0;
+                    if (wupscore > 0.88) {
+                        matched = true;
 
-                    if (wupscore < 0.7) {
-                        score = 1 - pathscore;
-                    } else {
-                        score = wupscore;
+                        double score = wupscore + pathscore + resscore;
+
+                        Float f = new Float(score);
+                        if (f.isInfinite()) {
+                            score = 10000;
+                        }
+
+                        recommendations.add(new MatchingScore(score, resource));
+                        System.out.println("Added: " + resource.getResourceName());
                     }
-
-                    //check the Country 
-                    if ((resource.getCountry() != null && project.getCountry() != null)
-                            && resource.getCountry().equals(project.getCountry())) {
-                        score += 1;
-                    }
-                    recommendations.add(new MatchingScore(score, project));
-                    System.out.println("Added: " + project.getProjectTitle());
                 }
             }
             matched = false;
@@ -362,12 +433,34 @@ public class MatchingServiceImpl implements MatchingService {
     }
 
     @Override
+    public Page<ResourceEntity> recommendSameCountryResourcesAsPageable(Long projectId, Pageable pageable) throws ProjectNotFoundException {
+        List<ResourceEntity> resultsList = this.recommendSameCountryResources(projectId);
+
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > resultsList.size() ? resultsList.size() : (start + pageable.getPageSize());
+        Page<ResourceEntity> recommendations = new PageImpl<ResourceEntity>(resultsList.subList(start.intValue(), end.intValue()), pageable, resultsList.size());
+
+        return recommendations;
+    }
+
+    @Override
     public Page<ResourceEntity> recommendResourcesAsPageable(Long projectId, Pageable pageable) throws ProjectNotFoundException {
         List<ResourceEntity> resultsList = this.recommendResources(projectId);
 
         Long start = pageable.getOffset();
         Long end = (start + pageable.getPageSize()) > resultsList.size() ? resultsList.size() : (start + pageable.getPageSize());
         Page<ResourceEntity> recommendations = new PageImpl<ResourceEntity>(resultsList.subList(start.intValue(), end.intValue()), pageable, resultsList.size());
+
+        return recommendations;
+    }
+
+    @Override
+    public Page<ProjectEntity> recommendSameCountryProjectsAsPageable(Long resourceId, Pageable pageable) throws ResourceNotFoundException {
+        List<ProjectEntity> resultsList = this.recommendSameCountryProjects(resourceId);
+
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > resultsList.size() ? resultsList.size() : (start + pageable.getPageSize());
+        Page<ProjectEntity> recommendations = new PageImpl<ProjectEntity>(resultsList.subList(start.intValue(), end.intValue()), pageable, resultsList.size());
 
         return recommendations;
     }
@@ -398,18 +491,19 @@ public class MatchingServiceImpl implements MatchingService {
 
         if (results.size() == 1) {
             recommendations.add(results.get(0).getResource());
-        }
-
-        //return only a list of resources in the sorted order
-        if (results.size() > 6) {
+        } else if (results.size() <= 6) {
+            for (int i = 0; i < results.size(); i++) {
+                recommendations.add(results.get(i).getResource());
+            }
+        } else {
             for (int i = 0; i < 6; i++) {
                 recommendations.add(results.get(i).getResource());
             }
-            System.out.print("Sorted keywords order: ");
-            for (ResourceEntity r : recommendations) {
-                System.out.print(r.getResourceName() + " ");
-            }
-            System.out.println();
+        }
+
+        System.out.println("Sorted recommendations order: ");
+        for (ResourceEntity r : recommendations) {
+            System.out.println(r.getResourceName() + " ");
         }
 
         return recommendations;
@@ -428,16 +522,21 @@ public class MatchingServiceImpl implements MatchingService {
         //custom sorting based on score 
         Collections.sort(results, new MatchingScoreComparator());
 
-        //return only a list of resources in the sorted order
-        if (results.size() > 6) {
+        if (results.size() == 1) {
+            recommendations.add(results.get(0).getProject());
+        } else if (results.size() <= 6) {
+            for (int i = 0; i < results.size(); i++) {
+                recommendations.add(results.get(i).getProject());
+            }
+        } else {
             for (int i = 0; i < 6; i++) {
                 recommendations.add(results.get(i).getProject());
             }
-            System.out.print("Sorted keywords order: ");
-            for (ProjectEntity p : recommendations) {
-                System.out.print(p.getProjectTitle() + " ");
-            }
-            System.out.println();
+        }
+
+        System.out.println("Sorted recommendations order: ");
+        for (ProjectEntity p : recommendations) {
+            System.out.println(p.getProjectTitle() + " ");
         }
 
         return recommendations;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.is4103.matchub;
+package com.is4103.matchub.helper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,14 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.util.CoreMap;
 
 public class StanfordPartOfSpeech {
+
+    private StanfordCoreNLP pipeline;
+
+    public StanfordPartOfSpeech() {
+        Properties properties = new Properties();
+        properties.put("annotators", "tokenize, ssplit, pos, lemma, ner, parse");
+        this.pipeline = new StanfordCoreNLP(properties);
+    }
 
     public static void testing() {
 
@@ -56,6 +64,27 @@ public class StanfordPartOfSpeech {
 
         System.out.println("Output: " + output);
 
+    }
+
+    public List<String> extractNoun(String input) {
+        Annotation annotation = pipeline.process(input);
+        List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+        List<String> output = new ArrayList<>();
+        String regex = "([{pos:/NN|NNS|NNP/}])"; //extracting Nouns
+
+        for (CoreMap sentence : sentences) {
+            List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
+            TokenSequencePattern tspattern = TokenSequencePattern.compile(regex);
+            TokenSequenceMatcher tsmatcher = tspattern.getMatcher(tokens);
+            while (tsmatcher.find()) {
+                output.add(tsmatcher.group());
+            }
+        }
+
+        System.out.println("Input: " + input);
+        System.out.println("Output: " + output);
+
+        return output;
     }
 
 }

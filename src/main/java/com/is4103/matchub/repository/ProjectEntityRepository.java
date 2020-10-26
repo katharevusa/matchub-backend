@@ -46,5 +46,10 @@ public interface ProjectEntityRepository extends JpaRepository<ProjectEntity, Lo
     
     @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.ACTIVE")
     List<ProjectEntity> getAllActiveProjects();
+    
+    @Query(value = "SELECT pe FROM ProjectEntity pe "
+            + "WHERE pe.projStatus = com.is4103.matchub.enumeration.ProjectStatusEnum.ACTIVE "
+            + "AND pe.country = ?1")
+    List<ProjectEntity> getAllActiveProjectsInCountry(String country);
 
 }

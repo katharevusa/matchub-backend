@@ -1,5 +1,5 @@
 
-package com.is4103.matchub;
+package com.is4103.matchub.helper;
 
 import edu.stanford.nlp.ling.CoreAnnotations.LemmaAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
@@ -43,6 +43,11 @@ public class StanfordLemmatizer {
     }
 
     public List<String> lemmatize(String documentText) {
+        
+        long t0 = System.currentTimeMillis();
+        System.out.println("START Stanford Lemmatizer *************** ");
+        System.out.println("Pre lemmatise: " + documentText);
+        
         List<String> lemmas = new LinkedList<String>();
         // Create an empty Annotation just with the given text
         Annotation document = new Annotation(documentText);
@@ -58,6 +63,11 @@ public class StanfordLemmatizer {
                 lemmas.add(token.get(LemmaAnnotation.class));
             }
         }
+        
+        long t1 = System.currentTimeMillis();
+        System.out.println("Done in " + (t1 - t0) + " msec.");
+        System.out.println("Lemmatised: " + lemmas);
+        
         return lemmas;
     }
 

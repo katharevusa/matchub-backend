@@ -1,6 +1,6 @@
 package com.is4103.matchub;
 
-import com.is4103.matchub.StanfordLemmatizer;
+import com.is4103.matchub.helper.StanfordLemmatizer;
 import com.is4103.matchub.service.InitService;
 import java.io.File;
 import java.io.IOException;
@@ -22,11 +22,6 @@ public class MatchubApplication extends AsyncConfigurerSupport {
     public static void main(String[] args) throws IOException {
         IMAGE_DIR = new File(".").getCanonicalPath() + "/build/resources/main/files/";
         SpringApplication.run(MatchubApplication.class, args);
-        StanfordLemmatizer lemmatizer = new StanfordLemmatizer();
-        lemmatizer.testing();
-        
-        StanfordPartOfSpeech extractNoun = new StanfordPartOfSpeech();
-        extractNoun.testing();
     }
 
     @Bean
