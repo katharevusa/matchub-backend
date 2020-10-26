@@ -40,6 +40,9 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%")
     List<ResourceEntity> getResourcesByKeyword(String keyword);
+ 
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = :projectId ")
+    List<ResourceEntity> getMatchedResourcesByProjectId(Long projectId);
 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = ?1",
             countQuery = "SELECT COUNT(r) FROM ResourceEntity r WHERE r.matchedProjectId = ?1")
@@ -50,5 +53,12 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
     
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true AND r.country = ?1")
     List<ResourceEntity> getAllAvailableResourcesInCountry(String country);
+
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.spotlight = TRUE ORDER BY r.spotlightEndTime DESC")
+    List<ResourceEntity> getSpotlightedResources();
+
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.spotlight = TRUE ORDER BY r.spotlightEndTime DESC",
+            countQuery = "SELECT COUNT(r) FROM ResourceEntity r WHERE r.spotlight = TRUE ORDER BY r.spotlightEndTime DESC")
+    Page<ResourceEntity> getSpotlightedResources(Pageable pageable);
 
 }
