@@ -5,15 +5,18 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.AnnouncementEntity;
 import com.is4103.matchub.entity.CommentEntity;
 import com.is4103.matchub.entity.KanbanBoardEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.entity.TaskEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.CreateTaskException;
 import com.is4103.matchub.exception.DeleteTaskException;
 import com.is4103.matchub.exception.RearrangeTaskException;
 import com.is4103.matchub.exception.UpdateTaskException;
+import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.CommentEntityRepository;
 import com.is4103.matchub.repository.KanbanBoardEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
@@ -26,11 +29,13 @@ import com.is4103.matchub.vo.RearrangeTaskVO;
 import com.is4103.matchub.vo.UpdateLabelVO;
 import com.is4103.matchub.vo.UpdateTaskVO;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -61,8 +66,15 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private FirebaseService firebaseService;
 
+    @Autowired
+    private AnnouncementService announcementService;
+
+    @Autowired
+    private AnnouncementEntityRepository announcementEntityRepository;
+
 //Create Channel Tasks
     @Override
+    @Transactional
     public TaskEntity createTask(CreateTaskVO vo) throws CreateTaskException {
 
         //check if creator is channel admin
@@ -84,6 +96,24 @@ public class TaskServiceImpl implements TaskService {
 
         task = taskEntityRepository.saveAndFlush(task);
         taskColumnEntityRepository.flush();
+
+       
+        //notify task leader
+        if (task.getTaskLeaderId() != null) {
+            ProfileEntity taskLeader = profileEntityRepository.findById(task.getTaskLeaderId()).get();
+            AnnouncementEntity announcementEntity = new AnnouncementEntity();
+            announcementEntity.setTitle("You have been assigned to be a leader of one task");
+            announcementEntity.setTimestamp(LocalDateTime.now());
+            announcementEntity.setType(AnnouncementTypeEnum.TASK_LEADER_ASSIGNED);
+            announcementEntity.setTaskId(task.getTaskId());
+            // association
+            announcementEntity.getNotifiedUsers().add(taskLeader);
+            taskLeader.getAnnouncements().add(announcementEntity);
+            announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+            // create notification
+            announcementService.createNormalNotification(announcementEntity);
+        }
+
         return task;
     }
 
@@ -138,7 +168,7 @@ public class TaskServiceImpl implements TaskService {
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
         if (!channelDetails.getAdminIds().contains(updatorId)) {
             throw new UpdateTaskException("Only channel admins can update task");
-        } 
+        }
         TaskEntity task = taskEntityRepository.findById(taskId).get();
 
         // remove previous taskdoer - task relationship
@@ -169,7 +199,7 @@ public class TaskServiceImpl implements TaskService {
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
         if (!channelDetails.getAdminIds().contains(deletorId)) {
             throw new DeleteTaskException("Only channel admin can delete task");
-        }      
+        }
         TaskEntity task = taskEntityRepository.findById(taskId).get();
 
         // remove task from column
@@ -224,7 +254,7 @@ public class TaskServiceImpl implements TaskService {
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
         if (!channelDetails.getAdminIds().contains(vo.getArrangerId())) {
             throw new RearrangeTaskException("Only channel admin can delete task");
-        } 
+        }
         Map<Long, List<Long>> columnIdAndTaskIdSequence = vo.getColumnIdAndTaskIdSequence();
         Long kanbanboardId = vo.getKanbanBoardId();
         Long arrangerId = vo.getArrangerId();
@@ -333,19 +363,20 @@ public class TaskServiceImpl implements TaskService {
         return taskEntityRepository.saveAndFlush(task);
 
     }
+
     @Override
-    public TaskEntity updateTaskStatus(Long taskId, Long oldColumnId, Long newColumnId){
+    public TaskEntity updateTaskStatus(Long taskId, Long oldColumnId, Long newColumnId) {
         TaskEntity task = taskEntityRepository.findById(taskId).get();
         TaskColumnEntity oldColumn = taskColumnEntityRepository.findById(oldColumnId).get();
         TaskColumnEntity newColumn = taskColumnEntityRepository.findById(newColumnId).get();
-        
+
         oldColumn.getListOfTasks().remove(task);
         newColumn.getListOfTasks().add(task);
         task.setTaskColumn(newColumn);
-        
+
         taskColumnEntityRepository.flush();
         return taskEntityRepository.saveAndFlush(task);
-        
+
     }
 
 }
