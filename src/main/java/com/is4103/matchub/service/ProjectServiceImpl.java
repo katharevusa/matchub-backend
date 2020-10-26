@@ -27,6 +27,7 @@ import com.is4103.matchub.exception.RevokeDownvoteException;
 import com.is4103.matchub.exception.RevokeUpvoteException;
 import com.is4103.matchub.exception.TerminateProjectException;
 import com.is4103.matchub.exception.UnableToAddProjectOwnerException;
+import com.is4103.matchub.exception.UnableToRemoveProjectOwnerException;
 import com.is4103.matchub.exception.UpdateProjectException;
 import com.is4103.matchub.exception.UpvoteProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
@@ -860,7 +861,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException {
+    public ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException, ProjectNotFoundException, UnableToAddProjectOwnerException {
 
         ProfileEntity projOwnerProfile = profileEntityRepository.findById(projOwner)
                 .orElseThrow(() -> new UserNotFoundException(projOwner));
@@ -887,6 +888,10 @@ public class ProjectServiceImpl implements ProjectService {
         if(project.getTeamMembers().contains(projOwnerToAddProfile)){
             project.getTeamMembers().remove(projOwnerToAddProfile);
         }
+        
+        if(projOwnerToAddProfile.getProjectsJoined().contains(project)){
+            projOwnerToAddProfile.getProjectsJoined().remove(project);
+        }
         project = projectEntityRepository.saveAndFlush(project);
 
         projOwnerToAddProfile.getProjectsOwned().add(project);
@@ -894,6 +899,53 @@ public class ProjectServiceImpl implements ProjectService {
 
         return project;
     }
+    
+    @Override
+    public ProjectEntity removeProjectOwner(Long editorId, Long projOwnerToRemoveId, Long projectId) throws ProjectNotFoundException, UnableToRemoveProjectOwnerException {
+    ProfileEntity editor = profileEntityRepository.findById(editorId)
+                .orElseThrow(() -> new UserNotFoundException(editorId));
+
+        ProfileEntity projOwnerToRemove = profileEntityRepository.findById(projOwnerToRemoveId)
+                .orElseThrow(() -> new UserNotFoundException(projOwnerToRemoveId));
+
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("Project " + projectId + " cannot be found."));
+
+        //check if action is authorised
+        if (!project.getProjectOwners().contains(editor)) {
+            throw new UnableToAddProjectOwnerException("Unable to remove new project owner "
+                    + "into project: account must be a project owner to perform this action");
+        }
+
+        //check if profile is already removed from projectOwner 
+        if (!project.getProjectOwners().contains(projOwnerToRemove)) {
+            throw new UnableToRemoveProjectOwnerException("Unable to remove project owner "
+                    + "into project: account is already not a project owner.");
+        }
+
+        // remove from project owners 
+        project.getProjectOwners().remove(projOwnerToRemove);
+        
+        // add back to project teammates
+        if(!project.getTeamMembers().contains(projOwnerToRemove)){
+            project.getTeamMembers().add(projOwnerToRemove);
+        }
+        
+        
+        project = projectEntityRepository.saveAndFlush(project);
+
+        //add back to project joined
+        if(!projOwnerToRemove.getProjectsJoined().contains(project)){
+            projOwnerToRemove.getProjectsJoined().add(project);
+        }
+        // remove from project owned
+        projOwnerToRemove.getProjectsOwned().remove(project);
+        profileEntityRepository.saveAndFlush(projOwnerToRemove);
+
+        return project;
+    }
+
+    
 
     @Override
     public ProjectEntity followProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException {

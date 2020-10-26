@@ -480,7 +480,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable) {
+    public Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable){
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 
