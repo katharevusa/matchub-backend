@@ -70,7 +70,7 @@ public class StanfordPartOfSpeech {
         Annotation annotation = pipeline.process(input);
         List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
         List<String> output = new ArrayList<>();
-        String regex = "([{pos:/NN|NNS|NNP/}])"; //extracting Nouns
+        String regex = "([{pos:/NN|NNS|NNP|NNPS/}])"; //extracting Nouns
 
         for (CoreMap sentence : sentences) {
             List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
