@@ -97,14 +97,13 @@ public class TaskServiceImpl implements TaskService {
         task = taskEntityRepository.saveAndFlush(task);
         taskColumnEntityRepository.flush();
 
-       
         //notify task leader
         if (task.getTaskLeaderId() != null) {
             ProfileEntity taskLeader = profileEntityRepository.findById(task.getTaskLeaderId()).get();
             AnnouncementEntity announcementEntity = new AnnouncementEntity();
             announcementEntity.setTitle("You have been assigned to be a leader of one task");
             announcementEntity.setTimestamp(LocalDateTime.now());
-            announcementEntity.setType(AnnouncementTypeEnum.TASK_LEADER_ASSIGNED);
+            announcementEntity.setType(AnnouncementTypeEnum.TASK_LEADER_APPOINTMENT);
             announcementEntity.setTaskId(task.getTaskId());
             // association
             announcementEntity.getNotifiedUsers().add(taskLeader);
@@ -187,7 +186,26 @@ public class TaskServiceImpl implements TaskService {
         profileEntityRepository.flush();
 
         task = taskEntityRepository.saveAndFlush(task);
-        System.out.println("Reach here ");
+
+        // check if there exists task doers
+        if (!task.getTaskdoers().isEmpty()) {
+            // notify task doers  
+            AnnouncementEntity announcementEntity = new AnnouncementEntity();
+            announcementEntity.setTitle("A new task has been assigned to you.");
+            announcementEntity.setTimestamp(LocalDateTime.now());
+            announcementEntity.setType(AnnouncementTypeEnum.TASK_ASSIGNED);
+            announcementEntity.setTaskId(task.getTaskId());
+            // association
+            announcementEntity.getNotifiedUsers().addAll(task.getTaskdoers());
+            for (ProfileEntity p : task.getTaskdoers()) {
+                p.getAnnouncements().add(announcementEntity);
+            }
+            announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+            // create notification
+            announcementService.createNormalNotification(announcementEntity);
+        }
+        
+
         return task;
     }
 
