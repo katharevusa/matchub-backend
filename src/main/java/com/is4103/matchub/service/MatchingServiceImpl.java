@@ -324,28 +324,34 @@ public class MatchingServiceImpl implements MatchingService {
                 //lemmatise and extract noun of project keywords 
                 projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
 
-                //run ws4j algo for each project keyword to each resource keyword 
-                for (int i = 0; i < resourceKeywords.size() && !matched; i++) {
-                    for (int j = 0; j < projectKeywords.size() && !matched; j++) {
+                double previousScore = 0.0;
+                //run ws4j algo for each resource keyword to each project keyword 
+                for (int i = 0; i < projectKeywords.size(); i++) {
+                    double wupscore = 0.0;
+                    double pathscore = 0.0;
+                    double resscore = 0.0;
+                    for (int j = 0; j < resourceKeywords.size(); j++) {
 
-                        double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
-                        double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
-                        double resscore = MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
+                        wupscore += MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                        pathscore += MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                        resscore += MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
-                        if (wupscore > 0.88) {
-                            matched = true;
-
-                            double score = wupscore + pathscore + resscore;
-
-                            Float f = new Float(score);
-                            if (f.isInfinite()) {
-                                score = 10000;
-                            }
-
-                            recommendations.add(new MatchingScore(score, resource));
-                            System.out.println("Added: " + resource.getResourceName());
-                        }
                     }
+                    wupscore /= resourceKeywords.size();
+                    pathscore /= resourceKeywords.size();
+                    resscore /= resourceKeywords.size();
+
+                    if (wupscore >= 0.3 && resscore >= 3 && pathscore >= 0.1) {
+
+                        double score = wupscore + pathscore + resscore;
+                        previousScore = Math.max(score, previousScore);
+
+                    }
+
+                }
+                if (previousScore > 0) {
+                    recommendations.add(new MatchingScore(previousScore, project));
+                    System.out.println("Added: " + project.getProjectTitle());
                 }
                 matched = false;
             }
@@ -371,8 +377,6 @@ public class MatchingServiceImpl implements MatchingService {
         //Get the resource name
         List<String> resourceKeywords = lemmatiseAndExtractNoun(resource.getResourceName());
 
-        System.out.println("Here*********");
-
         //find the list of active projects
         List<ProjectEntity> activeProjects = projectEntityRepository.getAllActiveProjects();
         System.out.println("total active projects : " + activeProjects.size());
@@ -392,28 +396,34 @@ public class MatchingServiceImpl implements MatchingService {
             //lemmatise and extract noun of project keywords 
             projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
 
-            //run ws4j algo for each project keyword to each resource keyword 
-            for (int i = 0; i < resourceKeywords.size() && !matched; i++) {
-                for (int j = 0; j < projectKeywords.size() && !matched; j++) {
+            double previousScore = 0.0;
+            //run ws4j algo for each resource keyword to each project keyword 
+            for (int i = 0; i < projectKeywords.size(); i++) {
+                double wupscore = 0.0;
+                double pathscore = 0.0;
+                double resscore = 0.0;
+                for (int j = 0; j < resourceKeywords.size(); j++) {
 
-                    double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
-                    double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
-                    double resscore = MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(j), resourceKeywords.get(i));
+                    wupscore += MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    pathscore += MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    resscore += MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
-                    if (wupscore > 0.88) {
-                        matched = true;
-
-                        double score = wupscore + pathscore + resscore;
-
-                        Float f = new Float(score);
-                        if (f.isInfinite()) {
-                            score = 10000;
-                        }
-
-                        recommendations.add(new MatchingScore(score, resource));
-                        System.out.println("Added: " + resource.getResourceName());
-                    }
                 }
+                wupscore /= resourceKeywords.size();
+                pathscore /= resourceKeywords.size();
+                resscore /= resourceKeywords.size();
+
+                if (wupscore >= 0.3 && resscore >= 3 && pathscore >= 0.1) {
+
+                    double score = wupscore + pathscore + resscore;
+                    previousScore = Math.max(score, previousScore);
+
+                }
+
+            }
+            if (previousScore > 0) {
+                recommendations.add(new MatchingScore(previousScore, project));
+                System.out.println("Added: " + project.getProjectTitle());
             }
             matched = false;
         }
@@ -522,7 +532,7 @@ public class MatchingServiceImpl implements MatchingService {
 
     private List<ProjectEntity> sortProjectRecommendations(List<MatchingScore> results) {
 
-        //Resource Results
+        //Project Results
         List<ProjectEntity> recommendations = new ArrayList<>();
         System.out.print("original keywords order: ");
         for (MatchingScore ms : results) {
