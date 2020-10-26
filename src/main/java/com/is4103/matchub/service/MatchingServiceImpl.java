@@ -183,7 +183,6 @@ public class MatchingServiceImpl implements MatchingService {
 
         Boolean matched = false;
 
-        //loop through all the available resources
         for (int x = 0; x < availableResources.size() && !matched; x++) {
             ResourceEntity resource = availableResources.get(x);
             String resourceKeywordString = resource.getResourceName();
@@ -191,28 +190,34 @@ public class MatchingServiceImpl implements MatchingService {
             //lemmatise and extract noun of resource 
             List<String> resourceKeywords = lemmatiseAndExtractNoun(resourceKeywordString);
 
+            double previousScore = 0.0;
             //run ws4j algo for each resource keyword to each project keyword 
-            for (int i = 0; i < projectKeywords.size() && !matched; i++) {
-                for (int j = 0; j < resourceKeywords.size() && !matched; j++) {
+            for (int i = 0; i < projectKeywords.size(); i++) {
+                double wupscore = 0.0;
+                double pathscore = 0.0;
+                double resscore = 0.0;
+                for (int j = 0; j < resourceKeywords.size(); j++) {
 
-                    double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    double resscore = MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    wupscore += MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    pathscore += MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    resscore += MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
-                    if (wupscore > 0.88) {
-                        matched = true;
-
-                        double score = wupscore + pathscore + resscore;
-
-                        Float f = new Float(score);
-                        if (f.isInfinite()) {
-                            score = 10000;
-                        }
-
-                        recommendations.add(new MatchingScore(score, resource));
-                        System.out.println("Added: " + resource.getResourceName());
-                    }
                 }
+                wupscore /= resourceKeywords.size();
+                pathscore /= resourceKeywords.size();
+                resscore /= resourceKeywords.size();
+
+                if (wupscore >= 0.3 && resscore >= 3 && pathscore >= 0.1) {
+
+                    double score = wupscore + pathscore + resscore;
+                    previousScore = Math.max(score, previousScore);
+
+                }
+
+            }
+            if (previousScore > 0) {
+                recommendations.add(new MatchingScore(previousScore, resource));
+                System.out.println("Added: " + resource.getResourceName());
             }
             matched = false;
         }
@@ -252,28 +257,34 @@ public class MatchingServiceImpl implements MatchingService {
             //lemmatise and extract noun of resource 
             List<String> resourceKeywords = lemmatiseAndExtractNoun(resourceKeywordString);
 
+            double previousScore = 0.0;
             //run ws4j algo for each resource keyword to each project keyword 
-            for (int i = 0; i < projectKeywords.size() && !matched; i++) {
-                for (int j = 0; j < resourceKeywords.size() && !matched; j++) {
+            for (int i = 0; i < projectKeywords.size(); i++) {
+                double wupscore = 0.0;
+                double pathscore = 0.0;
+                double resscore = 0.0;
+                for (int j = 0; j < resourceKeywords.size(); j++) {
 
-                    double wupscore = MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    double pathscore = MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    double resscore = MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    wupscore += MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    pathscore += MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    resscore += MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
-                    if (wupscore > 0.88) {
-                        matched = true;
-
-                        double score = wupscore + pathscore + resscore;
-
-                        Float f = new Float(score);
-                        if (f.isInfinite()) {
-                            score = 10000;
-                        }
-
-                        recommendations.add(new MatchingScore(score, resource));
-                        System.out.println("Added: " + resource.getResourceName());
-                    }
                 }
+                wupscore /= resourceKeywords.size();
+                pathscore /= resourceKeywords.size();
+                resscore /= resourceKeywords.size();
+
+                if (wupscore >= 0.3 && resscore >= 3 && pathscore >= 0.1) {
+
+                    double score = wupscore + pathscore + resscore;
+                    previousScore = Math.max(score, previousScore);
+
+                }
+
+            }
+            if (previousScore > 0) {
+                recommendations.add(new MatchingScore(previousScore, resource));
+                System.out.println("Added: " + resource.getResourceName());
             }
             matched = false;
         }
