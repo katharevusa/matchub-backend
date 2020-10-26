@@ -92,6 +92,9 @@ public class AnnouncementEntity {
     
     @Column(nullable = true)
     private Long newFollowerAndNewPosterProfileId;
+    
+    @Column(nullable = true)
+    private Long reviewId;
 
     public AnnouncementEntity(String title, String content, LocalDateTime timestamp, AnnouncementTypeEnum type) {
         this.title = title;
