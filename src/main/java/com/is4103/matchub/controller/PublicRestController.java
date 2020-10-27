@@ -6,8 +6,19 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.BadgeEntity;
+import com.is4103.matchub.entity.PostEntity;
+import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.entity.ResourceCategoryEntity;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.AttachmentService;
+import com.is4103.matchub.service.BadgeService;
 import com.is4103.matchub.service.EmailService;
+import com.is4103.matchub.service.OrganisationService;
+import com.is4103.matchub.service.PostService;
+import com.is4103.matchub.service.ProjectService;
+import com.is4103.matchub.service.ResourceCategoryService;
 import com.is4103.matchub.service.UserService;
 import com.is4103.matchub.vo.IndividualCreateVO;
 import com.is4103.matchub.vo.IndividualSetupVO;
@@ -16,10 +27,13 @@ import com.is4103.matchub.vo.OrganisationSetupVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,6 +58,22 @@ public class PublicRestController {
 
     @Autowired
     EmailService emailService;
+    
+    @Autowired
+    BadgeService badgeService;
+    
+    @Autowired
+    PostService postService;
+    
+    @Autowired
+    ProjectService projectService;
+    
+    @Autowired
+    ResourceCategoryService resourceCategoryService;
+    
+    @Autowired
+    OrganisationService organisationService;
+    
 
     @RequestMapping(method = RequestMethod.POST, value = "/createNewIndividual")
     UserVO createNewIndividual(@Valid @RequestBody IndividualCreateVO createVO) throws MessagingException, IOException {
@@ -108,6 +138,36 @@ public class PublicRestController {
     @RequestMapping(method = RequestMethod.POST, value = "/resetPassword/{uuid}")
     public void resetPassword(@PathVariable("uuid") UUID uuid, @Valid @RequestBody ChangePasswordVO vo) {
         userService.changePassword(uuid, vo);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getBadgesByAccountId/{accountId}")
+    Page<BadgeEntity> getBadgesByAccountId(@PathVariable("accountId") Long postId, Pageable pageable) {
+        return badgeService.getBadgesByAccountId(postId, pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getCreatedProjects")
+    List<ProjectEntity> getCreatedProjects(@RequestParam(value = "profileId", required = true) Long profileId) throws UserNotFoundException {
+        return projectService.getCreatedProjects(profileId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getPostsByAccountId/{accountId}")
+    Page<PostEntity> getPostsByAccountId(@PathVariable("accountId") Long accountId, Pageable pageable) {
+        return postService.getPostsByAccountId(accountId, pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllResourceCategories")
+    Page<ResourceCategoryEntity> getAllResourceCategories(Pageable pageable) {
+        return resourceCategoryService.getAllResourceCategories(pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "organisation/viewMembers/{organisationId}")
+    Page<ProfileEntity> viewOrganisationMembers(@PathVariable("organisationId") Long organisationId, Pageable pageable) {
+        return organisationService.viewOrganisationMembers(organisationId, pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "organisation/viewKAHs/{organisationId}")
+    Page<ProfileEntity> viewOrganisationKAHs(@PathVariable("organisationId") Long organisationId, Pageable pageable) {
+        return organisationService.viewOrganisationKAHs(organisationId, pageable);
     }
 
 }

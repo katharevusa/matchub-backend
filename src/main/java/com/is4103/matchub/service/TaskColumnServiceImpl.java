@@ -51,10 +51,10 @@ public class TaskColumnServiceImpl implements TaskColumnService {
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(newTaskColumn.getKanbanBoardId()).get();
 
 //        // checking only channel admins can create column 
-//        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
-//        if (!channelDetails.getAdminIds().contains(vo.getEditorId())) {
-//            throw new UpdateColumnException("Only channel admin can create column");
-//        }
+        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
+        if (!channelDetails.getAdminIds().contains(vo.getEditorId())) {
+            throw new UpdateColumnException("Only channel admin can create column");
+        }
 
         newTaskColumn = taskColumnEntityRepository.saveAndFlush(newTaskColumn);
         kanbanBoardEntity.getTaskColumns().add(newTaskColumn);
@@ -67,10 +67,10 @@ public class TaskColumnServiceImpl implements TaskColumnService {
         TaskColumnEntity taskColumn = taskColumnEntityRepository.findById(vo.getColumnId()).get();
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(taskColumn.getKanbanBoardId()).get();
 //        // checking only channel admins can update column  
-//        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
-//        if (!channelDetails.getAdminIds().contains(vo.getEditorId())) {
-//            throw new UpdateColumnException("Only channel admin can create column");
-//        }
+        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
+        if (!channelDetails.getAdminIds().contains(vo.getEditorId())) {
+            throw new UpdateColumnException("Only channel admin can create column");
+        }
 
         vo.updateTaskColumn(taskColumn);
         taskColumn = taskColumnEntityRepository.saveAndFlush(taskColumn);
@@ -87,10 +87,10 @@ public class TaskColumnServiceImpl implements TaskColumnService {
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(taskColumn.getKanbanBoardId()).get();
         
 //         // checking only channel admins can delete column 
-//        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
-//        if (!channelDetails.getAdminIds().contains(deleteVO.getDeletorId())) {
-//            throw new DeleteTaskColumnException("Only channel admin can delete column");
-//        }
+        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
+        if (!channelDetails.getAdminIds().contains(deleteVO.getDeletorId())) {
+            throw new DeleteTaskColumnException("Only channel admin can delete column");
+        }
 
         if (taskColumn.isDone()) {
             throw new DeleteTaskColumnException("Can not delete done column");
@@ -133,11 +133,11 @@ public class TaskColumnServiceImpl implements TaskColumnService {
     @Override
     public KanbanBoardEntity rearrangeColumn(Long kanbanBoardId, List<Long> columnIdSequence, Long editorId) throws UpdateColumnException {
 //        // only channel admins can rearrangecolumn
-//        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
-//        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
-//        if (!channelDetails.getAdminIds().contains(editorId)) {
-//            throw new UpdateColumnException("Only channel admin can rearrange column");
-//        }
+        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
+        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
+        if (!channelDetails.getAdminIds().contains(editorId)) {
+            throw new UpdateColumnException("Only channel admin can rearrange column");
+        }
 
         KanbanBoardEntity kanbanBoard = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
         kanbanBoard.setTaskColumns(new ArrayList<>());

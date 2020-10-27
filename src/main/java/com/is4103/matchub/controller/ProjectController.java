@@ -11,6 +11,7 @@ import com.is4103.matchub.exception.DeleteProjectException;
 import com.is4103.matchub.exception.DownvoteProjectException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.TerminateProjectException;
+import com.is4103.matchub.exception.UnableToRemoveProjectOwnerException;
 import com.is4103.matchub.exception.UpdateProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.AttachmentService;
@@ -152,6 +153,12 @@ public class ProjectController {
     @RequestMapping(method = RequestMethod.PUT, value = "/addProjectOwner")
     public ProjectEntity addProjectOwner(@RequestParam(value = "projOwnerId") Long projOwnerId, @RequestParam(value = "projOwnerToAddId") Long projOwnerToAddId, @RequestParam(value = "projectId") Long projectId) throws ProjectNotFoundException {
         return projectService.addProjectOwner(projOwnerId, projOwnerToAddId, projectId);
+    }
+    @RequestMapping(method = RequestMethod.PUT, value = "/removeProjectOwner")
+    public ProjectEntity removeProjectOwner(@RequestParam(value = "editorId")Long editorId,
+                                            @RequestParam(value = "projOwnerToRemoveId") Long projOwnerToRemoveId, 
+                                            @RequestParam(value = "projectId")Long projectId) throws UnableToRemoveProjectOwnerException, ProjectNotFoundException{
+        return projectService.removeProjectOwner(editorId, projOwnerToRemoveId, projectId);
     }
 
 }
