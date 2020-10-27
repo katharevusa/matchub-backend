@@ -147,6 +147,11 @@ public class AuthenticatedRestController {
         return userService.saveResource(accountId, resourceId);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/unsaveResource")
+    AccountEntity unsaveResource(@RequestParam(value = "accountId") Long accountId, @RequestParam(value = "resourceId") Long resourceId) throws ResourceNotFoundException {
+        return userService.unsaveResource(accountId, resourceId);
+    }
+
     @RequestMapping(method = RequestMethod.POST, value = "/updateIndividual/updateProfilePic/{uuid}")
     public AccountEntity updateIndividualFile(@RequestParam(value = "file") MultipartFile file, @PathVariable("uuid") UUID uuid) {
 //        return attachmentService.upload(file, directory);

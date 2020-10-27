@@ -650,4 +650,15 @@ public class ExceptionHandlingController {
 
     }
 
+    @ExceptionHandler(value = UnableToUnsaveResourceException.class)
+    public ResponseEntity<ExceptionResponse> unableToUnsaveResourceException(UnableToUnsaveResourceException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable To Unsave Resource.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+
+    }
+
 }
