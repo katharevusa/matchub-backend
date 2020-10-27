@@ -45,6 +45,8 @@ public interface UserService {
 
     ProfileEntity saveResource(Long resourceId, Long accountId) throws ResourceNotFoundException;
 
+    ProfileEntity unsaveResource(Long accountId, Long resourceId) throws ResourceNotFoundException;
+
 //    UserVO getAccount(Long id);
 //    UserVO getAccount(String username);
     AccountEntity getAccount(Long id);

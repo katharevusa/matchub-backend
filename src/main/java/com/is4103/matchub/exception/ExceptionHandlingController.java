@@ -614,7 +614,6 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-
     }
 
     @ExceptionHandler(value = UnableToSpotlightException.class)
@@ -625,7 +624,6 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-
     }
 
     @ExceptionHandler(value = DeleteCommentException.class)
@@ -647,7 +645,16 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 
+    @ExceptionHandler(value = UnableToUnsaveResourceException.class)
+    public ResponseEntity<ExceptionResponse> unableToUnsaveResourceException(UnableToUnsaveResourceException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable To Unsave Resource.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(value = LikePostException.class)
@@ -658,7 +665,6 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-
     }
 
     @ExceptionHandler(value = UnableToRemoveProjectOwnerException.class)
@@ -669,10 +675,9 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-
     }
-    
-     @ExceptionHandler(value = RepostException.class)
+
+    @ExceptionHandler(value = RepostException.class)
     public ResponseEntity<ExceptionResponse> repostException(RepostException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to repost.");
@@ -680,9 +685,6 @@ public class ExceptionHandlingController {
         response.setErrors(ValidationUtil.fromError(ex.getMessage()));
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
-
     }
-    
-    
 
 }
