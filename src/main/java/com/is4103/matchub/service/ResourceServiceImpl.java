@@ -132,50 +132,34 @@ public class ResourceServiceImpl implements ResourceService {
             resultFilterByCategories = resultFilterByAvailability;
         }
 
-        //filter by start date  
-        List<ResourceEntity> resultFilterByStartDate = new ArrayList();
-        if (!startTimeStr.equals("")) {
+        //filter by start date and end date  
+        List<ResourceEntity> resultFilterByDate = new ArrayList();
+        if (!startTimeStr.equals("")&& !endTimeStr.equals("")) {
             LocalDateTime startTime = LocalDateTime.parse(startTimeStr);
-            for (ResourceEntity r : resultFilterByCategories) {
-                if ((r.getStartTime().isAfter(startTime) || r.getStartTime().isEqual(startTime) || (r.getStartTime() == null))) {
-                    resultFilterByStartDate.add(r);
-                }
-
-            }
-
-        } else {
-            resultFilterByStartDate = resultFilterByCategories;
-        }
-
-        //filter by end date
-        List<ResourceEntity> resultFilterByEndDate = new ArrayList();
-        if (!endTimeStr.equals("")) {
             LocalDateTime endTime = LocalDateTime.parse(endTimeStr);
-            for (ResourceEntity r : resultFilterByStartDate) {
-                System.err.println("r.getEndTime(): " + r.getEndTime());
-                System.err.println("endTime" + endTime);
-                System.err.println("r.getEndTime().isEqual(endTime):" + r.getEndTime().isEqual(endTime));
-
-                if ((r.getEndTime().isBefore(endTime) || r.getEndTime().isEqual(endTime) || (r.getEndTime() == null))) {
-                    resultFilterByEndDate.add(r);
+            for (ResourceEntity r : resultFilterByCategories) {
+                if (!(r.getStartTime().isBefore(startTime)&& r.getEndTime().isBefore(startTime)) &&
+                     !(r.getStartTime().isAfter(endTime)&& r.getEndTime().isAfter(endTime))) {
+                    resultFilterByDate.add(r);
                 }
 
             }
 
         } else {
-            resultFilterByEndDate = resultFilterByStartDate;
+            resultFilterByDate = resultFilterByCategories;
         }
+        
 
         //filter by country
         List<ResourceEntity> resultFilterByCountry = new ArrayList();
         if (!country.equals("")) {
-            for (ResourceEntity r : resultFilterByEndDate) {
+            for (ResourceEntity r : resultFilterByDate) {
                 if (r.getCountry().equals(country)) {
                     resultFilterByCountry.add(r);
                 }
             }
         } else {
-            resultFilterByCountry = resultFilterByEndDate;
+            resultFilterByCountry = resultFilterByDate;
         }
 
         Long start = pageable.getOffset();

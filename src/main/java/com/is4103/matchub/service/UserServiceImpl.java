@@ -297,9 +297,9 @@ public class UserServiceImpl implements UserService {
 
             //update toFollowProfile followers
             toFollowProfile.getFollowers().add(accountId);
-            profile = profileEntityRepository.saveAndFlush(toFollowProfile);
+            toFollowProfile = profileEntityRepository.saveAndFlush(toFollowProfile);
 
-            // create announcement (notify profile follower)
+            // create announcement (notify toFollowProfile)
             String profileName = "";
             if (profile instanceof IndividualEntity) {
                 profileName = ((IndividualEntity) profile).getFirstName() + " " + ((IndividualEntity) profile).getLastName();
@@ -480,7 +480,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable) {
+    public Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable){
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 

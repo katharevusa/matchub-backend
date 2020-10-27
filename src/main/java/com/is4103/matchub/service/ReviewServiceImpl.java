@@ -5,11 +5,16 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.AnnouncementEntity;
+import com.is4103.matchub.entity.IndividualEntity;
+import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ReviewEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.UserNotFoundException;
+import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
@@ -35,6 +40,12 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Autowired
     private ProjectEntityRepository projectEntityRepository;
+    
+    @Autowired
+    private AnnouncementService announcementService;
+    
+    @Autowired
+    private AnnouncementEntityRepository announcementEntityRepository;
 
     @Override
     public Page<ReviewEntity> getReviewsReceivedByAccountId(Long id, Pageable pageable) {
@@ -80,9 +91,32 @@ public class ReviewServiceImpl implements ReviewService {
         reviewReceiver = profileEntityRepository.save(reviewReceiver);
 
         newReview = reviewEntityRepository.saveAndFlush(newReview);
+        
+        // get the name of the person giving reviews
+        String reviewerName = "";
+        if (reviewer instanceof IndividualEntity) {
+            reviewerName = ((IndividualEntity) reviewer).getFirstName() + " " + ((IndividualEntity) reviewer).getLastName();
+        } else if (reviewer instanceof OrganisationEntity) {
+            reviewerName = ((OrganisationEntity) reviewer).getOrganizationName();
+        }
+        
+        
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle("Check out your new review from "+reviewerName+"!");
+        announcementEntity.setContent(vo.getContent());
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.RECEIVING_NEW_REVIEW);
+        announcementEntity.setReviewId(newReview.getReviewId());
+        // association
+        announcementEntity.getNotifiedUsers().add(reviewReceiver);
+        reviewReceiver.getAnnouncements().add(announcementEntity);
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification
+        announcementService.createNormalNotification(announcementEntity);
 
         return newReview;
         
-        //********** create notifcation to send to reviewReceiver
+       
     }
 }
