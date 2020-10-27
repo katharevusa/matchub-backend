@@ -20,18 +20,25 @@ import org.springframework.data.domain.Pageable;
  */
 public interface MatchingService {
 
+    List<ResourceEntity> recommendSameCountryResources(Long projectId) throws ProjectNotFoundException;
+
     List<ResourceEntity> recommendResources(Long projectId) throws ProjectNotFoundException;
 
-    Page<ResourceEntity> recommendResourcesAsPageable(Long projectId, Pageable pageable) throws ProjectNotFoundException;
+    List<ProjectEntity> recommendSameCountryProjects(Long resourceId) throws ResourceNotFoundException;
 
     List<ProjectEntity> recommendProjects(Long resourceId) throws ResourceNotFoundException;
 
     Page<ProfileEntity> recommendProfiles(Long profileId, Pageable pageable);
 
-    Page<ProfileEntity> recommendIndividualProfiles(Long profileId, Pageable pageable);
+    Page<ResourceEntity> recommendSameCountryResourcesAsPageable(Long projectId, Pageable pageable) throws ProjectNotFoundException;
 
-    Page<ProfileEntity> recommendOrganisationProfiles(Long profileId, Pageable pageable);
+    Page<ResourceEntity> recommendResourcesAsPageable(Long projectId, Pageable pageable) throws ProjectNotFoundException;
+
+    Page<ProjectEntity> recommendSameCountryProjectsAsPageable(Long resourceId, Pageable pageable) throws ResourceNotFoundException;
 
     Page<ProjectEntity> recommendProjectsAsPageable(Long resourceId, Pageable pageable) throws ResourceNotFoundException;
 
+    Page<ProfileEntity> recommendIndividualProfiles(Long profileId, Pageable pageable);
+
+    Page<ProfileEntity> recommendOrganisationProfiles(Long profileId, Pageable pageable);
 }

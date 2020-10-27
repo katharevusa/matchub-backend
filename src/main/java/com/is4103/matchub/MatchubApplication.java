@@ -1,5 +1,6 @@
 package com.is4103.matchub;
 
+import com.is4103.matchub.helper.StanfordLemmatizer;
 import com.is4103.matchub.service.InitService;
 import java.io.File;
 import java.io.IOException;

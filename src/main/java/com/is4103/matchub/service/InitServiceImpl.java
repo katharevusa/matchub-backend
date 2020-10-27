@@ -550,7 +550,7 @@ public class InitServiceImpl implements InitService {
         resourceService.createResource(clothes, 7L, 9L);
 
         //9   
-        ResourceEntity dictionary = new ResourceEntity("Dictionary", "100 used english dictionaries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
+        ResourceEntity dictionary = new ResourceEntity("Giving Away Used English Language Dictionaries", "100 used english dictionaries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
         dictionary.setResourceProfilePic("https://localhost:8443/api/v1/files/init/dictionary.jpg");
         dictionary.getPhotos().add("https://localhost:8443/api/v1/files/init/dictionary.jpg");
         dictionary.setCountry("Cambodia");
@@ -571,70 +571,70 @@ public class InitServiceImpl implements InitService {
         resourceService.createResource(cereal, 1L, 7L);
 
         //12
-        ResourceEntity banana = new ResourceEntity("Banana", "Bananas", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 20);
-        banana.setResourceProfilePic("https://localhost:8443/api/v1/files/init/banana.jpg");
-        banana.getPhotos().add("https://localhost:8443/api/v1/files/init/banana.jpg");
-        banana.setCountry("Malawi");
-        resourceService.createResource(banana, 1L, 7L);
+        ResourceEntity apple = new ResourceEntity("Apples", "Apples", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 20);
+        apple.setResourceProfilePic("https://localhost:8443/api/v1/files/init/banana.jpg");
+        apple.getPhotos().add("https://localhost:8443/api/v1/files/init/banana.jpg");
+        apple.setCountry("Malawi");
+        resourceService.createResource(apple, 1L, 7L);
 
         //13
-        ResourceEntity bedframe = new ResourceEntity("Bedframe", "50 bedframes", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 50);
+        ResourceEntity bedframe = new ResourceEntity("Donating Sturdy Used Bedframes", "50 bedframes", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 50);
         bedframe.setResourceProfilePic("https://localhost:8443/api/v1/files/init/bedframe.jpg");
         bedframe.getPhotos().add("https://localhost:8443/api/v1/files/init/bedframe.jpg");
         bedframe.setCountry("Cambodia");
         resourceService.createResource(bedframe, 2L, 4L);
 
         //14
-        ResourceEntity door = new ResourceEntity("Door", "50 Wooden doors with doorknots", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 50);
+        ResourceEntity door = new ResourceEntity("Offering Marble Doors", "50 Marble doors with doorknots", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 50);
         door.setResourceProfilePic("https://localhost:8443/api/v1/files/init/door.jpg");
         door.getPhotos().add("https://localhost:8443/api/v1/files/init/door.jpg");
         door.setCountry("Cambodia");
         resourceService.createResource(door, 2L, 4L);
 
         //15
-        ResourceEntity detergent = new ResourceEntity("Detergent", "75 bottles of detergent (1kg per bottle) safe for use", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 75);
+        ResourceEntity detergent = new ResourceEntity("Giving away detergent", "75 bottles of detergent (1kg per bottle) safe for use", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 75);
         detergent.setResourceProfilePic("https://localhost:8443/api/v1/files/init/detergent.jpg");
         detergent.getPhotos().add("https://localhost:8443/api/v1/files/init/detergent.jpg");
         detergent.setCountry("Pakistan");
         resourceService.createResource(detergent, 3L, 6L);
 
         //16
-        ResourceEntity dustbin = new ResourceEntity("Dustbin", "60 new dustbins", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 60);
+        ResourceEntity dustbin = new ResourceEntity("Donating new dustbins", "60 new dustbins", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 60);
         dustbin.setResourceProfilePic("https://localhost:8443/api/v1/files/init/dustbin.jpg");
         dustbin.getPhotos().add("https://localhost:8443/api/v1/files/init/dustbin.jpg");
         dustbin.setCountry("Indonesia");
         resourceService.createResource(dustbin, 3L, 6L);
 
         //17
-        ResourceEntity torchlight = new ResourceEntity("Torchlight", "25 torchlight with batteries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 25);
+        ResourceEntity torchlight = new ResourceEntity("Giving away used torchlights", "25 torchlight with batteries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 25);
         torchlight.setResourceProfilePic("https://localhost:8443/api/v1/files/init/torchlight.jpg");
         torchlight.getPhotos().add("https://localhost:8443/api/v1/files/init/torchlight.jpg");
         torchlight.setCountry("Peru");
         resourceService.createResource(torchlight, 4L, 10L);
 
         //18
-        ResourceEntity pacifier = new ResourceEntity("Pacifier", "200 brand new pacifiers", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
+        ResourceEntity pacifier = new ResourceEntity("Donating new baby pacifier", "200 brand new pacifiers", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
         pacifier.setResourceProfilePic("https://localhost:8443/api/v1/files/init/pacifier.jpg");
         pacifier.getPhotos().add("https://localhost:8443/api/v1/files/init/pacifier.jpg");
         pacifier.setCountry("Indonesia");
         resourceService.createResource(pacifier, 4L, 5L);
 
         //19
-        ResourceEntity vege = new ResourceEntity("Vegetable", "10kg of fresh vegetables", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
+        ResourceEntity vege = new ResourceEntity("Offering fresh green vegetables", "10kg of fresh vegetables that are self harvested", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
         vege.setResourceProfilePic("https://localhost:8443/api/v1/files/init/vegetable.jpg");
         vege.getPhotos().add("https://localhost:8443/api/v1/files/init/vegetable.jpg");
         vege.setCountry("Kenya");
         resourceService.createResource(vege, 1L, 6L);
 
         //20
-        ResourceEntity glasses = new ResourceEntity("Glasses", "240 used glasses frame", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 240);
+        ResourceEntity glasses = new ResourceEntity("Donating Eyeglasses", "240 used glasses frame", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 240);
         glasses.setResourceProfilePic("https://localhost:8443/api/v1/files/init/glasses.jpg");
         glasses.getPhotos().add("https://localhost:8443/api/v1/files/init/glasses.jpg");
         glasses.setCountry("Australia");
         resourceService.createResource(glasses, 4L, 11L);
 
         //21
-        ResourceEntity toiletpaper = new ResourceEntity("Toilet Paper", "200kg of toilet paper", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
+        ResourceEntity toiletpaper = new ResourceEntity("Giving away toilet paper", "200kg of toilet paper", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
         toiletpaper.setResourceProfilePic("https://localhost:8443/api/v1/files/init/toiletpaper.jpg");
         toiletpaper.getPhotos().add("https://localhost:8443/api/v1/files/init/toiletpaper.jpg");
         toiletpaper.setCountry("Nepal");
@@ -680,8 +680,9 @@ public class InitServiceImpl implements InitService {
         //relatedResources
         List<String> relatedResources = new ArrayList<>();
         relatedResources.add("Phone");
-        relatedResources.add("Desktop");
         relatedResources.add("Tablet");
+        relatedResources.add("Device");
+        relatedResources.add("Computer");
         projectEntity1.setRelatedResources(relatedResources);
 
         projectEntity1.setProjStatus(ProjectStatusEnum.ACTIVE);
@@ -715,7 +716,7 @@ public class InitServiceImpl implements InitService {
 
         //relatedResources
         relatedResources = new ArrayList<>();
-        relatedResources.add("Food");
+        relatedResources.add("Fruits");
         projectEntity2.setRelatedResources(relatedResources);
 
         projectEntity2.setProjStatus(ProjectStatusEnum.ACTIVE);
@@ -899,7 +900,7 @@ public class InitServiceImpl implements InitService {
 
         //relatedResources
         relatedResources = new ArrayList<>();
-        relatedResources.add("Lamp");
+        relatedResources.add("Solar Lamp");
         projectEntity8.setRelatedResources(relatedResources);
 
         projectEntity8.setProjStatus(ProjectStatusEnum.ACTIVE);
