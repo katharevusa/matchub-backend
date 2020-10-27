@@ -20,8 +20,11 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
+import edu.cmu.lti.jawjaw.pobj.POS;
 import edu.cmu.lti.lexical_db.ILexicalDatabase;
 import edu.cmu.lti.lexical_db.NictWordNet;
+import edu.cmu.lti.lexical_db.data.Concept;
+import edu.cmu.lti.ws4j.Relatedness;
 import edu.cmu.lti.ws4j.RelatednessCalculator;
 import edu.cmu.lti.ws4j.impl.HirstStOnge;
 import edu.cmu.lti.ws4j.impl.JiangConrath;
@@ -86,13 +89,37 @@ public class MatchingServiceImpl implements MatchingService {
         WS4JConfiguration.getInstance().setMFS(true);
 
         long t0 = System.currentTimeMillis();
-        System.out.println("START WS4J ALGO ***************");
+        System.out.println("START WS4J ALGO ***************- " + word1 + " & " + word2);
 
         for (RelatednessCalculator rc : rcs) {
-            double s = rc.calcRelatednessOfWords(word1, word2);
-            System.out.println(rc.getClass().getName() + "\t" + s);
+            List<POS[]> posPairs = rc.getPOSPairs();
+            double maxScore = -1D;
+
+            for (POS[] posPair : posPairs) {
+                List<Concept> synsets1 = (List<Concept>) db.getAllConcepts(word1, posPair[0].toString());
+                List<Concept> synsets2 = (List<Concept>) db.getAllConcepts(word2, posPair[1].toString());
+
+                for (Concept synset1 : synsets1) {
+                    for (Concept synset2 : synsets2) {
+                        Relatedness relatedness = rc.calcRelatednessOfSynset(synset1, synset2);
+                        double score = relatedness.getScore();
+                        if (score > maxScore) {
+                            maxScore = score;
+                        }
+                    }
+                }
+            }
+
+            if (maxScore == -1D) {
+                maxScore = 0.0;
+            }
+            System.out.println(rc.getClass().getName() + "\t" + maxScore);
         }
 
+//        for (RelatednessCalculator rc : rcs) {
+//            double s = rc.calcRelatednessOfWords(word1, word2);
+//            System.out.println(rc.getClass().getName() + "\t" + s);
+//        }
         long t1 = System.currentTimeMillis();
         System.out.println("Done in " + (t1 - t0) + " msec.");
     }
@@ -104,13 +131,37 @@ public class MatchingServiceImpl implements MatchingService {
         long t0 = System.currentTimeMillis();
         System.out.println("START WUP Similarity ALGO *************** - " + word1 + " & " + word2);
 
-        double s = rcs[3].calcRelatednessOfWords(word1, word2);
-        System.out.println(rcs[3].getClass().getName() + "\t" + s);
+        List<POS[]> posPairs = rcs[3].getPOSPairs();
+        double maxScore = -1D;
 
+        for (POS[] posPair : posPairs) {
+            List<Concept> synsets1 = (List<Concept>) db.getAllConcepts(word1, posPair[0].toString());
+            List<Concept> synsets2 = (List<Concept>) db.getAllConcepts(word2, posPair[1].toString());
+
+            for (Concept synset1 : synsets1) {
+                for (Concept synset2 : synsets2) {
+                    Relatedness relatedness = rcs[3].calcRelatednessOfSynset(synset1, synset2);
+                    double score = relatedness.getScore();
+                    if (score > maxScore) {
+                        maxScore = score;
+                    }
+                }
+            }
+        }
+
+        if (maxScore == -1D) {
+            maxScore = 0.0;
+        }
+
+        System.out.println("sim('" + word1 + "', '" + word2 + "') =  " + maxScore);
+
+//        double s = rcs[3].calcRelatednessOfWords(word1, word2);
+//        System.out.println(rcs[3].getClass().getName() + "\t" + s);
         long t1 = System.currentTimeMillis();
         System.out.println("Done in " + (t1 - t0) + " msec.");
 
-        return s;
+//        return s;
+        return maxScore;
     }
 
     //using path
@@ -120,13 +171,37 @@ public class MatchingServiceImpl implements MatchingService {
         long t0 = System.currentTimeMillis();
         System.out.println("START PATH Similarity ALGO *************** - " + word1 + " & " + word2);
 
-        double s = rcs[7].calcRelatednessOfWords(word1, word2);
-        System.out.println(rcs[7].getClass().getName() + "\t" + s);
+        List<POS[]> posPairs = rcs[7].getPOSPairs();
+        double maxScore = -1D;
 
+        for (POS[] posPair : posPairs) {
+            List<Concept> synsets1 = (List<Concept>) db.getAllConcepts(word1, posPair[0].toString());
+            List<Concept> synsets2 = (List<Concept>) db.getAllConcepts(word2, posPair[1].toString());
+
+            for (Concept synset1 : synsets1) {
+                for (Concept synset2 : synsets2) {
+                    Relatedness relatedness = rcs[7].calcRelatednessOfSynset(synset1, synset2);
+                    double score = relatedness.getScore();
+                    if (score > maxScore) {
+                        maxScore = score;
+                    }
+                }
+            }
+        }
+
+        if (maxScore == -1D) {
+            maxScore = 0.0;
+        }
+
+        System.out.println("sim('" + word1 + "', '" + word2 + "') =  " + maxScore);
+
+//        double s = rcs[7].calcRelatednessOfWords(word1, word2);
+//        System.out.println(rcs[7].getClass().getName() + "\t" + s);
         long t1 = System.currentTimeMillis();
         System.out.println("Done in " + (t1 - t0) + " msec.");
 
-        return s;
+//        return s;
+        return maxScore;
     }
 
     //using res
@@ -136,13 +211,37 @@ public class MatchingServiceImpl implements MatchingService {
         long t0 = System.currentTimeMillis();
         System.out.println("START RES Similarity ALGO *************** - " + word1 + " & " + word2);
 
-        double s = rcs[4].calcRelatednessOfWords(word1, word2);
-        System.out.println(rcs[4].getClass().getName() + "\t" + s);
+        List<POS[]> posPairs = rcs[4].getPOSPairs();
+        double maxScore = -1D;
 
+        for (POS[] posPair : posPairs) {
+            List<Concept> synsets1 = (List<Concept>) db.getAllConcepts(word1, posPair[0].toString());
+            List<Concept> synsets2 = (List<Concept>) db.getAllConcepts(word2, posPair[1].toString());
+
+            for (Concept synset1 : synsets1) {
+                for (Concept synset2 : synsets2) {
+                    Relatedness relatedness = rcs[4].calcRelatednessOfSynset(synset1, synset2);
+                    double score = relatedness.getScore();
+                    if (score > maxScore) {
+                        maxScore = score;
+                    }
+                }
+            }
+        }
+
+        if (maxScore == -1D) {
+            maxScore = 0.0;
+        }
+
+        System.out.println("sim('" + word1 + "', '" + word2 + "') =  " + maxScore);
+
+//        double s = rcs[4].calcRelatednessOfWords(word1, word2);
+//        System.out.println(rcs[4].getClass().getName() + "\t" + s);
         long t1 = System.currentTimeMillis();
         System.out.println("Done in " + (t1 - t0) + " msec.");
 
-        return s;
+//        return s;
+        return maxScore;
     }
 
     private List<String> lemmatiseAndExtractNoun(String input) {
@@ -207,7 +306,7 @@ public class MatchingServiceImpl implements MatchingService {
                 pathscore /= resourceKeywords.size();
                 resscore /= resourceKeywords.size();
 
-                if (wupscore >= 0.3 && resscore >= 3 && pathscore >= 0.1) {
+                if (wupscore >= 0.65 && resscore >= 4 && pathscore >= 0.11) {
 
                     double score = wupscore + pathscore + resscore;
                     previousScore = Math.max(score, previousScore);
@@ -274,7 +373,7 @@ public class MatchingServiceImpl implements MatchingService {
                 pathscore /= resourceKeywords.size();
                 resscore /= resourceKeywords.size();
 
-                if (wupscore >= 0.3 && resscore >= 3 && pathscore >= 0.1) {
+                if (wupscore >= 0.65 && resscore >= 4 && pathscore >= 0.11) {
 
                     double score = wupscore + pathscore + resscore;
                     previousScore = Math.max(score, previousScore);
@@ -341,7 +440,7 @@ public class MatchingServiceImpl implements MatchingService {
                     pathscore /= resourceKeywords.size();
                     resscore /= resourceKeywords.size();
 
-                    if (wupscore >= 0.3 && resscore >= 3 && pathscore >= 0.1) {
+                    if (wupscore >= 0.65 && resscore >= 4 && pathscore >= 0.11) {
 
                         double score = wupscore + pathscore + resscore;
                         previousScore = Math.max(score, previousScore);
@@ -413,7 +512,7 @@ public class MatchingServiceImpl implements MatchingService {
                 pathscore /= resourceKeywords.size();
                 resscore /= resourceKeywords.size();
 
-                if (wupscore >= 0.3 && resscore >= 3 && pathscore >= 0.1) {
+                if (wupscore >= 0.65 && resscore >= 4 && pathscore >= 0.11) {
 
                     double score = wupscore + pathscore + resscore;
                     previousScore = Math.max(score, previousScore);
