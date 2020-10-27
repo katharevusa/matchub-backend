@@ -117,27 +117,79 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "sdg.sdgId IN :sdgIds")
     Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("country") String country, @Param("sdgIds") Long[] sdgIds, Pageable pageable);
 
-    @Query(value = "SELECT pe FROM ProfileEntity pe "
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe "
             + "WHERE pe.accountId <> ?1 AND "
             + "pe.accountId NOT IN ?2 AND "
             + "pe.country = ?3",
-            countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe "
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe "
             + "WHERE pe.accountId <> ?1 AND "
             + "pe.accountId NOT IN ?2 AND "
             + "pe.country = ?3")
     Page<ProfileEntity> recommendProfiles(Long id, Set<Long> followingIds, String country, Pageable pageable);
 
-    @Query(value = "SELECT pe FROM ProfileEntity pe JOIN pe.projectsFollowing project "
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe JOIN pe.projectsFollowing project "
             + "WHERE pe.accountId <> ?1 "
             + "AND pe.accountId NOT IN ?2 "
             + "AND (pe.country = ?3 OR "
             + "project IN ?4)",
-            countQuery = "SELECT COUNT(pe) FROM ProfileEntity pe JOIN pe.projectsJoined project "
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe JOIN pe.projectsJoined project "
             + "WHERE pe.accountId <> ?1 "
             + "AND pe.accountId NOT IN ?2 "
             + "AND (pe.country = ?3 OR "
             + "project IN ?4)")
     Page<ProfileEntity> recommendProfiles(Long id, Set<Long> followingIds, String country, List<ProjectEntity> projs, Pageable pageable);
+
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe "
+            + "WHERE pe.accountId <> ?1 AND "
+            + "pe.accountId NOT IN ?2 AND "
+            + "pe.country = ?3 AND "
+            + "pe.firstName IS NOT NULL",
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe "
+            + "WHERE pe.accountId <> ?1 AND "
+            + "pe.accountId NOT IN ?2 AND "
+            + "pe.country = ?3 AND "
+            + "pe.firstName IS NOT NULL")
+    Page<ProfileEntity> recommendIndividualProfiles(Long id, Set<Long> followingIds, String country, Pageable pageable);
+
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe JOIN pe.projectsFollowing project "
+            + "WHERE pe.accountId <> ?1 "
+            + "AND pe.accountId NOT IN ?2 "
+            + "AND (pe.country = ?3 OR "
+            + "project IN ?4) AND "
+            + "pe.firstName IS NOT NULL",
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe JOIN pe.projectsJoined project "
+            + "WHERE pe.accountId <> ?1 "
+            + "AND pe.accountId NOT IN ?2 "
+            + "AND (pe.country = ?3 OR "
+            + "project IN ?4) AND "
+            + "pe.firstName IS NOT NULL")
+    Page<ProfileEntity> recommendIndividualProfiles(Long id, Set<Long> followingIds, String country, List<ProjectEntity> projs, Pageable pageable);
+    
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe "
+            + "WHERE pe.accountId <> ?1 AND "
+            + "pe.accountId NOT IN ?2 AND "
+            + "pe.country = ?3 AND "
+            + "pe.organizationName IS NOT NULL",
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe "
+            + "WHERE pe.accountId <> ?1 AND "
+            + "pe.accountId NOT IN ?2 AND "
+            + "pe.country = ?3 AND "
+            + "pe.organizationName IS NOT NULL")
+    Page<ProfileEntity> recommendOrganisationProfiles(Long id, Set<Long> followingIds, String country, Pageable pageable);
+
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe JOIN pe.projectsFollowing project "
+            + "WHERE pe.accountId <> ?1 "
+            + "AND pe.accountId NOT IN ?2 "
+            + "AND (pe.country = ?3 OR "
+            + "project IN ?4) AND "
+            + "pe.organizationName IS NOT NULL",
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe JOIN pe.projectsJoined project "
+            + "WHERE pe.accountId <> ?1 "
+            + "AND pe.accountId NOT IN ?2 "
+            + "AND (pe.country = ?3 OR "
+            + "project IN ?4) AND "
+            + "pe.organizationName IS NOT NULL")
+    Page<ProfileEntity> recommendOrganisationProfiles(Long id, Set<Long> followingIds, String country, List<ProjectEntity> projs, Pageable pageable);
     //dont know why this doesnt work 
 //    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe JOIN pe.sdgs sdg "
 //            + "WHERE (pe.email LIKE %:search% OR "

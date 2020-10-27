@@ -65,9 +65,19 @@ public class MatchingController {
     public Page<ProjectEntity> recommendPageableOfProjects(@PathVariable("resourceId") Long resourceId, Pageable pageable) throws ResourceNotFoundException {
         return matchingService.recommendProjectsAsPageable(resourceId, pageable);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/recommendProfiles/{accountId}")
     public Page<ProfileEntity> recommendProfiles(@PathVariable("accountId") Long accountId, Pageable pageable) {
         return matchingService.recommendProfiles(accountId, pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendIndividualProfiles/{accountId}")
+    public Page<ProfileEntity> recommendIndividualProfiles(@PathVariable("accountId") Long accountId, Pageable pageable) {
+        return matchingService.recommendIndividualProfiles(accountId, pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendOrganisationProfiles/{accountId}")
+    public Page<ProfileEntity> recommendOrganisationProfiles(@PathVariable("accountId") Long accountId, Pageable pageable) {
+        return matchingService.recommendOrganisationProfiles(accountId, pageable);
     }
 }

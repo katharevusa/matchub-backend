@@ -28,6 +28,10 @@ public interface MatchingService {
 
     Page<ProfileEntity> recommendProfiles(Long profileId, Pageable pageable);
 
+    Page<ProfileEntity> recommendIndividualProfiles(Long profileId, Pageable pageable);
+
+    Page<ProfileEntity> recommendOrganisationProfiles(Long profileId, Pageable pageable);
+
     Page<ProjectEntity> recommendProjectsAsPageable(Long resourceId, Pageable pageable) throws ResourceNotFoundException;
 
 }

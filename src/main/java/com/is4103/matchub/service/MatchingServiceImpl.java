@@ -362,6 +362,48 @@ public class MatchingServiceImpl implements MatchingService {
     }
 
     @Override
+    public Page<ProfileEntity> recommendIndividualProfiles(Long accountId, Pageable pageable) {
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        Page<ProfileEntity> recommendations;
+
+        String country = profile.getCountry();
+        Set<Long> followingIds = profile.getFollowing();
+        List<ProjectEntity> projectsFollowing = profile.getProjectsFollowing();
+
+        if (projectsFollowing.isEmpty()) {
+            recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), followingIds, country, pageable);
+        } else {
+            //get profiles with same country + same project that profile is following 
+            recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
+        }
+
+        return recommendations;
+    }
+
+    @Override
+    public Page<ProfileEntity> recommendOrganisationProfiles(Long accountId, Pageable pageable) {
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        Page<ProfileEntity> recommendations;
+
+        String country = profile.getCountry();
+        Set<Long> followingIds = profile.getFollowing();
+        List<ProjectEntity> projectsFollowing = profile.getProjectsFollowing();
+
+        if (projectsFollowing.isEmpty()) {
+            recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), followingIds, country, pageable);
+        } else {
+            //get profiles with same country + same project that profile is following 
+            recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
+        }
+
+        return recommendations;
+    }
+
+    @Override
     public Page<ResourceEntity> recommendResourcesAsPageable(Long projectId, Pageable pageable) throws ProjectNotFoundException {
         List<ResourceEntity> resultsList = this.recommendResources(projectId);
 
