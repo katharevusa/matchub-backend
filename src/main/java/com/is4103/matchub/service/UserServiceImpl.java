@@ -408,6 +408,11 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    @Override
+    public ProfileEntity unsaveResource(Long accountId, Long resourceId) throws ResourceNotFoundException {
+
+    }
+
 //    @Override
 //    public UserVO getAccount(Long accountId) {
 //        AccountEntity account = accountEntityRepository.findById(accountId)
