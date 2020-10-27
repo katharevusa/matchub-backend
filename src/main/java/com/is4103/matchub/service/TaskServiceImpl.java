@@ -9,6 +9,7 @@ import com.is4103.matchub.entity.AnnouncementEntity;
 import com.is4103.matchub.entity.CommentEntity;
 import com.is4103.matchub.entity.KanbanBoardEntity;
 import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.entity.TaskEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
@@ -20,6 +21,7 @@ import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.CommentEntityRepository;
 import com.is4103.matchub.repository.KanbanBoardEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
+import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.TaskColumnEntityRepository;
 import com.is4103.matchub.repository.TaskEntityRepository;
 import com.is4103.matchub.vo.ChannelDetailsVO;
@@ -72,6 +74,8 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private AnnouncementEntityRepository announcementEntityRepository;
 
+    @Autowired
+    private ProjectEntityRepository projectEntityRepository;
 //Create Channel Tasks
     @Override
     @Transactional
@@ -79,6 +83,7 @@ public class TaskServiceImpl implements TaskService {
 
         //check if creator is channel admin
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(vo.getKanbanboardId()).get();
+        ProjectEntity project = projectEntityRepository.findById(kanbanBoardEntity.getProjectId()).get();
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
         if (!channelDetails.getAdminIds().contains(vo.getTaskCreatorOrEditorId())) {
             throw new CreateTaskException("Only channel admin can create task");
@@ -101,7 +106,8 @@ public class TaskServiceImpl implements TaskService {
         if (task.getTaskLeaderId() != null) {
             ProfileEntity taskLeader = profileEntityRepository.findById(task.getTaskLeaderId()).get();
             AnnouncementEntity announcementEntity = new AnnouncementEntity();
-            announcementEntity.setTitle("You have been assigned to be a leader of one task");
+            announcementEntity.setTitle("You have been assigned to be a leader of one task :'"+ task.getTaskTitle()+"'.");
+            announcementEntity.setContent("From project: '"+project.getProjectTitle()+"'.");
             announcementEntity.setTimestamp(LocalDateTime.now());
             announcementEntity.setType(AnnouncementTypeEnum.TASK_LEADER_APPOINTMENT);
             announcementEntity.setTaskId(task.getTaskId());
@@ -164,6 +170,7 @@ public class TaskServiceImpl implements TaskService {
 
 //     //    only channel admin can update task doers
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
+        ProjectEntity project = projectEntityRepository.findById(kanbanBoardEntity.getProjectId()).get();
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
         if (!channelDetails.getAdminIds().contains(updatorId)) {
             throw new UpdateTaskException("Only channel admins can update task");
@@ -191,7 +198,8 @@ public class TaskServiceImpl implements TaskService {
         if (!task.getTaskdoers().isEmpty()) {
             // notify task doers  
             AnnouncementEntity announcementEntity = new AnnouncementEntity();
-            announcementEntity.setTitle("A new task has been assigned to you.");
+            announcementEntity.setTitle("A new task has been assigned to you: '"+task.getTaskTitle()+"'. ");
+            announcementEntity.setContent("From project: '"+project.getProjectTitle()+"'.");
             announcementEntity.setTimestamp(LocalDateTime.now());
             announcementEntity.setType(AnnouncementTypeEnum.TASK_ASSIGNED);
             announcementEntity.setTaskId(task.getTaskId());
