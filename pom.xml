@@ -114,6 +114,7 @@
             <artifactId>stanford-corenlp</artifactId>
             <version>4.0.0</version>
         </dependency>
+       
         <dependency>
             <groupId>edu.stanford.nlp</groupId>
             <artifactId>stanford-corenlp</artifactId>
@@ -127,8 +128,6 @@
             <artifactId>protobuf-java</artifactId>
             <version>3.13.0</version>
         </dependency>
-          
-        
         
     </dependencies>
 
