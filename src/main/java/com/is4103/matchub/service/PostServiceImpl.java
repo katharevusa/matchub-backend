@@ -16,6 +16,7 @@ import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.DeleteCommentException;
 import com.is4103.matchub.exception.LikePostException;
 import com.is4103.matchub.exception.PostNotFoundException;
+import com.is4103.matchub.exception.RepostException;
 import com.is4103.matchub.exception.UnableToDeletePostException;
 import com.is4103.matchub.exception.UpdatePostException;
 import com.is4103.matchub.exception.UserNotFoundException;
@@ -31,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -62,8 +64,6 @@ public class PostServiceImpl implements PostService {
 
     @Autowired
     private CommentEntityRepository commentEntityRepository;
-    
-    
 
     @Transactional
     @Override
@@ -78,6 +78,8 @@ public class PostServiceImpl implements PostService {
 
         vo.updatePost(newPost);
 
+        newPost = postEntityRepository.saveAndFlush(newPost);
+        newPost.setOriginalPostId(newPost.getPostId());
         newPost = postEntityRepository.saveAndFlush(newPost);
         //set associations
         profile.getPosts().add(newPost);
@@ -233,7 +235,7 @@ public class PostServiceImpl implements PostService {
         newComment = commentEntityRepository.saveAndFlush(newComment);
         post.getListOfComments().add(newComment);
         post = postEntityRepository.saveAndFlush(post);
-        
+
         ProfileEntity commenter = profileEntityRepository.findById(newComment.getAccountId()).get();
         String commenterName = "";
         if (commenter instanceof IndividualEntity) {
@@ -241,10 +243,9 @@ public class PostServiceImpl implements PostService {
         } else if (commenter instanceof OrganisationEntity) {
             commenterName = ((OrganisationEntity) commenter).getOrganizationName();
         }
-        
-        
+
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle("Check out a new comment from "+commenterName+" for your post!");
+        announcementEntity.setTitle("Check out a new comment from " + commenterName + " for your post!");
         announcementEntity.setContent(post.getContent());
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.NEW_POST_COMMENT);
@@ -257,7 +258,7 @@ public class PostServiceImpl implements PostService {
         // create notification
         announcementService.createNormalNotification(announcementEntity);
         return post;
-        
+
     }
 
     @Override
@@ -284,7 +285,7 @@ public class PostServiceImpl implements PostService {
         post.setLikes(oldLikes++);
         post.getLikedUsersId().add(likerId);
         post = postEntityRepository.saveAndFlush(post);
-        
+
         // announcements
         ProfileEntity liker = profileEntityRepository.findById(likerId).get();
         String likerName = "";
@@ -293,10 +294,9 @@ public class PostServiceImpl implements PostService {
         } else if (liker instanceof OrganisationEntity) {
             likerName = ((OrganisationEntity) liker).getOrganizationName();
         }
-        
-        
+
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle("A new like from "+likerName+" for your post!");
+        announcementEntity.setTitle("A new like from " + likerName + " for your post!");
         announcementEntity.setContent(post.getContent());
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.NEW_POST_LIKE);
@@ -354,63 +354,123 @@ public class PostServiceImpl implements PostService {
                 return o1.getTimeCreated().compareTo(o2.getTimeCreated());
             }
         });
-        
+
         return posts;
     }
-    
+
     @Override
-    public List<AnnouncementEntity> getFollowingProjectAnnouncements(Long userId){
+    public List<AnnouncementEntity> getFollowingProjectAnnouncements(Long userId) {
         ProfileEntity user = profileEntityRepository.findById(userId).get();
         List<ProjectEntity> listOfFollowingProjects = user.getProjectsFollowing();
         List<AnnouncementEntity> announcements = new ArrayList<>();
-        for(ProjectEntity p : listOfFollowingProjects){
-           announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
+        for (ProjectEntity p : listOfFollowingProjects) {
+            announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
         }
-        
+
         Collections.sort(announcements, new Comparator<AnnouncementEntity>() {
             public int compare(AnnouncementEntity o1, AnnouncementEntity o2) {
                 return o1.getTimestamp().compareTo(o2.getTimestamp());
             }
         });
-        
-        return announcements;  
+
+        return announcements;
     }
-    
+
     @Override
-    public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId){
+    public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId) {
         ProfileEntity user = profileEntityRepository.findById(userId).get();
         List<ProjectEntity> listOfFollowingProjects = user.getProjectsOwned();
         List<AnnouncementEntity> announcements = new ArrayList<>();
-        for(ProjectEntity p : listOfFollowingProjects){
-           announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
+        for (ProjectEntity p : listOfFollowingProjects) {
+            announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
         }
-        
+
         Collections.sort(announcements, new Comparator<AnnouncementEntity>() {
             public int compare(AnnouncementEntity o1, AnnouncementEntity o2) {
                 return o1.getTimestamp().compareTo(o2.getTimestamp());
             }
         });
-        
-        return announcements;  
+
+        return announcements;
     }
-    
+
     @Override
-    public List<AnnouncementEntity> getJoinedProjectAnnouncements(Long userId){
+    public List<AnnouncementEntity> getJoinedProjectAnnouncements(Long userId) {
         ProfileEntity user = profileEntityRepository.findById(userId).get();
         List<ProjectEntity> listOfFollowingProjects = user.getProjectsJoined();
         List<AnnouncementEntity> announcements = new ArrayList<>();
-        for(ProjectEntity p : listOfFollowingProjects){
-           announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
+        for (ProjectEntity p : listOfFollowingProjects) {
+            announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
         }
-        
+
         Collections.sort(announcements, new Comparator<AnnouncementEntity>() {
             public int compare(AnnouncementEntity o1, AnnouncementEntity o2) {
                 return o1.getTimestamp().compareTo(o2.getTimestamp());
             }
         });
-        
-        return announcements;  
+
+        return announcements;
     }
+
+    @Override
+    public PostEntity repost(Long previousPostId, PostVO vo)throws RepostException{
+        ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
+                .orElseThrow(() -> new UserNotFoundException(vo.getPostCreatorId()));
+
+        
+        Optional<PostEntity> previousPostOpt = postEntityRepository.findById(previousPostId);
+        // if previouus post is deleted, then cannot repost
+        if(!previousPostOpt.isPresent()){
+            throw new RepostException("Sorry the previous post is deleted, cannot repost");
+        }
+        PostEntity previousPost = previousPostOpt.get();
+        
+        Optional<PostEntity> originalPostOpt = postEntityRepository.findById(previousPost.getOriginalPostId());
+        // if original post is deleted, then cannot repost
+        if(!originalPostOpt.isPresent()){
+            throw new RepostException("Sorry the original post is deleted, cannot repost");
+        }
+         
+        PostEntity newPost = new PostEntity();
+        newPost.setTimeCreated(LocalDateTime.now());
+        newPost.setPostCreator(profile);
+        newPost.setOriginalPostId(previousPost.getOriginalPostId());
+        newPost.setPreviousPostId(previousPostId);
+
+        vo.updatePost(newPost);
+        newPost = postEntityRepository.saveAndFlush(newPost);
+        //set associations
+        profile.getPosts().add(newPost);
+        profileEntityRepository.flush();
+
+        // notify previous post creator
+        
+        String reposterName = "";
+        if (profile instanceof IndividualEntity) {
+            reposterName = ((IndividualEntity) profile).getFirstName() + " " + ((IndividualEntity) profile).getLastName();
+        } else if (profile instanceof OrganisationEntity) {
+            reposterName = ((OrganisationEntity) profile).getOrganizationName();
+        }
+
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle(reposterName+" reposted your post : "+previousPost.getContent());
+        announcementEntity.setContent(newPost.getContent());
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.SHARE_POST);
+        announcementEntity.setPostId(newPost.getPostId());
+        // association
+        announcementEntity.getNotifiedUsers().add(previousPost.getPostCreator());
+        previousPost.getPostCreator().getAnnouncements().add(announcementEntity);
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification
+        announcementService.createNormalNotification(announcementEntity);
+        
+        
+        
+        return newPost;
+    }
+
+
    
-    // repost
 }

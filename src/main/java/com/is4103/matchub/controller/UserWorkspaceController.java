@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.DeleteCommentException;
 import com.is4103.matchub.exception.LikePostException;
+import com.is4103.matchub.exception.RepostException;
 import com.is4103.matchub.vo.PostVO;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,5 +121,10 @@ public class UserWorkspaceController {
     @RequestMapping(method = RequestMethod.GET, value = "/getJoinedProjectAnnouncements")
     public List<AnnouncementEntity> getJoinedProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
         return postService.getJoinedProjectAnnouncements(userId);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/repost")
+    public PostEntity repost(@RequestParam(value = "userId", required = true)Long previousPostId,@Valid @RequestBody PostVO vo)throws RepostException{
+        return postService.repost(previousPostId, vo);
     }
 }

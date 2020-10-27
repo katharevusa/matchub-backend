@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.DeleteCommentException;
 import com.is4103.matchub.exception.LikePostException;
+import com.is4103.matchub.exception.RepostException;
 import com.is4103.matchub.vo.CommentVO;
 import com.is4103.matchub.vo.PostVO;
 import java.io.IOException;
@@ -55,4 +56,6 @@ public interface PostService {
     public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId);
     
     public List<AnnouncementEntity> getJoinedProjectAnnouncements(Long userId);
+    
+    public PostEntity repost(Long previousPostId, PostVO vo)throws RepostException;
 }
