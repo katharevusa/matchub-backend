@@ -413,7 +413,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostEntity repost(Long previousPostId, PostVO vo)throws RepostException{
+    public PostEntity repost(Long previousPostId, PostVO vo)throws RepostException, UserNotFoundException{
         ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
                 .orElseThrow(() -> new UserNotFoundException(vo.getPostCreatorId()));
 
