@@ -17,6 +17,7 @@ import com.is4103.matchub.exception.CreateTaskException;
 import com.is4103.matchub.exception.DeleteTaskException;
 import com.is4103.matchub.exception.RearrangeTaskException;
 import com.is4103.matchub.exception.UpdateTaskException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.CommentEntityRepository;
 import com.is4103.matchub.repository.KanbanBoardEntityRepository;
@@ -111,6 +112,7 @@ public class TaskServiceImpl implements TaskService {
             announcementEntity.setTimestamp(LocalDateTime.now());
             announcementEntity.setType(AnnouncementTypeEnum.TASK_LEADER_APPOINTMENT);
             announcementEntity.setTaskId(task.getTaskId());
+            announcementEntity.setProjectId(kanbanBoardEntity.getProjectId());
             // association
             announcementEntity.getNotifiedUsers().add(taskLeader);
             taskLeader.getAnnouncements().add(announcementEntity);
@@ -203,6 +205,7 @@ public class TaskServiceImpl implements TaskService {
             announcementEntity.setTimestamp(LocalDateTime.now());
             announcementEntity.setType(AnnouncementTypeEnum.TASK_ASSIGNED);
             announcementEntity.setTaskId(task.getTaskId());
+            announcementEntity.setProjectId(kanbanBoardEntity.getProjectId());
             // association
             announcementEntity.getNotifiedUsers().addAll(task.getTaskdoers());
             for (ProfileEntity p : task.getTaskdoers()) {
@@ -276,11 +279,11 @@ public class TaskServiceImpl implements TaskService {
     @Override //Move task around
     public KanbanBoardEntity rearrangeTasks(RearrangeTaskVO vo) throws RearrangeTaskException {
         // incomplete check : only channel admins and task leader can move the task around
-        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(vo.getKanbanBoardId()).get();
-        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
-        if (!channelDetails.getAdminIds().contains(vo.getArrangerId())) {
-            throw new RearrangeTaskException("Only channel admin can delete task");
-        }
+//        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(vo.getKanbanBoardId()).get();
+//        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
+//        if (!channelDetails.getAdminIds().contains(vo.getArrangerId()) ) {
+//            throw new RearrangeTaskException("Only channel admin can delete task");
+//        }
         Map<Long, List<Long>> columnIdAndTaskIdSequence = vo.getColumnIdAndTaskIdSequence();
         Long kanbanboardId = vo.getKanbanBoardId();
         Long arrangerId = vo.getArrangerId();
@@ -403,6 +406,43 @@ public class TaskServiceImpl implements TaskService {
         taskColumnEntityRepository.flush();
         return taskEntityRepository.saveAndFlush(task);
 
+    }
+    // 1.getNoUnfinishedTasksByChannel(kanbanboardId) 
+    // 2.getNoUnfinishedTasksByUser(userId, kanbanBoardId)
+
+    @Override
+    public List<TaskEntity> getUnfinishedTasksByChannel(Long kanbanboardId){
+        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).get();
+        List<TaskEntity> unFinishedTasks = new ArrayList<>();
+        for(TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()){
+            if(tc.isDone()){
+                unFinishedTasks.addAll(tc.getListOfTasks());
+                break;
+            }
+        }
+        return unFinishedTasks;
+    
+        
+    }
+    
+    @Override
+    public List<TaskEntity> getUnfinishedTasksByUserId(Long kanbanboardId, Long userId){
+        ProfileEntity user = profileEntityRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).get();
+        List<TaskEntity> unFinishedTasks = new ArrayList<>();
+        for(TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()){
+            if(tc.isDone()){
+                for(TaskEntity t : tc.getListOfTasks()){
+                    if(t.getTaskdoers().contains(user)){
+                        unFinishedTasks.add(t);
+                    }
+                }
+               break;
+            }
+        }
+        return unFinishedTasks;
+        
     }
 
 }
