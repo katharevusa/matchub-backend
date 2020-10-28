@@ -265,4 +265,15 @@ public class KanbanBoardController {
             @RequestParam(value = "newColumnId", required = true) Long newColumnId) {
         return taskService.updateTaskStatus(taskId, oldColumnId, newColumnId);
     }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByUserId")
+    public List<TaskEntity> getUnfinishedTasksByUserId(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId,
+                                                       @RequestParam(value = "userId", required = true) Long userId){
+        return taskService.getUnfinishedTasksByUserId(kanbanboardId, userId);
+    }
+     
+    @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByChannel")
+     public List<TaskEntity> getUnfinishedTasksByChannel(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId){
+         return taskService.getUnfinishedTasksByChannel(kanbanboardId);
+     }
 }
