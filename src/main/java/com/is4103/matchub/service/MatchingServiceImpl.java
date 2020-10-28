@@ -244,6 +244,68 @@ public class MatchingServiceImpl implements MatchingService {
         return maxScore;
     }
 
+    //************ calculates socre for wup, res, oath for the same word sense pair and returns the highest score 
+    public static double calculateSimilarity(String word1, String word2) {
+
+        WS4JConfiguration.getInstance().setMFS(true);
+
+        long t0 = System.currentTimeMillis();
+//        System.out.println("START WS4J ALGO ***************");
+        List<POS[]> posPairs = rcs[3].getPOSPairs();
+
+//        System.out.println("CHECK HERE*****");
+//        List<POS[]> posPairs3 = rcs[3].getPOSPairs();
+//        System.out.println("PosPair3 length: " + posPairs3.size());
+//        List<POS[]> posPairs4 = rcs[4].getPOSPairs();
+//        System.out.println("PosPair4 length: " + posPairs4.size());
+//        List<POS[]> posPairs7 = rcs[7].getPOSPairs();
+//        System.out.println("PosPair7 length: " + posPairs7.size());
+        double maxScore = -1D;
+
+        for (POS[] posPair : posPairs) {
+            List<Concept> synsets1 = (List<Concept>) db.getAllConcepts(word1, posPair[0].toString());
+            List<Concept> synsets2 = (List<Concept>) db.getAllConcepts(word2, posPair[1].toString());
+
+            for (int i = 1; i <= synsets1.size(); i++) {
+                for (int j = 1; j <= synsets2.size(); j++) {
+
+                    // wup score for this synset1 of word1 to synset2 of word2
+                    double wupScore = rcs[3].calcRelatednessOfSynset(synsets1.get(i - 1), synsets2.get(j - 1)).getScore();
+
+                    // resnik score for this synset1 of word1 to synset2 of word2
+                    double resnikScore = rcs[4].calcRelatednessOfSynset(synsets1.get(i - 1), synsets2.get(j - 1)).getScore();
+
+                    // path score for this synset1 of word1 to synset2 of word2
+                    double pathScore = rcs[7].calcRelatednessOfSynset(synsets1.get(i - 1), synsets2.get(j - 1)).getScore();
+
+//                    System.out.println("\n" + rcs[3].getClass().getName() + ": " + word1 + "#" + i + " and " + word2 + "#" + j + ": " + wupScore);
+//                    System.out.println(rcs[4].getClass().getName() + ": " + word1 + "#" + i + " and " + word2 + "#" + j + ": " + resnikScore);
+//                    System.out.println(rcs[7].getClass().getName() + ": " + word1 + "#" + i + " and " + word2 + "#" + j + ": " + pathScore);
+                    if (wupScore >= 0.6 && resnikScore >= 4 && pathScore >= (double) 1 / 9) {
+
+                        System.out.println("\n *** Passed threshold check ***");
+                        double score = wupScore + resnikScore + pathScore;
+
+                        maxScore = Math.max(maxScore, score);
+
+                        System.out.println(rcs[3].getClass().getName() + ": " + word1 + "#" + i + " and " + word2 + "#" + j + ": " + wupScore);
+                        System.out.println(rcs[4].getClass().getName() + ": " + word1 + "#" + i + " and " + word2 + "#" + j + ": " + resnikScore);
+                        System.out.println(rcs[7].getClass().getName() + ": " + word1 + "#" + i + " and " + word2 + "#" + j + ": " + pathScore);
+                        System.out.println("*** current score from calculate for " + word1 + "#" + i + " and " + word2 + "#" + j + " is: " + score + " ***");
+                        System.out.println("*** current max score is: " + maxScore + " ***");
+                    }
+
+                }
+            }
+        }
+
+        if (maxScore == -1D) {
+            maxScore = 0.0;
+        }
+
+        return maxScore;
+    }
+
     private List<String> lemmatiseAndExtractNoun(String input) {
 
         //lemmatise the input 
@@ -280,6 +342,12 @@ public class MatchingServiceImpl implements MatchingService {
         List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResourcesInCountry(project.getCountry());
         System.out.println("total avail resources in country " + project.getCountry() + ": " + availableResources.size());
 
+        if (availableResources.size() == 0) {
+            //return an empty recommendation
+            System.out.println("No Resource in the same country");
+            return new ArrayList<ResourceEntity>();
+        }
+
         Boolean matched = false;
 
         for (int x = 0; x < availableResources.size() && !matched; x++) {
@@ -292,28 +360,20 @@ public class MatchingServiceImpl implements MatchingService {
             double previousScore = 0.0;
             //run ws4j algo for each resource keyword to each project keyword 
             for (int i = 0; i < projectKeywords.size(); i++) {
-                double wupscore = 0.0;
-                double pathscore = 0.0;
-                double resscore = 0.0;
                 for (int j = 0; j < resourceKeywords.size(); j++) {
 
-                    wupscore += MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    pathscore += MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    resscore += MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    // getting best synset score for word1 and word2. as a depiction, dog#1 and animal#2 
+                    // will give the highest score we are interested in.
+                    double scoreFromCalculate = calculateSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
+                    // this gives the highest score for word1 and word2 comparison and the highest synset1 and synset2 comparison.
+                    // meaning if dog and animal runs, maybe dog#1 and animal#2 will give the highest. then we store it here since 
+                    // these 2 could gave the highest so far. but there could be other keywords which are even better, so we keep
+                    // checking all and always replace this to see which words of the keywords array will give the best score and best synset comparison.
+                    previousScore = Math.max(previousScore, scoreFromCalculate);
                 }
-                wupscore /= resourceKeywords.size();
-                pathscore /= resourceKeywords.size();
-                resscore /= resourceKeywords.size();
-
-                if (wupscore >= 0.65 && resscore >= 4 && pathscore >= 0.11) {
-
-                    double score = wupscore + pathscore + resscore;
-                    previousScore = Math.max(score, previousScore);
-
-                }
-
             }
+
             if (previousScore > 0) {
                 recommendations.add(new MatchingScore(previousScore, resource));
                 System.out.println("Added: " + resource.getResourceName());
@@ -342,7 +402,7 @@ public class MatchingServiceImpl implements MatchingService {
         //lemmatise and extract noun of project keywords 
         projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
 
-        //find the list of available resources in the same country 
+        //find the list of available resources 
         List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResources();
         System.out.println("total avail resources: " + availableResources.size());
 
@@ -359,28 +419,20 @@ public class MatchingServiceImpl implements MatchingService {
             double previousScore = 0.0;
             //run ws4j algo for each resource keyword to each project keyword 
             for (int i = 0; i < projectKeywords.size(); i++) {
-                double wupscore = 0.0;
-                double pathscore = 0.0;
-                double resscore = 0.0;
                 for (int j = 0; j < resourceKeywords.size(); j++) {
 
-                    wupscore += MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    pathscore += MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    resscore += MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    // getting best synset score for word1 and word2. as a depiction, dog#1 and animal#2 
+                    // will give the highest score we are interested in.
+                    double scoreFromCalculate = calculateSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
+                    // this gives the highest score for word1 and word2 comparison and the highest synset1 and synset2 comparison.
+                    // meaning if dog and animal runs, maybe dog#1 and animal#2 will give the highest. then we store it here since 
+                    // these 2 could gave the highest so far. but there could be other keywords which are even better, so we keep
+                    // checking all and always replace this to see which words of the keywords array will give the best score and best synset comparison.
+                    previousScore = Math.max(previousScore, scoreFromCalculate);
                 }
-                wupscore /= resourceKeywords.size();
-                pathscore /= resourceKeywords.size();
-                resscore /= resourceKeywords.size();
-
-                if (wupscore >= 0.65 && resscore >= 4 && pathscore >= 0.11) {
-
-                    double score = wupscore + pathscore + resscore;
-                    previousScore = Math.max(score, previousScore);
-
-                }
-
             }
+
             if (previousScore > 0) {
                 recommendations.add(new MatchingScore(previousScore, resource));
                 System.out.println("Added: " + resource.getResourceName());
@@ -426,31 +478,23 @@ public class MatchingServiceImpl implements MatchingService {
                 double previousScore = 0.0;
                 //run ws4j algo for each resource keyword to each project keyword 
                 for (int i = 0; i < projectKeywords.size(); i++) {
-                    double wupscore = 0.0;
-                    double pathscore = 0.0;
-                    double resscore = 0.0;
                     for (int j = 0; j < resourceKeywords.size(); j++) {
 
-                        wupscore += MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                        pathscore += MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                        resscore += MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                        // getting best synset score for word1 and word2. as a depiction, dog#1 and animal#2 
+                        // will give the highest score we are interested in.
+                        double scoreFromCalculate = calculateSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
+                        // this gives the highest score for word1 and word2 comparison and the highest synset1 and synset2 comparison.
+                        // meaning if dog and animal runs, maybe dog#1 and animal#2 will give the highest. then we store it here since 
+                        // these 2 could gave the highest so far. but there could be other keywords which are even better, so we keep
+                        // checking all and always replace this to see which words of the keywords array will give the best score and best synset comparison.
+                        previousScore = Math.max(previousScore, scoreFromCalculate);
                     }
-                    wupscore /= resourceKeywords.size();
-                    pathscore /= resourceKeywords.size();
-                    resscore /= resourceKeywords.size();
-
-                    if (wupscore >= 0.65 && resscore >= 4 && pathscore >= 0.11) {
-
-                        double score = wupscore + pathscore + resscore;
-                        previousScore = Math.max(score, previousScore);
-
-                    }
-
                 }
+
                 if (previousScore > 0) {
-                    recommendations.add(new MatchingScore(previousScore, project));
-                    System.out.println("Added: " + project.getProjectTitle());
+                    recommendations.add(new MatchingScore(previousScore, resource));
+                    System.out.println("Added: " + resource.getResourceName());
                 }
                 matched = false;
             }
@@ -498,31 +542,23 @@ public class MatchingServiceImpl implements MatchingService {
             double previousScore = 0.0;
             //run ws4j algo for each resource keyword to each project keyword 
             for (int i = 0; i < projectKeywords.size(); i++) {
-                double wupscore = 0.0;
-                double pathscore = 0.0;
-                double resscore = 0.0;
                 for (int j = 0; j < resourceKeywords.size(); j++) {
 
-                    wupscore += MatchingServiceImpl.calculateWupSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    pathscore += MatchingServiceImpl.calculatePathSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
-                    resscore += MatchingServiceImpl.calculateResSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
+                    // getting best synset score for word1 and word2. as a depiction, dog#1 and animal#2 
+                    // will give the highest score we are interested in.
+                    double scoreFromCalculate = calculateSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
+                    // this gives the highest score for word1 and word2 comparison and the highest synset1 and synset2 comparison.
+                    // meaning if dog and animal runs, maybe dog#1 and animal#2 will give the highest. then we store it here since 
+                    // these 2 could gave the highest so far. but there could be other keywords which are even better, so we keep
+                    // checking all and always replace this to see which words of the keywords array will give the best score and best synset comparison.
+                    previousScore = Math.max(previousScore, scoreFromCalculate);
                 }
-                wupscore /= resourceKeywords.size();
-                pathscore /= resourceKeywords.size();
-                resscore /= resourceKeywords.size();
-
-                if (wupscore >= 0.65 && resscore >= 4 && pathscore >= 0.11) {
-
-                    double score = wupscore + pathscore + resscore;
-                    previousScore = Math.max(score, previousScore);
-
-                }
-
             }
+
             if (previousScore > 0) {
-                recommendations.add(new MatchingScore(previousScore, project));
-                System.out.println("Added: " + project.getProjectTitle());
+                recommendations.add(new MatchingScore(previousScore, resource));
+                System.out.println("Added: " + resource.getResourceName());
             }
             matched = false;
         }
