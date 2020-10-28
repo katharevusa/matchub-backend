@@ -18,6 +18,8 @@ import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.RevokeDownvoteException;
 import com.is4103.matchub.exception.RevokeUpvoteException;
 import com.is4103.matchub.exception.TerminateProjectException;
+import com.is4103.matchub.exception.UnableToAddProjectOwnerException;
+import com.is4103.matchub.exception.UnableToRemoveProjectOwnerException;
 import com.is4103.matchub.exception.UpdateProjectException;
 import com.is4103.matchub.exception.UpvoteProjectException;
 import com.is4103.matchub.exception.UserNotFoundException;
@@ -96,11 +98,13 @@ public interface ProjectService {
 
     public ProjectEntity followProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException;
 
-    Page<ProjectEntity> getFollowingProjectsByAccountId(Long accountId, Pageable pageable);
+    public Page<ProjectEntity> getFollowingProjectsByAccountId(Long accountId, Pageable pageable);
 
-    ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException;
+    public ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException, ProjectNotFoundException, UnableToAddProjectOwnerException;
 
-    List<ProjectEntity> getSpotlightedProjects();
+    public List<ProjectEntity> getSpotlightedProjects();
 
-    Page<ProjectEntity> getSpotlightedProjects(Pageable pageable);
+    public Page<ProjectEntity> getSpotlightedProjects(Pageable pageable);
+    
+    public ProjectEntity removeProjectOwner(Long editorId, Long projOwnerToRemoveId, Long projectId) throws UnableToRemoveProjectOwnerException, ProjectNotFoundException;
 }

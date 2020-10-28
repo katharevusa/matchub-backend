@@ -5,8 +5,12 @@
  */
 package com.is4103.matchub.controller;
 
+import com.is4103.matchub.entity.AnnouncementEntity;
 import com.is4103.matchub.entity.PostEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.DeleteCommentException;
+import com.is4103.matchub.exception.LikePostException;
+import com.is4103.matchub.exception.RepostException;
 import com.is4103.matchub.vo.PostVO;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,7 @@ import com.is4103.matchub.service.PostService;
 import com.is4103.matchub.vo.CommentVO;
 import com.is4103.matchub.vo.DeleteFilesVO;
 import java.io.IOException;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +35,7 @@ import org.springframework.web.bind.annotation.PathVariable;
  */
 @RestController
 @RequestMapping("/authenticated")
-public class PostEntityController {
+public class UserWorkspaceController {
 
     @Autowired
     PostService postService;
@@ -69,17 +74,57 @@ public class PostEntityController {
     void deletePost(@PathVariable("postId") Long postId, @PathVariable("postCreatorId") Long postCreatorId) throws IOException {
         postService.deletePost(postId, postCreatorId);
     }
-    
+
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteComment")
-    public void deleteComment(@RequestParam(value = "commentId", required = true) Long commentId, 
-                              @RequestParam(value = "postId", required = true) Long postId, 
-                              @RequestParam(value = "deletorId", required = true) Long deletorId)throws DeleteCommentException{
+    public void deleteComment(@RequestParam(value = "commentId", required = true) Long commentId,
+            @RequestParam(value = "postId", required = true) Long postId,
+            @RequestParam(value = "deletorId", required = true) Long deletorId) throws DeleteCommentException {
         postService.deleteComment(commentId, postId, deletorId);
     }
+
     @RequestMapping(method = RequestMethod.POST, value = "/addComment")
     public PostEntity addComment(@RequestBody @Valid CommentVO newCommentVO,
-                                @RequestParam(value = "postId", required = true)  Long postId){
+            @RequestParam(value = "postId", required = true) Long postId) {
         return postService.addComment(newCommentVO, postId);
-        
+
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/likeAPost")
+    public PostEntity likeAPost(@RequestParam(value = "postId", required = true)Long postId,
+                                @RequestParam(value = "likerId", required = true)Long likerId) throws LikePostException {
+        return postService.likeAPost(postId, likerId);
+
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/unLikeAPost")
+    public PostEntity unLikeAPost(@RequestParam(value = "postId", required = true)Long postId,
+                                  @RequestParam(value = "likerId", required = true)Long likerId) throws LikePostException {
+        return postService.unLikeAPost(postId, likerId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getListOfLikers")
+    public List<ProfileEntity> getListOfLikers(@RequestParam(value = "postId", required = true)Long postId) {
+        return postService.getListOfLikers(postId);
+    }
+    
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getFollowingProjectAnnouncements")
+    public List<AnnouncementEntity> getFollowingProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
+        return postService.getFollowingProjectAnnouncements(userId);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getOwnedProjectAnnouncements")
+    public List<AnnouncementEntity> getOwnedProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
+        return postService.getOwnedProjectAnnouncements(userId);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getJoinedProjectAnnouncements")
+    public List<AnnouncementEntity> getJoinedProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
+        return postService.getJoinedProjectAnnouncements(userId);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/repost")
+    public PostEntity repost(@RequestParam(value = "userId", required = true)Long previousPostId,@Valid @RequestBody PostVO vo)throws RepostException{
+        return postService.repost(previousPostId, vo);
     }
 }

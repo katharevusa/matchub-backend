@@ -8,7 +8,9 @@ package com.is4103.matchub.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -61,7 +63,7 @@ public class PostEntity {
 
     @Column(nullable = false)
     @NotNull
-    private Long likes = Long.valueOf(0);
+    private Long likes = 0L;
 
     @NotNull
     @ManyToOne(optional = false)
@@ -71,6 +73,9 @@ public class PostEntity {
 
     @OneToMany
     private List<CommentEntity> listOfComments = new ArrayList<>();
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Long> likedUsersId = new HashSet<>();
 
     public PostEntity(String content, LocalDateTime timeCreated, List<String> photos, Long originalPostId, Long previousPostId, ProfileEntity postCreator) {
         this.content = content;
