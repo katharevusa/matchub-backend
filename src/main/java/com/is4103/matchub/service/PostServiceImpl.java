@@ -343,17 +343,15 @@ public class PostServiceImpl implements PostService {
         for (Long id : user.getFollowing()) {
             listOfFollowingUsers.add(profileEntityRepository.findById(id).get());
         }
+        
+        listOfFollowingUsers.add(user);
         List<PostEntity> posts = new ArrayList<>();
 
         for (ProfileEntity p : listOfFollowingUsers) {
             posts.addAll(p.getPosts());
         }
 
-        Collections.sort(posts, new Comparator<PostEntity>() {
-            public int compare(PostEntity o1, PostEntity o2) {
-                return o1.getTimeCreated().compareTo(o2.getTimeCreated());
-            }
-        });
+        Collections.sort(posts, (PostEntity o1, PostEntity o2) -> o1.getTimeCreated().compareTo(o2.getTimeCreated()));
 
         return posts;
     }
@@ -367,11 +365,7 @@ public class PostServiceImpl implements PostService {
             announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
         }
 
-        Collections.sort(announcements, new Comparator<AnnouncementEntity>() {
-            public int compare(AnnouncementEntity o1, AnnouncementEntity o2) {
-                return o1.getTimestamp().compareTo(o2.getTimestamp());
-            }
-        });
+        Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
 
         return announcements;
     }
@@ -385,11 +379,7 @@ public class PostServiceImpl implements PostService {
             announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
         }
 
-        Collections.sort(announcements, new Comparator<AnnouncementEntity>() {
-            public int compare(AnnouncementEntity o1, AnnouncementEntity o2) {
-                return o1.getTimestamp().compareTo(o2.getTimestamp());
-            }
-        });
+        Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
 
         return announcements;
     }
@@ -403,11 +393,7 @@ public class PostServiceImpl implements PostService {
             announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
         }
 
-        Collections.sort(announcements, new Comparator<AnnouncementEntity>() {
-            public int compare(AnnouncementEntity o1, AnnouncementEntity o2) {
-                return o1.getTimestamp().compareTo(o2.getTimestamp());
-            }
-        });
+        Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
 
         return announcements;
     }
