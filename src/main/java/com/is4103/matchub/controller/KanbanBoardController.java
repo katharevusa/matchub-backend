@@ -272,8 +272,8 @@ public class KanbanBoardController {
         return taskService.getUnfinishedTasksByUserId(kanbanboardId, userId);
     }
      
-    @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByChannel")
-     public List<TaskEntity> getUnfinishedTasksByChannel(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId){
+    @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByKanbanBoardId")
+     public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId){
          return taskService.getUnfinishedTasksByKanbanBoardId(kanbanboardId);
      }
      
