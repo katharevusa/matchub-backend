@@ -127,4 +127,9 @@ public class UserWorkspaceController {
     public PostEntity repost(@RequestParam(value = "userId", required = true)Long previousPostId,@Valid @RequestBody PostVO vo)throws RepostException{
         return postService.repost(previousPostId, vo);
     }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getFollowingUserPosts")
+    public List<PostEntity> getFollowingUserPosts(@RequestParam(value = "userId", required = true)Long userId){
+        return postService.getFollowingUserPosts(userId);
+    }
 }

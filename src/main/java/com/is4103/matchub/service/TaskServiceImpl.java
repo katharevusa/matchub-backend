@@ -78,6 +78,7 @@ public class TaskServiceImpl implements TaskService {
     @Autowired
     private ProjectEntityRepository projectEntityRepository;
 //Create Channel Tasks
+
     @Override
     @Transactional
     public TaskEntity createTask(CreateTaskVO vo) throws CreateTaskException {
@@ -107,8 +108,8 @@ public class TaskServiceImpl implements TaskService {
         if (task.getTaskLeaderId() != null) {
             ProfileEntity taskLeader = profileEntityRepository.findById(task.getTaskLeaderId()).get();
             AnnouncementEntity announcementEntity = new AnnouncementEntity();
-            announcementEntity.setTitle("You have been assigned to be a leader of one task :'"+ task.getTaskTitle()+"'.");
-            announcementEntity.setContent("From project: '"+project.getProjectTitle()+"'.");
+            announcementEntity.setTitle("You have been assigned to be a leader of one task :'" + task.getTaskTitle() + "'.");
+            announcementEntity.setContent("From project: '" + project.getProjectTitle() + "'.");
             announcementEntity.setTimestamp(LocalDateTime.now());
             announcementEntity.setType(AnnouncementTypeEnum.TASK_LEADER_APPOINTMENT);
             announcementEntity.setTaskId(task.getTaskId());
@@ -200,8 +201,8 @@ public class TaskServiceImpl implements TaskService {
         if (!task.getTaskdoers().isEmpty()) {
             // notify task doers  
             AnnouncementEntity announcementEntity = new AnnouncementEntity();
-            announcementEntity.setTitle("A new task has been assigned to you: '"+task.getTaskTitle()+"'. ");
-            announcementEntity.setContent("From project: '"+project.getProjectTitle()+"'.");
+            announcementEntity.setTitle("A new task has been assigned to you: '" + task.getTaskTitle() + "'. ");
+            announcementEntity.setContent("From project: '" + project.getProjectTitle() + "'.");
             announcementEntity.setTimestamp(LocalDateTime.now());
             announcementEntity.setType(AnnouncementTypeEnum.TASK_ASSIGNED);
             announcementEntity.setTaskId(task.getTaskId());
@@ -215,7 +216,6 @@ public class TaskServiceImpl implements TaskService {
             // create notification
             announcementService.createNormalNotification(announcementEntity);
         }
-        
 
         return task;
     }
@@ -407,57 +407,54 @@ public class TaskServiceImpl implements TaskService {
         return taskEntityRepository.saveAndFlush(task);
 
     }
-    // 1.getNoUnfinishedTasksByChannel(kanbanboardId) 
-    // 2.getNoUnfinishedTasksByUser(userId, kanbanBoardId)
+
 
     @Override
-    public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(Long kanbanboardId){
+    public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(Long kanbanboardId) {
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).get();
         List<TaskEntity> unFinishedTasks = new ArrayList<>();
-        for(TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()){
-            if(tc.isDone()){
+        for (TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()) {
+            if (!tc.isDone()) {
                 unFinishedTasks.addAll(tc.getListOfTasks());
-                break;
+
             }
         }
         return unFinishedTasks;
-    
-        
+
     }
-    
+
     @Override
-    public List<TaskEntity> getUnfinishedTasksByChannelUId(String channelUId){
+    public List<TaskEntity> getUnfinishedTasksByChannelUId(String channelUId) {
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findByChannelUId(channelUId).get();
         List<TaskEntity> unFinishedTasks = new ArrayList<>();
-        for(TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()){
-            if(tc.isDone()){
+        for (TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()) {
+            if (!tc.isDone()) {
                 unFinishedTasks.addAll(tc.getListOfTasks());
-                break;
+
             }
         }
         return unFinishedTasks;
-    
-        
+
     }
-    
+
     @Override
-    public List<TaskEntity> getUnfinishedTasksByUserId(Long kanbanboardId, Long userId){
+    public List<TaskEntity> getUnfinishedTasksByUserId(Long kanbanboardId, Long userId) {
         ProfileEntity user = profileEntityRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).get();
         List<TaskEntity> unFinishedTasks = new ArrayList<>();
-        for(TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()){
-            if(tc.isDone()){
-                for(TaskEntity t : tc.getListOfTasks()){
-                    if(t.getTaskdoers().contains(user)){
+        for (TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()) {
+            if (!tc.isDone()) {
+                for (TaskEntity t : tc.getListOfTasks()) {
+                    if (t.getTaskdoers().contains(user)) {
                         unFinishedTasks.add(t);
                     }
                 }
-               break;
+                break;
             }
         }
         return unFinishedTasks;
-        
+
     }
 
 }
