@@ -411,8 +411,23 @@ public class TaskServiceImpl implements TaskService {
     // 2.getNoUnfinishedTasksByUser(userId, kanbanBoardId)
 
     @Override
-    public List<TaskEntity> getUnfinishedTasksByChannel(Long kanbanboardId){
+    public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(Long kanbanboardId){
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).get();
+        List<TaskEntity> unFinishedTasks = new ArrayList<>();
+        for(TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()){
+            if(tc.isDone()){
+                unFinishedTasks.addAll(tc.getListOfTasks());
+                break;
+            }
+        }
+        return unFinishedTasks;
+    
+        
+    }
+    
+    @Override
+    public List<TaskEntity> getUnfinishedTasksByChannelUId(String channelUId){
+        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findByChannelUId(channelUId).get();
         List<TaskEntity> unFinishedTasks = new ArrayList<>();
         for(TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()){
             if(tc.isDone()){
