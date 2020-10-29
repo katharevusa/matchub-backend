@@ -701,7 +701,7 @@ public class InitServiceImpl implements InitService {
         projectEntityRepository.save(projectEntity1);
         /* end of project badge */
 
-        ProjectEntity projectEntity2 = new ProjectEntity("Women's financial literacy, Malawi", "CARE will work with 20,000 women from 1,000 village savings and loans groups in Lilongwe, Dowa and Kasungu Districts, to overcome chronic hunger by expanding their farms or micro-businesses.", "Malawi", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2019-06-05T11:50:55"));
+        ProjectEntity projectEntity2 = new ProjectEntity("Women's financial literacy, Malawi", "CARE will work with 20,000 women from 1,000 village savings and loans groups in Lilongwe, Dowa and Kasungu Districts, to overcome chronic hunger by expanding their farms or micro-businesses.", "Malawi", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2021-06-05T11:50:55"));
         projectEntity2.getSdgs().add(genderEquality);
         projectEntity2.getSdgs().add(qualityEducation);
         projectEntity2.setUpvotes(23);

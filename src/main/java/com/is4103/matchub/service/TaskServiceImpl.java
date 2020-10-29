@@ -15,6 +15,7 @@ import com.is4103.matchub.entity.TaskEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.CreateTaskException;
 import com.is4103.matchub.exception.DeleteTaskException;
+import com.is4103.matchub.exception.KanbanBoardNotFoundException;
 import com.is4103.matchub.exception.RearrangeTaskException;
 import com.is4103.matchub.exception.UpdateTaskException;
 import com.is4103.matchub.exception.UserNotFoundException;
@@ -410,8 +411,8 @@ public class TaskServiceImpl implements TaskService {
 
 
     @Override
-    public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(Long kanbanboardId) {
-        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).get();
+    public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(Long kanbanboardId)throws KanbanBoardNotFoundException{
+        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).orElseThrow(() -> new KanbanBoardNotFoundException());
         List<TaskEntity> unFinishedTasks = new ArrayList<>();
         for (TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()) {
             if (!tc.isDone()) {
@@ -438,10 +439,10 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskEntity> getUnfinishedTasksByUserId(Long kanbanboardId, Long userId) {
+    public List<TaskEntity> getUnfinishedTasksByUserId(Long kanbanboardId, Long userId) throws KanbanBoardNotFoundException{
         ProfileEntity user = profileEntityRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
-        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).get();
+        KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).orElseThrow(() -> new KanbanBoardNotFoundException());
         List<TaskEntity> unFinishedTasks = new ArrayList<>();
         for (TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()) {
             if (!tc.isDone()) {

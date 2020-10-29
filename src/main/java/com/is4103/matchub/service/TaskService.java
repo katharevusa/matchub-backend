@@ -11,6 +11,7 @@ import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.entity.TaskEntity;
 import com.is4103.matchub.exception.CreateTaskException;
 import com.is4103.matchub.exception.DeleteTaskException;
+import com.is4103.matchub.exception.KanbanBoardNotFoundException;
 import com.is4103.matchub.exception.RearrangeTaskException;
 import com.is4103.matchub.exception.UpdateTaskException;
 import com.is4103.matchub.vo.CommentVO;
@@ -59,9 +60,9 @@ public interface TaskService {
      
      public TaskEntity updateTaskStatus(Long taskId, Long oldColumnId, Long newColumnId);
      
-     public List<TaskEntity> getUnfinishedTasksByUserId(Long kanbanboardId, Long userId);
+     public List<TaskEntity> getUnfinishedTasksByUserId(Long kanbanboardId, Long userId)throws KanbanBoardNotFoundException;
      
-     public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(Long kanbanboardId);
+     public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(Long kanbanboardId)throws KanbanBoardNotFoundException;
      
      public List<TaskEntity> getUnfinishedTasksByChannelUId(String channelUId);
    
