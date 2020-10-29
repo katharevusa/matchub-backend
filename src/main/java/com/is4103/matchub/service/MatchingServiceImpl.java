@@ -493,8 +493,8 @@ public class MatchingServiceImpl implements MatchingService {
                 }
 
                 if (previousScore > 0) {
-                    recommendations.add(new MatchingScore(previousScore, resource));
-                    System.out.println("Added: " + resource.getResourceName());
+                    recommendations.add(new MatchingScore(previousScore, project));
+                    System.out.println("Added: " + project.getProjectTitle());
                 }
                 matched = false;
             }
@@ -564,8 +564,8 @@ public class MatchingServiceImpl implements MatchingService {
             }
 
             if (previousScore > 0) {
-                recommendations.add(new MatchingScore(previousScore, resource));
-                System.out.println("Added: " + resource.getResourceName());
+                recommendations.add(new MatchingScore(previousScore, project));
+                System.out.println("Added: " + project.getProjectTitle());
             }
             matched = false;
         }
