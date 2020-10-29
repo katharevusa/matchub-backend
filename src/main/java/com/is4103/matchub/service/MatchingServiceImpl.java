@@ -580,9 +580,19 @@ public class MatchingServiceImpl implements MatchingService {
 
         if (projectsFollowing.isEmpty()) {
             recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, pageable);
+
+            if (followingIds.size() == 0) {
+                recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), country, pageable);
+            }
+
         } else {
             //get profiles with same country + same project that profile is following 
             recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
+
+            if (followingIds.size() == 0) {
+                recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), country, projectsFollowing, pageable);
+            }
+
         }
 
         return recommendations;
@@ -600,9 +610,19 @@ public class MatchingServiceImpl implements MatchingService {
 
         if (projectsFollowing.isEmpty()) {
             recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), followingIds, country, pageable);
+
+            if (followingIds.size() == 0) {
+                recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), country, pageable);
+            }
+
         } else {
             //get profiles with same country + same project that profile is following 
             recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
+
+            if (followingIds.size() == 0) {
+                recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), country, projectsFollowing, pageable);
+            }
+
         }
 
         return recommendations;
@@ -621,9 +641,19 @@ public class MatchingServiceImpl implements MatchingService {
 
         if (projectsFollowing.isEmpty()) {
             recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), followingIds, country, pageable);
+
+            if (followingIds.size() == 0) {
+                recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), country, pageable);
+            }
+
         } else {
             //get profiles with same country + same project that profile is following 
             recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
+
+            if (followingIds.size() == 0) {
+                recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), country, projectsFollowing, pageable);
+            }
+
         }
 
         return recommendations;
