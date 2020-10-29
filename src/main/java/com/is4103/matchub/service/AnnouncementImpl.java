@@ -57,8 +57,27 @@ public class AnnouncementImpl implements AnnouncementService {
         if(!project.getProjectOwners().contains(creator)){
             throw new CreateAnnouncementException("Only project owners can create project public announcement");
         }
-        //Incomplete: getFollowers and notify them
+        
+        newAnnouncementEntity.getNotifiedUsers().addAll(project.getProjectFollowers());
+        newAnnouncementEntity.setProjectId(newAnnouncementEntity.getProjectId());
         newAnnouncementEntity = announcementEntityRepository.save(newAnnouncementEntity);
+        
+        for(ProfileEntity p : project.getProjectFollowers()){
+            p.getAnnouncements().add(newAnnouncementEntity);
+        }
+        //Incomplete: getFollowers and notify them        
+        SendNotificationsToUsersVO sendNotificationsToUsersVO = new SendNotificationsToUsersVO();
+        sendNotificationsToUsersVO.setTitle(newAnnouncementEntity.getTitle());
+        sendNotificationsToUsersVO.setBody(newAnnouncementEntity.getContent());
+        sendNotificationsToUsersVO.setType(newAnnouncementEntity.getType().toString());
+        sendNotificationsToUsersVO.setImage("");
+        List<String> uuids = new ArrayList<>();
+        
+        for(ProfileEntity p: newAnnouncementEntity.getNotifiedUsers()){
+           uuids.add(p.getUuid().toString());
+        }     
+        sendNotificationsToUsersVO.setUuids(uuids);
+        firebaseService.sendNotificationsToUsers(sendNotificationsToUsersVO);      
         return newAnnouncementEntity;
     }
     

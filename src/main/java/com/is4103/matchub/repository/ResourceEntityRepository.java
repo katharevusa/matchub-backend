@@ -23,11 +23,11 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
 
 //    @Query("SELECT r FROM ResourceEntity r WHERE r.available = TRUE AND r.resourceOwner = :profile")
 //    List<ResourceEntity> getAvailableResourcesOfAccount(ProfileEntity profile);
-    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true ",
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true",
             countQuery = "SELECT COUNT(r) FROM ResourceEntity r WHERE r.available = true")
     Page<ResourceEntity> getAllAvailableResources(Pageable pageable);
 
-    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true ")
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true")
     List<ResourceEntity> getAllAvailableResources();
 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceOwnerId = :profileId ",
@@ -50,6 +50,9 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = ?1")
     List<ResourceEntity> getResourcesByProject(Long projectId);
+    
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true AND r.country = ?1")
+    List<ResourceEntity> getAllAvailableResourcesInCountry(String country);
 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.spotlight = TRUE ORDER BY r.spotlightEndTime DESC")
     List<ResourceEntity> getSpotlightedResources();

@@ -48,10 +48,23 @@ public class MatchingController {
         return matchingService.recommendResources(projectId);
     }
 
+    // for web
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendSameCountryResources/list/{projectId}")
+    public List<ResourceEntity> recommendListOfSameCountryResources(@PathVariable("projectId") Long projectId) throws ProjectNotFoundException {
+        return matchingService.recommendSameCountryResources(projectId);
+    }
+
     //for mobile
-    @RequestMapping(method = RequestMethod.GET, value = "/recommendResources/pageable/{projectId}")
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendResources/page/{projectId}")
     public Page<ResourceEntity> recommendPageableOfResources(@PathVariable("projectId") Long projectId, Pageable pageable) throws ProjectNotFoundException {
+//        return matchingService.recommendSameCountryResourcesAsPageable(projectId, pageable);
         return matchingService.recommendResourcesAsPageable(projectId, pageable);
+    }
+
+    //for mobile
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendSameCountryResources/page/{projectId}")
+    public Page<ResourceEntity> recommendPageableOfSameCountryResources(@PathVariable("projectId") Long projectId, Pageable pageable) throws ProjectNotFoundException {
+        return matchingService.recommendSameCountryResourcesAsPageable(projectId, pageable);
     }
 
     // for web
@@ -60,10 +73,22 @@ public class MatchingController {
         return matchingService.recommendProjects(resourceId);
     }
 
+    // for web
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendSameCountryProjects/list/{resourceId}")
+    public List<ProjectEntity> recommendListOfSameCountryProjects(@PathVariable("resourceId") Long resourceId) throws ResourceNotFoundException {
+        return matchingService.recommendSameCountryProjects(resourceId);
+    }
+
     //for mobile
-    @RequestMapping(method = RequestMethod.GET, value = "/recommendProjects/pageable/{resourceId}")
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendProjects/page/{resourceId}")
     public Page<ProjectEntity> recommendPageableOfProjects(@PathVariable("resourceId") Long resourceId, Pageable pageable) throws ResourceNotFoundException {
         return matchingService.recommendProjectsAsPageable(resourceId, pageable);
+    }
+
+    //for mobile
+    @RequestMapping(method = RequestMethod.GET, value = "/recommendSameCountryProjects/page/{resourceId}")
+    public Page<ProjectEntity> recommendPageableOfSameCountryProjects(@PathVariable("resourceId") Long resourceId, Pageable pageable) throws ResourceNotFoundException {
+        return matchingService.recommendSameCountryProjectsAsPageable(resourceId, pageable);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/recommendProfiles/{accountId}")

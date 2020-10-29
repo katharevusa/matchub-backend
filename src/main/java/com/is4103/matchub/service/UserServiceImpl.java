@@ -22,6 +22,7 @@ import com.is4103.matchub.exception.UnableToFollowProfileException;
 import com.is4103.matchub.exception.UnableToRemoveFollowerException;
 import com.is4103.matchub.exception.UnableToSaveResourceException;
 import com.is4103.matchub.exception.UnableToUnfollowProfileException;
+import com.is4103.matchub.exception.UnableToUnsaveResourceException;
 import com.is4103.matchub.exception.UpdateProfileException;
 import com.is4103.matchub.exception.UploadOrganisationVerificationDocException;
 import com.is4103.matchub.vo.UserVO;
@@ -297,9 +298,9 @@ public class UserServiceImpl implements UserService {
 
             //update toFollowProfile followers
             toFollowProfile.getFollowers().add(accountId);
-            profile = profileEntityRepository.saveAndFlush(toFollowProfile);
+            toFollowProfile = profileEntityRepository.saveAndFlush(toFollowProfile);
 
-            // create announcement (notify profile follower)
+            // create announcement (notify toFollowProfile)
             String profileName = "";
             if (profile instanceof IndividualEntity) {
                 profileName = ((IndividualEntity) profile).getFirstName() + " " + ((IndividualEntity) profile).getLastName();
@@ -402,10 +403,30 @@ public class UserServiceImpl implements UserService {
 
         //associate unidirectionally
         profile.getSavedResources().add(resourceToBeSaved);
-        profileEntityRepository.saveAndFlush(profile);
+        profile = profileEntityRepository.saveAndFlush(profile);
 
         return profile;
 
+    }
+
+    @Override
+    public ProfileEntity unsaveResource(Long accountId, Long resourceId) throws ResourceNotFoundException {
+        //find the profile 
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        //find the resource 
+        ResourceEntity resourceToUnsave = resourceEntityRepository.findById(resourceId)
+                .orElseThrow(() -> new ResourceNotFoundException("Resource Id " + resourceId + " is not found"));
+
+        if (!profile.getSavedResources().contains(resourceToUnsave)) {
+            throw new UnableToUnsaveResourceException("Unable to unsave resource: This resource is not in your saved Resources liat");
+        }
+
+        profile.getSavedResources().remove(resourceToUnsave);
+        profile = profileEntityRepository.saveAndFlush(profile);
+
+        return profile;
     }
 
 //    @Override
@@ -480,7 +501,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable) {
+    public Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable){
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 

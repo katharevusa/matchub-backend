@@ -58,6 +58,12 @@ public interface TaskService {
      public List<TaskEntity> getTasksByChannelUID(String channelUId);
      
      public TaskEntity updateTaskStatus(Long taskId, Long oldColumnId, Long newColumnId);
+     
+     public List<TaskEntity> getUnfinishedTasksByUserId(Long kanbanboardId, Long userId);
+     
+     public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(Long kanbanboardId);
+     
+     public List<TaskEntity> getUnfinishedTasksByChannelUId(String channelUId);
    
          
     
