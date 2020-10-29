@@ -101,6 +101,7 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
 
     @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe JOIN pe.sdgs sdg "
             + "WHERE (pe.email LIKE %:search% OR "
+            + "pe.country LIKE %:search% OR "
             + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
             + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
             + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
@@ -109,6 +110,7 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "sdg.sdgId IN :sdgIds",
             countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe JOIN pe.sdgs sdg "
             + "WHERE (pe.email LIKE %:search% OR "
+            + "pe.country LIKE %:search% OR "
             + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
             + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
             + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
