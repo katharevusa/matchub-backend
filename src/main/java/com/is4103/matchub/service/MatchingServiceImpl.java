@@ -403,7 +403,7 @@ public class MatchingServiceImpl implements MatchingService {
         projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
 
         //find the list of available resources 
-        List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResources();
+        List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResourcesNotInCountry(project.getCountry());
         System.out.println("total avail resources: " + availableResources.size());
 
         Boolean matched = false;
@@ -520,8 +520,15 @@ public class MatchingServiceImpl implements MatchingService {
         //Get the resource name
         List<String> resourceKeywords = lemmatiseAndExtractNoun(resource.getResourceName());
 
+        List<ProjectEntity> activeProjects;
+
+        if (resource.getCountry() != null) {
+            activeProjects = projectEntityRepository.getAllActiveProjectsNotInCountry(resource.getCountry());
+        } else {
+            activeProjects = projectEntityRepository.getAllActiveProjects();
+        }
+
         //find the list of active projects
-        List<ProjectEntity> activeProjects = projectEntityRepository.getAllActiveProjects();
         System.out.println("total active projects : " + activeProjects.size());
 
         Boolean matched = false;
