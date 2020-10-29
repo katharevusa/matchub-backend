@@ -688,12 +688,12 @@ public class MatchingServiceImpl implements MatchingService {
 
         if (results.size() == 1) {
             recommendations.add(results.get(0).getResource());
-        } else if (results.size() <= 6) {
+        } else if (results.size() <= 3) {
             for (int i = 0; i < results.size(); i++) {
                 recommendations.add(results.get(i).getResource());
             }
         } else {
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 3; i++) {
                 recommendations.add(results.get(i).getResource());
             }
         }
@@ -721,12 +721,12 @@ public class MatchingServiceImpl implements MatchingService {
 
         if (results.size() == 1) {
             recommendations.add(results.get(0).getProject());
-        } else if (results.size() <= 6) {
+        } else if (results.size() <= 3) {
             for (int i = 0; i < results.size(); i++) {
                 recommendations.add(results.get(i).getProject());
             }
         } else {
-            for (int i = 0; i < 6; i++) {
+            for (int i = 0; i < 3; i++) {
                 recommendations.add(results.get(i).getProject());
             }
         }
