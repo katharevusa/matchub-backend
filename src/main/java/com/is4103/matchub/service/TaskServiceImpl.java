@@ -450,7 +450,6 @@ public class TaskServiceImpl implements TaskService {
                         unFinishedTasks.add(t);
                     }
                 }
-                break;
             }
         }
         return unFinishedTasks;
