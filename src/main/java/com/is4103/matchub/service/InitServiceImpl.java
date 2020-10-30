@@ -101,7 +101,7 @@ public class InitServiceImpl implements InitService {
         initCommunityBadges();
 
         //join request 
-        initJoinRequest();
+//        initJoinRequest();
 
         // init project follower 
         initProjectFollower();
