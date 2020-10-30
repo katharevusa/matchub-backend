@@ -157,10 +157,10 @@ public class TaskServiceImpl implements TaskService {
         //Check: channel admins can update task
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(vo.getKanbanboardId()).get();
         ProjectEntity project = projectEntityRepository.findById(kanbanBoardEntity.getProjectId()).get();
-        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
-        if (!channelDetails.getAdminIds().contains(vo.getTaskCreatorOrEditorId())) {
-            throw new UpdateTaskException("Only channel admin can update task");
-        }
+//        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
+//        if (!channelDetails.getAdminIds().contains(vo.getTaskCreatorOrEditorId())) {
+//            throw new UpdateTaskException("Only channel admin can update task");
+//        }
 
         TaskEntity task = taskEntityRepository.findById(vo.getTaskId()).get();
         Long previousTaskLeaderId = -1L;
@@ -216,18 +216,33 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskEntity updateTaskDoers(List<Long> newTaskDoerList, Long taskId, Long updatorId, Long kanbanBoardId) throws UpdateTaskException {
+    public TaskEntity updateTaskDoers(List<Long> newTaskDoerIdList, Long taskId, Long updatorId, Long kanbanBoardId) throws UpdateTaskException {
 
 //     //    only channel admin can update task doers
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanBoardId).get();
         ProjectEntity project = projectEntityRepository.findById(kanbanBoardEntity.getProjectId()).get();
-        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
-        if (!channelDetails.getAdminIds().contains(updatorId)) {
-            throw new UpdateTaskException("Only channel admins can update task");
-        }
+//        ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
+//        if (!channelDetails.getAdminIds().contains(updatorId)) {
+//            throw new UpdateTaskException("Only channel admins can update task");
+//        }
+
         TaskEntity task = taskEntityRepository.findById(taskId).get();
 
         List<ProfileEntity> oldTaskDoers = task.getTaskdoers();
+        // check if there is a change in newTaskDoers
+        boolean change = false;
+        if (newTaskDoerIdList.size() != oldTaskDoers.size()) {
+            change = true;
+        }
+        for (ProfileEntity p : oldTaskDoers) {
+            if (!newTaskDoerIdList.contains(p.getAccountId())) {
+                change = true;
+            }
+        }
+
+        if (change == false) {
+            return task;
+        }
         // remove previous taskdoer - task relationship
         for (ProfileEntity taskDoer : task.getTaskdoers()) {
             taskDoer.getTasks().remove(task);
@@ -235,7 +250,7 @@ public class TaskServiceImpl implements TaskService {
         task.setTaskdoers(new ArrayList<>());
 
         // add taskdoer to task
-        for (Long taskDoerId : newTaskDoerList) {
+        for (Long taskDoerId : newTaskDoerIdList) {
             ProfileEntity taskDoer = profileEntityRepository.findById(taskDoerId).get();
             task.getTaskdoers().add(taskDoer);
             taskDoer.getTasks().add(task);
