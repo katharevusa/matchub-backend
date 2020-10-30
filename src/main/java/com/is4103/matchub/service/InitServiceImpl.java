@@ -690,16 +690,22 @@ public class InitServiceImpl implements InitService {
         keyboard.getPhotos().add("https://localhost:8443/api/v1/files/init/keyboard.jpg");
         keyboard.setCountry("Singapore");
         resourceService.createResource(keyboard, 4L, 12L);
+        
+        ResourceEntity floorPlan = new ResourceEntity("Floor Plans", "Floors Plans available, contact me for more details", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
+        floorPlan.setResourceProfilePic("https://localhost:8443/api/v1/files/init/floorplan.png");
+        floorPlan.getPhotos().add("https://localhost:8443/api/v1/files/init/floorplan.png");
+        floorPlan.setCountry("Cambodia");
+        resourceService.createResource(floorPlan, 8L, 10L);
 
         //22
         //*********** for rep points testing 
-        ResourceEntity testing = new ResourceEntity("testing", "testing", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
-        testing.setResourceProfilePic("https://img.jakpost.net/c/2020/09/08/2020_09_08_103888_1599536848._large.jpg");
-        testing.getPhotos().add("https://img.jakpost.net/c/2020/09/08/2020_09_08_103888_1599536848._large.jpg");
-        testing.setCountry("Korea, Republic of South Korea");
-        testing.setAvailable(false);
-        testing.setMatchedProjectId(Long.valueOf(14));
-        resourceService.createResource(testing, 3L, 5L);
+//        ResourceEntity testing = new ResourceEntity("testing", "testing", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
+//        testing.setResourceProfilePic("https://img.jakpost.net/c/2020/09/08/2020_09_08_103888_1599536848._large.jpg");
+//        testing.getPhotos().add("https://img.jakpost.net/c/2020/09/08/2020_09_08_103888_1599536848._large.jpg");
+//        testing.setCountry("Korea, Republic of South Korea");
+//        testing.setAvailable(false);
+//        testing.setMatchedProjectId(Long.valueOf(14));
+//        resourceService.createResource(testing, 3L, 5L);
 
     }
 
@@ -824,7 +830,7 @@ public class InitServiceImpl implements InitService {
 
         //relatedResources
         relatedResources = new ArrayList<>();
-        relatedResources.add("Bed");
+        relatedResources.add("Layout Architect");
         relatedResources.add("Shampoo");
         relatedResources.add("Paint");
         projectEntity4.setRelatedResources(relatedResources);
