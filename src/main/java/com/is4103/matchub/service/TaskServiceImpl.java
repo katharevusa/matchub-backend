@@ -156,15 +156,61 @@ public class TaskServiceImpl implements TaskService {
     public TaskEntity updateTask(UpdateTaskVO vo) throws UpdateTaskException {
         //Check: channel admins can update task
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(vo.getKanbanboardId()).get();
+        ProjectEntity project = projectEntityRepository.findById(kanbanBoardEntity.getProjectId()).get();
         ChannelDetailsVO channelDetails = firebaseService.getChannelDetails(kanbanBoardEntity.getChannelUid());
         if (!channelDetails.getAdminIds().contains(vo.getTaskCreatorOrEditorId())) {
             throw new UpdateTaskException("Only channel admin can update task");
         }
 
         TaskEntity task = taskEntityRepository.findById(vo.getTaskId()).get();
+        Long previousTaskLeaderId = -1L;
+        // check if old task has task leader
+        if (task.getTaskLeaderId() != null) {
+            previousTaskLeaderId = task.getTaskLeaderId();
+        }
+
         vo.updateTask(task);
 
         task = taskEntityRepository.saveAndFlush(task);
+        // if new task has task leader and is different from old task leader
+        if (task.getTaskLeaderId() != null && !previousTaskLeaderId.equals(task.getTaskLeaderId())) {
+            // notify the new task leader
+            ProfileEntity taskLeader = profileEntityRepository.findById(task.getTaskLeaderId()).get();
+            AnnouncementEntity announcementEntity = new AnnouncementEntity();
+            announcementEntity.setTitle("You have been assigned to be a reporter of one task :'" + task.getTaskTitle() + "'.");
+            announcementEntity.setContent("From project: '" + project.getProjectTitle() + "'.");
+            announcementEntity.setTimestamp(LocalDateTime.now());
+            announcementEntity.setType(AnnouncementTypeEnum.TASK_LEADER_APPOINTMENT);
+            announcementEntity.setTaskId(task.getTaskId());
+            announcementEntity.setProjectId(kanbanBoardEntity.getProjectId());
+            // association
+            announcementEntity.getNotifiedUsers().add(taskLeader);
+            taskLeader.getAnnouncements().add(announcementEntity);
+            announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+            // create notification
+            announcementService.createNormalNotification(announcementEntity);
+
+        }
+
+        if (previousTaskLeaderId != -1L && !previousTaskLeaderId.equals(task.getTaskLeaderId())) {
+            // notify the removed task leader 
+            ProfileEntity removedTaskLeader = profileEntityRepository.findById(previousTaskLeaderId).get();
+            AnnouncementEntity announcementEntity = new AnnouncementEntity();
+            announcementEntity.setTitle("You are no longer a reporter for task :'" + task.getTaskTitle() + "'.");
+            announcementEntity.setContent("From project: '" + project.getProjectTitle() + "'.");
+            announcementEntity.setTimestamp(LocalDateTime.now());
+            announcementEntity.setType(AnnouncementTypeEnum.TASK_UPDATE);
+            announcementEntity.setTaskId(task.getTaskId());
+            announcementEntity.setProjectId(kanbanBoardEntity.getProjectId());
+            // association
+            announcementEntity.getNotifiedUsers().add(removedTaskLeader);
+            removedTaskLeader.getAnnouncements().add(announcementEntity);
+            announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+            // create notification
+            announcementService.createNormalNotification(announcementEntity);
+
+        }
+
         return task;
 
     }
@@ -181,6 +227,7 @@ public class TaskServiceImpl implements TaskService {
         }
         TaskEntity task = taskEntityRepository.findById(taskId).get();
 
+        List<ProfileEntity> oldTaskDoers = task.getTaskdoers();
         // remove previous taskdoer - task relationship
         for (ProfileEntity taskDoer : task.getTaskdoers()) {
             taskDoer.getTasks().remove(task);
@@ -198,24 +245,82 @@ public class TaskServiceImpl implements TaskService {
 
         task = taskEntityRepository.saveAndFlush(task);
 
-        // check if there exists task doers
-        if (!task.getTaskdoers().isEmpty()) {
-            // notify task doers  
+        //check if anyone gets deleted from old task doers
+        List<ProfileEntity> deletedTaskDoers = new ArrayList<>();
+        for (ProfileEntity p : oldTaskDoers) {
+            if (!task.getTaskdoers().contains(p)) {
+                deletedTaskDoers.add(p);
+            }
+        }
+
+        if (!deletedTaskDoers.isEmpty()) {
             AnnouncementEntity announcementEntity = new AnnouncementEntity();
-            announcementEntity.setTitle("A new task has been assigned to you: '" + task.getTaskTitle() + "'. ");
+            announcementEntity.setTitle("You are no longer an assignee for task: '" + task.getTaskTitle() + "'. ");
             announcementEntity.setContent("From project: '" + project.getProjectTitle() + "'.");
             announcementEntity.setTimestamp(LocalDateTime.now());
-            announcementEntity.setType(AnnouncementTypeEnum.TASK_ASSIGNED);
+            announcementEntity.setType(AnnouncementTypeEnum.TASK_UPDATE);
             announcementEntity.setTaskId(task.getTaskId());
             announcementEntity.setProjectId(kanbanBoardEntity.getProjectId());
             // association
-            announcementEntity.getNotifiedUsers().addAll(task.getTaskdoers());
-            for (ProfileEntity p : task.getTaskdoers()) {
+            announcementEntity.getNotifiedUsers().addAll(deletedTaskDoers);
+            for (ProfileEntity p : deletedTaskDoers) {
                 p.getAnnouncements().add(announcementEntity);
             }
             announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
             // create notification
             announcementService.createNormalNotification(announcementEntity);
+        }
+
+        // check if there exists task doers
+        if (!task.getTaskdoers().isEmpty()) {
+            // get list of new task doers between new task doers and old task doers
+            List<ProfileEntity> notifiedNewTaskDoers = new ArrayList<>();
+            List<ProfileEntity> notifiedOldTaskDoers = new ArrayList<>();
+            for (ProfileEntity p : task.getTaskdoers()) {
+                if (!oldTaskDoers.contains(p)) {
+                    notifiedNewTaskDoers.add(p);
+                } else {
+                    notifiedOldTaskDoers.add(p);
+                }
+            }
+
+            if (!notifiedNewTaskDoers.isEmpty()) {
+                // notify new task doers  
+                AnnouncementEntity announcementEntity = new AnnouncementEntity();
+                announcementEntity.setTitle("A new task has been assigned to you: '" + task.getTaskTitle() + "'. ");
+                announcementEntity.setContent("From project: '" + project.getProjectTitle() + "'.");
+                announcementEntity.setTimestamp(LocalDateTime.now());
+                announcementEntity.setType(AnnouncementTypeEnum.TASK_ASSIGNED);
+                announcementEntity.setTaskId(task.getTaskId());
+                announcementEntity.setProjectId(kanbanBoardEntity.getProjectId());
+                // association
+                announcementEntity.getNotifiedUsers().addAll(notifiedNewTaskDoers);
+                for (ProfileEntity p : notifiedNewTaskDoers) {
+                    p.getAnnouncements().add(announcementEntity);
+                }
+                announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+                // create notification
+                announcementService.createNormalNotification(announcementEntity);
+            }
+
+            if (!notifiedOldTaskDoers.isEmpty()) {
+                AnnouncementEntity announcementEntity = new AnnouncementEntity();
+                announcementEntity.setTitle("There is an update of task doers for task: '" + task.getTaskTitle() + "'. ");
+                announcementEntity.setContent("From project: '" + project.getProjectTitle() + "'.");
+                announcementEntity.setTimestamp(LocalDateTime.now());
+                announcementEntity.setType(AnnouncementTypeEnum.TASK_UPDATE);
+                announcementEntity.setTaskId(task.getTaskId());
+                announcementEntity.setProjectId(kanbanBoardEntity.getProjectId());
+                // association
+                announcementEntity.getNotifiedUsers().addAll(notifiedOldTaskDoers);
+                for (ProfileEntity p : notifiedOldTaskDoers) {
+                    p.getAnnouncements().add(announcementEntity);
+                }
+                announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+                // create notification
+                announcementService.createNormalNotification(announcementEntity);
+            }
+
         }
 
         return task;
@@ -409,9 +514,8 @@ public class TaskServiceImpl implements TaskService {
 
     }
 
-
     @Override
-    public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(Long kanbanboardId)throws KanbanBoardNotFoundException{
+    public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(Long kanbanboardId) throws KanbanBoardNotFoundException {
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).orElseThrow(() -> new KanbanBoardNotFoundException());
         List<TaskEntity> unFinishedTasks = new ArrayList<>();
         for (TaskColumnEntity tc : kanbanBoardEntity.getTaskColumns()) {
@@ -439,7 +543,7 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskEntity> getUnfinishedTasksByUserId(Long kanbanboardId, Long userId) throws KanbanBoardNotFoundException{
+    public List<TaskEntity> getUnfinishedTasksByUserId(Long kanbanboardId, Long userId) throws KanbanBoardNotFoundException {
         ProfileEntity user = profileEntityRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
         KanbanBoardEntity kanbanBoardEntity = kanbanBoardEntityRepository.findById(kanbanboardId).orElseThrow(() -> new KanbanBoardNotFoundException());
