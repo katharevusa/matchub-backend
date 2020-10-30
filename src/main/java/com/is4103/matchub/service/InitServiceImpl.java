@@ -481,6 +481,9 @@ public class InitServiceImpl implements InitService {
 
         ResourceCategoryEntity ipCategory = new ResourceCategoryEntity("Intellectual Property", "All IP-related, non-physical Resources (Trademarks, Patents, Copyrights)", 1, 15, "property");
         resourceCategoryService.createResourceCategory(ipCategory);
+        
+        ResourceCategoryEntity consumerGoodsCategory = new ResourceCategoryEntity("Consumer Goods", "All Consumer Goods", 1, 15, "unit");
+        resourceCategoryService.createResourceCategory(consumerGoodsCategory);
 
     }
 
@@ -553,7 +556,7 @@ public class InitServiceImpl implements InitService {
         resourceService.createResource(clothes, 7L, 9L);
 
         //9   
-        ResourceEntity dictionary = new ResourceEntity("Giving Away Used English Language Dictionaries", "100 used english dictionaries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
+        ResourceEntity dictionary = new ResourceEntity("Giving Away English Language Dictionaries", "100 used english dictionaries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
         dictionary.setResourceProfilePic("https://localhost:8443/api/v1/files/init/dictionary.jpg");
         dictionary.getPhotos().add("https://localhost:8443/api/v1/files/init/dictionary.jpg");
         dictionary.setCountry("Cambodia");
@@ -665,7 +668,7 @@ public class InitServiceImpl implements InitService {
         bodyWash.setResourceProfilePic("https://localhost:8443/api/v1/files/init/bodywash.png");
         bodyWash.getPhotos().add("https://localhost:8443/api/v1/files/init/bodywash.png");
         bodyWash.setCountry("Malaysia");
-        resourceService.createResource(bodyWash, 4L, 6L);
+        resourceService.createResource(bodyWash, 9L, 6L);
 
         ResourceEntity garbageBag = new ResourceEntity("Garbage Bags", "10,000 new garbage bags", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10000);
         garbageBag.setResourceProfilePic("https://localhost:8443/api/v1/files/init/garbageBag.jpg");
