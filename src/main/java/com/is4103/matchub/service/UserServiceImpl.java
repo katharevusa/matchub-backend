@@ -398,7 +398,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Resource Id " + resourceId + " is not found"));
 
         if (profile.getSavedResources().contains(resourceToBeSaved)) {
-            throw new UnableToSaveResourceException("Unble to save resource: You have previously saved this resource");
+            throw new UnableToSaveResourceException("Unable to save resource: You have previously saved this resource");
         }
 
         //associate unidirectionally
