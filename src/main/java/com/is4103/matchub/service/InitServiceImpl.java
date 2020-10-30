@@ -661,7 +661,7 @@ public class InitServiceImpl implements InitService {
         ResourceEntity paintDye = new ResourceEntity("Paint Dye", "10kg of NIPPON colour dye of different colours each (White, whitewash, light blue, black, yellow)", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
         paintDye.setResourceProfilePic("https://localhost:8443/api/v1/files/init/paintdye.jpg");
         paintDye.getPhotos().add("https://localhost:8443/api/v1/files/init/paintdye.jpg");
-        paintDye.setCountry("Singapore");
+        paintDye.setCountry("Malaysia");
         resourceService.createResource(paintDye, 4L, 4L);
 
         ResourceEntity bodyWash = new ResourceEntity("Body Wash", "100 bottles of body wash", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
@@ -704,13 +704,13 @@ public class InitServiceImpl implements InitService {
         shovel.setResourceProfilePic("https://localhost:8443/api/v1/files/init/shovel.jpg");
         shovel.getPhotos().add("https://localhost:8443/api/v1/files/init/shovel.jpg");
         shovel.setCountry("Cambodia");
-        resourceService.createResource(shovel, 8L, 10L);
+        resourceService.createResource(shovel, 4L, 10L);
         
         ResourceEntity spade = new ResourceEntity("Gardening Spade", "Gardening Spade available", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         spade.setResourceProfilePic("https://localhost:8443/api/v1/files/init/spade.jpg");
         spade.getPhotos().add("https://localhost:8443/api/v1/files/init/spade.jpg");
         spade.setCountry("Cambodia");
-        resourceService.createResource(spade, 8L, 10L);
+        resourceService.createResource(spade, 4L, 10L);
         
         ResourceEntity gloves = new ResourceEntity("Sofa", "5 sets of used sofa available for donation", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
         gloves.setResourceProfilePic("https://localhost:8443/api/v1/files/init/sofa.jpg");
