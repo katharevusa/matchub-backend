@@ -101,7 +101,7 @@ public class InitServiceImpl implements InitService {
         initCommunityBadges();
 
         //join request 
-//        initJoinRequest();
+        initJoinRequest();
 
         // init project follower 
         initProjectFollower();
@@ -712,15 +712,15 @@ public class InitServiceImpl implements InitService {
         spade.setCountry("Cambodia");
         resourceService.createResource(spade, 8L, 10L);
         
-        ResourceEntity gloves = new ResourceEntity("Sofa", "1000 Tomatoes available", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
-        gloves.setResourceProfilePic("https://localhost:8443/api/v1/files/init/tomato.jpg");
-        gloves.getPhotos().add("https://localhost:8443/api/v1/files/init/tomato.jpg");
+        ResourceEntity gloves = new ResourceEntity("Sofa", "5 sets of used sofa available for donation", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
+        gloves.setResourceProfilePic("https://localhost:8443/api/v1/files/init/sofa.jpg");
+        gloves.getPhotos().add("https://localhost:8443/api/v1/files/init/sofa.jpg");
         gloves.setCountry("Singapore");
         resourceService.createResource(gloves, 9L, 7L);
         
-        ResourceEntity mask = new ResourceEntity("Chair", "1000 Tomatoes available", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
-        mask.setResourceProfilePic("https://localhost:8443/api/v1/files/init/tomato.jpg");
-        mask.getPhotos().add("https://localhost:8443/api/v1/files/init/tomato.jpg");
+        ResourceEntity mask = new ResourceEntity("Chair", "500 Brand New Chairs", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 500);
+        mask.setResourceProfilePic("https://localhost:8443/api/v1/files/init/chair.jpg");
+        mask.getPhotos().add("https://localhost:8443/api/v1/files/init/chair.jpg");
         mask.setCountry("Singapore");
         resourceService.createResource(mask, 9L, 7L);
 
@@ -1216,11 +1216,11 @@ public class InitServiceImpl implements InitService {
         profileEntityRepository.save(songhwa);
 
         //associate resources 
-        ResourceRequestEntity rr1 = new ResourceRequestEntity(Long.valueOf(5), Long.valueOf(22), completedProject.getProjectId(), 10, "Testing testing");
-        rr1.setRequestCreationTime(LocalDateTime.of(2020, Month.MARCH, 17, 11, 15));
-        rr1.setRequestorEnum(RequestorEnum.RESOURCE_OWNER);
-        rr1.setStatus(RequestStatusEnum.ACCEPTED);
-        resourceRequestEntityRepository.saveAndFlush(rr1);
+//        ResourceRequestEntity rr1 = new ResourceRequestEntity(Long.valueOf(5), Long.valueOf(22), completedProject.getProjectId(), 10, "Testing testing");
+//        rr1.setRequestCreationTime(LocalDateTime.of(2020, Month.MARCH, 17, 11, 15));
+//        rr1.setRequestorEnum(RequestorEnum.RESOURCE_OWNER);
+//        rr1.setStatus(RequestStatusEnum.ACCEPTED);
+//        resourceRequestEntityRepository.saveAndFlush(rr1);
 
         /* end of completed project 1 */
 
