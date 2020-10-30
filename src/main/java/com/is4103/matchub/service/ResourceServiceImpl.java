@@ -54,7 +54,7 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Autowired
     AttachmentService attachmentService;
-    
+
     @Autowired
     ProjectEntityRepository projectEntityRepository;
 
@@ -91,7 +91,10 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Override
     public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTimeStr, String endTimeStr, String country, Pageable pageable) {
-        List<ResourceEntity> initResource = new ArrayList();
+        System.out.println("starttime"+startTimeStr);
+        System.out.println("endtime"+endTimeStr);
+        
+        List<ResourceEntity> initResource = new ArrayList();     
         if (keyword.equals("")) {
             System.err.println("key word is null");
             initResource = resourceEntityRepository.findAll();
@@ -132,14 +135,36 @@ public class ResourceServiceImpl implements ResourceService {
             resultFilterByCategories = resultFilterByAvailability;
         }
 
-        //filter by start date and end date  
+        //filter by start date and end date if end date and start date exit
         List<ResourceEntity> resultFilterByDate = new ArrayList();
-        if (!startTimeStr.equals("")&& !endTimeStr.equals("")) {
+        if (!startTimeStr.equals("") && !endTimeStr.equals("")) {
             LocalDateTime startTime = LocalDateTime.parse(startTimeStr);
             LocalDateTime endTime = LocalDateTime.parse(endTimeStr);
             for (ResourceEntity r : resultFilterByCategories) {
-                if (!(r.getStartTime().isBefore(startTime)&& r.getEndTime().isBefore(startTime)) &&
-                     !(r.getStartTime().isAfter(endTime)&& r.getEndTime().isAfter(endTime))) {
+                if (!(r.getStartTime().isBefore(startTime) && r.getEndTime().isBefore(startTime))
+                        && !(r.getStartTime().isAfter(endTime) && r.getEndTime().isAfter(endTime))) {
+                    resultFilterByDate.add(r);
+                }
+
+            }
+
+        } else if (!startTimeStr.equals("")) {
+            // filter by start date only
+            LocalDateTime startTime = LocalDateTime.parse(startTimeStr);
+            for (ResourceEntity r : resultFilterByCategories) {
+                if (r.getStartTime().isAfter(startTime)||r.getStartTime()==null) {
+                    System.err.println(" resource starttime : "+ r.getStartTime().toString());
+                    System.err.println("startTime : "+startTimeStr);
+                    resultFilterByDate.add(r);
+                }
+
+            }
+
+        } else if (!endTimeStr.equals("")) {
+            // filter by end date only 
+            LocalDateTime endTime = LocalDateTime.parse(endTimeStr);
+            for (ResourceEntity r : resultFilterByCategories) {
+                if (r.getEndTime().isBefore(endTime)|| r.getEndTime()==null) {
                     resultFilterByDate.add(r);
                 }
 
@@ -148,7 +173,6 @@ public class ResourceServiceImpl implements ResourceService {
         } else {
             resultFilterByDate = resultFilterByCategories;
         }
-        
 
         //filter by country
         List<ResourceEntity> resultFilterByCountry = new ArrayList();
@@ -267,12 +291,12 @@ public class ResourceServiceImpl implements ResourceService {
 
         return page;
     }
-    
+
     @Override
     public List<ResourceEntity> getSpotlightedResources() {
         return resourceEntityRepository.getSpotlightedResources();
     }
-    
+
     @Override
     public Page<ResourceEntity> getSpotlightedResources(Pageable pageable) {
         return resourceEntityRepository.getSpotlightedResources(pageable);
@@ -439,7 +463,5 @@ public class ResourceServiceImpl implements ResourceService {
         resources = resourceEntityRepository.getMatchedResourcesByProjectId(projectId);
         return resources;
     }
-
-    
 
 }
