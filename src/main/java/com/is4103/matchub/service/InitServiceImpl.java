@@ -556,7 +556,7 @@ public class InitServiceImpl implements InitService {
         resourceService.createResource(clothes, 7L, 9L);
 
         //9   
-        ResourceEntity dictionary = new ResourceEntity("Giving Away English Language Dictionaries", "100 used english dictionaries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
+        ResourceEntity dictionary = new ResourceEntity("English Language Dictionaries", "100 used english dictionaries", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
         dictionary.setResourceProfilePic("https://localhost:8443/api/v1/files/init/dictionary.jpg");
         dictionary.getPhotos().add("https://localhost:8443/api/v1/files/init/dictionary.jpg");
         dictionary.setCountry("Cambodia");
@@ -699,6 +699,30 @@ public class InitServiceImpl implements InitService {
         floorPlan.getPhotos().add("https://localhost:8443/api/v1/files/init/floorplan.png");
         floorPlan.setCountry("Cambodia");
         resourceService.createResource(floorPlan, 8L, 10L);
+        
+        ResourceEntity shovel = new ResourceEntity("Shovel", "Shovel available, contact me for more details", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
+        shovel.setResourceProfilePic("https://localhost:8443/api/v1/files/init/shovel.jpg");
+        shovel.getPhotos().add("https://localhost:8443/api/v1/files/init/shovel.jpg");
+        shovel.setCountry("Cambodia");
+        resourceService.createResource(shovel, 8L, 10L);
+        
+        ResourceEntity spade = new ResourceEntity("Gardening Spade", "Gardening Spade available", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
+        spade.setResourceProfilePic("https://localhost:8443/api/v1/files/init/spade.jpg");
+        spade.getPhotos().add("https://localhost:8443/api/v1/files/init/spade.jpg");
+        spade.setCountry("Cambodia");
+        resourceService.createResource(spade, 8L, 10L);
+        
+        ResourceEntity gloves = new ResourceEntity("Sofa", "1000 Tomatoes available", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
+        gloves.setResourceProfilePic("https://localhost:8443/api/v1/files/init/tomato.jpg");
+        gloves.getPhotos().add("https://localhost:8443/api/v1/files/init/tomato.jpg");
+        gloves.setCountry("Singapore");
+        resourceService.createResource(gloves, 9L, 7L);
+        
+        ResourceEntity mask = new ResourceEntity("Chair", "1000 Tomatoes available", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
+        mask.setResourceProfilePic("https://localhost:8443/api/v1/files/init/tomato.jpg");
+        mask.getPhotos().add("https://localhost:8443/api/v1/files/init/tomato.jpg");
+        mask.setCountry("Singapore");
+        resourceService.createResource(mask, 9L, 7L);
 
         //22
         //*********** for rep points testing 
@@ -1252,7 +1276,7 @@ public class InitServiceImpl implements InitService {
         completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
         completedProject.setUpvotes(36);
 
-        completedProject.setUpvotes(136);
+        completedProject.setProjectPoolPoints(136);
 
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/genderEqualityIndia.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/genderEqualityIndia1.jpg");
@@ -1295,7 +1319,7 @@ public class InitServiceImpl implements InitService {
         completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
         completedProject.setUpvotes(60);
 
-        completedProject.setUpvotes(160);
+        completedProject.setProjectPoolPoints(160);
 
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll.jpg");
         completedProject.getPhotos().add("https://localhost:8443/api/v1/files/init/educationForAll1.jpg");
