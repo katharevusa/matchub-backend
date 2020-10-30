@@ -54,7 +54,6 @@ public class AnnouncementEntity {
     private LocalDateTime timestamp;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    
     @JsonIgnoreProperties({"announcements"})
     private List<ProfileEntity> notifiedUsers = new ArrayList<>();
 
