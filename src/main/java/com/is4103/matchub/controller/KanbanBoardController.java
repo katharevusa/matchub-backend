@@ -7,6 +7,7 @@ package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.CommentEntity;
 import com.is4103.matchub.entity.KanbanBoardEntity;
+import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.entity.TaskEntity;
 import com.is4103.matchub.exception.CreateTaskException;
@@ -35,6 +36,9 @@ import java.util.List;
 import java.util.Map;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -265,21 +269,54 @@ public class KanbanBoardController {
             @RequestParam(value = "newColumnId", required = true) Long newColumnId) {
         return taskService.updateTaskStatus(taskId, oldColumnId, newColumnId);
     }
-    
+
+    //For Web
     @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByUserId")
     public List<TaskEntity> getUnfinishedTasksByUserId(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId,
-                                                       @RequestParam(value = "userId", required = true) Long userId){
+            @RequestParam(value = "userId", required = true) Long userId)throws KanbanBoardNotFoundException{
         return taskService.getUnfinishedTasksByUserId(kanbanboardId, userId);
     }
-     
+
     @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByKanbanBoardId")
-     public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId){
-         return taskService.getUnfinishedTasksByKanbanBoardId(kanbanboardId);
-     }
-     
-     
-     @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByChannelUId")
-     public List<TaskEntity> getUnfinishedTasksByChannelUId(@RequestParam(value = "channelUId", required = true)String channelUId){
-         return taskService.getUnfinishedTasksByChannelUId(channelUId);
-     }
+    public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId)throws KanbanBoardNotFoundException{
+        return taskService.getUnfinishedTasksByKanbanBoardId(kanbanboardId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByChannelUId")
+    public List<TaskEntity> getUnfinishedTasksByChannelUId(@RequestParam(value = "channelUId", required = true) String channelUId) {
+        return taskService.getUnfinishedTasksByChannelUId(channelUId);
+    }
+
+    //For mobile
+    @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByUserIdMobile")
+    public Page<TaskEntity> getUnfinishedTasksByUserIdMobile(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId,
+                                                             @RequestParam(value = "userId", required = true) Long userId,
+                                                             Pageable pageable) throws KanbanBoardNotFoundException{
+        List<TaskEntity> taskList = taskService.getUnfinishedTasksByUserId(kanbanboardId, userId);
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > taskList.size() ? taskList.size() : (start + pageable.getPageSize());
+        Page<TaskEntity> pages = new PageImpl<TaskEntity>(taskList.subList(start.intValue(), end.intValue()), pageable, taskList.size());
+        return pages;
+
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByKanbanBoardIdMobile")
+    public Page<TaskEntity> getUnfinishedTasksByKanbanBoardIdMobile(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId,
+                                                                     Pageable pageable) throws KanbanBoardNotFoundException{
+        List<TaskEntity> taskList = taskService.getUnfinishedTasksByKanbanBoardId(kanbanboardId);
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > taskList.size() ? taskList.size() : (start + pageable.getPageSize());
+        Page<TaskEntity> pages = new PageImpl<TaskEntity>(taskList.subList(start.intValue(), end.intValue()), pageable, taskList.size());
+        return pages;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByChannelUIdMobile")
+    public Page<TaskEntity> getUnfinishedTasksByChannelUIdMobile(@RequestParam(value = "channelUId", required = true) String channelUId, Pageable pageable) {
+        List<TaskEntity> taskList = taskService.getUnfinishedTasksByChannelUId(channelUId);
+        Long start = pageable.getOffset();
+        Long end = (start + pageable.getPageSize()) > taskList.size() ? taskList.size() : (start + pageable.getPageSize());
+        Page<TaskEntity> pages = new PageImpl<TaskEntity>(taskList.subList(start.intValue(), end.intValue()), pageable, taskList.size());
+        return pages;
+    }
+
 }
