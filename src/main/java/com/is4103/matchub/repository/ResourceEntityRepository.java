@@ -54,7 +54,7 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true AND (r.country = ?1 OR r.resourceCategoryId = 8)")
     List<ResourceEntity> getAllAvailableResourcesInCountry(String country);
     
-    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true AND r.country <> ?1")
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true AND (r.country <> ?1 OR r.resourceCategoryId = 8)")
     List<ResourceEntity> getAllAvailableResourcesNotInCountry(String country);
 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.spotlight = TRUE ORDER BY r.spotlightEndTime DESC")
