@@ -1399,8 +1399,8 @@ public class InitServiceImpl implements InitService {
         }
 
         try {
-            projectService.createJoinRequest(13L, 11L);
-            projectService.createJoinRequest(13L, 12L);
+            projectService.createJoinRequest(1L, 11L);
+            projectService.createJoinRequest(1L, 12L);
         } catch (Exception e) {
             System.err.println("Error in init join request");
         }
