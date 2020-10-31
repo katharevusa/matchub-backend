@@ -709,20 +709,20 @@ public class InitServiceImpl implements InitService {
         ResourceEntity spade = new ResourceEntity("Gardening Spade", "Gardening Spade available", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         spade.setResourceProfilePic("https://localhost:8443/api/v1/files/init/spade.jpg");
         spade.getPhotos().add("https://localhost:8443/api/v1/files/init/spade.jpg");
-        spade.setCountry("Cambodia");
+        spade.setCountry("Singapore");
         resourceService.createResource(spade, 4L, 10L);
         
-        ResourceEntity gloves = new ResourceEntity("Sofa", "5 sets of used sofa available for donation", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
-        gloves.setResourceProfilePic("https://localhost:8443/api/v1/files/init/sofa.jpg");
-        gloves.getPhotos().add("https://localhost:8443/api/v1/files/init/sofa.jpg");
-        gloves.setCountry("Singapore");
-        resourceService.createResource(gloves, 9L, 7L);
+        ResourceEntity sofa = new ResourceEntity("Sofa", "5 sets of used sofa available for donation", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
+        sofa.setResourceProfilePic("https://localhost:8443/api/v1/files/init/sofa.jpg");
+        sofa.getPhotos().add("https://localhost:8443/api/v1/files/init/sofa.jpg");
+        sofa.setCountry("Singapore");
+        resourceService.createResource(sofa, 9L, 7L);
         
-        ResourceEntity mask = new ResourceEntity("Chair", "500 Brand New Chairs", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 500);
-        mask.setResourceProfilePic("https://localhost:8443/api/v1/files/init/chair.jpg");
-        mask.getPhotos().add("https://localhost:8443/api/v1/files/init/chair.jpg");
-        mask.setCountry("Singapore");
-        resourceService.createResource(mask, 9L, 7L);
+        ResourceEntity chair = new ResourceEntity("Chair", "500 Brand New Chairs", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 500);
+        chair.setResourceProfilePic("https://localhost:8443/api/v1/files/init/chair.jpg");
+        chair.getPhotos().add("https://localhost:8443/api/v1/files/init/chair.jpg");
+        chair.setCountry("Singapore");
+        resourceService.createResource(chair, 9L, 7L);
 
         //22
         //*********** for rep points testing 
