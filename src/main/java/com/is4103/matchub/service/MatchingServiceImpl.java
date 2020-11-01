@@ -35,6 +35,7 @@ import edu.cmu.lti.ws4j.impl.Path;
 import edu.cmu.lti.ws4j.impl.Resnik;
 import edu.cmu.lti.ws4j.impl.WuPalmer;
 import edu.cmu.lti.ws4j.util.WS4JConfiguration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -85,165 +86,6 @@ public class MatchingServiceImpl implements MatchingService {
         new Resnik(db), new JiangConrath(db), new Lin(db), new Path(db)
     };
 
-    public static void runWS4J(String word1, String word2) {
-        WS4JConfiguration.getInstance().setMFS(true);
-
-        long t0 = System.currentTimeMillis();
-        System.out.println("START WS4J ALGO ***************- " + word1 + " & " + word2);
-
-        for (RelatednessCalculator rc : rcs) {
-            List<POS[]> posPairs = rc.getPOSPairs();
-            double maxScore = -1D;
-
-            for (POS[] posPair : posPairs) {
-                List<Concept> synsets1 = (List<Concept>) db.getAllConcepts(word1, posPair[0].toString());
-                List<Concept> synsets2 = (List<Concept>) db.getAllConcepts(word2, posPair[1].toString());
-
-                for (Concept synset1 : synsets1) {
-                    for (Concept synset2 : synsets2) {
-                        Relatedness relatedness = rc.calcRelatednessOfSynset(synset1, synset2);
-                        double score = relatedness.getScore();
-                        if (score > maxScore) {
-                            maxScore = score;
-                        }
-                    }
-                }
-            }
-
-            if (maxScore == -1D) {
-                maxScore = 0.0;
-            }
-            System.out.println(rc.getClass().getName() + "\t" + maxScore);
-        }
-
-//        for (RelatednessCalculator rc : rcs) {
-//            double s = rc.calcRelatednessOfWords(word1, word2);
-//            System.out.println(rc.getClass().getName() + "\t" + s);
-//        }
-        long t1 = System.currentTimeMillis();
-        System.out.println("Done in " + (t1 - t0) + " msec.");
-    }
-
-    //using WuPalmer
-    public static double calculateWupSimilarity(String word1, String word2) {
-        WS4JConfiguration.getInstance().setMFS(true);
-
-        long t0 = System.currentTimeMillis();
-        System.out.println("START WUP Similarity ALGO *************** - " + word1 + " & " + word2);
-
-        List<POS[]> posPairs = rcs[3].getPOSPairs();
-        double maxScore = -1D;
-
-        for (POS[] posPair : posPairs) {
-            List<Concept> synsets1 = (List<Concept>) db.getAllConcepts(word1, posPair[0].toString());
-            List<Concept> synsets2 = (List<Concept>) db.getAllConcepts(word2, posPair[1].toString());
-
-            for (Concept synset1 : synsets1) {
-                for (Concept synset2 : synsets2) {
-                    Relatedness relatedness = rcs[3].calcRelatednessOfSynset(synset1, synset2);
-                    double score = relatedness.getScore();
-                    if (score > maxScore) {
-                        maxScore = score;
-                    }
-                }
-            }
-        }
-
-        if (maxScore == -1D) {
-            maxScore = 0.0;
-        }
-
-        System.out.println("sim('" + word1 + "', '" + word2 + "') =  " + maxScore);
-
-//        double s = rcs[3].calcRelatednessOfWords(word1, word2);
-//        System.out.println(rcs[3].getClass().getName() + "\t" + s);
-        long t1 = System.currentTimeMillis();
-        System.out.println("Done in " + (t1 - t0) + " msec.");
-
-//        return s;
-        return maxScore;
-    }
-
-    //using path
-    public static double calculatePathSimilarity(String word1, String word2) {
-        WS4JConfiguration.getInstance().setMFS(true);
-
-        long t0 = System.currentTimeMillis();
-        System.out.println("START PATH Similarity ALGO *************** - " + word1 + " & " + word2);
-
-        List<POS[]> posPairs = rcs[7].getPOSPairs();
-        double maxScore = -1D;
-
-        for (POS[] posPair : posPairs) {
-            List<Concept> synsets1 = (List<Concept>) db.getAllConcepts(word1, posPair[0].toString());
-            List<Concept> synsets2 = (List<Concept>) db.getAllConcepts(word2, posPair[1].toString());
-
-            for (Concept synset1 : synsets1) {
-                for (Concept synset2 : synsets2) {
-                    Relatedness relatedness = rcs[7].calcRelatednessOfSynset(synset1, synset2);
-                    double score = relatedness.getScore();
-                    if (score > maxScore) {
-                        maxScore = score;
-                    }
-                }
-            }
-        }
-
-        if (maxScore == -1D) {
-            maxScore = 0.0;
-        }
-
-        System.out.println("sim('" + word1 + "', '" + word2 + "') =  " + maxScore);
-
-//        double s = rcs[7].calcRelatednessOfWords(word1, word2);
-//        System.out.println(rcs[7].getClass().getName() + "\t" + s);
-        long t1 = System.currentTimeMillis();
-        System.out.println("Done in " + (t1 - t0) + " msec.");
-
-//        return s;
-        return maxScore;
-    }
-
-    //using res
-    public static double calculateResSimilarity(String word1, String word2) {
-        WS4JConfiguration.getInstance().setMFS(true);
-
-        long t0 = System.currentTimeMillis();
-        System.out.println("START RES Similarity ALGO *************** - " + word1 + " & " + word2);
-
-        List<POS[]> posPairs = rcs[4].getPOSPairs();
-        double maxScore = -1D;
-
-        for (POS[] posPair : posPairs) {
-            List<Concept> synsets1 = (List<Concept>) db.getAllConcepts(word1, posPair[0].toString());
-            List<Concept> synsets2 = (List<Concept>) db.getAllConcepts(word2, posPair[1].toString());
-
-            for (Concept synset1 : synsets1) {
-                for (Concept synset2 : synsets2) {
-                    Relatedness relatedness = rcs[4].calcRelatednessOfSynset(synset1, synset2);
-                    double score = relatedness.getScore();
-                    if (score > maxScore) {
-                        maxScore = score;
-                    }
-                }
-            }
-        }
-
-        if (maxScore == -1D) {
-            maxScore = 0.0;
-        }
-
-        System.out.println("sim('" + word1 + "', '" + word2 + "') =  " + maxScore);
-
-//        double s = rcs[4].calcRelatednessOfWords(word1, word2);
-//        System.out.println(rcs[4].getClass().getName() + "\t" + s);
-        long t1 = System.currentTimeMillis();
-        System.out.println("Done in " + (t1 - t0) + " msec.");
-
-//        return s;
-        return maxScore;
-    }
-
     //************ calculates socre for wup, res, oath for the same word sense pair and returns the highest score 
     public static double calculateSimilarity(String word1, String word2) {
 
@@ -253,13 +95,6 @@ public class MatchingServiceImpl implements MatchingService {
 //        System.out.println("START WS4J ALGO ***************");
         List<POS[]> posPairs = rcs[3].getPOSPairs();
 
-//        System.out.println("CHECK HERE*****");
-//        List<POS[]> posPairs3 = rcs[3].getPOSPairs();
-//        System.out.println("PosPair3 length: " + posPairs3.size());
-//        List<POS[]> posPairs4 = rcs[4].getPOSPairs();
-//        System.out.println("PosPair4 length: " + posPairs4.size());
-//        List<POS[]> posPairs7 = rcs[7].getPOSPairs();
-//        System.out.println("PosPair7 length: " + posPairs7.size());
         double maxScore = -1D;
 
         for (POS[] posPair : posPairs) {
@@ -278,9 +113,7 @@ public class MatchingServiceImpl implements MatchingService {
                     // path score for this synset1 of word1 to synset2 of word2
                     double pathScore = rcs[7].calcRelatednessOfSynset(synsets1.get(i - 1), synsets2.get(j - 1)).getScore();
 
-//                    System.out.println("\n" + rcs[3].getClass().getName() + ": " + word1 + "#" + i + " and " + word2 + "#" + j + ": " + wupScore);
-//                    System.out.println(rcs[4].getClass().getName() + ": " + word1 + "#" + i + " and " + word2 + "#" + j + ": " + resnikScore);
-//                    System.out.println(rcs[7].getClass().getName() + ": " + word1 + "#" + i + " and " + word2 + "#" + j + ": " + pathScore);
+//                    predefined threshold  
                     if (wupScore >= 0.6 && resnikScore >= 4 && pathScore >= (double) 1 / 9) {
 
                         System.out.println("\n *** Passed threshold check ***");
@@ -311,6 +144,7 @@ public class MatchingServiceImpl implements MatchingService {
         //lemmatise the input 
         List<String> lemmatised = stanfordLemmatizer.lemmatize(input);
 
+        //convert lemmatised list into a string with a space seperating the words
         String delim = " ";
         String lemmatisedString = String.join(delim, lemmatised);
 
@@ -339,12 +173,13 @@ public class MatchingServiceImpl implements MatchingService {
         projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
 
         //find the list of available resources in the same country 
+        //the database query factors in the resource availability time and the rpoject start and end date
         List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResourcesInCountry(project.getCountry(), project.getStartDate(), project.getEndDate());
-        System.out.println("total avail resources in country " + project.getCountry() + ": " + availableResources.size());
+        System.out.println("total avail resources in country (" + project.getCountry() + ") within project start and end date: " + availableResources.size());
 
         if (availableResources.size() == 0) {
             //return an empty recommendation
-            System.out.println("No Resource in the same country");
+            System.out.println("No Resource in the same country within the project start and end date");
             return new ArrayList<ResourceEntity>();
         }
 
@@ -354,7 +189,7 @@ public class MatchingServiceImpl implements MatchingService {
             ResourceEntity resource = availableResources.get(x);
             String resourceKeywordString = resource.getResourceName();
 
-            //lemmatise and extract noun of resource 
+            //lemmatise and extract noun of each resource 
             List<String> resourceKeywords = lemmatiseAndExtractNoun(resourceKeywordString);
 
             double previousScore = 0.0;
@@ -363,13 +198,13 @@ public class MatchingServiceImpl implements MatchingService {
                 for (int j = 0; j < resourceKeywords.size(); j++) {
 
                     // getting best synset score for word1 and word2. as a depiction, dog#1 and animal#2 
-                    // will give the highest score we are interested in.
+                    // will give the highest score we are interested in
                     double scoreFromCalculate = calculateSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
                     // this gives the highest score for word1 and word2 comparison and the highest synset1 and synset2 comparison.
                     // meaning if dog and animal runs, maybe dog#1 and animal#2 will give the highest. then we store it here since 
-                    // these 2 could gave the highest so far. but there could be other keywords which are even better, so we keep
-                    // checking all and always replace this to see which words of the keywords array will give the best score and best synset comparison.
+                    // these 2 gives the highest so far. but there could be other keywords which are even better, 
+                    // so we loop through all and constantly compare for the best synset comparison by Math.max()
                     previousScore = Math.max(previousScore, scoreFromCalculate);
                 }
             }
@@ -402,9 +237,9 @@ public class MatchingServiceImpl implements MatchingService {
         //lemmatise and extract noun of project keywords 
         projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
 
-        //find the list of available resources 
+        //find the list of available resources not in the same country as the project, factoring in the project's start and end date
         List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResourcesNotInCountry(project.getCountry(), project.getStartDate(), project.getEndDate());
-        System.out.println("total avail resources: " + availableResources.size());
+        System.out.println("total avail resources (not same country as project): " + availableResources.size());
 
         Boolean matched = false;
 
@@ -422,13 +257,13 @@ public class MatchingServiceImpl implements MatchingService {
                 for (int j = 0; j < resourceKeywords.size(); j++) {
 
                     // getting best synset score for word1 and word2. as a depiction, dog#1 and animal#2 
-                    // will give the highest score we are interested in.
+                    // will give the highest score we are interested in
                     double scoreFromCalculate = calculateSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
                     // this gives the highest score for word1 and word2 comparison and the highest synset1 and synset2 comparison.
                     // meaning if dog and animal runs, maybe dog#1 and animal#2 will give the highest. then we store it here since 
-                    // these 2 could gave the highest so far. but there could be other keywords which are even better, so we keep
-                    // checking all and always replace this to see which words of the keywords array will give the best score and best synset comparison.
+                    // these 2 gives the highest so far. but there could be other keywords which are even better, 
+                    // so we loop through all and constantly compare for the best synset comparison by Math.max()
                     previousScore = Math.max(previousScore, scoreFromCalculate);
                 }
             }
@@ -457,7 +292,14 @@ public class MatchingServiceImpl implements MatchingService {
 
         //find the list of active projects in country 
         if (resource.getCountry() != null) {
-            List<ProjectEntity> activeProjects = projectEntityRepository.getAllActiveProjectsInCountry(resource.getCountry());
+
+            List<ProjectEntity> activeProjects;
+            if (resource.getStartTime() != null && resource.getEndTime() != null) {
+                //find al active projects within resource start and end availability time
+                activeProjects = projectEntityRepository.getAllActiveProjectsInCountry(resource.getCountry(), resource.getStartTime(), resource.getEndTime());
+            } else { // resource does not have start and end time 
+                activeProjects = projectEntityRepository.getAllActiveProjectsInCountry(resource.getCountry());
+            }
             System.out.println("total active projects in country (" + resource.getCountry() + "): " + activeProjects.size());
 
             Boolean matched = false;
@@ -481,13 +323,13 @@ public class MatchingServiceImpl implements MatchingService {
                     for (int j = 0; j < resourceKeywords.size(); j++) {
 
                         // getting best synset score for word1 and word2. as a depiction, dog#1 and animal#2 
-                        // will give the highest score we are interested in.
+                        // will give the highest score we are interested in
                         double scoreFromCalculate = calculateSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
                         // this gives the highest score for word1 and word2 comparison and the highest synset1 and synset2 comparison.
                         // meaning if dog and animal runs, maybe dog#1 and animal#2 will give the highest. then we store it here since 
-                        // these 2 could gave the highest so far. but there could be other keywords which are even better, so we keep
-                        // checking all and always replace this to see which words of the keywords array will give the best score and best synset comparison.
+                        // these 2 gives the highest so far. but there could be other keywords which are even better, 
+                        // so we loop through all and constantly compare for the best synset comparison by Math.max()
                         previousScore = Math.max(previousScore, scoreFromCalculate);
                     }
                 }
@@ -503,6 +345,8 @@ public class MatchingServiceImpl implements MatchingService {
 
         } else {//resource does not have country specified
             System.out.println("Resource does not have country specified");
+
+            //return an empty list of recommendations 
             return new ArrayList<ProjectEntity>();
         }
 
@@ -523,9 +367,23 @@ public class MatchingServiceImpl implements MatchingService {
         List<ProjectEntity> activeProjects;
 
         if (resource.getCountry() != null) {
-            activeProjects = projectEntityRepository.getAllActiveProjectsNotInCountry(resource.getCountry());
-        } else {
-            activeProjects = projectEntityRepository.getAllActiveProjects();
+
+            if (resource.getStartTime() != null && resource.getEndTime() != null) {
+                activeProjects = projectEntityRepository.getAllActiveProjectsNotInCountry(resource.getCountry(), resource.getStartTime(), resource.getEndTime());
+            } else {
+                // resource does not have start and end time specified
+                activeProjects = projectEntityRepository.getAllActiveProjectsNotInCountry(resource.getCountry());
+            }
+
+        } else { // resource does not have country
+
+            if (resource.getStartTime() != null && resource.getEndTime() != null) {
+                activeProjects = projectEntityRepository.getAllActiveProjects(resource.getStartTime(), resource.getEndTime());
+            } else {
+                // resource does not have start and end time specified, does not have country 
+                activeProjects = projectEntityRepository.getAllActiveProjects();
+            }
+
         }
 
         //find the list of active projects
@@ -552,13 +410,13 @@ public class MatchingServiceImpl implements MatchingService {
                 for (int j = 0; j < resourceKeywords.size(); j++) {
 
                     // getting best synset score for word1 and word2. as a depiction, dog#1 and animal#2 
-                    // will give the highest score we are interested in.
+                    // will give the highest score we are interested in
                     double scoreFromCalculate = calculateSimilarity(projectKeywords.get(i), resourceKeywords.get(j));
 
                     // this gives the highest score for word1 and word2 comparison and the highest synset1 and synset2 comparison.
                     // meaning if dog and animal runs, maybe dog#1 and animal#2 will give the highest. then we store it here since 
-                    // these 2 could gave the highest so far. but there could be other keywords which are even better, so we keep
-                    // checking all and always replace this to see which words of the keywords array will give the best score and best synset comparison.
+                    // these 2 gives the highest so far. but there could be other keywords which are even better, 
+                    // so we loop through all and constantly compare for the best synset comparison by Math.max()
                     previousScore = Math.max(previousScore, scoreFromCalculate);
                 }
             }
@@ -774,33 +632,6 @@ public class MatchingServiceImpl implements MatchingService {
         }
 
         return recommendations;
-    }
-
-    private List<String> preprocessResourceKeywords(ResourceEntity resource) {
-
-        List<String> resourceKeywords = new ArrayList<>();
-
-        //Each Resource: Get the ResourceName & ResourceCategory, concat into a List of String
-        String categoryName = resourceCategoryEntityRepository.findById(resource.getResourceCategoryId()).get().getResourceCategoryName();
-
-        resourceKeywords.add(categoryName);
-
-        String[] array = resource.getResourceName().split(" ");
-        resourceKeywords.addAll(Arrays.asList(array));
-
-        return resourceKeywords;
-    }
-
-    private List<String> preprocessProjectKeywords(ProjectEntity project) {
-
-        List<String> projectKeywords = new ArrayList<>();
-
-        for (String s : project.getRelatedResources()) {
-            String[] array = s.split(" ");
-            projectKeywords.addAll(Arrays.asList(array));
-        }
-
-        return projectKeywords;
     }
 
 }
