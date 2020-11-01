@@ -146,9 +146,7 @@ public class KanbanBoardController {
             createTaskVO.setTaskDescription(createFullTaskVO.getTaskDescription());
         }
 
-        if (createFullTaskVO.getExpectedDeadline() != null) {
-            createTaskVO.setExpectedDeadline(createFullTaskVO.getExpectedDeadline());
-        }
+        createTaskVO.setExpectedDeadline(createFullTaskVO.getExpectedDeadline());
 
         if (createFullTaskVO.getTaskLeaderId() != null) {
             createTaskVO.setTaskLeaderId(createFullTaskVO.getTaskLeaderId());
@@ -273,12 +271,12 @@ public class KanbanBoardController {
     //For Web
     @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByUserId")
     public List<TaskEntity> getUnfinishedTasksByUserId(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId,
-            @RequestParam(value = "userId", required = true) Long userId)throws KanbanBoardNotFoundException{
+            @RequestParam(value = "userId", required = true) Long userId) throws KanbanBoardNotFoundException {
         return taskService.getUnfinishedTasksByUserId(kanbanboardId, userId);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByKanbanBoardId")
-    public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId)throws KanbanBoardNotFoundException{
+    public List<TaskEntity> getUnfinishedTasksByKanbanBoardId(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId) throws KanbanBoardNotFoundException {
         return taskService.getUnfinishedTasksByKanbanBoardId(kanbanboardId);
     }
 
@@ -290,8 +288,8 @@ public class KanbanBoardController {
     //For mobile
     @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByUserIdMobile")
     public Page<TaskEntity> getUnfinishedTasksByUserIdMobile(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId,
-                                                             @RequestParam(value = "userId", required = true) Long userId,
-                                                             Pageable pageable) throws KanbanBoardNotFoundException{
+            @RequestParam(value = "userId", required = true) Long userId,
+            Pageable pageable) throws KanbanBoardNotFoundException {
         List<TaskEntity> taskList = taskService.getUnfinishedTasksByUserId(kanbanboardId, userId);
         Long start = pageable.getOffset();
         Long end = (start + pageable.getPageSize()) > taskList.size() ? taskList.size() : (start + pageable.getPageSize());
@@ -302,7 +300,7 @@ public class KanbanBoardController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/getUnfinishedTasksByKanbanBoardIdMobile")
     public Page<TaskEntity> getUnfinishedTasksByKanbanBoardIdMobile(@RequestParam(value = "kanbanboardId", required = true) Long kanbanboardId,
-                                                                     Pageable pageable) throws KanbanBoardNotFoundException{
+            Pageable pageable) throws KanbanBoardNotFoundException {
         List<TaskEntity> taskList = taskService.getUnfinishedTasksByKanbanBoardId(kanbanboardId);
         Long start = pageable.getOffset();
         Long end = (start + pageable.getPageSize()) > taskList.size() ? taskList.size() : (start + pageable.getPageSize());

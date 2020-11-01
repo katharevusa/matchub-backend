@@ -26,10 +26,9 @@ public class CreateFullTaskVO {
   
     private String taskDescription;
     
-    
+    @NotNull(message = "Expected deadline can not be null")
     private LocalDateTime expectedDeadline;
 
-    
     private Long taskLeaderId;
     
     @NotNull(message = "Task Column Id can not be null")
