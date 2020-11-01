@@ -339,7 +339,7 @@ public class MatchingServiceImpl implements MatchingService {
         projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
 
         //find the list of available resources in the same country 
-        List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResourcesInCountry(project.getCountry());
+        List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResourcesInCountry(project.getCountry(), project.getStartDate(), project.getEndDate());
         System.out.println("total avail resources in country " + project.getCountry() + ": " + availableResources.size());
 
         if (availableResources.size() == 0) {
@@ -403,7 +403,7 @@ public class MatchingServiceImpl implements MatchingService {
         projectKeywords = lemmatiseAndExtractNoun(projectKeywordsString);
 
         //find the list of available resources 
-        List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResourcesNotInCountry(project.getCountry());
+        List<ResourceEntity> availableResources = resourceEntityRepository.getAllAvailableResourcesNotInCountry(project.getCountry(), project.getStartDate(), project.getEndDate());
         System.out.println("total avail resources: " + availableResources.size());
 
         Boolean matched = false;
