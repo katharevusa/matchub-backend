@@ -21,10 +21,10 @@ public class CreateTaskVO {
     private String taskTitle;
 
 
-    
+    @NotNull(message = "Task title can not be null")
     private String taskDescription;
     
-    
+    @NotNull(message = "Expected deadline can not be null")
     private LocalDateTime expectedDeadline;
 
     
@@ -47,9 +47,8 @@ public class CreateTaskVO {
         newTask.setTaskDescription(this.taskDescription);
         newTask.setCreatedTime(LocalDateTime.now());
         newTask.setTaskCreatorId(this.taskCreatorOrEditorId);
-        if(expectedDeadline!=null){
-            newTask.setExpectedDeadline(this.expectedDeadline);          
-        }
+        newTask.setExpectedDeadline(this.expectedDeadline);          
+        
         if(taskLeaderId!=null){
             newTask.setTaskLeaderId(this.taskLeaderId);
         }
