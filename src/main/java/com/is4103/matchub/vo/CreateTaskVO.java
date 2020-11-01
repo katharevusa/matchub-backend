@@ -21,7 +21,7 @@ public class CreateTaskVO {
     private String taskTitle;
 
 
-    @NotNull(message = "Task title can not be null")
+    
     private String taskDescription;
     
     @NotNull(message = "Expected deadline can not be null")
