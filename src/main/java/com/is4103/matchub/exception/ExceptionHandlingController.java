@@ -687,4 +687,13 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = StripeRuntimeException.class)
+    public ResponseEntity<ExceptionResponse> stripeException(StripeRuntimeException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Stripe ran into an error.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 }

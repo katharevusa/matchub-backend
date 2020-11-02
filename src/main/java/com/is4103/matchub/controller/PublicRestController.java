@@ -19,6 +19,7 @@ import com.is4103.matchub.service.OrganisationService;
 import com.is4103.matchub.service.PostService;
 import com.is4103.matchub.service.ProjectService;
 import com.is4103.matchub.service.ResourceCategoryService;
+import com.is4103.matchub.service.StripeService;
 import com.is4103.matchub.service.UserService;
 import com.is4103.matchub.vo.IndividualCreateVO;
 import com.is4103.matchub.vo.IndividualSetupVO;
@@ -30,6 +31,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 import javax.mail.MessagingException;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -58,22 +60,24 @@ public class PublicRestController {
 
     @Autowired
     EmailService emailService;
-    
+
     @Autowired
     BadgeService badgeService;
-    
+
     @Autowired
     PostService postService;
-    
+
     @Autowired
     ProjectService projectService;
-    
+
     @Autowired
     ResourceCategoryService resourceCategoryService;
-    
+
     @Autowired
     OrganisationService organisationService;
-    
+
+    @Autowired
+    StripeService stripeService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/createNewIndividual")
     UserVO createNewIndividual(@Valid @RequestBody IndividualCreateVO createVO) throws MessagingException, IOException {
@@ -139,7 +143,7 @@ public class PublicRestController {
     public void resetPassword(@PathVariable("uuid") UUID uuid, @Valid @RequestBody ChangePasswordVO vo) {
         userService.changePassword(uuid, vo);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/getBadgesByAccountId/{accountId}")
     Page<BadgeEntity> getBadgesByAccountId(@PathVariable("accountId") Long postId, Pageable pageable) {
         return badgeService.getBadgesByAccountId(postId, pageable);
@@ -170,4 +174,9 @@ public class PublicRestController {
         return organisationService.viewOrganisationKAHs(organisationId, pageable);
     }
 
+    // placed in public so that webhook can work without bearer token
+    @RequestMapping(method = RequestMethod.POST, value = "/webhook")
+    public String stripeWebhookListener(@RequestBody String json, HttpServletRequest request) {
+        return stripeService.handleWebhookEvent(json, request);
+    }
 }
