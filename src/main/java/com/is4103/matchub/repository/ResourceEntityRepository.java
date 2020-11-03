@@ -6,6 +6,7 @@
 package com.is4103.matchub.repository;
 
 import com.is4103.matchub.entity.ResourceEntity;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -40,7 +41,7 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.resourceName LIKE %?1% OR r.resourceDescription LIKE %?1%")
     List<ResourceEntity> getResourcesByKeyword(String keyword);
- 
+
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = :projectId ")
     List<ResourceEntity> getMatchedResourcesByProjectId(Long projectId);
 
@@ -50,12 +51,35 @@ public interface ResourceEntityRepository extends JpaRepository<ResourceEntity, 
 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.matchedProjectId = ?1")
     List<ResourceEntity> getResourcesByProject(Long projectId);
-    
+
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true AND (r.country = ?1 OR r.resourceCategoryId = 8)")
     List<ResourceEntity> getAllAvailableResourcesInCountry(String country);
-    
+
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true "
+            + "AND (r.country = ?1 OR r.resourceCategoryId = 8) "
+            + "AND ("
+            + "("
+            + "(r.startTime BETWEEN ?2 AND ?3) "
+            + "OR (r.endTime BETWEEN ?2 AND ?3) "
+            + "OR (?2 BETWEEN r.startTime AND r.endTime) "
+            + "OR (?3 BETWEEN r.startTime AND r.endTime)"
+            + ") "
+            + "OR (r.startTime IS NULL AND r.endTime IS NULL))")
+    List<ResourceEntity> getAllAvailableResourcesInCountry(String country, LocalDateTime projectStartDate, LocalDateTime projectEndDate);
+
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true AND (r.country <> ?1 OR r.resourceCategoryId = 8)")
     List<ResourceEntity> getAllAvailableResourcesNotInCountry(String country);
+
+    @Query(value = "SELECT r FROM ResourceEntity r WHERE r.available = true AND (r.country <> ?1 OR r.resourceCategoryId = 8) "
+            + "AND ("
+            + "("
+            + "(r.startTime BETWEEN ?2 AND ?3) "
+            + "OR (r.endTime BETWEEN ?2 AND ?3) "
+            + "OR (?2 BETWEEN r.startTime AND r.endTime) "
+            + "OR (?3 BETWEEN r.startTime AND r.endTime)"
+            + ") "
+            + "OR (r.startTime IS NULL AND r.endTime IS NULL))")
+    List<ResourceEntity> getAllAvailableResourcesNotInCountry(String country, LocalDateTime projectStartDate, LocalDateTime projectEndDate);
 
     @Query(value = "SELECT r FROM ResourceEntity r WHERE r.spotlight = TRUE ORDER BY r.spotlightEndTime DESC")
     List<ResourceEntity> getSpotlightedResources();

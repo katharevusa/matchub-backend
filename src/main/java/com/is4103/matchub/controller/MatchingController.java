@@ -37,10 +37,10 @@ public class MatchingController {
     MatchingServiceImpl matchingServiceImpl;
 
     //for testing purposes only
-    @RequestMapping(method = RequestMethod.GET, value = "/ws4j")
-    public void ws4j(@RequestParam("word1") String word1, @RequestParam("word2") String word2) {
-        matchingServiceImpl.runWS4J(word1, word2);
-    }
+//    @RequestMapping(method = RequestMethod.GET, value = "/ws4j")
+//    public void ws4j(@RequestParam("word1") String word1, @RequestParam("word2") String word2) {
+//        matchingServiceImpl.runWS4J(word1, word2);
+//    }
 
     // for web
     @RequestMapping(method = RequestMethod.GET, value = "/recommendResources/list/{projectId}")
