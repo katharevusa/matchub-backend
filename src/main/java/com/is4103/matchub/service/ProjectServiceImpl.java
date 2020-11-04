@@ -273,7 +273,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     // manually complete project for early completion of project, reputation point and review should be given
     @Override
-    public void completeProject(Long projectId, Long profileId) throws CompleteProjectException {
+    public void completeProject(Long projectId, Long profileId) throws CompleteProjectException, ProjectNotFoundException {
         Optional<ProfileEntity> profileOptional = profileEntityRepository.findById(profileId);
         if (!profileOptional.isPresent()) {
             throw new CompleteProjectException("Failed to complete project: User is not found");
@@ -313,6 +313,7 @@ public class ProjectServiceImpl implements ProjectService {
         /* trigger the issueProjectBadge method */
         badgeService.issueProjectBadge(project);
         reputationPointsService.issuePointsToFundDonors(project);
+        reputationPointsService.issuePointsForCompletedTasks(project);
 
         //*************include notification to send to project owners & teamMembers to leave reviews
         AnnouncementEntity announcementEntity = new AnnouncementEntity();

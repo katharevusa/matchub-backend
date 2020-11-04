@@ -7,10 +7,13 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.FundPledgeEntity;
 import com.is4103.matchub.entity.FundsCampaignEntity;
+import com.is4103.matchub.entity.KanbanBoardEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.entity.TaskColumnEntity;
+import com.is4103.matchub.entity.TaskEntity;
 import com.is4103.matchub.enumeration.FundStatusEnum;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
@@ -21,6 +24,7 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
+import com.is4103.matchub.repository.TaskColumnEntityRepository;
 import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -55,6 +59,12 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
     @Autowired
     private ResourceCategoryService resourceCategoryService;
+
+    @Autowired
+    private KanbanBoardService kanbanBoardService;
+
+    @Autowired
+    private TaskColumnEntityRepository taskColumnEntityRepository;
 
     @Override
     public Page<ResourceEntity> getResourceOfProject(Long projectId, Pageable pageable) throws ProjectNotFoundException {
@@ -289,6 +299,52 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
                     //save updated profile into db 
                     profileEntityRepository.saveAndFlush(fundDonor);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void issuePointsForCompletedTasks(ProjectEntity project) throws ProjectNotFoundException {
+
+        System.out.println("Issue Points for Completed Tasks method****************");
+        //get all kanban boards in project
+        List<KanbanBoardEntity> kanbans = kanbanBoardService.getAllKanbanBoardByProjectId(project.getProjectId());
+
+        for (KanbanBoardEntity k : kanbans) {
+            //get the task column which is the last column/completed column
+            TaskColumnEntity lastTaskColumn = taskColumnEntityRepository.getCompletedTaskColumnByKanbanboardId(k.getKanbanBoardId());
+
+            //get a list of all tasks under that completed task column
+            List<TaskEntity> completedTasks = lastTaskColumn.getListOfTasks();
+
+            //for each completed task
+            for (TaskEntity t : completedTasks) {
+
+                //find the list of task doers 
+                List<ProfileEntity> taskDoers = t.getTaskdoers();
+
+                //add task creator and task leader
+                ProfileEntity taskCreator = profileEntityRepository.findById(t.getTaskCreatorId())
+                        .orElseThrow(() -> new UserNotFoundException(t.getTaskCreatorId()));
+
+                ProfileEntity taskLeader = profileEntityRepository.findById(t.getTaskLeaderId())
+                        .orElseThrow(() -> new UserNotFoundException(t.getTaskLeaderId()));
+
+                if (!taskDoers.contains(taskCreator)) {
+                    taskDoers.add(taskCreator);
+                }
+                if (!taskDoers.contains(taskLeader)) {
+                    taskDoers.add(taskLeader);
+                }
+
+                //award 1 point to each profile in the list
+                //persist into db
+                for (ProfileEntity p : taskDoers) {
+                    p.setReputationPoints(p.getReputationPoints() + 1);
+
+                    profileEntityRepository.saveAndFlush(p);
                 }
             }
         }

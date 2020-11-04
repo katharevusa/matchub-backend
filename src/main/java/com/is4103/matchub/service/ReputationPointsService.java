@@ -29,4 +29,6 @@ public interface ReputationPointsService {
 
     void issuePointsToFundDonors(ProjectEntity project);
 
+    void issuePointsForCompletedTasks(ProjectEntity project) throws ProjectNotFoundException;
+
 }
