@@ -687,4 +687,14 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = UnableToCreateReviewException.class)
+    public ResponseEntity<ExceptionResponse> unableToCreateReviewException(UnableToCreateReviewException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to Create Review.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
 }

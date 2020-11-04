@@ -13,6 +13,7 @@ import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.UnableToCreateReviewException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
@@ -40,10 +41,10 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Autowired
     private ProjectEntityRepository projectEntityRepository;
-    
+
     @Autowired
     private AnnouncementService announcementService;
-    
+
     @Autowired
     private AnnouncementEntityRepository announcementEntityRepository;
 
@@ -77,6 +78,25 @@ public class ReviewServiceImpl implements ReviewService {
         ProfileEntity reviewReceiver = profileEntityRepository.findById(vo.getReviewReceiverId())
                 .orElseThrow(() -> new UserNotFoundException(vo.getReviewReceiverId()));
 
+        //***************add in additional checks 
+        //check if review has been made to the same person already or not 
+        for (ReviewEntity r : reviewReceiver.getReviewsReceived()) {
+            //do not allow review to be made to the same person of the same project 
+            //ie. only 1 review can be made from person A to B of a particular project
+            if (r.getReviewer() == reviewer && r.getProject() == project) {
+                throw new UnableToCreateReviewException("Unable to create review: a review can only be made once: account "
+                        + reviewer.getAccountId() + " has already left a review for account " + reviewReceiver.getAccountId() + " for project id " + project.getProjectId());
+            }
+        }
+
+        //review can only be made within the same project
+        if (!project.getTeamMembers().contains(reviewer) || !project.getProjectOwners().contains(reviewer)
+                || !project.getTeamMembers().contains(reviewReceiver) || !project.getProjectOwners().contains(reviewReceiver)) {
+            throw new UnableToCreateReviewException("Unable to create review: accountId "
+                    + reviewer.getAccountId() + " and accountId " + reviewReceiver.getAccountId()
+                    + " do not belong to the same project specified.");
+        }
+
         ReviewEntity newReview = new ReviewEntity();
         newReview.setTimeCreated(LocalDateTime.now());
 
@@ -91,7 +111,7 @@ public class ReviewServiceImpl implements ReviewService {
         reviewReceiver = profileEntityRepository.save(reviewReceiver);
 
         newReview = reviewEntityRepository.saveAndFlush(newReview);
-        
+
         // get the name of the person giving reviews
         String reviewerName = "";
         if (reviewer instanceof IndividualEntity) {
@@ -99,10 +119,9 @@ public class ReviewServiceImpl implements ReviewService {
         } else if (reviewer instanceof OrganisationEntity) {
             reviewerName = ((OrganisationEntity) reviewer).getOrganizationName();
         }
-        
-        
+
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle("Check out your new review from "+reviewerName+"!");
+        announcementEntity.setTitle("Check out your new review from " + reviewerName + "!");
         announcementEntity.setContent(vo.getContent());
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.RECEIVING_NEW_REVIEW);
@@ -116,7 +135,6 @@ public class ReviewServiceImpl implements ReviewService {
         announcementService.createNormalNotification(announcementEntity);
 
         return newReview;
-        
-       
+
     }
 }
