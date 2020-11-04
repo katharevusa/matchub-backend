@@ -27,4 +27,6 @@ public interface ReputationPointsService {
 
     ResourceEntity spotlightResource(Long resourceId, Long accountId) throws ResourceNotFoundException;
 
+    void issuePointsToFundDonors(ProjectEntity project);
+
 }

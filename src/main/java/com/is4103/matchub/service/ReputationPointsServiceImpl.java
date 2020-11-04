@@ -5,10 +5,13 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.FundPledgeEntity;
+import com.is4103.matchub.entity.FundsCampaignEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.enumeration.FundStatusEnum;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.UnableToRewardRepPointsException;
@@ -19,8 +22,8 @@ import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -246,6 +249,50 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
             profile.setSpotlightChances(profile.getSpotlightChances() + 5);
             profileEntityRepository.saveAndFlush(profile);
         }
+    }
+
+    //************this method is triggered upon completedProject() method
+    @Override
+    public void issuePointsToFundDonors(ProjectEntity project) {
+
+        System.out.println("Issue Points to Fund Donors method****************");
+
+        List<FundsCampaignEntity> fundCampaigns = project.getFundsCampaign();
+
+        for (FundsCampaignEntity f : fundCampaigns) {
+            //get a list of donations for that fund campaign 
+            List<FundPledgeEntity> donations = f.getFundPledges();
+
+            //for each donation, allocation points to fund donor
+            for (FundPledgeEntity donate : donations) {
+                //get donor
+                ProfileEntity fundDonor = donate.getProfile();
+
+                //get the amount donated 
+                BigDecimal donatedAmt = donate.getDonatedAmount();
+
+                //if donation is received, then rep points is given
+                //if it is any enum other than received then rep points is not awarded
+                if (donate.getFundStatus() == FundStatusEnum.RECEIVED) {
+                    Integer addRepPoints = donatedAmt.divide(BigDecimal.valueOf(Long.valueOf(10))).intValue();
+
+                    //set rep point upper cap to be 50 per donation no matter the donatedAmt
+                    //fundDonor can only receive up to a max ot 50 rep points for their donation
+                    if (addRepPoints > 50) {
+                        //add points 
+                        fundDonor.setReputationPoints(fundDonor.getReputationPoints() + 50);
+                        System.out.println("Fund Donor will only receive a max of 50 rep points for their donation.");
+                    } else {
+                        //add points 
+                        fundDonor.setReputationPoints(fundDonor.getReputationPoints() + addRepPoints);
+                    }
+
+                    //save updated profile into db 
+                    profileEntityRepository.saveAndFlush(fundDonor);
+                }
+            }
+        }
+
     }
 
 }
