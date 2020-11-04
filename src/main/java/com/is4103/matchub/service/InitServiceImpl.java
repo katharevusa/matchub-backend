@@ -481,7 +481,7 @@ public class InitServiceImpl implements InitService {
 
         ResourceCategoryEntity ipCategory = new ResourceCategoryEntity("Intellectual Property", "All IP-related, non-physical Resources (Trademarks, Patents, Copyrights)", 1, 15, "property");
         resourceCategoryService.createResourceCategory(ipCategory);
-        
+
         ResourceCategoryEntity consumerGoodsCategory = new ResourceCategoryEntity("Consumer Goods", "All Consumer Goods", 1, 15, "unit");
         resourceCategoryService.createResourceCategory(consumerGoodsCategory);
 
@@ -675,49 +675,49 @@ public class InitServiceImpl implements InitService {
         garbageBag.getPhotos().add("https://localhost:8443/api/v1/files/init/garbageBag.jpg");
         garbageBag.setCountry("Thailand");
         resourceService.createResource(garbageBag, 4L, 7L);
-        
+
         ResourceEntity headphone = new ResourceEntity("Headphones", "250 brand new SONY headphones", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
         headphone.setResourceProfilePic("https://localhost:8443/api/v1/files/init/headphone.jpeg");
         headphone.getPhotos().add("https://localhost:8443/api/v1/files/init/headphone.jpeg");
         headphone.setCountry("Singapore");
         resourceService.createResource(headphone, 4L, 12L);
-        
+
         ResourceEntity computerMouse = new ResourceEntity("Computer Mouse", "170 used wired computer mouse, can be easily connected with computer/laptops via USB", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 170);
         computerMouse.setResourceProfilePic("https://localhost:8443/api/v1/files/init/computerMouse.jpg");
         computerMouse.getPhotos().add("https://localhost:8443/api/v1/files/init/computerMouse.jpg");
         computerMouse.setCountry("Singapore");
         resourceService.createResource(computerMouse, 4L, 12L);
-        
+
         ResourceEntity keyboard = new ResourceEntity("Keyboard", "188 used Keyboards, can be easily connected with computer/laptops via USB or Bluetooth", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 188);
         keyboard.setResourceProfilePic("https://localhost:8443/api/v1/files/init/keyboard.jpg");
         keyboard.getPhotos().add("https://localhost:8443/api/v1/files/init/keyboard.jpg");
         keyboard.setCountry("Singapore");
         resourceService.createResource(keyboard, 4L, 12L);
-        
+
         ResourceEntity floorPlan = new ResourceEntity("Floor Plans", "Floors Plans available, contact me for more details", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         floorPlan.setResourceProfilePic("https://localhost:8443/api/v1/files/init/floorplan.png");
         floorPlan.getPhotos().add("https://localhost:8443/api/v1/files/init/floorplan.png");
         floorPlan.setCountry("Cambodia");
         resourceService.createResource(floorPlan, 8L, 10L);
-        
+
         ResourceEntity shovel = new ResourceEntity("Shovel", "Shovel available, contact me for more details", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         shovel.setResourceProfilePic("https://localhost:8443/api/v1/files/init/shovel.jpg");
         shovel.getPhotos().add("https://localhost:8443/api/v1/files/init/shovel.jpg");
         shovel.setCountry("Cambodia");
         resourceService.createResource(shovel, 4L, 10L);
-        
+
         ResourceEntity spade = new ResourceEntity("Gardening Spade", "Gardening Spade available", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         spade.setResourceProfilePic("https://localhost:8443/api/v1/files/init/spade.jpg");
         spade.getPhotos().add("https://localhost:8443/api/v1/files/init/spade.jpg");
         spade.setCountry("Singapore");
         resourceService.createResource(spade, 4L, 10L);
-        
+
         ResourceEntity sofa = new ResourceEntity("Sofa", "5 sets of used sofa available for donation", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
         sofa.setResourceProfilePic("https://localhost:8443/api/v1/files/init/sofa.jpg");
         sofa.getPhotos().add("https://localhost:8443/api/v1/files/init/sofa.jpg");
         sofa.setCountry("Singapore");
         resourceService.createResource(sofa, 9L, 7L);
-        
+
         ResourceEntity chair = new ResourceEntity("Chair", "500 Brand New Chairs", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 500);
         chair.setResourceProfilePic("https://localhost:8443/api/v1/files/init/chair.jpg");
         chair.getPhotos().add("https://localhost:8443/api/v1/files/init/chair.jpg");
@@ -733,7 +733,6 @@ public class InitServiceImpl implements InitService {
 //        testing.setAvailable(false);
 //        testing.setMatchedProjectId(Long.valueOf(14));
 //        resourceService.createResource(testing, 3L, 5L);
-
     }
 
     public void initProjects() {
@@ -784,6 +783,15 @@ public class InitServiceImpl implements InitService {
         projectEntity1.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity1);
         /* end of project badge */
+
+ /* add team member into this project */
+        ProfileEntity songhwa = profileEntityRepository.findById(Long.valueOf(9)).get();
+        projectEntity1.getTeamMembers().add(songhwa);
+        songhwa.getProjectsJoined().add(projectEntity1);
+
+        profileEntityRepository.save(songhwa);
+        projectEntityRepository.save(projectEntity1);
+        /* end of add team member */
 
         ProjectEntity projectEntity2 = new ProjectEntity("Women's financial literacy, Malawi", "CARE will work with 20,000 women from 1,000 village savings and loans groups in Lilongwe, Dowa and Kasungu Districts, to overcome chronic hunger by expanding their farms or micro-businesses. We hope to receive donations of various nutritious food like fruits.", "Malawi", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2021-06-05T11:50:55"));
         projectEntity2.getSdgs().add(genderEquality);
@@ -944,7 +952,6 @@ public class InitServiceImpl implements InitService {
 //        profileEntityRepository.save(songhwa);
 //        projectEntityRepository.save(projectEntity6);
 //        /* end of add team member */
-
         ProjectEntity projectEntity7 = new ProjectEntity("Protect reefs through sustainable tourism in Indonesia", "To protect threatened coral reefs in Indonesia by uniting governments, NGOs and the diving and snorkelling industry to establish international environmental standards for marine tourism. Thus, more trashbins should be placed in tourist spots to keep the waters clean. ", "Indonesia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
         projectEntity7.getSdgs().add(climateAction);
         projectEntity7.getSdgs().add(sustainableCities);
@@ -1109,7 +1116,6 @@ public class InitServiceImpl implements InitService {
 //        projectEntity12.setProjectBadge(projBadge);
 //        projectEntityRepository.save(projectEntity12);
 //        /* end of project badge */
-
 //        ProjectEntity projectEntity13 = new ProjectEntity("Build School Toilets for Nepal", "Building School-Friendly Toilets for Girls in Nepal.", "Nepal", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
 //        projectEntity13.getSdgs().add(goodHealth);
 //        projectEntity13.setUpvotes(35);
@@ -1135,7 +1141,6 @@ public class InitServiceImpl implements InitService {
 //        projectEntity13.setProjectBadge(projBadge);
 //        projectEntityRepository.save(projectEntity13);
 //        /* end of project badge */
-
     }
 
     //for badge and review use cases
