@@ -326,16 +326,10 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                 //find the list of task doers 
                 List<ProfileEntity> taskDoers = t.getTaskdoers();
 
-                //add task creator and task leader
-                ProfileEntity taskCreator = profileEntityRepository.findById(t.getTaskCreatorId())
-                        .orElseThrow(() -> new UserNotFoundException(t.getTaskCreatorId()));
-
+                //add task leader
                 ProfileEntity taskLeader = profileEntityRepository.findById(t.getTaskLeaderId())
                         .orElseThrow(() -> new UserNotFoundException(t.getTaskLeaderId()));
 
-                if (!taskDoers.contains(taskCreator)) {
-                    taskDoers.add(taskCreator);
-                }
                 if (!taskDoers.contains(taskLeader)) {
                     taskDoers.add(taskLeader);
                 }
