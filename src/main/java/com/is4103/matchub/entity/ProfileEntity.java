@@ -1,8 +1,6 @@
 package com.is4103.matchub.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.util.ArrayList;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -64,6 +62,12 @@ public abstract class ProfileEntity extends AccountEntity {
     @PositiveOrZero
     private Integer spotlightChances = 0;
 
+    @Column(nullable = true, unique = true)
+    private String stripeAccountUid;
+
+    @Column(nullable = true)
+    private Boolean stripeAccountChargesEnabled = false;
+
     //************************** ASSOCIATIONS HERE **************************
     @OneToMany(mappedBy = "postCreator")
     @JsonIgnoreProperties({"postCreator", "listOfComments"})
@@ -111,8 +115,9 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<BadgeEntity> badges = new ArrayList<>();
 
-    @OneToMany(mappedBy = "profile")
-    private List<FundPledgeEntity> fundPladges = new ArrayList<>();
+    @OneToMany(mappedBy = "donator")
+    @JsonIgnoreProperties({"donators"})
+    private List<DonationEntity> donations = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"taskdoers"})

@@ -7,8 +7,11 @@ package com.is4103.matchub.enumeration;
 
 /**
  *
- * @author ngjin
+ * @author longluqian
  */
-public enum FundStatusEnum {
-    IN_PROGRESS, RECEIVED;
+public enum PaymentScenario {
+    FundCampaignDonation,
+    ResourcePurchase
+    
+    
 }

@@ -15,7 +15,6 @@ import com.is4103.matchub.vo.ChangePasswordVO;
 import com.is4103.matchub.vo.DeleteFilesVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
-import java.util.Set;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import org.springframework.data.domain.Page;
@@ -96,4 +95,8 @@ public interface UserService {
     Page<ProfileEntity> searchAllUsers(String search, Pageable pageable);
 
     Page<ProfileEntity> globalSearchAllUsers(String search, String country, Long[] sdgIds, Pageable pageable);
+
+    public void setUserStripeAccountUid(String email, String stripeAccountUid);
+
+    public void setUserStripeAccountChargesEnabled(String stripeAccountUid);
 }

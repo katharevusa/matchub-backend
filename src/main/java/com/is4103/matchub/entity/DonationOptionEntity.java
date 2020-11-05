@@ -5,15 +5,19 @@
  */
 package com.is4103.matchub.entity;
 
-import com.is4103.matchub.enumeration.FundStatusEnum;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,37 +33,31 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FundPledgeEntity {
+public class DonationOptionEntity {
 
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fundPledgeId;
+    private Long donationOptionId;
 
     @Column(nullable = false)
     @NotNull
-    private BigDecimal donatedAmount;
+    private BigDecimal amount;
 
     @Column(nullable = false)
     @NotNull
-    private String wellWishes;
-
-    @Column(nullable = false)
-    @NotNull
-    private FundStatusEnum fundStatus;
-
+    private String optionDescription;
+    
+    @OneToMany
+    @JsonIgnoreProperties({"donationOption"})
+    private List<DonationEntity> donations = new ArrayList<>();
+   
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    private ProfileEntity profile;
+    @JsonIgnoreProperties({"donationOptions"})
+    private FundCampaignEntity fundCampaign;
+    
 
-    @ManyToOne(optional = false)
-    @JoinColumn(nullable = false)
-    private FundsCampaignEntity fundCampaign;
-
-    public FundPledgeEntity(BigDecimal donatedAmount, String wellWishes, FundStatusEnum fundStatus) {
-        this.donatedAmount = donatedAmount;
-        this.wellWishes = wellWishes;
-        this.fundStatus = fundStatus;
-    }
+    
 
 }
