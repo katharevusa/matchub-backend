@@ -1,5 +1,6 @@
 package com.is4103.matchub.vo;
 
+import com.is4103.matchub.enumeration.PaymentScenario;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -7,7 +8,7 @@ import lombok.Data;
 @Data
 public class PaymentIntentCreateVO {
 
-    @NotNull(message = "Amounct can not be null.")
+    @NotNull(message = "Amount can not be null.")
     private Long amountInCents;
 
     @NotNull(message = "Payee's Stripe account can not be null.")
@@ -16,10 +17,15 @@ public class PaymentIntentCreateVO {
 
     private String payerStripeUid;
 
-    // not sure if these are correct, change at own discretion
-    // so that can use to find and associate later on
+    
+   // compulsory if payment is for resource purchase
     private Long resourceId;
 
-    // so that can use to find and associate later on
+    // compulsory if payment is for donation
     private Long donationOptionId;
+    
+   
+    
+    @NotNull(message = "payment scenario can not be null.")
+    private PaymentScenario paymentScenario;
 }

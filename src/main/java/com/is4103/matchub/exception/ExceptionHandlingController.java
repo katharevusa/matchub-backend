@@ -696,4 +696,58 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+    
+     @ExceptionHandler(value = CreateFundCampaignException.class)
+    public ResponseEntity<ExceptionResponse> createFundCampaignException(CreateFundCampaignException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to create fund campaign");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+      @ExceptionHandler(value = FundCampaignNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> fundCampaignNotFoundException(FundCampaignNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to find fund campaign");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+        @ExceptionHandler(value = DeleteFundCampaignException.class)
+    public ResponseEntity<ExceptionResponse> deleteFundCampaignException(DeleteFundCampaignException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to delete fund campaign");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+     @ExceptionHandler(value = DonationOptionNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> donationOptionNotFoundException(DonationOptionNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to find the donation option");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = DeleteDonationOptionException.class)
+    public ResponseEntity<ExceptionResponse> deleteDonationOptionException(DeleteDonationOptionException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to find the donation option");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    
+    
+    
 }

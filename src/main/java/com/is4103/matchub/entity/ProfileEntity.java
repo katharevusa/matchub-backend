@@ -115,8 +115,9 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<BadgeEntity> badges = new ArrayList<>();
 
-    @OneToMany(mappedBy = "profile")
-    private List<FundPledgeEntity> fundPladges = new ArrayList<>();
+    @OneToMany(mappedBy = "donator")
+    @JsonIgnoreProperties({"donators"})
+    private List<DonationEntity> donations = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"taskdoers"})
