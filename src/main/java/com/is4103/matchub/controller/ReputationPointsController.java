@@ -15,6 +15,7 @@ import com.is4103.matchub.service.ProjectService;
 import com.is4103.matchub.service.ReputationPointsService;
 import com.is4103.matchub.service.ResourceService;
 import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
+import com.is4103.matchub.vo.IssuePointsToTeamMembersVO;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,11 @@ public class ReputationPointsController {
     @RequestMapping(method = RequestMethod.PUT, value = "/issuePointsToResourceDonors")
     void issuePointsToResourceDonors(@Valid @RequestBody IssuePointsToResourceDonorsVO vo) throws ProjectNotFoundException {
         reputationPointsService.issuePointsToResourceDonors(vo);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/issuePointsToTeamMembers")
+    void issuePointsToTeamMembers(@Valid @RequestBody IssuePointsToTeamMembersVO vo) throws ProjectNotFoundException {
+        reputationPointsService.issuePointsToTeamMembers(vo);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/spotlightProject/{projectId}/{accountId}")

@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import static com.google.cloud.storage.Storage.GetHmacKeyOption.projectId;
 import com.is4103.matchub.entity.FundPledgeEntity;
 import com.is4103.matchub.entity.FundsCampaignEntity;
 import com.is4103.matchub.entity.GamificationPointTiers;
@@ -29,6 +30,7 @@ import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.TaskColumnEntityRepository;
 import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
+import com.is4103.matchub.vo.IssuePointsToTeamMembersVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -155,6 +157,46 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
             }
         }
 
+    }
+
+    @Override
+    public void issuePointsToTeamMembers(IssuePointsToTeamMembersVO vo) throws ProjectNotFoundException {
+
+        //check if the project exists
+        ProjectEntity project = projectEntityRepository.findById(vo.getProjectId())
+                .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + vo.getProjectId() + " not found."));
+
+        if (vo.getHashmap() == null) {
+            vo.setHashmap(new HashMap<Long, Integer>());
+        }
+
+        List<ProfileEntity> teamMembers = project.getTeamMembers();
+
+        for (ProfileEntity p : teamMembers) {
+
+            if (vo.getHashmap().containsKey(p.getAccountId())) {
+                //additional points 
+                Integer additionalPoints = vo.getHashmap().get(p.getAccountId());
+
+                //check the extrapoints awarded exceeds total points in project
+                if (project.getProjectPoolPoints() < additionalPoints) {
+                    throw new UnableToRewardRepPointsException("Unable to Reward Reputation points to "
+                            + "team member: additional points entered exceeded project's pool of points");
+                }
+
+                //award the resourceDonor the points
+                p.setReputationPoints(p.getReputationPoints() + additionalPoints);
+                p = profileEntityRepository.saveAndFlush(p);
+
+                System.out.println("Awarded points to resource donor: " + additionalPoints);
+
+                //deduct additionalPoints from the projectPoolPoints
+                project.setProjectPoolPoints(project.getProjectPoolPoints() - additionalPoints);
+                project = projectEntityRepository.saveAndFlush(project);
+
+                checkPointsToAwardSpotlightChances(p);
+            }
+        }
     }
 
     @Override
