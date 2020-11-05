@@ -6,6 +6,7 @@
 package com.is4103.matchub.repository;
 
 import com.is4103.matchub.entity.OrganisationEntity;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,9 @@ public interface OrganisationEntityRepository extends JpaRepository<Organisation
     @Query(value = "SELECT o FROM OrganisationEntity o ORDER BY o.reputationPoints DESC",
             countQuery = "SELECT COUNT(o) FROM OrganisationEntity o ORDER BY o.reputationPoints DESC")
     Page<OrganisationEntity> organisationalLeaderboard(Pageable pageable);
+
+    @Query(value = "SELECT o FROM OrganisationEntity o ORDER BY o.reputationPoints DESC")
+    List<OrganisationEntity> organisationalLeaderboard();
 
 //    @Query(value = "SELECT o FROM OrganisationEntity o WHERE :accountId IN o.employees")
 //    Optional<OrganisationEntity> findOrgansationOfProfile(Long accountId);
