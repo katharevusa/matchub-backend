@@ -5,7 +5,6 @@
  */
 package com.is4103.matchub.service;
 
-import static com.google.cloud.storage.Storage.GetHmacKeyOption.projectId;
 import com.is4103.matchub.entity.FundPledgeEntity;
 import com.is4103.matchub.entity.FundsCampaignEntity;
 import com.is4103.matchub.entity.GamificationPointTiers;
@@ -33,6 +32,7 @@ import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
 import com.is4103.matchub.vo.IssuePointsToTeamMembersVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,23 +92,48 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
         ProjectEntity project = projectEntityRepository.findById(vo.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + vo.getProjectId() + " not found."));
 
-        //get all the resources of project
+        //get all the matched resources of project
         List<ResourceEntity> resources = resourceEntityRepository.getResourcesByProject(vo.getProjectId());
+
+        //giving out baseline points only 
+        for (ResourceEntity r : resources) {
+            //find the base points 
+            ResourceCategoryEntity resourceCat = resourceCategoryService.getResourceCategoryById(r.getResourceCategoryId());
+            Integer basePoints = resourceCat.getCommunityPointsGuideline();
+
+            //find the resource donor 
+            Long resourceDonorId = r.getResourceOwnerId();
+            ProfileEntity resourceDonor = profileEntityRepository.findById(resourceDonorId)
+                    .orElseThrow(() -> new UserNotFoundException(resourceDonorId));
+
+            //award the resourceDonor the points
+            resourceDonor.setReputationPoints(resourceDonor.getReputationPoints() + basePoints);
+            resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
+
+            System.out.println("Awarded baseline points to resource donor: " + basePoints);
+        }
+
+        //get list of resourceDonors
+        List<ProfileEntity> resourceDonors = new ArrayList<>();
+
+        for (ResourceEntity r : resources) {
+
+            ProfileEntity resourceDonor = profileEntityRepository.findById(r.getResourceOwnerId())
+                    .orElseThrow(() -> new UserNotFoundException(r.getResourceOwnerId()));
+
+            resourceDonors.add(resourceDonor);
+        }
 
         if (vo.getHashmap() == null) {
             vo.setHashmap(new HashMap<Long, Integer>());
         }
 
-        for (ResourceEntity r : resources) {
+        for (ProfileEntity p : resourceDonors) {
             //award additional points
-            if (vo.getHashmap().containsKey(r.getResourceId())) {
-
-                //find the base points 
-                ResourceCategoryEntity resourceCat = resourceCategoryService.getResourceCategoryById(r.getResourceCategoryId());
-                Integer basePoints = resourceCat.getCommunityPointsGuideline();
+            if (vo.getHashmap().containsKey(p.getAccountId())) {
 
                 //additional points 
-                Integer additionalPoints = vo.getHashmap().get(r.getResourceId());
+                Integer additionalPoints = vo.getHashmap().get(p.getAccountId());
 
                 //check the extrapoints awarded exceeds total points in project
                 if (project.getProjectPoolPoints() < additionalPoints) {
@@ -116,49 +141,97 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                             + "resource donor: additional points entered exceeded project's pool of points");
                 }
 
-                //calculate the total points to award
-                Integer totalPointsToAward = additionalPoints + basePoints;
-
-                //find the resource donor 
-                Long resourceDonorId = r.getResourceOwnerId();
-                ProfileEntity resourceDonor = profileEntityRepository.findById(resourceDonorId)
-                        .orElseThrow(() -> new UserNotFoundException(resourceDonorId));
-
                 //award the resourceDonor the points
-                resourceDonor.setReputationPoints(resourceDonor.getReputationPoints() + totalPointsToAward);
-                resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
+                p.setReputationPoints(p.getReputationPoints() + additionalPoints);
+                p = profileEntityRepository.saveAndFlush(p);
 
-                System.out.println("Awarded points to resource donor: " + totalPointsToAward);
+                System.out.println("Awarded points to resource donor: " + additionalPoints);
 
                 //deduct additionalPoints from the projectPoolPoints
                 project.setProjectPoolPoints(project.getProjectPoolPoints() - additionalPoints);
                 project = projectEntityRepository.saveAndFlush(project);
 
-                checkPointsToAwardSpotlightChances(resourceDonor);
+                checkPointsToAwardSpotlightChances(p);
 
-            } else { //award base points to resources if not found in HashMap
-
-                //find the base points 
-                ResourceCategoryEntity resourceCat = resourceCategoryService.getResourceCategoryById(r.getResourceCategoryId());
-                Integer basePoints = resourceCat.getCommunityPointsGuideline();
-
-                //find the resource donor 
-                Long resourceDonorId = r.getResourceOwnerId();
-                ProfileEntity resourceDonor = profileEntityRepository.findById(resourceDonorId)
-                        .orElseThrow(() -> new UserNotFoundException(resourceDonorId));
-
-                //award the resourceDonor the points
-                resourceDonor.setReputationPoints(resourceDonor.getReputationPoints() + basePoints);
-                resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
-
-                System.out.println("Awarded points to resource donor (basepoints): " + basePoints);
-
-                checkPointsToAwardSpotlightChances(resourceDonor);
             }
         }
 
     }
 
+    // old method implementation
+//    @Override
+//    public void issuePointsToResourceDonors(IssuePointsToResourceDonorsVO vo) throws ProjectNotFoundException {
+//
+//        //check if the project exists
+//        ProjectEntity project = projectEntityRepository.findById(vo.getProjectId())
+//                .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + vo.getProjectId() + " not found."));
+//
+//        //get all the resources of project
+//        List<ResourceEntity> resources = resourceEntityRepository.getResourcesByProject(vo.getProjectId());
+//
+//        if (vo.getHashmap() == null) {
+//            vo.setHashmap(new HashMap<Long, Integer>());
+//        }
+//
+//        for (ResourceEntity r : resources) {
+//            //award additional points
+//            if (vo.getHashmap().containsKey(r.getResourceId())) {
+//
+//                //find the base points 
+//                ResourceCategoryEntity resourceCat = resourceCategoryService.getResourceCategoryById(r.getResourceCategoryId());
+//                Integer basePoints = resourceCat.getCommunityPointsGuideline();
+//
+//                //additional points 
+//                Integer additionalPoints = vo.getHashmap().get(r.getResourceId());
+//
+//                //check the extrapoints awarded exceeds total points in project
+//                if (project.getProjectPoolPoints() < additionalPoints) {
+//                    throw new UnableToRewardRepPointsException("Unable to Reward Reputation points to "
+//                            + "resource donor: additional points entered exceeded project's pool of points");
+//                }
+//
+//                //calculate the total points to award
+//                Integer totalPointsToAward = additionalPoints + basePoints;
+//
+//                //find the resource donor 
+//                Long resourceDonorId = r.getResourceOwnerId();
+//                ProfileEntity resourceDonor = profileEntityRepository.findById(resourceDonorId)
+//                        .orElseThrow(() -> new UserNotFoundException(resourceDonorId));
+//
+//                //award the resourceDonor the points
+//                resourceDonor.setReputationPoints(resourceDonor.getReputationPoints() + totalPointsToAward);
+//                resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
+//
+//                System.out.println("Awarded points to resource donor: " + totalPointsToAward);
+//
+//                //deduct additionalPoints from the projectPoolPoints
+//                project.setProjectPoolPoints(project.getProjectPoolPoints() - additionalPoints);
+//                project = projectEntityRepository.saveAndFlush(project);
+//
+//                checkPointsToAwardSpotlightChances(resourceDonor);
+//
+//            } else { //award base points to resources if not found in HashMap
+//
+//                //find the base points 
+//                ResourceCategoryEntity resourceCat = resourceCategoryService.getResourceCategoryById(r.getResourceCategoryId());
+//                Integer basePoints = resourceCat.getCommunityPointsGuideline();
+//
+//                //find the resource donor 
+//                Long resourceDonorId = r.getResourceOwnerId();
+//                ProfileEntity resourceDonor = profileEntityRepository.findById(resourceDonorId)
+//                        .orElseThrow(() -> new UserNotFoundException(resourceDonorId));
+//
+//                //award the resourceDonor the points
+//                resourceDonor.setReputationPoints(resourceDonor.getReputationPoints() + basePoints);
+//                resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
+//
+//                System.out.println("Awarded points to resource donor (basepoints): " + basePoints);
+//
+//                checkPointsToAwardSpotlightChances(resourceDonor);
+//            }
+//        }
+//
+//    }
     @Override
     public void issuePointsToTeamMembers(IssuePointsToTeamMembersVO vo) throws ProjectNotFoundException {
 
