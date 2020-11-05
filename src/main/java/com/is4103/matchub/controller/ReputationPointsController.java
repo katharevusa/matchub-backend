@@ -6,6 +6,7 @@
 package com.is4103.matchub.controller;
 
 import static com.google.cloud.storage.Storage.GetHmacKeyOption.projectId;
+import com.is4103.matchub.entity.GamificationPointTiers;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
@@ -41,6 +42,11 @@ public class ReputationPointsController {
 
     @Autowired
     ResourceService resourceService;
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getPointTiers")
+    GamificationPointTiers getGamificationPointTiers() {
+        return reputationPointsService.getGamificationPointTiers();
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceOfProject/{projectId}")
     Page<ResourceEntity> getResourceOfProject(@PathVariable("projectId") Long projectId, Pageable pageable) throws ProjectNotFoundException {

@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.GamificationPointTiers;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
@@ -30,5 +31,7 @@ public interface ReputationPointsService {
     void issuePointsToFundDonors(ProjectEntity project);
 
     void issuePointsForCompletedTasks(ProjectEntity project) throws ProjectNotFoundException;
+
+    GamificationPointTiers getGamificationPointTiers();
 
 }

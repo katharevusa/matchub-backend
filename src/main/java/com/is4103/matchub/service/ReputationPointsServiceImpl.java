@@ -7,6 +7,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.FundPledgeEntity;
 import com.is4103.matchub.entity.FundsCampaignEntity;
+import com.is4103.matchub.entity.GamificationPointTiers;
 import com.is4103.matchub.entity.KanbanBoardEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
@@ -349,6 +350,12 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
             }
         }
 
+    }
+
+    @Override
+    public GamificationPointTiers getGamificationPointTiers() {
+
+        return new GamificationPointTiers();
     }
 
 }
