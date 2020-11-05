@@ -88,4 +88,9 @@ public class ReputationPointsController {
         return resourceService.getSpotlightedResources(pageable);
     }
 
+    @RequestMapping(method = RequestMethod.PUT, value = "/issuePointsByReviewRatings/{projectId}")
+    void issuePointsByReviewRatings(@PathVariable("projectId") Long projectId) throws ProjectNotFoundException {
+        reputationPointsService.issuePointsByReviewRatings(projectId);
+    }
+
 }

@@ -13,6 +13,7 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.entity.TaskEntity;
 import com.is4103.matchub.enumeration.FundStatusEnum;
@@ -25,6 +26,7 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
+import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.TaskColumnEntityRepository;
 import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
 import java.math.BigDecimal;
@@ -66,6 +68,9 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
     @Autowired
     private TaskColumnEntityRepository taskColumnEntityRepository;
+
+    @Autowired
+    private ReviewEntityRepository reviewEntityRepository;
 
     @Override
     public Page<ResourceEntity> getResourceOfProject(Long projectId, Pageable pageable) throws ProjectNotFoundException {
@@ -346,10 +351,62 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
     }
 
+    //********* triggered after the 2 weeks window period for reviews to be made 
+    //rep points only added to teamMembers
+    @Override
+    public void issuePointsByReviewRatings(Long projectId) throws ProjectNotFoundException {
+        //find the project 
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + projectId + " not found."));
+
+        System.out.println("Project " + projectId + " found");
+
+        //get the list of reviews associated with the project
+        List<ReviewEntity> reviews = project.getReviews();
+
+        System.out.println("Reviews size " + reviews.size());
+
+        //do not include team ownerss
+        for (ProfileEntity p : project.getTeamMembers()) {
+            //get all the reviews from this project 
+            List<ReviewEntity> allReviews = reviewEntityRepository.getReviewsOfAccountByProjectId(projectId, p.getAccountId());
+
+            System.out.println("all reviews by profile " + allReviews.size());
+
+            double averageRating = calculateAverageRatings(allReviews);
+            Integer addRepPoints = 0;
+
+            if (averageRating < 2.5) {
+                //award 0.5
+                addRepPoints = (int) (0.5 * (project.getProjectPoolPoints() / project.getTeamMembers().size()));
+
+            } else {
+                //average rating is > 0.5
+                addRepPoints = (int) (averageRating / 5.0 * (project.getProjectPoolPoints() / project.getTeamMembers().size()));
+            }
+
+            System.out.println("average rating" + averageRating);
+
+            p.setReputationPoints(p.getReputationPoints() + addRepPoints);
+            profileEntityRepository.saveAndFlush(p);
+        }
+    }
+
     @Override
     public GamificationPointTiers getGamificationPointTiers() {
 
         return new GamificationPointTiers();
+    }
+
+    private double calculateAverageRatings(List<ReviewEntity> allReviews) {
+        BigDecimal ratings = BigDecimal.valueOf(0);
+        for (ReviewEntity r : allReviews) {
+            ratings = ratings.add(r.getRating());
+        }
+        Double doubleRatings = ratings.doubleValue();
+        double average = doubleRatings / allReviews.size();
+
+        return average;
     }
 
 }

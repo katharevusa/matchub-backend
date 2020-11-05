@@ -29,4 +29,7 @@ public interface ReviewEntityRepository extends JpaRepository<ReviewEntity, Long
     //this query is to check for reviews given before deleting an account (used in UserServiceImpl)
     @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewer.accountId = :id")
     List<ReviewEntity> getReviewsGivenByAccountId(Long id);
+
+    @Query(value = "SELECT r FROM ReviewEntity r WHERE r.reviewReceiver.accountId = ?2 AND r.project.projectId = ?1")
+    List<ReviewEntity> getReviewsOfAccountByProjectId(Long projectId, Long accountId);
 }
