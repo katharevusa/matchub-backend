@@ -8,6 +8,7 @@ package com.is4103.matchub.repository;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -272,4 +273,9 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
 //            + "(LENGTH(:country) > 0 AND LOWER(pe.country) LIKE LOWER(CONCAT('%', :country, '%'))) AND "
 //            + "sdg.sdgId IN :sdgIds")
 //    Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("country") String country, @Param("sdgIds") Long[] sdgIds, Pageable pageable);
+
+    Optional<ProfileEntity> findByEmail(String email);
+    
+    Optional<ProfileEntity> findByStripeAccountUid(String stripeAccountUid);
+
 }

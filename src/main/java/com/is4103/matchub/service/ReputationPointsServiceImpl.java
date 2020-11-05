@@ -5,8 +5,9 @@
  */
 package com.is4103.matchub.service;
 
-import com.is4103.matchub.entity.FundPledgeEntity;
-import com.is4103.matchub.entity.FundsCampaignEntity;
+import com.is4103.matchub.entity.DonationEntity;
+import com.is4103.matchub.entity.DonationOptionEntity;
+import com.is4103.matchub.entity.FundCampaignEntity;
 import com.is4103.matchub.entity.GamificationPointTiers;
 import com.is4103.matchub.entity.KanbanBoardEntity;
 import com.is4103.matchub.entity.ProfileEntity;
@@ -16,7 +17,6 @@ import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.TaskColumnEntity;
 import com.is4103.matchub.entity.TaskEntity;
-import com.is4103.matchub.enumeration.FundStatusEnum;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.UnableToRewardRepPointsException;
@@ -388,23 +388,24 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
         System.out.println("Issue Points to Fund Donors method****************");
 
-        List<FundsCampaignEntity> fundCampaigns = project.getFundsCampaign();
+        List<FundCampaignEntity> fundCampaigns = project.getFundsCampaign();
 
-        for (FundsCampaignEntity f : fundCampaigns) {
+        for (FundCampaignEntity f : fundCampaigns) {
             //get a list of donations for that fund campaign 
-            List<FundPledgeEntity> donations = f.getFundPledges();
+            List<DonationOptionEntity> donationOptions = f.getDonationOptions();
 
-            //for each donation, allocation points to fund donor
-            for (FundPledgeEntity donate : donations) {
-                //get donor
-                ProfileEntity fundDonor = donate.getProfile();
+            for (DonationOptionEntity d : donationOptions) {
 
-                //get the amount donated 
-                BigDecimal donatedAmt = donate.getDonatedAmount();
+                List<DonationEntity> donations = d.getDonations();
 
-                //if donation is received, then rep points is given
-                //if it is any enum other than received then rep points is not awarded
-                if (donate.getFundStatus() == FundStatusEnum.RECEIVED) {
+                //for each donation, allocation points to fund donor
+                for (DonationEntity donate : donations) {
+                    //get donor
+                    ProfileEntity fundDonor = donate.getDonator();
+
+                    //get the amount donated 
+                    BigDecimal donatedAmt = donate.getDonatedAmount();
+
                     Integer addRepPoints = donatedAmt.divide(BigDecimal.valueOf(Long.valueOf(10))).intValue();
 
                     //set rep point upper cap to be 50 per donation no matter the donatedAmt
@@ -422,6 +423,7 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                     profileEntityRepository.saveAndFlush(fundDonor);
                 }
             }
+
         }
 
     }
