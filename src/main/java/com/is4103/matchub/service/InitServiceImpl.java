@@ -458,31 +458,31 @@ public class InitServiceImpl implements InitService {
     }
 
     public void initResourceCategories() {
-        ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food", "All Food-related Resources", 1, 5, "kg");
+        ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food", "All Food-related Resources", 5, 1, "kg");
         resourceCategoryService.createResourceCategory(foodCategory);
 
-        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Facilities", "All Resources that are Facilities", 1, 5, "hour");
+        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Facilities", "All Resources that are Facilities", 5, 1, "hour");
         resourceCategoryService.createResourceCategory(spaceCategory);
 
-        ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural", "All Natural Resources", 1, 5, "kg");
+        ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural", "All Natural Resources", 5, 1, "kg");
         resourceCategoryService.createResourceCategory(naturalResourceCategory);
 
-        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Machinery and Equipment", "All Machinery and Equipment", 1, 10, "set");
+        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Machinery and Equipment", "All Machinery and Equipment", 10, 1, "set");
         resourceCategoryService.createResourceCategory(deviceCategory);
 
         ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation", "All Transportation Resources", 1, 1, "hour");
         resourceCategoryService.createResourceCategory(transportationCategory);
 
-        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Education and Training", "All Education Resources", 1, 5, "set");
+        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Education and Training", "All Education Resources", 5, 1, "set");
         resourceCategoryService.createResourceCategory(educationCategory);
 
-        ResourceCategoryEntity clothCategory = new ResourceCategoryEntity("Clothes", "All clothes Resources", 1, 5, "piece");
+        ResourceCategoryEntity clothCategory = new ResourceCategoryEntity("Clothes", "All clothes Resources", 5, 1, "piece");
         resourceCategoryService.createResourceCategory(clothCategory);
 
-        ResourceCategoryEntity ipCategory = new ResourceCategoryEntity("Intellectual Property", "All IP-related, non-physical Resources (Trademarks, Patents, Copyrights)", 1, 15, "property");
+        ResourceCategoryEntity ipCategory = new ResourceCategoryEntity("Intellectual Property", "All IP-related, non-physical Resources (Trademarks, Patents, Copyrights)", 15, 1, "property");
         resourceCategoryService.createResourceCategory(ipCategory);
 
-        ResourceCategoryEntity consumerGoodsCategory = new ResourceCategoryEntity("Consumer Goods", "All Consumer Goods", 1, 15, "unit");
+        ResourceCategoryEntity consumerGoodsCategory = new ResourceCategoryEntity("Consumer Goods", "All Consumer Goods", 15, 1, "unit");
         resourceCategoryService.createResourceCategory(consumerGoodsCategory);
 
     }
