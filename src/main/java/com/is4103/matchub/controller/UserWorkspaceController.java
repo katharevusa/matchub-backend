@@ -124,8 +124,8 @@ public class UserWorkspaceController {
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "/repost")
-    public PostEntity repost(@RequestParam(value = "userId", required = true)Long previousPostId,@Valid @RequestBody PostVO vo)throws RepostException{
-        return postService.repost(previousPostId, vo);
+    public PostEntity repost(@RequestParam(value = "originalPostId", required = true)Long originalPostId,@Valid @RequestBody PostVO vo)throws RepostException{
+        return postService.repost(originalPostId, vo);
     }
     
     @RequestMapping(method = RequestMethod.GET, value = "/getFollowingUserPosts")

@@ -14,7 +14,7 @@ import lombok.Data;
  *
  * @author ngjin
  */
-@Data
+@Data 
 public class PostVO {
 
     @NotNull(message = "Post Creator Id can not be null.")

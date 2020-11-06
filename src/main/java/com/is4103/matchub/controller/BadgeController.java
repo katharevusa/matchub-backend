@@ -46,7 +46,7 @@ public class BadgeController {
         return badgeService.createProjectBadge(createVO);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "projectBadge/uploadBadgeIcon/{badgeId}")
+    @RequestMapping(method = RequestMethod.POST, value = "/projectBadge/uploadBadgeIcon/{badgeId}")
     public BadgeEntity uploadBadgeIcon(@RequestParam(value = "icon") MultipartFile icon, @PathVariable("badgeId") Long badgeId) throws IOException {
         return badgeService.uploadBadgeIcon(badgeId, icon);
     }

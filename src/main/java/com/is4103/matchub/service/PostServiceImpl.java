@@ -79,7 +79,7 @@ public class PostServiceImpl implements PostService {
         vo.updatePost(newPost);
 
         newPost = postEntityRepository.saveAndFlush(newPost);
-        newPost.setOriginalPostId(newPost.getPostId());
+//        newPost.setOriginalPostId(newPost.getPostId());
         newPost = postEntityRepository.saveAndFlush(newPost);
         //set associations
         profile.getPosts().add(newPost);
@@ -203,7 +203,7 @@ public class PostServiceImpl implements PostService {
 
         if (postToDelete.getPostCreator().getAccountId().equals(postCreatorId)) {
 
-            if (postToDelete.getOriginalPostId() != null || postToDelete.getPreviousPostId() != null) {
+            if (postToDelete.getOriginalPostId() != null) {
                 //Post cannot be deleted if it is being reshared
                 throw new UnableToDeletePostException("Unable to delete post because post is reshared.");
             }
@@ -399,29 +399,29 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostEntity repost(Long previousPostId, PostVO vo)throws RepostException, UserNotFoundException{
+    public PostEntity repost(Long originalPostId, PostVO vo)throws RepostException, UserNotFoundException{
         ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
                 .orElseThrow(() -> new UserNotFoundException(vo.getPostCreatorId()));
 
         
-        Optional<PostEntity> previousPostOpt = postEntityRepository.findById(previousPostId);
+        Optional<PostEntity> originalPostOpt = postEntityRepository.findById(originalPostId);
         // if previouus post is deleted, then cannot repost
-        if(!previousPostOpt.isPresent()){
-            throw new RepostException("Sorry the previous post is deleted, cannot repost");
-        }
-        PostEntity previousPost = previousPostOpt.get();
-        
-        Optional<PostEntity> originalPostOpt = postEntityRepository.findById(previousPost.getOriginalPostId());
-        // if original post is deleted, then cannot repost
         if(!originalPostOpt.isPresent()){
             throw new RepostException("Sorry the original post is deleted, cannot repost");
         }
+        
+        PostEntity originalPost = originalPostOpt.get();
+//        
+//        Optional<PostEntity> originalPostOpt = postEntityRepository.findById(originalPost.getOriginalPostId());
+//        // if original post is deleted, then cannot repost
+//        if(!originalPostOpt.isPresent()){
+//            throw new RepostException("Sorry the original post is deleted, cannot repost");
+//        }
          
         PostEntity newPost = new PostEntity();
         newPost.setTimeCreated(LocalDateTime.now());
         newPost.setPostCreator(profile);
-        newPost.setOriginalPostId(previousPost.getOriginalPostId());
-        newPost.setPreviousPostId(previousPostId);
+        newPost.setOriginalPostId(originalPostId);
 
         vo.updatePost(newPost);
         newPost = postEntityRepository.saveAndFlush(newPost);
@@ -439,24 +439,19 @@ public class PostServiceImpl implements PostService {
         }
 
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle(reposterName+" reposted your post : "+previousPost.getContent());
+        announcementEntity.setTitle(reposterName+" reposted your post : "+originalPost.getContent());
         announcementEntity.setContent(newPost.getContent());
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.SHARE_POST);
         announcementEntity.setPostId(newPost.getPostId());
         // association
-        announcementEntity.getNotifiedUsers().add(previousPost.getPostCreator());
-        previousPost.getPostCreator().getAnnouncements().add(announcementEntity);
+        announcementEntity.getNotifiedUsers().add(originalPost.getPostCreator());
+        originalPost.getPostCreator().getAnnouncements().add(announcementEntity);
         announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
 
         // create notification
         announcementService.createNormalNotification(announcementEntity);
         
-        
-        
         return newPost;
     }
-
-
-   
 }
