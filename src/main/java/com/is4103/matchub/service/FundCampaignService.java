@@ -18,6 +18,7 @@ import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.vo.CreateDonationOptionVO;
 import com.is4103.matchub.vo.CreateFundCampaignVO;
 import com.is4103.matchub.vo.UpdateDonationOptionVO;
+import com.is4103.matchub.vo.UpdateFundCampaignVO;
 import com.stripe.model.PaymentIntent;
 import java.util.List;
 
@@ -48,12 +49,13 @@ public interface FundCampaignService {
     public List<DonationEntity> getDonationsByOptionId(Long optionId) throws DonationOptionNotFoundException;
 
     public List<FundCampaignEntity> getFundCampaignsByProjectId(Long projectId) throws ProjectNotFoundException;
-    
-    public List<FundCampaignEntity> getFundCampaignsByPayeeId(Long payeeId )throws UserNotFoundException;
-    
-    public FundCampaignEntity getFundCampaignByFundCampaignId(Long fundCampaignId)throws  FundCampaignNotFoundException;
-    
+
+    public List<FundCampaignEntity> getFundCampaignsByPayeeId(Long payeeId) throws UserNotFoundException;
+
+    public FundCampaignEntity getFundCampaignByFundCampaignId(Long fundCampaignId) throws FundCampaignNotFoundException;
+
     public List<FundCampaignEntity> getAllFundCampaignEntity();
-    
-    
+
+    public FundCampaignEntity updateFundCampaign(UpdateFundCampaignVO vo) throws FundCampaignNotFoundException;
+
 }

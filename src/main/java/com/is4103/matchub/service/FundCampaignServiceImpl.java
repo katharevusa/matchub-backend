@@ -25,6 +25,7 @@ import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.vo.CreateDonationOptionVO;
 import com.is4103.matchub.vo.CreateFundCampaignVO;
 import com.is4103.matchub.vo.UpdateDonationOptionVO;
+import com.is4103.matchub.vo.UpdateFundCampaignVO;
 import com.stripe.model.PaymentIntent;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -91,6 +92,7 @@ public class FundCampaignServiceImpl implements FundCampaignService {
         return fundCampaignEntityRepository.saveAndFlush(fundCampaignEntity);
 
     }
+   
 
     @Override
     public boolean activateFundCampaign(Long fundCampaignId) throws FundCampaignNotFoundException {
@@ -211,7 +213,7 @@ public class FundCampaignServiceImpl implements FundCampaignService {
     
     @Override
     public FundCampaignEntity getFundCampaignByFundCampaignId(Long fundCampaignId)throws  FundCampaignNotFoundException{
-        FundCampaignEntity fundCampaignEntity = fundCampaignEntityRepository.findById(fundCampaignId).orElseThrow(() -> new FundCampaignNotFoundException() );
+        FundCampaignEntity fundCampaignEntity = fundCampaignEntityRepository.findById(fundCampaignId).orElseThrow(() -> new FundCampaignNotFoundException("Fund Campaign not found") );
         return fundCampaignEntity;
     }
     
@@ -220,6 +222,16 @@ public class FundCampaignServiceImpl implements FundCampaignService {
     public List<FundCampaignEntity> getAllFundCampaignEntity(){
         return fundCampaignEntityRepository.findAll();
     }
+    
+    @Override 
+    public FundCampaignEntity updateFundCampaign(UpdateFundCampaignVO vo)throws FundCampaignNotFoundException{
+        FundCampaignEntity fundCampaignEntity = fundCampaignEntityRepository.findById(vo.getCampaignId()).orElseThrow(() -> new FundCampaignNotFoundException("Fund Campaign not found") );
+        vo.updateFundCampaign(fundCampaignEntity);
+        return fundCampaignEntityRepository.saveAndFlush(fundCampaignEntity);
+    }
+            
+            
+    
     
 //    @Override
 //    public List<FundCampaignEntity> fundCampaignGlobalSearch(){

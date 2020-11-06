@@ -19,6 +19,7 @@ import com.is4103.matchub.service.FundCampaignService;
 import com.is4103.matchub.vo.CreateDonationOptionVO;
 import com.is4103.matchub.vo.CreateFundCampaignVO;
 import com.is4103.matchub.vo.UpdateDonationOptionVO;
+import com.is4103.matchub.vo.UpdateFundCampaignVO;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,15 +94,20 @@ public class FundCampaignController {
     public List<FundCampaignEntity> getFundCampaignsByPayeeId(@RequestParam(value = "payeeId", required = true) Long payeeId) throws UserNotFoundException {
         return fundCampaignService.getFundCampaignsByPayeeId(payeeId);
     }
+
     @RequestMapping(method = RequestMethod.GET, value = "/getFundCampaignByFundCampaignId")
-    public FundCampaignEntity getFundCampaignByFundCampaignId(@RequestParam(value = "fundCampaignId", required = true)Long fundCampaignId)throws  FundCampaignNotFoundException{
+    public FundCampaignEntity getFundCampaignByFundCampaignId(@RequestParam(value = "fundCampaignId", required = true) Long fundCampaignId) throws FundCampaignNotFoundException {
         return fundCampaignService.getFundCampaignByFundCampaignId(fundCampaignId);
     }
-    
-     
+
     @RequestMapping(method = RequestMethod.GET, value = "/getAllFundCampaignEntity")
-    public List<FundCampaignEntity> getAllFundCampaignEntity(){
+    public List<FundCampaignEntity> getAllFundCampaignEntity() {
         return fundCampaignService.getAllFundCampaignEntity();
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/updateFundCampaign")
+    public FundCampaignEntity updateFundCampaign(UpdateFundCampaignVO vo) throws FundCampaignNotFoundException {
+        return fundCampaignService.updateFundCampaign(vo);
     }
 
 }
