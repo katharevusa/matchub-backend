@@ -58,9 +58,6 @@ public class PostEntity {
     @Column(nullable = true)
     private Long originalPostId;
 
-//    @Column(nullable = true)
-//    private Long previousPostId;
-
     @Column(nullable = false)
     @NotNull
     private Long likes = 0L;

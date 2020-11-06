@@ -42,7 +42,7 @@ public class DonationEntity {
     private BigDecimal donatedAmount;
 
     
-    @JsonIgnoreProperties({"donations"})
+    @JsonIgnoreProperties({"donations","posts","announcements","hostedResources","savedResources","sdgs","projectsJoined","projectsOwned","projectsFollowing","joinRequests", "reviewsReceived","badges","tasks","managedChannel","joinedChannel"})
     @NotNull
     @ManyToOne
     private ProfileEntity donator;
