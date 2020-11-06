@@ -203,10 +203,10 @@ public class PostServiceImpl implements PostService {
 
         if (postToDelete.getPostCreator().getAccountId().equals(postCreatorId)) {
 
-            if (postToDelete.getOriginalPostId() != null) {
-                //Post cannot be deleted if it is being reshared
-                throw new UnableToDeletePostException("Unable to delete post because post is reshared.");
-            }
+//            if (postToDelete.getOriginalPostId() != null) {
+//                //Post cannot be deleted if it is being reshared
+//                throw new UnableToDeletePostException("Unable to delete post because post is reshared.");
+//            }
 
             //delete the all photos from build/ folder first
             for (String photo : postToDelete.getPhotos()) {
