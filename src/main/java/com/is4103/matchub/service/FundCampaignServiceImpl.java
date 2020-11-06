@@ -229,12 +229,14 @@ public class FundCampaignServiceImpl implements FundCampaignService {
         vo.updateFundCampaign(fundCampaignEntity);
         return fundCampaignEntityRepository.saveAndFlush(fundCampaignEntity);
     }
-            
-            
     
     
-//    @Override
+    
+    
+        
 //    public List<FundCampaignEntity> fundCampaignGlobalSearch(){
+//        
+//    }
 //// campaignTitle
 ////campaignDescription
 ////endDate
