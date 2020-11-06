@@ -687,6 +687,16 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(value = UnableToCreateReviewException.class)
+    public ResponseEntity<ExceptionResponse> unableToCreateReviewException(UnableToCreateReviewException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to Create Review.");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(value = StripeRuntimeException.class)
     public ResponseEntity<ExceptionResponse> stripeException(StripeRuntimeException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -696,8 +706,8 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-     @ExceptionHandler(value = CreateFundCampaignException.class)
+
+    @ExceptionHandler(value = CreateFundCampaignException.class)
     public ResponseEntity<ExceptionResponse> createFundCampaignException(CreateFundCampaignException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to create fund campaign");
@@ -706,8 +716,8 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-      @ExceptionHandler(value = FundCampaignNotFoundException.class)
+
+    @ExceptionHandler(value = FundCampaignNotFoundException.class)
     public ResponseEntity<ExceptionResponse> fundCampaignNotFoundException(FundCampaignNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to find fund campaign");
@@ -716,8 +726,8 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-        @ExceptionHandler(value = DeleteFundCampaignException.class)
+
+    @ExceptionHandler(value = DeleteFundCampaignException.class)
     public ResponseEntity<ExceptionResponse> deleteFundCampaignException(DeleteFundCampaignException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to delete fund campaign");
@@ -726,8 +736,8 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-     @ExceptionHandler(value = DonationOptionNotFoundException.class)
+
+    @ExceptionHandler(value = DonationOptionNotFoundException.class)
     public ResponseEntity<ExceptionResponse> donationOptionNotFoundException(DonationOptionNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to find the donation option");
@@ -736,7 +746,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = DeleteDonationOptionException.class)
     public ResponseEntity<ExceptionResponse> deleteDonationOptionException(DeleteDonationOptionException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -746,8 +756,5 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-    
-    
-    
+
 }

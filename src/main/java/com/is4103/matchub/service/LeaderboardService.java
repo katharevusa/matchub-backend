@@ -19,4 +19,6 @@ public interface LeaderboardService {
     Page<IndividualEntity> individualLeaderboard(Pageable pageable);
 
     Page<OrganisationEntity> organisationalLeaderboard(Pageable pageable);
+
+    Integer rank(Long accountId);
 }

@@ -86,7 +86,7 @@ public interface ProjectService {
 
     public List<ProjectEntity> getProjectsByListOfIds(List<Long> ids) throws ProjectNotFoundException;
 
-    public void completeProject(Long projectId, Long profileId) throws CompleteProjectException;
+    public void completeProject(Long projectId, Long profileId) throws CompleteProjectException, ProjectNotFoundException;
 
     public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, String country, ProjectStatusEnum status, Pageable pageable);
 
@@ -105,6 +105,6 @@ public interface ProjectService {
     public List<ProjectEntity> getSpotlightedProjects();
 
     public Page<ProjectEntity> getSpotlightedProjects(Pageable pageable);
-    
+
     public ProjectEntity removeProjectOwner(Long editorId, Long projOwnerToRemoveId, Long projectId) throws UnableToRemoveProjectOwnerException, ProjectNotFoundException;
 }

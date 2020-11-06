@@ -88,6 +88,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private AnnouncementService announcementService;
 
+    @Autowired
+    private ReputationPointsService reputationPointsService;
+
     @Override
     public ProjectEntity createProject(ProjectCreateVO vo) {
         ProjectEntity newProject = new ProjectEntity();
@@ -270,7 +273,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     // manually complete project for early completion of project, reputation point and review should be given
     @Override
-    public void completeProject(Long projectId, Long profileId) throws CompleteProjectException {
+    public void completeProject(Long projectId, Long profileId) throws CompleteProjectException, ProjectNotFoundException {
         Optional<ProfileEntity> profileOptional = profileEntityRepository.findById(profileId);
         if (!profileOptional.isPresent()) {
             throw new CompleteProjectException("Failed to complete project: User is not found");
@@ -309,10 +312,12 @@ public class ProjectServiceImpl implements ProjectService {
         // Incomplete: reputation points, reviews, badge should be started
         /* trigger the issueProjectBadge method */
         badgeService.issueProjectBadge(project);
+        reputationPointsService.issuePointsToFundDonors(project);
+        reputationPointsService.issuePointsForCompletedTasks(project);
 
         //*************include notification to send to project owners & teamMembers to leave reviews
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle("congratulation, the project "+project.getProjectTitle()+" is officially completed!");
+        announcementEntity.setTitle("congratulation, the project " + project.getProjectTitle() + " is officially completed!");
         announcementEntity.setContent("Don't forget to give reviews and appreciation notes for your lovely teammates, reputations points allocation will also take consideration of those reviews.");
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.PROJECT_COMPLETED);
@@ -320,18 +325,17 @@ public class ProjectServiceImpl implements ProjectService {
         // association
         announcementEntity.getNotifiedUsers().addAll(project.getProjectOwners());
         announcementEntity.getNotifiedUsers().addAll(project.getTeamMembers());
-        for(ProfileEntity p : project.getProjectOwners()){
+        for (ProfileEntity p : project.getProjectOwners()) {
             p.getAnnouncements().add(announcementEntity);
         }
-        for(ProfileEntity p : project.getTeamMembers()){
+        for (ProfileEntity p : project.getTeamMembers()) {
             p.getAnnouncements().add(announcementEntity);
         }
-        
+
         announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
         // create notification
         announcementService.createNormalNotification(announcementEntity);
-        
-        
+
     }
 
     @Override
@@ -366,14 +370,14 @@ public class ProjectServiceImpl implements ProjectService {
             initProjects = projectEntityRepository.findAll();
         } else {
 
-            Set<ProjectEntity> temp = new HashSet<>();  
+            Set<ProjectEntity> temp = new HashSet<>();
             // search the whole keyword, if empty, then split
             if (projectEntityRepository.searchByKeywords(keyword).isEmpty()) {
                 String[] keywords = keyword.split(" ");
                 for (String s : keywords) {
                     temp.addAll(projectEntityRepository.searchByKeywords(s));
                 }
-            }else{
+            } else {
                 temp.addAll(projectEntityRepository.searchByKeywords(keyword));
             }
 
@@ -906,11 +910,11 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         project.getProjectOwners().add(projOwnerToAddProfile);
-        if(project.getTeamMembers().contains(projOwnerToAddProfile)){
+        if (project.getTeamMembers().contains(projOwnerToAddProfile)) {
             project.getTeamMembers().remove(projOwnerToAddProfile);
         }
-        
-        if(projOwnerToAddProfile.getProjectsJoined().contains(project)){
+
+        if (projOwnerToAddProfile.getProjectsJoined().contains(project)) {
             projOwnerToAddProfile.getProjectsJoined().remove(project);
         }
         project = projectEntityRepository.saveAndFlush(project);
@@ -920,10 +924,10 @@ public class ProjectServiceImpl implements ProjectService {
 
         return project;
     }
-    
+
     @Override
     public ProjectEntity removeProjectOwner(Long editorId, Long projOwnerToRemoveId, Long projectId) throws ProjectNotFoundException, UnableToRemoveProjectOwnerException {
-    ProfileEntity editor = profileEntityRepository.findById(editorId)
+        ProfileEntity editor = profileEntityRepository.findById(editorId)
                 .orElseThrow(() -> new UserNotFoundException(editorId));
 
         ProfileEntity projOwnerToRemove = profileEntityRepository.findById(projOwnerToRemoveId)
@@ -946,17 +950,16 @@ public class ProjectServiceImpl implements ProjectService {
 
         // remove from project owners 
         project.getProjectOwners().remove(projOwnerToRemove);
-        
+
         // add back to project teammates
-        if(!project.getTeamMembers().contains(projOwnerToRemove)){
+        if (!project.getTeamMembers().contains(projOwnerToRemove)) {
             project.getTeamMembers().add(projOwnerToRemove);
         }
-        
-        
+
         project = projectEntityRepository.saveAndFlush(project);
 
         //add back to project joined
-        if(!projOwnerToRemove.getProjectsJoined().contains(project)){
+        if (!projOwnerToRemove.getProjectsJoined().contains(project)) {
             projOwnerToRemove.getProjectsJoined().add(project);
         }
         // remove from project owned
@@ -965,8 +968,6 @@ public class ProjectServiceImpl implements ProjectService {
 
         return project;
     }
-
-    
 
     @Override
     public ProjectEntity followProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException {

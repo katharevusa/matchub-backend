@@ -8,6 +8,7 @@ package com.is4103.matchub.repository;
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,4 +31,7 @@ public interface IndividualEntityRepository extends JpaRepository<IndividualEnti
     @Query(value = "SELECT i FROM IndividualEntity i ORDER BY i.reputationPoints DESC",
             countQuery = "SELECT COUNT(i) FROM IndividualEntity i ORDER BY i.reputationPoints DESC")
     Page<IndividualEntity> individualLeaderboard(Pageable pageable);
+
+    @Query(value = "SELECT i FROM IndividualEntity i ORDER BY i.reputationPoints DESC")
+    List<IndividualEntity> individualLeaderboard();
 }

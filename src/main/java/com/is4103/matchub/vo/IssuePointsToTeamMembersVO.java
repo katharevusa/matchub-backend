@@ -15,7 +15,7 @@ import lombok.Data;
  * @author ngjin
  */
 @Data
-public class IssuePointsToResourceDonorsVO {
+public class IssuePointsToTeamMembersVO {
 
     //Long is for accountId
     //Integer is for additional points 
@@ -25,5 +25,4 @@ public class IssuePointsToResourceDonorsVO {
 
     @NotNull(message = "projectId can not be null.")
     private Long projectId;
-
 }
