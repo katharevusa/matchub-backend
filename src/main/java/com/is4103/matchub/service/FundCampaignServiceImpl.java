@@ -156,7 +156,7 @@ public class FundCampaignServiceImpl implements FundCampaignService {
     @Override
     public void createDonation(String payerEmail, PaymentIntent paymentIntent) throws UserNotFoundException, DonationOptionNotFoundException {
         DonationEntity donation = new DonationEntity();
-        donation.setDonatedAmount(BigDecimal.valueOf(paymentIntent.getAmount()));
+        donation.setDonatedAmount(BigDecimal.valueOf(paymentIntent.getAmount()).divide(BigDecimal.valueOf(100)));
         donation.setDonationTime(LocalDateTime.now());
         ProfileEntity donator = profileEntityRepository.findByEmail(payerEmail).orElseThrow(() -> new UserNotFoundException(payerEmail));
         DonationOptionEntity donationOption = donationOptionEntityRepository.findById(Long.parseLong(paymentIntent.getMetadata().get("donation_option_id"))).orElseThrow(() -> new DonationOptionNotFoundException());
@@ -167,7 +167,10 @@ public class FundCampaignServiceImpl implements FundCampaignService {
         // associate donation with donation options
         donation.setDonationOption(donationOption);
         donationOption.getDonations().add(donation);
+        
 
+        FundCampaignEntity fundCampaignEntity = donationOption.getFundCampaign();
+        fundCampaignEntity.setCurrentAmountRaised(fundCampaignEntity.getCurrentAmountRaised().add(donation.getDonatedAmount()));
         donationEntityRepository.save(donation);
 
     }
@@ -212,5 +215,17 @@ public class FundCampaignServiceImpl implements FundCampaignService {
         return fundCampaignEntity;
     }
     
+    
+    @Override 
+    public List<FundCampaignEntity> getAllFundCampaignEntity(){
+        return fundCampaignEntityRepository.findAll();
+    }
+    
+//    @Override
+//    public List<FundCampaignEntity> fundCampaignGlobalSearch(){
+//// campaignTitle
+////campaignDescription
+////endDate
+//    }
 
 }

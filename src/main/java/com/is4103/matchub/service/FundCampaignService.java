@@ -53,5 +53,7 @@ public interface FundCampaignService {
     
     public FundCampaignEntity getFundCampaignByFundCampaignId(Long fundCampaignId)throws  FundCampaignNotFoundException;
     
+    public List<FundCampaignEntity> getAllFundCampaignEntity();
+    
     
 }

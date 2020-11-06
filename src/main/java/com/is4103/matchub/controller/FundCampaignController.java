@@ -97,5 +97,11 @@ public class FundCampaignController {
     public FundCampaignEntity getFundCampaignByFundCampaignId(@RequestParam(value = "fundCampaignId", required = true)Long fundCampaignId)throws  FundCampaignNotFoundException{
         return fundCampaignService.getFundCampaignByFundCampaignId(fundCampaignId);
     }
+    
+     
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllFundCampaignEntity")
+    public List<FundCampaignEntity> getAllFundCampaignEntity(){
+        return fundCampaignService.getAllFundCampaignEntity();
+    }
 
 }

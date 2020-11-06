@@ -21,7 +21,8 @@ public class CreateFundCampaignVO {
     @NotNull(message = "Campaign target can not be null")
     private BigDecimal campaignTarget;
 
-   
+   @NotNull(message = "Fund Campaign title can not be null")
+    private String campaignTitle;
   
     @NotNull(message =  "End date can not be null")
     private LocalDateTime endDate;
@@ -36,6 +37,7 @@ public class CreateFundCampaignVO {
     private Long payeeId;
     
     public void createFundCampaign(FundCampaignEntity fundCampaignEntity){
+        fundCampaignEntity.setCampaignTitle(campaignTitle);
         fundCampaignEntity.setCampaignTarget(campaignTarget);
         fundCampaignEntity.setEndDate(endDate);
         fundCampaignEntity.setCampaignDescription(campaignDescription);

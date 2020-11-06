@@ -42,6 +42,10 @@ public class FundCampaignEntity {
 
     @Column(nullable = false)
     @NotNull
+    private String campaignTitle;
+    
+    @Column(nullable = false)
+    @NotNull
     private BigDecimal campaignTarget;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
