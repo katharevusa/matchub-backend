@@ -202,7 +202,8 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new PostNotFoundException("PostId: " + postId + " cannot be found"));
 
         if (postToDelete.getPostCreator().getAccountId().equals(postCreatorId)) {
-
+            
+          
             //delete the all photos from build/ folder first
             for (String photo : postToDelete.getPhotos()) {
                 attachmentService.deleteFile(photo);
@@ -211,9 +212,15 @@ public class PostServiceImpl implements PostService {
             //remove from association
             ProfileEntity postCreator = postToDelete.getPostCreator();
             postCreator.getPosts().remove(postToDelete);
+            
 
             //delete the post entity
             postEntityRepository.delete(postToDelete);
+            
+            List<PostEntity> sharedPosts = postEntityRepository.getAllSharedPostByOriginalPostId(postId);
+            for(PostEntity p: sharedPosts){
+                p.setOriginalPostId(0L);
+            }
         } else {
             throw new UnableToDeletePostException("Unable to delete post because account: " + postCreatorId
                     + " is not the owner of the post to be deleted.");

@@ -21,4 +21,7 @@ public interface PostEntityRepository extends JpaRepository<PostEntity, Long> {
     @Query(value = "SELECT p FROM PostEntity p WHERE p.postCreator.accountId = :id ORDER BY p.timeCreated DESC",
             countQuery = "SELECT COUNT(p) FROM PostEntity p WHERE p.postCreator.accountId = :id ORDER BY p.timeCreated DESC")
     Page<PostEntity> getPostsByAccountId(Long id, Pageable pageable);
+    
+    @Query(value = "SELECT p FROM PostEntity p WHERE p.originalPostId = :postId")
+    List<PostEntity> getAllSharedPostByOriginalPostId(Long postId);
 }
