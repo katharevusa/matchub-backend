@@ -141,6 +141,8 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                             + "resource donor: additional points entered exceeded project's pool of points");
                 }
 
+                Integer pointsBefore = p.getReputationPoints();
+
                 //award the resourceDonor the points
                 p.setReputationPoints(p.getReputationPoints() + additionalPoints);
                 p = profileEntityRepository.saveAndFlush(p);
@@ -151,7 +153,7 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                 project.setProjectPoolPoints(project.getProjectPoolPoints() - additionalPoints);
                 project = projectEntityRepository.saveAndFlush(project);
 
-                checkPointsToAwardSpotlightChances(p);
+                checkPointsToAwardSpotlightChances(pointsBefore, p.getReputationPoints(), p);
 
             }
         }
@@ -257,6 +259,8 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                             + "team member: additional points entered exceeded project's pool of points");
                 }
 
+                Integer pointsBefore = p.getReputationPoints();
+
                 //award the resourceDonor the points
                 p.setReputationPoints(p.getReputationPoints() + additionalPoints);
                 p = profileEntityRepository.saveAndFlush(p);
@@ -267,7 +271,7 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                 project.setProjectPoolPoints(project.getProjectPoolPoints() - additionalPoints);
                 project = projectEntityRepository.saveAndFlush(project);
 
-                checkPointsToAwardSpotlightChances(p);
+                checkPointsToAwardSpotlightChances(pointsBefore, p.getReputationPoints(), p);
             }
         }
     }
@@ -374,12 +378,19 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
         return resource;
     }
 
-    private void checkPointsToAwardSpotlightChances(ProfileEntity profile) {
-        if (profile.getReputationPoints() > 200) {
+    private void checkPointsToAwardSpotlightChances(Integer pointsBefore, Integer pointsAfter, ProfileEntity profile) {
 
-            profile.setSpotlightChances(profile.getSpotlightChances() + 5);
+        int tierBefore = pointsBefore / 200;
+        int tierAfter = pointsAfter / 200;
+
+        if (tierAfter > tierBefore) {
+            Integer spotlightToGive = (tierAfter - tierBefore) * 5;
+
+            profile.setSpotlightChances(profile.getSpotlightChances() + spotlightToGive);
             profileEntityRepository.saveAndFlush(profile);
+
         }
+
     }
 
     //************this method is triggered upon completedProject() method
