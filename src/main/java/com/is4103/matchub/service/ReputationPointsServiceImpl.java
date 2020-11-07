@@ -128,7 +128,13 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
             vo.setHashmap(new HashMap<Long, Integer>());
         }
 
-        for (ProfileEntity p : resourceDonors) {
+        System.out.println("size of resource donors: " + resourceDonors.size());
+
+        for (int i = 0; i < resourceDonors.size(); i++) {
+
+            ProfileEntity p = resourceDonors.get(i);
+            System.out.println("found profile resource donor: accountId" + p.getAccountId());
+
             //award additional points
             if (vo.getHashmap().containsKey(p.getAccountId())) {
 
@@ -247,7 +253,9 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
         List<ProfileEntity> teamMembers = project.getTeamMembers();
 
-        for (ProfileEntity p : teamMembers) {
+        for (int i = 0; i < teamMembers.size(); i++) {
+
+            ProfileEntity p = teamMembers.get(i);
 
             if (vo.getHashmap().containsKey(p.getAccountId())) {
                 //additional points 
@@ -265,7 +273,7 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                 p.setReputationPoints(p.getReputationPoints() + additionalPoints);
                 p = profileEntityRepository.saveAndFlush(p);
 
-                System.out.println("Awarded points to resource donor: " + additionalPoints);
+                System.out.println("Awarded points to team member: " + additionalPoints);
 
                 //deduct additionalPoints from the projectPoolPoints
                 project.setProjectPoolPoints(project.getProjectPoolPoints() - additionalPoints);
