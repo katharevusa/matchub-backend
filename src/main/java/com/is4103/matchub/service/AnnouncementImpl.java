@@ -8,10 +8,10 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.AnnouncementEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
-import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.CreateAnnouncementException;
 import com.is4103.matchub.exception.DeleteAnnouncementException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.vo.AnnouncementVO;
 import java.util.List;
@@ -20,8 +20,10 @@ import org.springframework.stereotype.Service;
 import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
+import com.is4103.matchub.vo.AnnouncementSettingVO;
 import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  *
@@ -258,6 +260,16 @@ public class AnnouncementImpl implements AnnouncementService {
         ProfileEntity user = profileEntityRepository.findById(userId).get();
         user.setAnnouncements(new ArrayList<>());
         profileEntityRepository.saveAndFlush(user);   
+    }
+    
+    
+    @Override
+    public ProfileEntity updateAnnouncementSettinge(AnnouncementSettingVO vo)throws UserNotFoundException{
+        ProfileEntity user  = profileEntityRepository.findById(vo.getUserId()).orElseThrow(() -> new UserNotFoundException(vo.getUserId()));
+        for(AnnouncementTypeEnum k :vo.getNewSetting().keySet()){
+           user.getAnnouncementsSetting().replace(k, vo.getNewSetting().get(k));
+        }
+        return profileEntityRepository.saveAndFlush(user);
     }
     
 }

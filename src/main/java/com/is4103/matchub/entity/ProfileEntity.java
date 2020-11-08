@@ -1,13 +1,16 @@
 package com.is4103.matchub.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import java.util.ArrayList;
+import java.util.HashMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -67,6 +70,10 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @Column(nullable = true)
     private Boolean stripeAccountChargesEnabled = false;
+    
+    // scenario, boolean
+    @ElementCollection
+    private Map<AnnouncementTypeEnum, Boolean> announcementsSetting = new HashMap<>();
 
     //************************** ASSOCIATIONS HERE **************************
     @OneToMany(mappedBy = "postCreator")
@@ -128,6 +135,7 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ChannelEntity> joinedChannel = new ArrayList<>();
+    
 
     public ProfileEntity(String email, String password) {
         super(email, password);

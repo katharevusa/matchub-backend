@@ -173,6 +173,7 @@ public class UserServiceImpl implements UserService {
         individual.setIsVerified(Boolean.TRUE);
 
         AccountEntity updatedAccount = (AccountEntity) individual;
+
         updatedAccount = accountEntityRepository.save(updatedAccount);
 
         return UserVO.of(updatedAccount);
@@ -299,7 +300,7 @@ public class UserServiceImpl implements UserService {
             //update toFollowProfile followers
             toFollowProfile.getFollowers().add(accountId);
             toFollowProfile = profileEntityRepository.saveAndFlush(toFollowProfile);
-
+              
             // create announcement (notify toFollowProfile)
             String profileName = "";
             if (profile instanceof IndividualEntity) {
@@ -317,13 +318,17 @@ public class UserServiceImpl implements UserService {
             announcementEntity.setNewFollowerAndNewPosterUUID(profile.getUuid());
 
             // association
+            if(toFollowProfile.getAnnouncementsSetting().get(AnnouncementTypeEnum.NEW_PROFILE_FOLLOWER)){
             announcementEntity.getNotifiedUsers().add(toFollowProfile);
             toFollowProfile.getAnnouncements().add(announcementEntity);
+            }
 
             announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
 
-            // create notification         
+            // create notification   
+            if(toFollowProfile.getAnnouncementsSetting().get(AnnouncementTypeEnum.NEW_PROFILE_FOLLOWER)){
             announcementService.createNormalNotification(announcementEntity);
+            }
 
             return profile;
         } else {

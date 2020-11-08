@@ -11,6 +11,7 @@ import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
@@ -196,6 +197,10 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
         ikjun.setSdgs(sdgs);
+        
+        for(AnnouncementTypeEnum a : AnnouncementTypeEnum.values()){
+            ikjun.getAnnouncementsSetting().put(a, Boolean.TRUE);
+        }
         accountEntityRepository.save(ikjun);
 
         //3rd individual
