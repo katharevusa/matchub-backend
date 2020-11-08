@@ -40,7 +40,7 @@ public class ProjectCreateVO {
     @NotBlank(message = "Country can not be blank")
     private String country;
 
-    @FutureOrPresent
+   
     @NotNull(message = "Project start time can not be null")
     private LocalDateTime startDate;
 
