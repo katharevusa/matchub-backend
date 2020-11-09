@@ -11,6 +11,7 @@ import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
@@ -29,6 +30,7 @@ import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
+import com.is4103.matchub.vo.PostVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -84,6 +86,9 @@ public class InitServiceImpl implements InitService {
     @Autowired
     ResourceRequestEntityRepository resourceRequestEntityRepository;
 
+    @Autowired
+    PostService postService;
+
     @Transactional
     public void init() {
         // testing:
@@ -105,6 +110,8 @@ public class InitServiceImpl implements InitService {
 
         // init project follower 
         initProjectFollower();
+
+        initPost();
 
 //        firebaseService.getChannelDetails("s");
         // init kanbanboard for project 3
@@ -196,6 +203,10 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
         ikjun.setSdgs(sdgs);
+
+        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
+            ikjun.getAnnouncementsSetting().put(a, Boolean.TRUE);
+        }
         accountEntityRepository.save(ikjun);
 
         //3rd individual
@@ -1491,6 +1502,80 @@ public class InitServiceImpl implements InitService {
         user5.getProjectsFollowing().add(project5);
         user7.getProjectsFollowing().add(project5);
 
+    }
+
+    private void initPost() {
+        // user 2
+        PostVO post1 = new PostVO();
+        post1.setPostCreatorId(2L);
+        post1.setContent("What a nice day!");
+        postService.createPostDataInit(post1);
+
+        PostVO post2 = new PostVO();
+        post2.setPostCreatorId(2L);
+        post2.setContent("Hi my dear friends, I am planning to launch a new project related to saving the earth from global warming! Hit me up if you are interested to join :D");
+        postService.createPostDataInit(post2);
+
+        // user 3
+        PostVO post3 = new PostVO();
+        post3.setPostCreatorId(3L);
+        post3.setContent("Hi my dear friends, I am planning to launch a new project related to saving the earth from global warming! Hit me up if you are interested to join :D");
+        postService.createPostDataInit(post3);
+
+        PostVO post4 = new PostVO();
+        post4.setPostCreatorId(3L);
+        post4.setContent("Today marks my ten years as a green campaigner! Really proud of myself");
+        postService.createPostDataInit(post4);
+
+        // user 4
+        PostVO post5 = new PostVO();
+        post5.setPostCreatorId(4L);
+        post5.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
+        postService.createPostDataInit(post5);
+
+        PostVO post6 = new PostVO();
+        post6.setPostCreatorId(4L);
+        post6.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
+        postService.createPostDataInit(post6);
+
+        // user 5
+        PostVO post7 = new PostVO();
+        post7.setPostCreatorId(5L);
+        post7.setContent("Good morning folks! \n"
+                + "Let's talk about #SDGs and contribute our quota. \n"
+                + "Have a wonderful week. More win$ #WealthSecrets");
+        postService.createPostDataInit(post7);
+
+        PostVO post8 = new PostVO();
+        post8.setPostCreatorId(5L);
+        post8.setContent("Reducing the amount of “stuff” you consume has the greatest benefits for the planet. It’s best to avoid waste in the first place, so think more carefully about your purchases.Re-using items saves the natural resources and energy needed to manufacture new ones.");
+        postService.createPostDataInit(post8);
+
+        // user 6
+        PostVO post9 = new PostVO();
+        post9.setPostCreatorId(6L);
+        post9.setContent("Saving our planet, lifting people out of poverty, advancing economic growth... these are one and the same fight. We must connect the dots between climate change, energy shortages, global health, food security and women's empowerment\" - Ban Ki-moon");
+        postService.createPostDataInit(post9);
+
+        PostVO post10 = new PostVO();
+        post10.setPostCreatorId(6L);
+        post10.setContent("Rural development is crucial for meeting the #SDGs.\n"
+                + "\n"
+                + "Our projects transform rural communities economically and socially, while promoting gender equality and inclusiveness.\n"
+                + "\n"
+                + "Investing in rural people is investing in a brighter future for everyone.");
+        postService.createPostDataInit(post10);
+
+        // user 7
+        PostVO post11 = new PostVO();
+        post11.setPostCreatorId(7L);
+        post11.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
+        postService.createPostDataInit(post11);
+
+        PostVO post12 = new PostVO();
+        post12.setPostCreatorId(7L);
+        post12.setContent("Red square The days ahead will be very consequential for the state of the world. The resurgence of COVID-19 and the US Presidential Election are just two of the issues that will weigh heavily on our future. During these days, standing firm for the #SDGs is a good way to stay grounded.");
+        postService.createPostDataInit(post12);
     }
 
 }

@@ -58,4 +58,6 @@ public interface PostService {
     public List<AnnouncementEntity> getJoinedProjectAnnouncements(Long userId);
     
     public PostEntity repost(Long previousPostId, PostVO vo)throws RepostException;
+    
+    public void createPostDataInit(PostVO vo);
 }

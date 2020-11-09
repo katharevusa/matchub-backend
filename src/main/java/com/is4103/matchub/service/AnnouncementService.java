@@ -6,8 +6,11 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AnnouncementEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.CreateAnnouncementException;
 import com.is4103.matchub.exception.DeleteAnnouncementException;
+import com.is4103.matchub.exception.UserNotFoundException;
+import com.is4103.matchub.vo.AnnouncementSettingVO;
 import com.is4103.matchub.vo.AnnouncementVO;
 import java.util.List;
 
@@ -42,4 +45,6 @@ public interface AnnouncementService {
     public void readAllAnnouncements(Long userId);
     
     public void clearAllAnnouncemnents(Long userId);
+    
+    public ProfileEntity updateAnnouncementSettinge(AnnouncementSettingVO vo)throws UserNotFoundException;
 }
