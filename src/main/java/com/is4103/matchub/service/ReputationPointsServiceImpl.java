@@ -95,24 +95,6 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
         //get all the matched resources of project
         List<ResourceEntity> resources = resourceEntityRepository.getResourcesByProject(vo.getProjectId());
 
-        //giving out baseline points only 
-        for (ResourceEntity r : resources) {
-            //find the base points 
-            ResourceCategoryEntity resourceCat = resourceCategoryService.getResourceCategoryById(r.getResourceCategoryId());
-            Integer basePoints = resourceCat.getCommunityPointsGuideline();
-
-            //find the resource donor 
-            Long resourceDonorId = r.getResourceOwnerId();
-            ProfileEntity resourceDonor = profileEntityRepository.findById(resourceDonorId)
-                    .orElseThrow(() -> new UserNotFoundException(resourceDonorId));
-
-            //award the resourceDonor the points
-            resourceDonor.setReputationPoints(resourceDonor.getReputationPoints() + basePoints);
-            resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
-
-            System.out.println("Awarded baseline points to resource donor: " + basePoints);
-        }
-
         //get list of resourceDonors
         List<ProfileEntity> resourceDonors = new ArrayList<>();
 
@@ -485,6 +467,32 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
             }
         }
 
+    }
+
+    @Override
+    public void issueBaselinePointsToResourceDonors(ProjectEntity project) throws ProjectNotFoundException {
+
+        System.out.println("Issue Baseline Points To Resource Donors method****************");
+        //get all the matched resources of project
+        List<ResourceEntity> resources = resourceEntityRepository.getResourcesByProject(project.getProjectId());
+
+        //giving out baseline points only 
+        for (ResourceEntity r : resources) {
+            //find the base points 
+            ResourceCategoryEntity resourceCat = resourceCategoryService.getResourceCategoryById(r.getResourceCategoryId());
+            Integer basePoints = resourceCat.getCommunityPointsGuideline();
+
+            //find the resource donor 
+            Long resourceDonorId = r.getResourceOwnerId();
+            ProfileEntity resourceDonor = profileEntityRepository.findById(resourceDonorId)
+                    .orElseThrow(() -> new UserNotFoundException(resourceDonorId));
+
+            //award the resourceDonor the points
+            resourceDonor.setReputationPoints(resourceDonor.getReputationPoints() + basePoints);
+            resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
+
+            System.out.println("Awarded baseline points to resource donor: " + basePoints);
+        }
     }
 
     //********* triggered after the 2 weeks window period for reviews to be made 

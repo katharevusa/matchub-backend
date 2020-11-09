@@ -314,6 +314,7 @@ public class ProjectServiceImpl implements ProjectService {
         badgeService.issueProjectBadge(project);
         reputationPointsService.issuePointsToFundDonors(project);
         reputationPointsService.issuePointsForCompletedTasks(project);
+        reputationPointsService.issueBaselinePointsToResourceDonors(project);
 
         //*************include notification to send to project owners & teamMembers to leave reviews
         AnnouncementEntity announcementEntity = new AnnouncementEntity();

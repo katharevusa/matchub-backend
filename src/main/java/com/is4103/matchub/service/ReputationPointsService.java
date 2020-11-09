@@ -35,6 +35,8 @@ public interface ReputationPointsService {
 
     void issuePointsForCompletedTasks(ProjectEntity project) throws ProjectNotFoundException;
 
+    void issueBaselinePointsToResourceDonors(ProjectEntity project) throws ProjectNotFoundException;
+
     void issuePointsByReviewRatings(Long projectId) throws ProjectNotFoundException;
 
     GamificationPointTiers getGamificationPointTiers();
