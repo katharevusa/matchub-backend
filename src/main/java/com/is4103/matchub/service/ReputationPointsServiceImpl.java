@@ -95,24 +95,6 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
         //get all the matched resources of project
         List<ResourceEntity> resources = resourceEntityRepository.getResourcesByProject(vo.getProjectId());
 
-        //giving out baseline points only 
-        for (ResourceEntity r : resources) {
-            //find the base points 
-            ResourceCategoryEntity resourceCat = resourceCategoryService.getResourceCategoryById(r.getResourceCategoryId());
-            Integer basePoints = resourceCat.getCommunityPointsGuideline();
-
-            //find the resource donor 
-            Long resourceDonorId = r.getResourceOwnerId();
-            ProfileEntity resourceDonor = profileEntityRepository.findById(resourceDonorId)
-                    .orElseThrow(() -> new UserNotFoundException(resourceDonorId));
-
-            //award the resourceDonor the points
-            resourceDonor.setReputationPoints(resourceDonor.getReputationPoints() + basePoints);
-            resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
-
-            System.out.println("Awarded baseline points to resource donor: " + basePoints);
-        }
-
         //get list of resourceDonors
         List<ProfileEntity> resourceDonors = new ArrayList<>();
 
@@ -128,7 +110,13 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
             vo.setHashmap(new HashMap<Long, Integer>());
         }
 
-        for (ProfileEntity p : resourceDonors) {
+        System.out.println("size of resource donors: " + resourceDonors.size());
+
+        for (int i = 0; i < resourceDonors.size(); i++) {
+
+            ProfileEntity p = resourceDonors.get(i);
+            System.out.println("found profile resource donor: accountId" + p.getAccountId());
+
             //award additional points
             if (vo.getHashmap().containsKey(p.getAccountId())) {
 
@@ -141,6 +129,8 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                             + "resource donor: additional points entered exceeded project's pool of points");
                 }
 
+                Integer pointsBefore = p.getReputationPoints();
+
                 //award the resourceDonor the points
                 p.setReputationPoints(p.getReputationPoints() + additionalPoints);
                 p = profileEntityRepository.saveAndFlush(p);
@@ -151,7 +141,7 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                 project.setProjectPoolPoints(project.getProjectPoolPoints() - additionalPoints);
                 project = projectEntityRepository.saveAndFlush(project);
 
-                checkPointsToAwardSpotlightChances(p);
+                checkPointsToAwardSpotlightChances(pointsBefore, p.getReputationPoints(), p);
 
             }
         }
@@ -245,7 +235,9 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
         List<ProfileEntity> teamMembers = project.getTeamMembers();
 
-        for (ProfileEntity p : teamMembers) {
+        for (int i = 0; i < teamMembers.size(); i++) {
+
+            ProfileEntity p = teamMembers.get(i);
 
             if (vo.getHashmap().containsKey(p.getAccountId())) {
                 //additional points 
@@ -257,17 +249,19 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
                             + "team member: additional points entered exceeded project's pool of points");
                 }
 
+                Integer pointsBefore = p.getReputationPoints();
+
                 //award the resourceDonor the points
                 p.setReputationPoints(p.getReputationPoints() + additionalPoints);
                 p = profileEntityRepository.saveAndFlush(p);
 
-                System.out.println("Awarded points to resource donor: " + additionalPoints);
+                System.out.println("Awarded points to team member: " + additionalPoints);
 
                 //deduct additionalPoints from the projectPoolPoints
                 project.setProjectPoolPoints(project.getProjectPoolPoints() - additionalPoints);
                 project = projectEntityRepository.saveAndFlush(project);
 
-                checkPointsToAwardSpotlightChances(p);
+                checkPointsToAwardSpotlightChances(pointsBefore, p.getReputationPoints(), p);
             }
         }
     }
@@ -374,12 +368,19 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
         return resource;
     }
 
-    private void checkPointsToAwardSpotlightChances(ProfileEntity profile) {
-        if (profile.getReputationPoints() > 200) {
+    private void checkPointsToAwardSpotlightChances(Integer pointsBefore, Integer pointsAfter, ProfileEntity profile) {
 
-            profile.setSpotlightChances(profile.getSpotlightChances() + 5);
+        int tierBefore = pointsBefore / 200;
+        int tierAfter = pointsAfter / 200;
+
+        if (tierAfter > tierBefore) {
+            Integer spotlightToGive = (tierAfter - tierBefore) * 5;
+
+            profile.setSpotlightChances(profile.getSpotlightChances() + spotlightToGive);
             profileEntityRepository.saveAndFlush(profile);
+
         }
+
     }
 
     //************this method is triggered upon completedProject() method
@@ -466,6 +467,32 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
             }
         }
 
+    }
+
+    @Override
+    public void issueBaselinePointsToResourceDonors(ProjectEntity project) throws ProjectNotFoundException {
+
+        System.out.println("Issue Baseline Points To Resource Donors method****************");
+        //get all the matched resources of project
+        List<ResourceEntity> resources = resourceEntityRepository.getResourcesByProject(project.getProjectId());
+
+        //giving out baseline points only 
+        for (ResourceEntity r : resources) {
+            //find the base points 
+            ResourceCategoryEntity resourceCat = resourceCategoryService.getResourceCategoryById(r.getResourceCategoryId());
+            Integer basePoints = resourceCat.getCommunityPointsGuideline();
+
+            //find the resource donor 
+            Long resourceDonorId = r.getResourceOwnerId();
+            ProfileEntity resourceDonor = profileEntityRepository.findById(resourceDonorId)
+                    .orElseThrow(() -> new UserNotFoundException(resourceDonorId));
+
+            //award the resourceDonor the points
+            resourceDonor.setReputationPoints(resourceDonor.getReputationPoints() + basePoints);
+            resourceDonor = profileEntityRepository.saveAndFlush(resourceDonor);
+
+            System.out.println("Awarded baseline points to resource donor: " + basePoints);
+        }
     }
 
     //********* triggered after the 2 weeks window period for reviews to be made 

@@ -314,6 +314,7 @@ public class ProjectServiceImpl implements ProjectService {
         badgeService.issueProjectBadge(project);
         reputationPointsService.issuePointsToFundDonors(project);
         reputationPointsService.issuePointsForCompletedTasks(project);
+        reputationPointsService.issueBaselinePointsToResourceDonors(project);
 
         //*************include notification to send to project owners & teamMembers to leave reviews
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
@@ -599,6 +600,11 @@ public class ProjectServiceImpl implements ProjectService {
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Upable to upvote project: Project not exist");
         }
+
+        if (projectOptional.get().getProjStatus() == ProjectStatusEnum.COMPLETED) {
+            throw new UpvoteProjectException("Unable to upvote completed project");
+        }
+
         if (!profOptional.isPresent()) {
             throw new UserNotFoundException("Upable to upvote project: User not found");
         }
@@ -639,6 +645,10 @@ public class ProjectServiceImpl implements ProjectService {
 
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Upable to downvote project: Project not exist");
+        }
+
+        if (projectOptional.get().getProjStatus() == ProjectStatusEnum.COMPLETED) {
+            throw new DownvoteProjectException("Unable to downvote completed project");
         }
 
         if (!profOptional.isPresent()) {
