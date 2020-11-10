@@ -15,6 +15,7 @@ import com.is4103.matchub.exception.DonationOptionNotFoundException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.BadgeService;
+import com.is4103.matchub.service.CSVService;
 import com.is4103.matchub.service.EmailService;
 import com.is4103.matchub.service.OrganisationService;
 import com.is4103.matchub.service.PostService;
@@ -79,6 +80,19 @@ public class PublicRestController {
 
     @Autowired
     StripeService stripeService;
+    
+    @Autowired
+    CSVService cSVService;
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/testingCSV/ind")
+    void csvIndividual(@RequestParam("file") MultipartFile file)  {
+        cSVService.importIndividuals(file);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/testingCSV/org")
+    void csvOrganisation(@RequestParam("file") MultipartFile file)  {
+        cSVService.importOrganisations(file);
+    }
 
     @RequestMapping(method = RequestMethod.POST, value = "/createNewIndividual")
     UserVO createNewIndividual(@Valid @RequestBody IndividualCreateVO createVO) throws MessagingException, IOException {

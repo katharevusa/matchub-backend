@@ -46,13 +46,15 @@ public class AccountEntity {
     @NotNull
     private UUID uuid;
 
-    @Column(nullable = false, unique = true)
-    @NotNull
+//    @Column(nullable = false, unique = true)
+//    @NotNull
+    @Column(nullable = true, unique = true)
     private String email;
 
-    @Column(nullable = false)
-    @NotNull
+//    @Column(nullable = false)
+//    @NotNull
     @JsonIgnore
+    @Column(nullable = true)
     private String password;
 
     @Column(nullable = false)
@@ -64,7 +66,7 @@ public class AccountEntity {
     private Boolean accountExpired = false;
 
     @Column(nullable = false)
-    @NotNull    
+    @NotNull
     private Boolean disabled = true;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -74,9 +76,10 @@ public class AccountEntity {
     @NotNull
     private Boolean isVerified = false;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+//    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime joinDate;
-    
+
     @Column(nullable = false)
     @NotNull
     private Integer activeMonths = 0;

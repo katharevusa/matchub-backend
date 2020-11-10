@@ -8,6 +8,7 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,7 +29,8 @@ public class OrganisationEntity extends ProfileEntity {
     @NotNull
     private String organizationName;
 
-    @Column(nullable = true, length = 1000)
+    @Column(nullable = true, length = 2000, columnDefinition="TEXT")
+    @Lob
     @Nullable
     private String organizationDescription;
 
