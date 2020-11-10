@@ -35,6 +35,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -105,6 +106,9 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
             resourceDonors.add(resourceDonor);
         }
+
+        //remove duplicates, only have distinct resource donors 
+        resourceDonors = resourceDonors.stream().distinct().collect(Collectors.toList());
 
         if (vo.getHashmap() == null) {
             vo.setHashmap(new HashMap<Long, Integer>());
