@@ -74,65 +74,67 @@ public class FirebaseServiceImpl implements FirebaseService {
 
     @Override
     public void sendNotificationsToUsers(SendNotificationsToUsersVO vo) {
+        if (!vo.getUuids().isEmpty()) {
 
-        try {
-            CollectionReference users = FirestoreClient.getFirestore().collection("users");
-            Query query = users.whereIn("uid", vo.getUuids());
-            ApiFuture<QuerySnapshot> querySnapshot = query.get();
+            try {
+                CollectionReference users = FirestoreClient.getFirestore().collection("users");
+                Query query = users.whereIn("uid", vo.getUuids());
+                ApiFuture<QuerySnapshot> querySnapshot = query.get();
 
-            List<String> webDeviceTokens = new ArrayList<>();
-            List<String> mobileDeviceTokens = new ArrayList<>();
+                List<String> webDeviceTokens = new ArrayList<>();
+                List<String> mobileDeviceTokens = new ArrayList<>();
 
-            for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
-                FirebaseUserPojo userDetails = document.toObject(FirebaseUserPojo.class);
-                if (userDetails.getMobilePushToken() != null) {
-                    mobileDeviceTokens.add(userDetails.getMobilePushToken());
+                for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+                    FirebaseUserPojo userDetails = document.toObject(FirebaseUserPojo.class);
+                    if (userDetails.getMobilePushToken() != null) {
+                        mobileDeviceTokens.add(userDetails.getMobilePushToken());
+                    }
+                    if (userDetails.getWebPushToken() != null) {
+                        webDeviceTokens.add(userDetails.getWebPushToken());
+                    }
                 }
-                if (userDetails.getWebPushToken() != null) {
-                    webDeviceTokens.add(userDetails.getWebPushToken());
+
+                int messageCount = 0;
+
+                if (webDeviceTokens.size() > 0) {
+                    MulticastMessage webMessage = MulticastMessage.builder()
+                            .putData("type", vo.getType())
+                            .putData("title", vo.getTitle())
+                            .putData("body", vo.getBody())
+                            .putData("image", vo.getImage())
+                            .addAllTokens(webDeviceTokens)
+                            .build();
+
+                    BatchResponse webResponse = FirebaseMessaging.getInstance().sendMulticast(webMessage);
+                    messageCount += webResponse.getSuccessCount();
                 }
+
+                if (mobileDeviceTokens.size() > 0) {
+                    MulticastMessage mobileMessage = MulticastMessage.builder()
+                            .setNotification(Notification.builder()
+                                    .setTitle(vo.getTitle())
+                                    .setBody(vo.getBody())
+                                    .setImage(vo.getImage())
+                                    .build())
+                            .setApnsConfig(ApnsConfig.builder()
+                                    .putHeader("mutable-content", "1")
+                                    .setFcmOptions(ApnsFcmOptions.builder()
+                                            .setImage(vo.getImage())
+                                            .build())
+                                    .setAps(Aps.builder()
+                                            .build())
+                                    .build())
+                            .addAllTokens(mobileDeviceTokens)
+                            .build();
+
+                    BatchResponse mobileResponse = FirebaseMessaging.getInstance().sendMulticast(mobileMessage);
+                    messageCount += mobileResponse.getSuccessCount();
+                }
+
+                System.out.println(messageCount + " messages were sent successfully");
+            } catch (InterruptedException | ExecutionException | FirebaseMessagingException ex) {
+                throw new FirebaseRuntimeException(ex.getMessage());
             }
-
-            int messageCount = 0;
-
-            if (webDeviceTokens.size() > 0) {
-                MulticastMessage webMessage = MulticastMessage.builder()
-                        .putData("type", vo.getType())
-                        .putData("title", vo.getTitle())
-                        .putData("body", vo.getBody())
-                        .putData("image", vo.getImage())
-                        .addAllTokens(webDeviceTokens)
-                        .build();
-
-                BatchResponse webResponse = FirebaseMessaging.getInstance().sendMulticast(webMessage);
-                messageCount += webResponse.getSuccessCount();
-            }
-
-            if (mobileDeviceTokens.size() > 0) {
-                MulticastMessage mobileMessage = MulticastMessage.builder()
-                        .setNotification(Notification.builder()
-                                .setTitle(vo.getTitle())
-                                .setBody(vo.getBody())
-                                .setImage(vo.getImage())
-                                .build())
-                        .setApnsConfig(ApnsConfig.builder()
-                                .putHeader("mutable-content", "1")
-                                .setFcmOptions(ApnsFcmOptions.builder()
-                                        .setImage(vo.getImage())
-                                        .build())
-                                .setAps(Aps.builder()
-                                        .build())
-                                .build())
-                        .addAllTokens(mobileDeviceTokens)
-                        .build();
-
-                BatchResponse mobileResponse = FirebaseMessaging.getInstance().sendMulticast(mobileMessage);
-                messageCount += mobileResponse.getSuccessCount();
-            }
-
-            System.out.println(messageCount + " messages were sent successfully");
-        } catch (InterruptedException | ExecutionException | FirebaseMessagingException ex) {
-            throw new FirebaseRuntimeException(ex.getMessage());
         }
     }
 
@@ -148,9 +150,9 @@ public class FirebaseServiceImpl implements FirebaseService {
             ApiFuture<QuerySnapshot> querySnapshot = query.get();
             for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
                 ChannelMappingVO channelMappingVO = document.toObject(ChannelMappingVO.class);
-                System.out.println("channelMappingVO"+channelMappingVO);
-                System.out.println("get admins:"+ channelMappingVO.getAdmins());
-                System.out.println("get members:"+ channelMappingVO.getMembers());
+                System.out.println("channelMappingVO" + channelMappingVO);
+                System.out.println("get admins:" + channelMappingVO.getAdmins());
+                System.out.println("get members:" + channelMappingVO.getMembers());
                 for (String s : channelMappingVO.getAdmins()) {
                     AccountEntity user = accountEntityRepository.findByUuid(UUID.fromString(s)).get();
                     admins.add(user.getAccountId());
