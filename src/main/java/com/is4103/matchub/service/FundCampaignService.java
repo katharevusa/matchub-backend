@@ -21,6 +21,8 @@ import com.is4103.matchub.vo.UpdateDonationOptionVO;
 import com.is4103.matchub.vo.UpdateFundCampaignVO;
 import com.stripe.model.PaymentIntent;
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 /**
  *
@@ -58,4 +60,5 @@ public interface FundCampaignService {
 
     public FundCampaignEntity updateFundCampaign(UpdateFundCampaignVO vo) throws FundCampaignNotFoundException;
 
+    public Page<FundCampaignEntity> searchCampaign(String key, Pageable pageable);
 }
