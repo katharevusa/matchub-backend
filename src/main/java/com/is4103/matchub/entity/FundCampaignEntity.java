@@ -52,7 +52,7 @@ public class FundCampaignEntity {
     @NotNull
     private LocalDateTime endDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false,length = 2000)
     @NotNull
     private String campaignDescription;
 
