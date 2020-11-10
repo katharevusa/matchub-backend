@@ -11,6 +11,7 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.DeleteCommentException;
 import com.is4103.matchub.exception.LikePostException;
 import com.is4103.matchub.exception.RepostException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.vo.PostVO;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import com.is4103.matchub.service.PostService;
+import com.is4103.matchub.vo.AnnouncementSettingVO;
 import com.is4103.matchub.vo.CommentVO;
 import com.is4103.matchub.vo.DeleteFilesVO;
 import java.io.IOException;
@@ -124,8 +126,8 @@ public class UserWorkspaceController {
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "/repost")
-    public PostEntity repost(@RequestParam(value = "userId", required = true)Long previousPostId,@Valid @RequestBody PostVO vo)throws RepostException{
-        return postService.repost(previousPostId, vo);
+    public PostEntity repost(@RequestParam(value = "originalPostId", required = true)Long originalPostId,@Valid @RequestBody PostVO vo)throws RepostException{
+        return postService.repost(originalPostId, vo);
     }
     
     @RequestMapping(method = RequestMethod.GET, value = "/getFollowingUserPosts")

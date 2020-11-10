@@ -17,7 +17,7 @@ import lombok.Data;
 @Data
 public class IssuePointsToResourceDonorsVO {
 
-    //Long is for resourceId
+    //Long is for accountId
     //Integer is for additional points 
     //only add in the resources that are awarded extra points, 
     //do not need to add in resources if they are not awarded additional points

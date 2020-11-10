@@ -43,7 +43,7 @@ public class PostEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
 
-    @Column(nullable = false, length = 1000)
+    @Column(nullable = false, length = 2000)
     @NotNull
     private String content;
 
@@ -57,9 +57,6 @@ public class PostEntity {
 
     @Column(nullable = true)
     private Long originalPostId;
-
-    @Column(nullable = true)
-    private Long previousPostId;
 
     @Column(nullable = false)
     @NotNull
@@ -77,12 +74,12 @@ public class PostEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Long> likedUsersId = new HashSet<>();
 
-    public PostEntity(String content, LocalDateTime timeCreated, List<String> photos, Long originalPostId, Long previousPostId, ProfileEntity postCreator) {
+    public PostEntity(String content, LocalDateTime timeCreated, List<String> photos, Long originalPostId, ProfileEntity postCreator) {
         this.content = content;
         this.timeCreated = timeCreated;
         this.photos = photos;
         this.originalPostId = originalPostId;
-        this.previousPostId = previousPostId;
+//        this.previousPostId = previousPostId;
         this.postCreator = postCreator;
     }
 

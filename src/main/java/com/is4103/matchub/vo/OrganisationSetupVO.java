@@ -7,6 +7,7 @@ package com.is4103.matchub.vo;
 
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -88,5 +89,9 @@ public class OrganisationSetupVO {
 
         //upload profile pic in attachment service class
         //do not associate sdg here, associate in user service class
+        //set the announcement setting, default
+        for(AnnouncementTypeEnum a : AnnouncementTypeEnum.values()){
+            organisation.getAnnouncementsSetting().put(a, Boolean.TRUE);
+        }
     }
 }

@@ -90,7 +90,7 @@ public class ProjectController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/completeProject")
-    void completeProject(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "profileId", required = true) Long profileId) throws CompleteProjectException {
+    void completeProject(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "profileId", required = true) Long profileId) throws CompleteProjectException, ProjectNotFoundException {
         projectService.completeProject(projectId, profileId);
     }
 
@@ -154,10 +154,11 @@ public class ProjectController {
     public ProjectEntity addProjectOwner(@RequestParam(value = "projOwnerId") Long projOwnerId, @RequestParam(value = "projOwnerToAddId") Long projOwnerToAddId, @RequestParam(value = "projectId") Long projectId) throws ProjectNotFoundException {
         return projectService.addProjectOwner(projOwnerId, projOwnerToAddId, projectId);
     }
+
     @RequestMapping(method = RequestMethod.PUT, value = "/removeProjectOwner")
-    public ProjectEntity removeProjectOwner(@RequestParam(value = "editorId")Long editorId,
-                                            @RequestParam(value = "projOwnerToRemoveId") Long projOwnerToRemoveId, 
-                                            @RequestParam(value = "projectId")Long projectId) throws UnableToRemoveProjectOwnerException, ProjectNotFoundException{
+    public ProjectEntity removeProjectOwner(@RequestParam(value = "editorId") Long editorId,
+            @RequestParam(value = "projOwnerToRemoveId") Long projOwnerToRemoveId,
+            @RequestParam(value = "projectId") Long projectId) throws UnableToRemoveProjectOwnerException, ProjectNotFoundException {
         return projectService.removeProjectOwner(editorId, projOwnerToRemoveId, projectId);
     }
 

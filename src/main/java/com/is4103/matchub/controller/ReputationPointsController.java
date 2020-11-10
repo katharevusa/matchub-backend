@@ -6,6 +6,7 @@
 package com.is4103.matchub.controller;
 
 import static com.google.cloud.storage.Storage.GetHmacKeyOption.projectId;
+import com.is4103.matchub.entity.GamificationPointTiers;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
@@ -14,6 +15,7 @@ import com.is4103.matchub.service.ProjectService;
 import com.is4103.matchub.service.ReputationPointsService;
 import com.is4103.matchub.service.ResourceService;
 import com.is4103.matchub.vo.IssuePointsToResourceDonorsVO;
+import com.is4103.matchub.vo.IssuePointsToTeamMembersVO;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +44,11 @@ public class ReputationPointsController {
     @Autowired
     ResourceService resourceService;
 
+    @RequestMapping(method = RequestMethod.GET, value = "/getPointTiers")
+    GamificationPointTiers getGamificationPointTiers() {
+        return reputationPointsService.getGamificationPointTiers();
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceOfProject/{projectId}")
     Page<ResourceEntity> getResourceOfProject(@PathVariable("projectId") Long projectId, Pageable pageable) throws ProjectNotFoundException {
         return reputationPointsService.getResourceOfProject(projectId, pageable);
@@ -50,6 +57,11 @@ public class ReputationPointsController {
     @RequestMapping(method = RequestMethod.PUT, value = "/issuePointsToResourceDonors")
     void issuePointsToResourceDonors(@Valid @RequestBody IssuePointsToResourceDonorsVO vo) throws ProjectNotFoundException {
         reputationPointsService.issuePointsToResourceDonors(vo);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/issuePointsToTeamMembers")
+    void issuePointsToTeamMembers(@Valid @RequestBody IssuePointsToTeamMembersVO vo) throws ProjectNotFoundException {
+        reputationPointsService.issuePointsToTeamMembers(vo);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/spotlightProject/{projectId}/{accountId}")
@@ -80,6 +92,11 @@ public class ReputationPointsController {
     @RequestMapping(method = RequestMethod.GET, value = "/page/getSpotlightedResources")
     Page<ResourceEntity> getSpotlightedResources(Pageable pageable) {
         return resourceService.getSpotlightedResources(pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/issuePointsByReviewRatings/{projectId}")
+    void issuePointsByReviewRatings(@PathVariable("projectId") Long projectId) throws ProjectNotFoundException {
+        reputationPointsService.issuePointsByReviewRatings(projectId);
     }
 
 }

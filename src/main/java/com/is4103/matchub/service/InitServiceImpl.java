@@ -11,6 +11,7 @@ import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
@@ -29,6 +30,7 @@ import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
+import com.is4103.matchub.vo.PostVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -84,6 +86,9 @@ public class InitServiceImpl implements InitService {
     @Autowired
     ResourceRequestEntityRepository resourceRequestEntityRepository;
 
+    @Autowired
+    PostService postService;
+
     @Transactional
     public void init() {
         // testing:
@@ -105,6 +110,8 @@ public class InitServiceImpl implements InitService {
 
         // init project follower 
         initProjectFollower();
+
+        initPost();
 
 //        firebaseService.getChannelDetails("s");
         // init kanbanboard for project 3
@@ -128,6 +135,7 @@ public class InitServiceImpl implements InitService {
 
                         //update the followers list 
                         IndividualEntity user1 = (IndividualEntity) account;
+                        setNotifications(user1);
                         user1.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4))));
                     } else {
                         account = accountEntityRepository.save(new OrganisationEntity(a + "@gmail.com", passwordEncoder.encode("password"), "NUS", "description", "address"));
@@ -136,6 +144,8 @@ public class InitServiceImpl implements InitService {
                         //update the followers list 
                         OrganisationEntity user2 = (OrganisationEntity) account;
                         user2.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(6))));
+
+                        setNotifications(user2);
                     }
                     accountEntityRepository.save(account);
                 });
@@ -166,6 +176,8 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         alexLow.setSdgs(sdgs);
+        setNotifications(alexLow);
+
         accountEntityRepository.save(alexLow);
 
         //2nd individual
@@ -196,6 +208,9 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
         ikjun.setSdgs(sdgs);
+
+        setNotifications(ikjun);
+        
         accountEntityRepository.save(ikjun);
 
         //3rd individual
@@ -221,6 +236,8 @@ public class InitServiceImpl implements InitService {
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         sophia.setSdgs(sdgs);
+        
+        setNotifications(sophia);
         accountEntityRepository.save(sophia);
 
         /* INIT 2 ORGANISATIONS */
@@ -248,6 +265,7 @@ public class InitServiceImpl implements InitService {
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         genc.setSdgs(sdgs);
+        setNotifications(genc);
         accountEntityRepository.saveAndFlush(genc);
 
         //2nd organisation
@@ -280,6 +298,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(10)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
         networkForGood.setSdgs(sdgs);
+        setNotifications(networkForGood);
         accountEntityRepository.save(networkForGood);
 
         //4th individual
@@ -308,6 +327,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
         songhwa.setSdgs(sdgs);
+        setNotifications(songhwa);
         accountEntityRepository.save(songhwa);
 
         //3rd organisation, accountId = 10
@@ -344,6 +364,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(15)));
         kfem.setSdgs(sdgs);
+        setNotifications(kfem);
         accountEntityRepository.save(kfem);
 
         //individual, accountId = 11
@@ -372,6 +393,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
         jeongha.setSdgs(sdgs);
+        setNotifications(jeongha);
         accountEntityRepository.save(jeongha);
 
         //individual, accountId = 12
@@ -401,6 +423,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(4)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         billy.setSdgs(sdgs);
+        setNotifications(billy);
         accountEntityRepository.save(billy);
     }
 
@@ -458,31 +481,31 @@ public class InitServiceImpl implements InitService {
     }
 
     public void initResourceCategories() {
-        ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food", "All Food-related Resources", 1, 5, "kg");
+        ResourceCategoryEntity foodCategory = new ResourceCategoryEntity("Food", "All Food-related Resources", 5, 1, "kg");
         resourceCategoryService.createResourceCategory(foodCategory);
 
-        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Facilities", "All Resources that are Facilities", 1, 5, "hour");
+        ResourceCategoryEntity spaceCategory = new ResourceCategoryEntity("Facilities", "All Resources that are Facilities", 5, 1, "hour");
         resourceCategoryService.createResourceCategory(spaceCategory);
 
-        ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural", "All Natural Resources", 1, 5, "kg");
+        ResourceCategoryEntity naturalResourceCategory = new ResourceCategoryEntity("Natural", "All Natural Resources", 5, 1, "kg");
         resourceCategoryService.createResourceCategory(naturalResourceCategory);
 
-        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Machinery and Equipment", "All Machinery and Equipment", 1, 10, "set");
+        ResourceCategoryEntity deviceCategory = new ResourceCategoryEntity("Machinery and Equipment", "All Machinery and Equipment", 10, 1, "set");
         resourceCategoryService.createResourceCategory(deviceCategory);
 
         ResourceCategoryEntity transportationCategory = new ResourceCategoryEntity("Transportation", "All Transportation Resources", 1, 1, "hour");
         resourceCategoryService.createResourceCategory(transportationCategory);
 
-        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Education and Training", "All Education Resources", 1, 5, "set");
+        ResourceCategoryEntity educationCategory = new ResourceCategoryEntity("Education and Training", "All Education Resources", 5, 1, "set");
         resourceCategoryService.createResourceCategory(educationCategory);
 
-        ResourceCategoryEntity clothCategory = new ResourceCategoryEntity("Clothes", "All clothes Resources", 1, 5, "piece");
+        ResourceCategoryEntity clothCategory = new ResourceCategoryEntity("Clothes", "All clothes Resources", 5, 1, "piece");
         resourceCategoryService.createResourceCategory(clothCategory);
 
-        ResourceCategoryEntity ipCategory = new ResourceCategoryEntity("Intellectual Property", "All IP-related, non-physical Resources (Trademarks, Patents, Copyrights)", 1, 15, "property");
+        ResourceCategoryEntity ipCategory = new ResourceCategoryEntity("Intellectual Property", "All IP-related, non-physical Resources (Trademarks, Patents, Copyrights)", 15, 1, "property");
         resourceCategoryService.createResourceCategory(ipCategory);
-        
-        ResourceCategoryEntity consumerGoodsCategory = new ResourceCategoryEntity("Consumer Goods", "All Consumer Goods", 1, 15, "unit");
+
+        ResourceCategoryEntity consumerGoodsCategory = new ResourceCategoryEntity("Consumer Goods", "All Consumer Goods", 15, 1, "unit");
         resourceCategoryService.createResourceCategory(consumerGoodsCategory);
 
     }
@@ -675,49 +698,49 @@ public class InitServiceImpl implements InitService {
         garbageBag.getPhotos().add("https://localhost:8443/api/v1/files/init/garbageBag.jpg");
         garbageBag.setCountry("Thailand");
         resourceService.createResource(garbageBag, 4L, 7L);
-        
+
         ResourceEntity headphone = new ResourceEntity("Headphones", "250 brand new SONY headphones", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
         headphone.setResourceProfilePic("https://localhost:8443/api/v1/files/init/headphone.jpeg");
         headphone.getPhotos().add("https://localhost:8443/api/v1/files/init/headphone.jpeg");
         headphone.setCountry("Singapore");
         resourceService.createResource(headphone, 4L, 12L);
-        
+
         ResourceEntity computerMouse = new ResourceEntity("Computer Mouse", "170 used wired computer mouse, can be easily connected with computer/laptops via USB", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 170);
         computerMouse.setResourceProfilePic("https://localhost:8443/api/v1/files/init/computerMouse.jpg");
         computerMouse.getPhotos().add("https://localhost:8443/api/v1/files/init/computerMouse.jpg");
         computerMouse.setCountry("Singapore");
         resourceService.createResource(computerMouse, 4L, 12L);
-        
+
         ResourceEntity keyboard = new ResourceEntity("Keyboard", "188 used Keyboards, can be easily connected with computer/laptops via USB or Bluetooth", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 188);
         keyboard.setResourceProfilePic("https://localhost:8443/api/v1/files/init/keyboard.jpg");
         keyboard.getPhotos().add("https://localhost:8443/api/v1/files/init/keyboard.jpg");
         keyboard.setCountry("Singapore");
         resourceService.createResource(keyboard, 4L, 12L);
-        
+
         ResourceEntity floorPlan = new ResourceEntity("Floor Plans", "Floors Plans available, contact me for more details", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         floorPlan.setResourceProfilePic("https://localhost:8443/api/v1/files/init/floorplan.png");
         floorPlan.getPhotos().add("https://localhost:8443/api/v1/files/init/floorplan.png");
         floorPlan.setCountry("Cambodia");
         resourceService.createResource(floorPlan, 8L, 10L);
-        
+
         ResourceEntity shovel = new ResourceEntity("Shovel", "Shovel available, contact me for more details", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         shovel.setResourceProfilePic("https://localhost:8443/api/v1/files/init/shovel.jpg");
         shovel.getPhotos().add("https://localhost:8443/api/v1/files/init/shovel.jpg");
         shovel.setCountry("Cambodia");
         resourceService.createResource(shovel, 4L, 10L);
-        
+
         ResourceEntity spade = new ResourceEntity("Gardening Spade", "Gardening Spade available", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         spade.setResourceProfilePic("https://localhost:8443/api/v1/files/init/spade.jpg");
         spade.getPhotos().add("https://localhost:8443/api/v1/files/init/spade.jpg");
         spade.setCountry("Singapore");
         resourceService.createResource(spade, 4L, 10L);
-        
+
         ResourceEntity sofa = new ResourceEntity("Sofa", "5 sets of used sofa available for donation", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
         sofa.setResourceProfilePic("https://localhost:8443/api/v1/files/init/sofa.jpg");
         sofa.getPhotos().add("https://localhost:8443/api/v1/files/init/sofa.jpg");
         sofa.setCountry("Singapore");
         resourceService.createResource(sofa, 9L, 7L);
-        
+
         ResourceEntity chair = new ResourceEntity("Chair", "500 Brand New Chairs", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 500);
         chair.setResourceProfilePic("https://localhost:8443/api/v1/files/init/chair.jpg");
         chair.getPhotos().add("https://localhost:8443/api/v1/files/init/chair.jpg");
@@ -733,7 +756,6 @@ public class InitServiceImpl implements InitService {
 //        testing.setAvailable(false);
 //        testing.setMatchedProjectId(Long.valueOf(14));
 //        resourceService.createResource(testing, 3L, 5L);
-
     }
 
     public void initProjects() {
@@ -784,6 +806,15 @@ public class InitServiceImpl implements InitService {
         projectEntity1.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity1);
         /* end of project badge */
+
+ /* add team member into this project */
+        ProfileEntity songhwa = profileEntityRepository.findById(Long.valueOf(9)).get();
+        projectEntity1.getTeamMembers().add(songhwa);
+        songhwa.getProjectsJoined().add(projectEntity1);
+
+        profileEntityRepository.save(songhwa);
+        projectEntityRepository.save(projectEntity1);
+        /* end of add team member */
 
         ProjectEntity projectEntity2 = new ProjectEntity("Women's financial literacy, Malawi", "CARE will work with 20,000 women from 1,000 village savings and loans groups in Lilongwe, Dowa and Kasungu Districts, to overcome chronic hunger by expanding their farms or micro-businesses. We hope to receive donations of various nutritious food like fruits.", "Malawi", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2021-06-05T11:50:55"));
         projectEntity2.getSdgs().add(genderEquality);
@@ -944,7 +975,6 @@ public class InitServiceImpl implements InitService {
 //        profileEntityRepository.save(songhwa);
 //        projectEntityRepository.save(projectEntity6);
 //        /* end of add team member */
-
         ProjectEntity projectEntity7 = new ProjectEntity("Protect reefs through sustainable tourism in Indonesia", "To protect threatened coral reefs in Indonesia by uniting governments, NGOs and the diving and snorkelling industry to establish international environmental standards for marine tourism. Thus, more trashbins should be placed in tourist spots to keep the waters clean. ", "Indonesia", LocalDateTime.now(), LocalDateTime.parse("2021-06-05T11:50:55"));
         projectEntity7.getSdgs().add(climateAction);
         projectEntity7.getSdgs().add(sustainableCities);
@@ -1109,7 +1139,6 @@ public class InitServiceImpl implements InitService {
 //        projectEntity12.setProjectBadge(projBadge);
 //        projectEntityRepository.save(projectEntity12);
 //        /* end of project badge */
-
 //        ProjectEntity projectEntity13 = new ProjectEntity("Build School Toilets for Nepal", "Building School-Friendly Toilets for Girls in Nepal.", "Nepal", LocalDateTime.parse("2018-12-01T11:50:55"), LocalDateTime.parse("2030-12-01T11:50:55"));
 //        projectEntity13.getSdgs().add(goodHealth);
 //        projectEntity13.setUpvotes(35);
@@ -1135,7 +1164,6 @@ public class InitServiceImpl implements InitService {
 //        projectEntity13.setProjectBadge(projBadge);
 //        projectEntityRepository.save(projectEntity13);
 //        /* end of project badge */
-
     }
 
     //for badge and review use cases
@@ -1401,6 +1429,7 @@ public class InitServiceImpl implements InitService {
         try {
             projectService.createJoinRequest(1L, 11L);
             projectService.createJoinRequest(1L, 12L);
+            projectService.createJoinRequest(1L, 7L);
         } catch (Exception e) {
             System.err.println("Error in init join request");
         }
@@ -1485,6 +1514,86 @@ public class InitServiceImpl implements InitService {
         user5.getProjectsFollowing().add(project5);
         user7.getProjectsFollowing().add(project5);
 
+    }
+
+    private void initPost() {
+        // user 2
+        PostVO post1 = new PostVO();
+        post1.setPostCreatorId(2L);
+        post1.setContent("What a nice day!");
+        postService.createPostDataInit(post1);
+
+        PostVO post2 = new PostVO();
+        post2.setPostCreatorId(2L);
+        post2.setContent("Hi my dear friends, I am planning to launch a new project related to saving the earth from global warming! Hit me up if you are interested to join :D");
+        postService.createPostDataInit(post2);
+
+        // user 3
+        PostVO post3 = new PostVO();
+        post3.setPostCreatorId(3L);
+        post3.setContent("Hi my dear friends, I am planning to launch a new project related to saving the earth from global warming! Hit me up if you are interested to join :D");
+        postService.createPostDataInit(post3);
+
+        PostVO post4 = new PostVO();
+        post4.setPostCreatorId(3L);
+        post4.setContent("Today marks my ten years as a green campaigner! Really proud of myself");
+        postService.createPostDataInit(post4);
+
+        // user 4
+        PostVO post5 = new PostVO();
+        post5.setPostCreatorId(4L);
+        post5.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
+        postService.createPostDataInit(post5);
+
+        PostVO post6 = new PostVO();
+        post6.setPostCreatorId(4L);
+        post6.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
+        postService.createPostDataInit(post6);
+
+        // user 5
+        PostVO post7 = new PostVO();
+        post7.setPostCreatorId(5L);
+        post7.setContent("Good morning folks! \n"
+                + "Let's talk about #SDGs and contribute our quota. \n"
+                + "Have a wonderful week. More win$ #WealthSecrets");
+        postService.createPostDataInit(post7);
+
+        PostVO post8 = new PostVO();
+        post8.setPostCreatorId(5L);
+        post8.setContent("Reducing the amount of “stuff” you consume has the greatest benefits for the planet. It’s best to avoid waste in the first place, so think more carefully about your purchases.Re-using items saves the natural resources and energy needed to manufacture new ones.");
+        postService.createPostDataInit(post8);
+
+        // user 6
+        PostVO post9 = new PostVO();
+        post9.setPostCreatorId(6L);
+        post9.setContent("Saving our planet, lifting people out of poverty, advancing economic growth... these are one and the same fight. We must connect the dots between climate change, energy shortages, global health, food security and women's empowerment\" - Ban Ki-moon");
+        postService.createPostDataInit(post9);
+
+        PostVO post10 = new PostVO();
+        post10.setPostCreatorId(6L);
+        post10.setContent("Rural development is crucial for meeting the #SDGs.\n"
+                + "\n"
+                + "Our projects transform rural communities economically and socially, while promoting gender equality and inclusiveness.\n"
+                + "\n"
+                + "Investing in rural people is investing in a brighter future for everyone.");
+        postService.createPostDataInit(post10);
+
+        // user 7
+        PostVO post11 = new PostVO();
+        post11.setPostCreatorId(7L);
+        post11.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
+        postService.createPostDataInit(post11);
+
+        PostVO post12 = new PostVO();
+        post12.setPostCreatorId(7L);
+        post12.setContent("Red square The days ahead will be very consequential for the state of the world. The resurgence of COVID-19 and the US Presidential Election are just two of the issues that will weigh heavily on our future. During these days, standing firm for the #SDGs is a good way to stay grounded.");
+        postService.createPostDataInit(post12);
+    }
+
+    private void setNotifications(ProfileEntity profileEntity) {
+        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
+            profileEntity.getAnnouncementsSetting().put(a, Boolean.TRUE);
+        }
     }
 
 }

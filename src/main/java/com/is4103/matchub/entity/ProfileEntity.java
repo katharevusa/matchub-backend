@@ -1,15 +1,16 @@
 package com.is4103.matchub.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import java.util.ArrayList;
+import java.util.HashMap;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -64,6 +65,16 @@ public abstract class ProfileEntity extends AccountEntity {
     @PositiveOrZero
     private Integer spotlightChances = 0;
 
+    @Column(nullable = true, unique = true)
+    private String stripeAccountUid;
+
+    @Column(nullable = true)
+    private Boolean stripeAccountChargesEnabled = false;
+    
+    // scenario, boolean
+    @ElementCollection
+    private Map<AnnouncementTypeEnum, Boolean> announcementsSetting = new HashMap<>();
+
     //************************** ASSOCIATIONS HERE **************************
     @OneToMany(mappedBy = "postCreator")
     @JsonIgnoreProperties({"postCreator", "listOfComments"})
@@ -111,8 +122,9 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<BadgeEntity> badges = new ArrayList<>();
 
-    @OneToMany(mappedBy = "profile")
-    private List<FundPledgeEntity> fundPladges = new ArrayList<>();
+    @OneToMany(mappedBy = "donator")
+    @JsonIgnoreProperties({"donators"})
+    private List<DonationEntity> donations = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"taskdoers"})
@@ -123,6 +135,7 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ChannelEntity> joinedChannel = new ArrayList<>();
+    
 
     public ProfileEntity(String email, String password) {
         super(email, password);

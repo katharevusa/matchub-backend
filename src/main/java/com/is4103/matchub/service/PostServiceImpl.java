@@ -27,12 +27,14 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.vo.CommentVO;
 import com.is4103.matchub.vo.PostVO;
 import java.io.IOException;
+import static java.lang.Long.max;
+import static java.lang.Long.min;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -79,8 +81,7 @@ public class PostServiceImpl implements PostService {
         vo.updatePost(newPost);
 
         newPost = postEntityRepository.saveAndFlush(newPost);
-        newPost.setOriginalPostId(newPost.getPostId());
-        newPost = postEntityRepository.saveAndFlush(newPost);
+
         //set associations
         profile.getPosts().add(newPost);
 
@@ -117,6 +118,28 @@ public class PostServiceImpl implements PostService {
         announcementService.createNormalNotification(announcementEntity);
 
         return newPost;
+    }
+
+    @Override
+    public void createPostDataInit(PostVO vo) {
+        ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
+                .orElseThrow(() -> new UserNotFoundException(vo.getPostCreatorId()));
+
+        PostEntity newPost = new PostEntity();
+        newPost.setTimeCreated(LocalDateTime.now());
+        newPost.setPostCreator(profile);
+
+        vo.updatePost(newPost);
+        newPost.setLikes(20L);
+         
+
+        newPost = postEntityRepository.saveAndFlush(newPost);
+
+        //set associations
+        profile.getPosts().add(newPost);
+
+        profileEntityRepository.flush();
+
     }
 
     @Transactional
@@ -203,11 +226,6 @@ public class PostServiceImpl implements PostService {
 
         if (postToDelete.getPostCreator().getAccountId().equals(postCreatorId)) {
 
-            if (postToDelete.getOriginalPostId() != null || postToDelete.getPreviousPostId() != null) {
-                //Post cannot be deleted if it is being reshared
-                throw new UnableToDeletePostException("Unable to delete post because post is reshared.");
-            }
-
             //delete the all photos from build/ folder first
             for (String photo : postToDelete.getPhotos()) {
                 attachmentService.deleteFile(photo);
@@ -219,6 +237,11 @@ public class PostServiceImpl implements PostService {
 
             //delete the post entity
             postEntityRepository.delete(postToDelete);
+
+            List<PostEntity> sharedPosts = postEntityRepository.getAllSharedPostByOriginalPostId(postId);
+            for (PostEntity p : sharedPosts) {
+                p.setOriginalPostId(0L);
+            }
         } else {
             throw new UnableToDeletePostException("Unable to delete post because account: " + postCreatorId
                     + " is not the owner of the post to be deleted.");
@@ -286,28 +309,28 @@ public class PostServiceImpl implements PostService {
         post.getLikedUsersId().add(likerId);
         post = postEntityRepository.saveAndFlush(post);
 
-        // announcements
-        ProfileEntity liker = profileEntityRepository.findById(likerId).get();
-        String likerName = "";
-        if (liker instanceof IndividualEntity) {
-            likerName = ((IndividualEntity) liker).getFirstName() + " " + ((IndividualEntity) liker).getLastName();
-        } else if (liker instanceof OrganisationEntity) {
-            likerName = ((OrganisationEntity) liker).getOrganizationName();
-        }
-
-        AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle("A new like from " + likerName + " for your post!");
-        announcementEntity.setContent(post.getContent());
-        announcementEntity.setTimestamp(LocalDateTime.now());
-        announcementEntity.setType(AnnouncementTypeEnum.NEW_POST_LIKE);
-        announcementEntity.setPostId(postId);
-        // association
-        announcementEntity.getNotifiedUsers().add(post.getPostCreator());
-        post.getPostCreator().getAnnouncements().add(announcementEntity);
-        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
-
-        // create notification
-        announcementService.createNormalNotification(announcementEntity);
+//        // announcements
+//        ProfileEntity liker = profileEntityRepository.findById(likerId).get();
+//        String likerName = "";
+//        if (liker instanceof IndividualEntity) {
+//            likerName = ((IndividualEntity) liker).getFirstName() + " " + ((IndividualEntity) liker).getLastName();
+//        } else if (liker instanceof OrganisationEntity) {
+//            likerName = ((OrganisationEntity) liker).getOrganizationName();
+//        }
+//
+//        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+//        announcementEntity.setTitle("A new like from " + likerName + " for your post!");
+//        announcementEntity.setContent(post.getContent());
+//        announcementEntity.setTimestamp(LocalDateTime.now());
+//        announcementEntity.setType(AnnouncementTypeEnum.NEW_POST_LIKE);
+//        announcementEntity.setPostId(postId);
+//        // association
+//        announcementEntity.getNotifiedUsers().add(post.getPostCreator());
+//        post.getPostCreator().getAnnouncements().add(announcementEntity);
+//        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+//
+//        // create notification
+//        announcementService.createNormalNotification(announcementEntity);
         return post;
 
     }
@@ -343,7 +366,7 @@ public class PostServiceImpl implements PostService {
         for (Long id : user.getFollowing()) {
             listOfFollowingUsers.add(profileEntityRepository.findById(id).get());
         }
-        
+
         listOfFollowingUsers.add(user);
         List<PostEntity> posts = new ArrayList<>();
 
@@ -399,29 +422,28 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostEntity repost(Long previousPostId, PostVO vo)throws RepostException, UserNotFoundException{
+    public PostEntity repost(Long originalPostId, PostVO vo) throws RepostException, UserNotFoundException {
         ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
                 .orElseThrow(() -> new UserNotFoundException(vo.getPostCreatorId()));
 
-        
-        Optional<PostEntity> previousPostOpt = postEntityRepository.findById(previousPostId);
+        Optional<PostEntity> originalPostOpt = postEntityRepository.findById(originalPostId);
         // if previouus post is deleted, then cannot repost
-        if(!previousPostOpt.isPresent()){
-            throw new RepostException("Sorry the previous post is deleted, cannot repost");
-        }
-        PostEntity previousPost = previousPostOpt.get();
-        
-        Optional<PostEntity> originalPostOpt = postEntityRepository.findById(previousPost.getOriginalPostId());
-        // if original post is deleted, then cannot repost
-        if(!originalPostOpt.isPresent()){
+        if (!originalPostOpt.isPresent()) {
             throw new RepostException("Sorry the original post is deleted, cannot repost");
         }
-         
+
+        PostEntity originalPost = originalPostOpt.get();
+//        
+//        Optional<PostEntity> originalPostOpt = postEntityRepository.findById(originalPost.getOriginalPostId());
+//        // if original post is deleted, then cannot repost
+//        if(!originalPostOpt.isPresent()){
+//            throw new RepostException("Sorry the original post is deleted, cannot repost");
+//        }
+
         PostEntity newPost = new PostEntity();
         newPost.setTimeCreated(LocalDateTime.now());
         newPost.setPostCreator(profile);
-        newPost.setOriginalPostId(previousPost.getOriginalPostId());
-        newPost.setPreviousPostId(previousPostId);
+        newPost.setOriginalPostId(originalPostId);
 
         vo.updatePost(newPost);
         newPost = postEntityRepository.saveAndFlush(newPost);
@@ -430,7 +452,6 @@ public class PostServiceImpl implements PostService {
         profileEntityRepository.flush();
 
         // notify previous post creator
-        
         String reposterName = "";
         if (profile instanceof IndividualEntity) {
             reposterName = ((IndividualEntity) profile).getFirstName() + " " + ((IndividualEntity) profile).getLastName();
@@ -439,24 +460,19 @@ public class PostServiceImpl implements PostService {
         }
 
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle(reposterName+" reposted your post : "+previousPost.getContent());
+        announcementEntity.setTitle(reposterName + " reposted your post : " + originalPost.getContent());
         announcementEntity.setContent(newPost.getContent());
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.SHARE_POST);
         announcementEntity.setPostId(newPost.getPostId());
         // association
-        announcementEntity.getNotifiedUsers().add(previousPost.getPostCreator());
-        previousPost.getPostCreator().getAnnouncements().add(announcementEntity);
+        announcementEntity.getNotifiedUsers().add(originalPost.getPostCreator());
+        originalPost.getPostCreator().getAnnouncements().add(announcementEntity);
         announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
 
         // create notification
         announcementService.createNormalNotification(announcementEntity);
-        
-        
-        
+
         return newPost;
     }
-
-
-   
 }

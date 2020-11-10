@@ -6,8 +6,10 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.AnnouncementEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.CreateAnnouncementException;
 import com.is4103.matchub.exception.DeleteAnnouncementException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.vo.AnnouncementVO;
 import java.util.List;
 import javax.validation.Valid;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import com.is4103.matchub.service.AnnouncementService;
+import com.is4103.matchub.vo.AnnouncementSettingVO;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -99,6 +102,11 @@ public class AnnouncementController {
     @RequestMapping(method = RequestMethod.PUT, value = "/viewAllAnnouncements")
     public void viewAllAnnouncements(@RequestParam(value = "userId",required = true) Long userId){
          announcement.readAllAnnouncements(userId);
+    }
+    
+    @RequestMapping(method = RequestMethod.PUT, value = "/updateAnnouncementSettinge")
+     public ProfileEntity updateAnnouncementSettinge(@Valid @RequestBody AnnouncementSettingVO vo)throws UserNotFoundException{
+      return  announcement.updateAnnouncementSettinge(vo);
     }
     
 }

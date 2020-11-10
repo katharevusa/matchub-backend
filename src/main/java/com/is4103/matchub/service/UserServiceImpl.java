@@ -173,6 +173,7 @@ public class UserServiceImpl implements UserService {
         individual.setIsVerified(Boolean.TRUE);
 
         AccountEntity updatedAccount = (AccountEntity) individual;
+
         updatedAccount = accountEntityRepository.save(updatedAccount);
 
         return UserVO.of(updatedAccount);
@@ -317,13 +318,17 @@ public class UserServiceImpl implements UserService {
             announcementEntity.setNewFollowerAndNewPosterUUID(profile.getUuid());
 
             // association
-            announcementEntity.getNotifiedUsers().add(toFollowProfile);
-            toFollowProfile.getAnnouncements().add(announcementEntity);
+            if (toFollowProfile.getAnnouncementsSetting().get(AnnouncementTypeEnum.NEW_PROFILE_FOLLOWER)) {
+                announcementEntity.getNotifiedUsers().add(toFollowProfile);
+                toFollowProfile.getAnnouncements().add(announcementEntity);
+            }
 
             announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
 
-            // create notification         
-            announcementService.createNormalNotification(announcementEntity);
+            // create notification   
+            if (toFollowProfile.getAnnouncementsSetting().get(AnnouncementTypeEnum.NEW_PROFILE_FOLLOWER)) {
+                announcementService.createNormalNotification(announcementEntity);
+            }
 
             return profile;
         } else {
@@ -501,7 +506,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable){
+    public Page<ProfileEntity> getFollowing(Long accountId, Pageable pageable) {
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 
@@ -912,4 +917,33 @@ public class UserServiceImpl implements UserService {
         return page;
     }
 
+    @Override
+    public void setUserStripeAccountUid(String email, String stripeAccountUid) {
+
+        Optional<ProfileEntity> accountOptional = profileEntityRepository.findByEmail(email);
+
+        if (!accountOptional.isPresent()) {
+            throw new UserNotFoundException("No user found with the provided email.");
+        }
+
+        ProfileEntity profile = (ProfileEntity) accountOptional.get();
+        profile.setStripeAccountUid(stripeAccountUid);
+
+        profileEntityRepository.saveAndFlush(profile);
+    }
+
+    @Override
+    public void setUserStripeAccountChargesEnabled(String stripeAccountUid) {
+
+        Optional<ProfileEntity> accountOptional = profileEntityRepository.findByStripeAccountUid(stripeAccountUid);
+
+        if (!accountOptional.isPresent()) {
+            throw new UserNotFoundException("No user found with the provided Stripe account ID.");
+        }
+
+        ProfileEntity profile = (ProfileEntity) accountOptional.get();
+        profile.setStripeAccountChargesEnabled(true);
+
+        profileEntityRepository.saveAndFlush(profile);
+    }
 }

@@ -128,7 +128,8 @@ public class ProjectEntity {
     private BadgeEntity projectBadge;
 
     @OneToMany
-    private List<FundsCampaignEntity> fundsCampaign = new ArrayList<>();
+    @JsonIgnoreProperties({"donationOptions"})
+    private List<FundCampaignEntity> fundsCampaign = new ArrayList<>();
 
     @OneToMany
     private List<ScheduleEntity> meetings = new ArrayList<>();

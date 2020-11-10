@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FundsCampaignEntity {
+public class FundCampaignEntity {
 
     @Id
     @Column(nullable = false)
@@ -41,37 +42,44 @@ public class FundsCampaignEntity {
 
     @Column(nullable = false)
     @NotNull
-    private BigDecimal campaignTarget;
-
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    private String campaignTitle;
+    
+    @Column(nullable = false)
     @NotNull
-    private LocalDateTime startDate;
+    private BigDecimal campaignTarget;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @NotNull
     private LocalDateTime endDate;
 
-    @Column(nullable = false)
+    @Column(nullable = false,length = 2000)
     @NotNull
     private String campaignDescription;
 
     @Column(nullable = false)
     @NotNull
-    private BigDecimal currentAmountRaised;
+    private BigDecimal currentAmountRaised = BigDecimal.ZERO;
 
     @OneToMany(mappedBy = "fundCampaign")
-    private List<FundPledgeEntity> fundPledges = new ArrayList<>();
+    @JsonIgnoreProperties({"fundCampaign"})
+    private List<DonationOptionEntity> donationOptions = new ArrayList<>();
 
     @Column(nullable = false)
     @NotNull
     private Long projectId;
 
-    public FundsCampaignEntity(BigDecimal campaignTarget, LocalDateTime startDate, LocalDateTime endDate, String campaignDescription, BigDecimal currentAmountRaised) {
-        this.campaignTarget = campaignTarget;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.campaignDescription = campaignDescription;
-        this.currentAmountRaised = currentAmountRaised;
-    }
+    @Column(nullable = false)
+    @NotNull
+    private String stripeAccountUid;
+    
+    @Column(nullable = false)
+    @NotNull
+    private boolean activated = Boolean.FALSE;
+    
+    @Column(nullable = false)
+    @NotNull
+    private Long payeeId;
+    
+   
 
 }
