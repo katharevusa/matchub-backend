@@ -88,7 +88,7 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
             + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
             + "(pe.firstName IS NOT NULL AND pe.lastName IS NOT NULL AND (CONCAT(pe.firstName, ' ', pe.lastName) LIKE %:search% OR CONCAT(pe.lastName, ' ', pe.firstName) LIKE %:search%)) OR "
-            + "pe.country LIKE %:search%) AND "
+            + "(pe.country IS NOT NULL AND pe.country LIKE %:search%)) AND "
             + "sdg.sdgId IN :sdgIds",
             countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe JOIN pe.sdgs sdg "
             + "WHERE (pe.email LIKE %:search% OR "
@@ -96,7 +96,7 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
             + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
             + "(pe.firstName IS NOT NULL AND pe.lastName IS NOT NULL AND (CONCAT(pe.firstName, ' ', pe.lastName) LIKE %:search% OR CONCAT(pe.lastName, ' ', pe.firstName) LIKE %:search%)) OR "
-            + "pe.country LIKE %:search%) AND "
+            + "(pe.country IS NOT NULL AND pe.country LIKE %:search%)) AND "
             + "sdg.sdgId IN :sdgIds")
     Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("sdgIds") Long[] sdgIds, Pageable pageable);
 
