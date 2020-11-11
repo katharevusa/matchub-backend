@@ -23,6 +23,8 @@ import com.is4103.matchub.vo.UpdateFundCampaignVO;
 import java.util.List;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -108,6 +110,11 @@ public class FundCampaignController {
     @RequestMapping(method = RequestMethod.PUT, value = "/updateFundCampaign")
     public FundCampaignEntity updateFundCampaign(UpdateFundCampaignVO vo) throws FundCampaignNotFoundException {
         return fundCampaignService.updateFundCampaign(vo);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/searchCampaignByKeyWord")
+    public Page<FundCampaignEntity> searchCampaignByKeyWord(@RequestParam(value = "keyword", required = true)String keyword, Pageable pageable){
+        return fundCampaignService.searchCampaign(keyword, pageable);
     }
 
 }

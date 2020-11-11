@@ -136,6 +136,7 @@ public class InitServiceImpl implements InitService {
                         //update the followers list 
                         IndividualEntity user1 = (IndividualEntity) account;
                         user1.setProfilePhoto("https://localhost:8443/api/v1/files/init/nus.jpg");
+                        setNotifications(user1);
                         user1.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4))));
                     } else {
                         account = accountEntityRepository.save(new OrganisationEntity(a + "@gmail.com", passwordEncoder.encode("password"), "NUS", "description", "address"));
@@ -145,6 +146,8 @@ public class InitServiceImpl implements InitService {
                         OrganisationEntity user2 = (OrganisationEntity) account;
                         user2.setProfilePhoto("https://localhost:8443/api/v1/files/init/nus.jpg");
                         user2.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(6))));
+
+                        setNotifications(user2);
                     }
                     accountEntityRepository.save(account);
                 });
@@ -175,6 +178,8 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         alexLow.setSdgs(sdgs);
+        setNotifications(alexLow);
+
         accountEntityRepository.save(alexLow);
 
         //2nd individual
@@ -206,9 +211,8 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
         ikjun.setSdgs(sdgs);
 
-        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
-            ikjun.getAnnouncementsSetting().put(a, Boolean.TRUE);
-        }
+        setNotifications(ikjun);
+        
         accountEntityRepository.save(ikjun);
 
         //3rd individual
@@ -234,6 +238,8 @@ public class InitServiceImpl implements InitService {
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         sophia.setSdgs(sdgs);
+        
+        setNotifications(sophia);
         accountEntityRepository.save(sophia);
 
         /* INIT 2 ORGANISATIONS */
@@ -261,6 +267,7 @@ public class InitServiceImpl implements InitService {
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         genc.setSdgs(sdgs);
+        setNotifications(genc);
         accountEntityRepository.saveAndFlush(genc);
 
         //2nd organisation
@@ -293,6 +300,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(10)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
         networkForGood.setSdgs(sdgs);
+        setNotifications(networkForGood);
         accountEntityRepository.save(networkForGood);
 
         //4th individual
@@ -321,6 +329,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
         songhwa.setSdgs(sdgs);
+        setNotifications(songhwa);
         accountEntityRepository.save(songhwa);
 
         //3rd organisation, accountId = 10
@@ -357,6 +366,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(15)));
         kfem.setSdgs(sdgs);
+        setNotifications(kfem);
         accountEntityRepository.save(kfem);
 
         //individual, accountId = 11
@@ -385,6 +395,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
         jeongha.setSdgs(sdgs);
+        setNotifications(jeongha);
         accountEntityRepository.save(jeongha);
 
         //individual, accountId = 12
@@ -414,6 +425,7 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(4)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         billy.setSdgs(sdgs);
+        setNotifications(billy);
         accountEntityRepository.save(billy);
     }
 
@@ -1578,6 +1590,12 @@ public class InitServiceImpl implements InitService {
         post12.setPostCreatorId(7L);
         post12.setContent("Red square The days ahead will be very consequential for the state of the world. The resurgence of COVID-19 and the US Presidential Election are just two of the issues that will weigh heavily on our future. During these days, standing firm for the #SDGs is a good way to stay grounded.");
         postService.createPostDataInit(post12);
+    }
+
+    private void setNotifications(ProfileEntity profileEntity) {
+        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
+            profileEntity.getAnnouncementsSetting().put(a, Boolean.TRUE);
+        }
     }
 
 }
