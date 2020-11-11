@@ -135,6 +135,7 @@ public class InitServiceImpl implements InitService {
 
                         //update the followers list 
                         IndividualEntity user1 = (IndividualEntity) account;
+                        user1.setProfilePhoto("https://localhost:8443/api/v1/files/init/nus.jpg");
                         user1.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4))));
                     } else {
                         account = accountEntityRepository.save(new OrganisationEntity(a + "@gmail.com", passwordEncoder.encode("password"), "NUS", "description", "address"));
@@ -142,6 +143,7 @@ public class InitServiceImpl implements InitService {
 
                         //update the followers list 
                         OrganisationEntity user2 = (OrganisationEntity) account;
+                        user2.setProfilePhoto("https://localhost:8443/api/v1/files/init/nus.jpg");
                         user2.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(6))));
                     }
                     accountEntityRepository.save(account);
