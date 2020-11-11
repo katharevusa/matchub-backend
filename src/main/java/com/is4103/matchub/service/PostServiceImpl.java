@@ -342,7 +342,7 @@ public class PostServiceImpl implements PostService {
             throw new LikePostException("You have never liked this post");
         }
         Long oldLikes = post.getLikes();
-        post.setLikes(oldLikes--);
+        post.setLikes(oldLikes-1);
         post.getLikedUsersId().remove(likerId);
         return postEntityRepository.saveAndFlush(post);
 
