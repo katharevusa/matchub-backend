@@ -78,6 +78,11 @@ public class ReviewServiceImpl implements ReviewService {
         ProfileEntity reviewReceiver = profileEntityRepository.findById(vo.getReviewReceiverId())
                 .orElseThrow(() -> new UserNotFoundException(vo.getReviewReceiverId()));
 
+        //check that reviewer and reviewReceiver are not the same person 
+        if (reviewReceiver.getAccountId().equals(reviewer.getAccountId())) {
+            throw new UnableToCreateReviewException("Unable to create review: You are not allowed to create a review for yourself");
+        }
+
         //***************add in additional checks 
         //check if review has been made to the same person already or not 
         for (ReviewEntity r : reviewReceiver.getReviewsReceived()) {
