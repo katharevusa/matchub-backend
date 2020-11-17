@@ -31,6 +31,7 @@ import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.vo.PostVO;
+import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -89,6 +90,9 @@ public class InitServiceImpl implements InitService {
     @Autowired
     PostService postService;
 
+    @Autowired
+    ResourceRequestService resourceRequestService;
+
     @Transactional
     public void init() {
         // testing:
@@ -107,6 +111,9 @@ public class InitServiceImpl implements InitService {
 
         //join request 
         initJoinRequest();
+
+        //init resource requests
+        initResourceRequests();
 
         // init project follower 
         initProjectFollower();
@@ -212,7 +219,7 @@ public class InitServiceImpl implements InitService {
         ikjun.setSdgs(sdgs);
 
         setNotifications(ikjun);
-        
+
         accountEntityRepository.save(ikjun);
 
         //3rd individual
@@ -238,7 +245,7 @@ public class InitServiceImpl implements InitService {
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         sophia.setSdgs(sdgs);
-        
+
         setNotifications(sophia);
         accountEntityRepository.save(sophia);
 
@@ -1434,6 +1441,22 @@ public class InitServiceImpl implements InitService {
             projectService.createJoinRequest(1L, 7L);
         } catch (Exception e) {
             System.err.println("Error in init join request");
+        }
+
+    }
+
+    private void initResourceRequests() {
+
+        try {
+            resourceRequestService.createResourceRequestResourceOwner(1L, 9L, 6L, 12);
+        } catch (Exception e) {
+            System.err.println("Error in init resource request for projectId 1: Lamp");
+        }
+
+        try {
+            resourceRequestService.createResourceRequestResourceOwner(1L, 11L, 19L, 10);
+        } catch (Exception e) {
+            System.err.println("Error in init resource request for projectId 1: Eyeglasses");
         }
 
     }

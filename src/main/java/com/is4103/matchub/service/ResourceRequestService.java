@@ -23,6 +23,8 @@ public interface ResourceRequestService {
 
     public ResourceRequestEntity createResourceRequestProjectOwner(ResourceRequestCreateVO vo) throws CreateResourceRequestException;
 
+    public ResourceRequestEntity createResourceRequestResourceOwner(Long projectId, Long requestorId, Long resourceId, Integer units) throws CreateResourceRequestException;
+
     public ResourceRequestEntity createResourceRequestResourceOwner(ResourceRequestCreateVO vo) throws CreateResourceRequestException;
 
     public void terminateResourceRequest(Long requestId, Long terminatorId) throws DeleteResourceRequestException;
@@ -42,7 +44,7 @@ public interface ResourceRequestService {
     public List<ResourceRequestEntity> getAllOutgoingResourceRequests(Long userId);
 
     public List<ResourceRequestEntity> getAllIncomingResourceRequests(Long userId);
-    
+
     public List<ResourceRequestEntity> getAllOutgoingDonationRequests(Long userId);
 
 }
