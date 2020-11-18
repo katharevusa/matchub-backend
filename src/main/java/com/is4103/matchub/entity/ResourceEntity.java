@@ -60,56 +60,53 @@ public class ResourceEntity {
     @Column(nullable = true)
     @ElementCollection(fetch = FetchType.LAZY, targetClass = String.class)
     private List<String> uploadedFiles = new ArrayList<>();
-    
+
     @NotNull
     private boolean available = Boolean.TRUE;
-    
+
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime startTime;
-    
+
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime endTime;
-    
+
     @OneToMany
-    private List<ResourceRequestEntity> listOfRequests;
-    
-    
+    private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
+
     @Column(nullable = false)
     @NotNull
     private Long resourceCategoryId;
-    
+
     @Column(nullable = false)
     @NotNull
     private Long resourceOwnerId;
-    
+
     @NotNull
     @Column(nullable = false)
     private Integer units;
-      
+
     private String resourceProfilePic;
-    
+
     @OrderColumn
     @Column(nullable = true)
     @ElementCollection(fetch = FetchType.LAZY, targetClass = String.class)
     private List<String> photos = new ArrayList<>();
-    
+
     //Key: filename, Value = docPath
     @ElementCollection
     private Map<String, String> documents = new HashMap<>();
-    
-    
+
     @Column(nullable = false)
     private Boolean spotlight = Boolean.FALSE;
-    
+
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime spotlightEndTime;
-    
+
     @Column(nullable = true)
     private Long matchedProjectId;
-    
+
     @Column(nullable = true)
     private String country;
-    
 
     public ResourceEntity(String resourceName, String resourceDescription, Long resourceCategoryId, Long resourceOwnerId, Integer units) {
         this.resourceName = resourceName;
@@ -118,7 +115,7 @@ public class ResourceEntity {
         this.resourceOwnerId = resourceOwnerId;
         this.units = units;
     }
-    
+
     public ResourceEntity(String resourceName, String resourceDescription, Integer units) {
         this.resourceName = resourceName;
         this.resourceDescription = resourceDescription;
@@ -132,17 +129,5 @@ public class ResourceEntity {
         this.endTime = endTime;
         this.units = units;
     }
-    
-    
-    
-
-    
-
-    
-    
-
-  
-
-    
 
 }

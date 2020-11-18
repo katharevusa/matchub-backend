@@ -155,7 +155,7 @@ public class ResourceRequestImpl implements ResourceRequestService {
         resourceRequest.setRequestorEnum(RequestorEnum.RESOURCE_OWNER);
 
         System.out.println("Here******1");
-
+        resourceRequest = resourceRequestEntityRepository.save(resourceRequest);
         project.getListOfRequests().add(resourceRequest);
         resource.getListOfRequests().add(resourceRequest);
         System.out.println("Here******2");
@@ -164,6 +164,7 @@ public class ResourceRequestImpl implements ResourceRequestService {
         projectEntityRepository.saveAndFlush(project);
         System.out.println("Here******4");
         resourceEntityRepository.saveAndFlush(resource);
+        resourceRequest.setMessage("Hello! I would like to make a donation.");
 
         // create announcement (notify project owner)
         List<ProfileEntity> projectOwners = project.getProjectOwners();

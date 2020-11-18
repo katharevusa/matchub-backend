@@ -112,14 +112,14 @@ public class InitServiceImpl implements InitService {
         //join request 
         initJoinRequest();
 
-        //init resource requests
-        initResourceRequests();
 
         // init project follower 
         initProjectFollower();
 
         initPost();
 
+        //init resource requests
+        initResourceRequests();
 //        firebaseService.getChannelDetails("s");
         // init kanbanboard for project 3
     }
@@ -1450,7 +1450,7 @@ public class InitServiceImpl implements InitService {
         try {
             resourceRequestService.createResourceRequestResourceOwner(1L, 9L, 6L, 12);
         } catch (Exception e) {
-            System.err.println("Error in init resource request for projectId 1: Lamp");
+            e.printStackTrace();
         }
 
         try {
