@@ -114,7 +114,7 @@ public class ResourceRequestImpl implements ResourceRequestService {
         // create announcement (notify resource owner)
         ProfileEntity resourceOwner = profileEntityRepository.findById(resource.getResourceOwnerId()).get();
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle("Project '"+project.getProjectTitle()+"' wants your resource "+resource.getResourceName());
+        announcementEntity.setTitle("Project '" + project.getProjectTitle() + "' wants your resource " + resource.getResourceName());
         announcementEntity.setContent(resourceRequest.getMessage());
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.REQUEST_FOR_RESOURCE);
@@ -129,6 +129,70 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
         return resourceRequest;
 
+    }
+
+    //for data init only 
+    public ResourceRequestEntity createResourceRequestResourceOwner(Long projectId, Long requestorId, Long resourceId, Integer units) throws CreateResourceRequestException {
+
+        System.out.println("Here******: DATA INIT RESOURCE REQUESTS");
+
+        if (!resourceEntityRepository.findById(resourceId).isPresent()) {
+            throw new CreateResourceRequestException("Unable to create resource request: resource not found");
+        }
+        ResourceEntity resource = resourceEntityRepository.findById(resourceId).get();
+
+        if (!projectEntityRepository.findById(projectId).isPresent()) {
+            throw new CreateResourceRequestException("Unable to create resource request: project not found");
+        }
+        ProjectEntity project = projectEntityRepository.findById(projectId).get();
+
+        ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
+
+        resourceRequest.setRequestorId(requestorId);
+        resourceRequest.setProjectId(projectId);
+        resourceRequest.setResourceId(resourceId);
+        resourceRequest.setUnitsRequired(units);
+        resourceRequest.setRequestorEnum(RequestorEnum.RESOURCE_OWNER);
+
+        System.out.println("Here******1");
+        resourceRequest = resourceRequestEntityRepository.save(resourceRequest);
+        project.getListOfRequests().add(resourceRequest);
+        resource.getListOfRequests().add(resourceRequest);
+        System.out.println("Here******2");
+        resourceRequest = resourceRequestEntityRepository.saveAndFlush(resourceRequest);
+        System.out.println("Here******3");
+        projectEntityRepository.saveAndFlush(project);
+        System.out.println("Here******4");
+        resourceEntityRepository.saveAndFlush(resource);
+        resourceRequest.setMessage("Hello! I would like to make a donation.");
+
+        // create announcement (notify project owner)
+        List<ProfileEntity> projectOwners = project.getProjectOwners();
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        ProfileEntity resourceOwner = profileEntityRepository.findById(resource.getResourceOwnerId()).get();
+        String resourceOwnerName = "";
+        if (resourceOwner instanceof IndividualEntity) {
+            resourceOwnerName = ((IndividualEntity) resourceOwner).getFirstName() + " " + ((IndividualEntity) resourceOwner).getLastName();
+        } else if (resourceOwner instanceof OrganisationEntity) {
+            resourceOwnerName = ((OrganisationEntity) resourceOwner).getOrganizationName();
+        }
+
+        announcementEntity.setTitle(resourceOwnerName + " wants to donate '" + resource.getResourceName() + "' to your project '" + project.getProjectTitle() + "'.");
+        announcementEntity.setContent(resourceRequest.getMessage());
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.DONATE_TO_PROJECT);
+        announcementEntity.setResourceRequestId(resourceRequest.getRequestId());
+        // association
+        announcementEntity.getNotifiedUsers().addAll(projectOwners);
+        for (ProfileEntity p : projectOwners) {
+            p.getAnnouncements().add(announcementEntity);
+        }
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification         
+        announcementService.createNormalNotification(announcementEntity);
+
+        return resourceRequest;
     }
 
     //Create Resource Donation Request
@@ -186,9 +250,8 @@ public class ResourceRequestImpl implements ResourceRequestService {
         } else if (resourceOwner instanceof OrganisationEntity) {
             resourceOwnerName = ((OrganisationEntity) resourceOwner).getOrganizationName();
         }
-        
-        
-        announcementEntity.setTitle(resourceOwnerName+" wants to donate '"+resource.getResourceName()+"' to your project '"+project.getProjectTitle()+"'.");
+
+        announcementEntity.setTitle(resourceOwnerName + " wants to donate '" + resource.getResourceName() + "' to your project '" + project.getProjectTitle() + "'.");
         announcementEntity.setContent(resourceRequest.getMessage());
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.DONATE_TO_PROJECT);
@@ -258,7 +321,6 @@ public class ResourceRequestImpl implements ResourceRequestService {
 //
 //        // create notification         
 //        announcementService.createNormalNotification(announcementEntity);
-
         resourceRequestEntityRepository.delete(request);
 
     }
