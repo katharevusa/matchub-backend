@@ -5,20 +5,17 @@
  */
 package com.is4103.matchub.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.validation.constraints.NotNull;
+import javax.persistence.OneToOne;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -28,34 +25,32 @@ import lombok.NoArgsConstructor;
  */
 @Entity
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SDGEntity {
+public class SelectedTargetEntity {
 
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long sdgId;
+    private Long selectedTargetId;
 
-    @Column(nullable = false)
-    @NotNull
-    private String sdgName;
-
-    @Column(nullable = false)
-    @NotNull
-    private String sdgDescription;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"sdgs", "projectOwners", "joinRequests", "reviews", "projectBadge", "fundsCampaign", "meetings", "listOfRequests", "kpis", "teamMembers", "channels"})
-    private List<ProjectEntity> projects = new ArrayList<>();
+    //***********ASSOCIATIONS************
+    @OneToOne
+    private SDGEntity sdg;
 
     @OneToMany
     private List<TargetEntity> targets = new ArrayList<>();
 
-    public SDGEntity(String sdgName, String sdgDescription) {
-        this.sdgName = sdgName;
-        this.sdgDescription = sdgDescription;
+    @ManyToOne
+    private ProfileEntity profile;
+
+    @ManyToOne
+    private ProjectEntity project;
+
+    public SelectedTargetEntity(SDGEntity sdg, ProfileEntity profile, ProjectEntity project) {
+        this.sdg = sdg;
+        this.profile = profile;
+        this.project = project;
     }
 
 }

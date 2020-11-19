@@ -70,7 +70,7 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @Column(nullable = true)
     private Boolean stripeAccountChargesEnabled = false;
-    
+
     // scenario, boolean
     @ElementCollection
     private Map<AnnouncementTypeEnum, Boolean> announcementsSetting = new HashMap<>();
@@ -135,7 +135,10 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @ManyToMany(fetch = FetchType.LAZY)
     private List<ChannelEntity> joinedChannel = new ArrayList<>();
-    
+
+    //sdg refactoring
+    @OneToMany
+    private List<SelectedTargetEntity> selectedTargets = new ArrayList<>();
 
     public ProfileEntity(String email, String password) {
         super(email, password);
