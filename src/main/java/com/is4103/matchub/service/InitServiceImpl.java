@@ -878,21 +878,181 @@ public class InitServiceImpl implements InitService {
         sdgEntityRepository.save(sustainableCities);
 
         //init sdg11 targets
-        target = new SDGTargetEntity("Target 11.1", "");
+        target = new SDGTargetEntity("Target 11.1", "By 2030, ensure access for all to adequate, safe and affordable housing and basic services and upgrade slums");
         sDGTargetEntityRepository.saveAndFlush(target);
         sustainableCities.getTargets().add(target);
 
+        target = new SDGTargetEntity("Target 11.2", "By 2030, provide access to safe, affordable, accessible and sustainable transport systems for all, improving road safety, notably by expanding public transport, with special attention to the needs of those in vulnerable situations, women, children, persons with disabilities and older persons");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.3", "By 2030, enhance inclusive and sustainable urbanization and capacity for participatory, integrated and sustainable human settlement planning and management in all countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.4", "Strengthen efforts to protect and safeguard the world’s cultural and natural heritage");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.5", "By 2030, significantly reduce the number of deaths and the number of people affected and substantially decrease the direct economic losses relative to global gross domestic product caused by disasters, including water-related disasters, with a focus on protecting the poor and people in vulnerable situations");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.6", "By 2030, reduce the adverse per capita environmental impact of cities, including by paying special attention to air quality and municipal and other waste management");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.7", "By 2030, provide universal access to safe, inclusive and accessible, green and public spaces, in particular for women and children, older persons and persons with disabilities");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.a", "Support positive economic, social and environmental links between urban, per-urban and rural areas by strengthening national and regional development planning");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.b", "By 2020, substantially increase the number of cities and human settlements adopting and implementing integrated policies and plans towards inclusion, resource efficiency, mitigation and adaptation to climate change, resilience to disasters, and develop and implement, in line with the Sendai Framework for Disaster Risk Reduction 2015-2030, holistic disaster risk management at all levels");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.c", "Support least developed countries, including through financial and technical assistance, in building sustainable and resilient buildings utilizing local materials");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(sustainableCities);
+
+        //sdg 12
         SDGEntity responsibleConsumption = new SDGEntity("Responsible Consumption and Production", "Ensure sustainable consumption and production patterns");
         sdgEntityRepository.save(responsibleConsumption);
 
+        //init sdg12 targets
+        target = new SDGTargetEntity("Target 12.1", "Implement the 10-year framework of programmes on sustainable consumption and production, all countries taking action, with developed countries taking the lead, taking into account the development and capabilities of developing countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.2", "By 2030, achieve the sustainable management and efficient use of natural resources");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.3", "By 2030, halve per capita global food waste at the retail and consumer levels and reduce food losses along production and supply chains, including post-harvest losses");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.4", "By 2020, achieve the environmentally sound management of chemicals and all wastes throughout their life cycle, in accordance with agreed international frameworks, and significantly reduce their release to air, water and soil in order to minimize their adverse impacts on human health and the environment");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.5", "By 2030, substantially reduce waste generation through prevention, reduction, recycling and reuse");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.6", "Encourage companies, especially large and transnational companies, to adopt sustainable practices and to integrate sustainability information into their reporting cycle");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.7", "Promote public procurement practices that are sustainable, in accordance with national policies and priorities");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.8", "By 2030, ensure that people everywhere have the relevant information and awareness for sustainable development and lifestyles in harmony with nature");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.a", "Support developing countries to strengthen their scientific and technological capacity to move towards more sustainable patterns of consumption and production");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.b", "Develop and implement tools to monitor sustainable development impacts for sustainable tourism that creates jobs and promotes local culture and products");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.c", "Rationalize inefficient fossil-fuel subsidies that encourage wasteful consumption by removing market distortions, in accordance with national circumstances, including by restructuring taxation and phasing out those harmful subsidies, where they exist, to reflect their environmental impacts, taking fully into account the specific needs and conditions of developing countries and minimizing the possible adverse impacts on their development in a manner that protects the poor and the affected communities");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(responsibleConsumption);
+
+        //sdg 13
         SDGEntity climateAction = new SDGEntity("Climate Action", "Take urgent action to combat climate change and its impacts");
         sdgEntityRepository.save(climateAction);
 
+        //init sdg13 targets
+        target = new SDGTargetEntity("Target 13.1", "Strengthen resilience and adaptive capacity to climate-related hazards and natural disasters in all countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        climateAction.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 13.2", "Integrate climate change measures into national policies, strategies and planning");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        climateAction.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 13.3", "Improve education, awareness-raising and human and institutional capacity on climate change mitigation, adaptation, impact reduction and early warning");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        climateAction.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 13.a", "Implement the commitment undertaken by developed-country parties to the United Nations Framework Convention on Climate Change to a goal of mobilizing jointly $100 billion annually by 2020 from all sources to address the needs of developing countries in the context of meaningful mitigation actions and transparency on implementation and fully operationalize the Green Climate Fund through its capitalization as soon as possible");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        climateAction.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 13.b", "Promote mechanisms for raising capacity for effective climate change-related planning and management in least developed countries and small island developing States, including focusing on women, youth and local and marginalized communities &lt;br&gt; &lt;br&gt;* Acknowledging that the United Nations Framework Convention on Climate Change is the primary international, &lt;br&gt;intergovernmental forum for negotiating the global response to climate change.");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        climateAction.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(climateAction);
+
+        //sdg 14
         SDGEntity lifeBelowWater = new SDGEntity("Life Below Water", "Conserve and sustainably use the oceans, seas and marine resources for sustainable development");
         sdgEntityRepository.save(lifeBelowWater);
 
+        //init sdg14 targets
+        target = new SDGTargetEntity("Target 14.1", "By 2025, prevent and significantly reduce marine pollution of all kinds, in particular from land-based activities, including marine debris and nutrient pollution");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.2", "By 2020, sustainably manage and protect marine and coastal ecosystems to avoid significant adverse impacts, including by strengthening their resilience, and take action for their restoration in order to achieve healthy and productive oceans");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.3", "Minimize and address the impacts of ocean acidification, including through enhanced scientific cooperation at all levels");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.4", "By 2020, effectively regulate harvesting and end overfishing, illegal, unreported and unregulated fishing and destructive fishing practices and implement science-based management plans, in order to restore fish stocks in the shortest time feasible, at least to levels that can produce maximum sustainable yield as determined by their biological characteristics");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.5", "By 2020, conserve at least 10 per cent of coastal and marine areas, consistent with national and international law and based on the best available scientific information");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.6", "By 2020, prohibit certain forms of fisheries subsidies which contribute to overcapacity and overfishing, eliminate subsidies that contribute to illegal, unreported and unregulated fishing and refrain from introducing new such subsidies, recognizing that appropriate and effective special and differential treatment for developing and least developed countries should be an integral part of the World Trade Organization fisheries subsidies negotiation");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.7", "By 2030, increase the economic benefits to Small Island developing States and least developed countries from the sustainable use of marine resources, including through sustainable management of fisheries, aquaculture and tourism");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.a", "Increase scientific knowledge, develop research capacity and transfer marine technology, taking into account the Intergovernmental Oceanographic Commission Criteria and Guidelines on the Transfer of Marine Technology, in order to improve ocean health and to enhance the contribution of marine biodiversity to the development of developing countries, in particular small island developing States and least developed countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.b", "Provide access for small-scale artisanal fishers to marine resources and markets");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.c", "Enhance the conservation and sustainable use of oceans and their resources by implementing international law as reflected in UNCLOS, which provides the legal framework for the conservation and sustainable use of oceans and their resources, as recalled in paragraph 158 of The Future We Want");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(lifeBelowWater);
+
+        //sdg 15
         SDGEntity lifeOnLand = new SDGEntity("Life On Land", "Protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss");
         sdgEntityRepository.save(lifeOnLand);
+
+        //init sdg15 targets
+        target = new SDGTargetEntity("Target 15.1", "");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
 
         SDGEntity peaceJustice = new SDGEntity("Peace, Justice and Strong Institutions", "Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels");
         sdgEntityRepository.save(peaceJustice);
