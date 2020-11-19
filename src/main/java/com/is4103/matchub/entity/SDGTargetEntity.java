@@ -23,19 +23,24 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class TargetEntity {
+public class SDGTargetEntity {
 
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long targetId;
+    private Long sdgTargetId;
+
+    @Column(nullable = false, unique = true)
+    @NotNull
+    private String sdgTargetNumbering;
 
     @Column(nullable = false, length = 2000)
     @NotNull
-    private String targetName;
+    private String sdgTargetDescription;
 
-    public TargetEntity(String targetName) {
-        this.targetName = targetName;
+    public SDGTargetEntity(String sdgTargetNumbering, String sdgTargetDescription) {
+        this.sdgTargetNumbering = sdgTargetNumbering;
+        this.sdgTargetDescription = sdgTargetDescription;
     }
 
 }
