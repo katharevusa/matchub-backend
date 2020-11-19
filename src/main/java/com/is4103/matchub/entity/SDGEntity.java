@@ -51,7 +51,7 @@ public class SDGEntity {
     private List<ProjectEntity> projects = new ArrayList<>();
 
     @OneToMany
-    private List<TargetEntity> targets = new ArrayList<>();
+    private List<SDGTargetEntity> targets = new ArrayList<>();
 
     public SDGEntity(String sdgName, String sdgDescription) {
         this.sdgName = sdgName;

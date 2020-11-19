@@ -39,7 +39,7 @@ public class SelectedTargetEntity {
     private SDGEntity sdg;
 
     @OneToMany
-    private List<TargetEntity> targets = new ArrayList<>();
+    private List<SDGTargetEntity> targets = new ArrayList<>();
 
     @ManyToOne
     private ProfileEntity profile;

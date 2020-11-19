@@ -11,6 +11,7 @@ import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.entity.SDGTargetEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
@@ -30,6 +31,7 @@ import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
+import com.is4103.matchub.repository.SDGTargetEntityRepository;
 import com.is4103.matchub.vo.PostVO;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import java.math.BigDecimal;
@@ -93,11 +95,17 @@ public class InitServiceImpl implements InitService {
     @Autowired
     ResourceRequestService resourceRequestService;
 
+    @Autowired
+    SDGTargetEntityRepository sDGTargetEntityRepository;
+
     @Transactional
     public void init() {
         // testing:
 
         initSDG();
+
+        // init sdg targets
+        initTargets();
         initUsers();
         initResourceCategories();
         initResources();
@@ -111,7 +119,6 @@ public class InitServiceImpl implements InitService {
 
         //join request 
         initJoinRequest();
-
 
         // init project follower 
         initProjectFollower();
@@ -437,11 +444,49 @@ public class InitServiceImpl implements InitService {
     }
 
     private void initSDG() {
+        //sdg 1
         SDGEntity noPoverty = new SDGEntity("No Poverty", "End poverty in all its forms everywhere");
         sdgEntityRepository.save(noPoverty);
 
+        //init sdg1 targets
+        SDGTargetEntity target = new SDGTargetEntity("Target 1.1", "By 2030, eradicate extreme poverty for all people everywhere, currently measured as people living on less than $1.25 a day");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.2", "By 2030, reduce at least by half the proportion of men, women and children of all ages living in poverty in all its dimensions according to national definitions");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.3", "Implement nationally appropriate social protection systems and measures for all, including floors, and by 2030 achieve substantial coverage of the poor and the vulnerable");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.4", "By 2030, ensure that all men and women, in particular the poor and the vulnerable, have equal rights to economic resources, as well as access to basic services, ownership and control over land and other forms of property, inheritance, natural resources, appropriate new technology and financial services, including microfinance");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.5", "By 2030, build the resilience of the poor and those in vulnerable situations and reduce their exposure and vulnerability to climate-related extreme events and other economic, social and environmental shocks and disasters");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.a", "Ensure significant mobilization of resources from a variety of sources, including through enhanced development cooperation, in order to provide adequate and predictable means for developing countries, in particular least developed countries, to implement programmes and policies to end poverty in all its dimensions");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.b", "Create sound policy frameworks at the national, regional and international levels, based on pro-poor and gender-sensitive development strategies, to support accelerated investment in poverty eradication actions");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(noPoverty);
+
+        //sdg 2
         SDGEntity zeroHunger = new SDGEntity("Zero Hunger", "End hunger, achieve food security and improved nutrition and promote sustainable agriculture");
         sdgEntityRepository.save(zeroHunger);
+
+        //init sdg2 targets
+//        target = new SDGTargetEntity("Target 1.4", "");
+//        sDGTargetEntityRepository.saveAndFlush(target);
+//        noPoverty.getTargets().add(target);
 
         SDGEntity goodHealth = new SDGEntity("Good Health and Well-being", "Ensure healthy lives and promote well-being for all at all ages");
         sdgEntityRepository.save(goodHealth);
@@ -487,6 +532,10 @@ public class InitServiceImpl implements InitService {
 
         SDGEntity partnerships = new SDGEntity("Partnerships for the Goals", "Strengthen the means of implementation and revitalize the global partnership for sustainable development");
         sdgEntityRepository.save(partnerships);
+    }
+
+    private void initTargets() {
+
     }
 
     public void initResourceCategories() {
