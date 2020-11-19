@@ -1050,15 +1050,193 @@ public class InitServiceImpl implements InitService {
         sdgEntityRepository.save(lifeOnLand);
 
         //init sdg15 targets
-        target = new SDGTargetEntity("Target 15.1", "");
+        target = new SDGTargetEntity("Target 15.1", "By 2020, ensure the conservation, restoration and sustainable use of terrestrial and inland freshwater ecosystems and their services, in particular forests, wetlands, mountains and drylands, in line with obligations under international agreements");
         sDGTargetEntityRepository.saveAndFlush(target);
         lifeOnLand.getTargets().add(target);
 
+        target = new SDGTargetEntity("Target 15.2", "By 2020, promote the implementation of sustainable management of all types of forests, halt deforestation, restore degraded forests and substantially increase afforestation and reforestation globally");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.3", "By 2030, combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and strive to achieve a land degradation-neutral world");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.4", "By 2030, ensure the conservation of mountain ecosystems, including their biodiversity, in order to enhance their capacity to provide benefits that are essential for sustainable development");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.5", "Take urgent and significant action to reduce the degradation of natural habitats, halt the loss of biodiversity and, by 2020, protect and prevent the extinction of threatened species");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.6", "Promote fair and equitable sharing of the benefits arising from the utilization of genetic resources and promote appropriate access to such resources, as internationally agreed");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.7", "Take urgent action to end poaching and trafficking of protected species of flora and fauna and address both demand and supply of illegal wildlife products");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.8", "By 2020, introduce measures to prevent the introduction and significantly reduce the impact of invasive alien species on land and water ecosystems and control or eradicate the priority species");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.9", "By 2020, integrate ecosystem and biodiversity values into national and local planning, development processes, poverty reduction strategies and accounts");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.a", "Mobilize and significantly increase financial resources from all sources to conserve and sustainably use biodiversity and ecosystems");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.b", "Mobilize significant resources from all sources and at all levels to finance sustainable forest management and provide adequate incentives to developing countries to advance such management, including for conservation and reforestation");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.c", "Enhance global support for efforts to combat poaching and trafficking of protected species, including by increasing the capacity of local communities to pursue sustainable livelihood opportunities");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(lifeOnLand);
+
+        //sdg 16
         SDGEntity peaceJustice = new SDGEntity("Peace, Justice and Strong Institutions", "Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels");
         sdgEntityRepository.save(peaceJustice);
 
+        //init sdg16 targets
+        target = new SDGTargetEntity("Target 16.1", "Significantly reduce all forms of violence and related death rates everywhere");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.2", "End abuse, exploitation, trafficking and all forms of violence against and torture of children");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.3", "Promote the rule of law at the national and international levels and ensure equal access to justice for all");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.4", "By 2030, significantly reduce illicit financial and arms flows, strengthen the recovery and return of stolen assets and combat all forms of organized crime");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.5", "Substantially reduce corruption and bribery in all their forms");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.6", "Develop effective, accountable and transparent institutions at all levels");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.7", "Ensure responsive, inclusive, participatory and representative decision-making at all levels");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.8", "Broaden and strengthen the participation of developing countries in the institutions of global governance");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.9", "By 2030, provide legal identity for all, including birth registration");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.10", "Ensure public access to information and protect fundamental freedoms, in accordance with national legislation and international agreements");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.a", "Strengthen relevant national institutions, including through international cooperation, for building capacity at all levels, in particular in developing countries, to prevent violence and combat terrorism and crime");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.b", "Promote and enforce non-discriminatory laws and policies for sustainable development");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(peaceJustice);
+
+        //sdg 17
         SDGEntity partnerships = new SDGEntity("Partnerships for the Goals", "Strengthen the means of implementation and revitalize the global partnership for sustainable development");
         sdgEntityRepository.save(partnerships);
+
+        //init sdg17 targets
+        target = new SDGTargetEntity("Target 17.1", "Strengthen domestic resource mobilization, including through international support to developing countries, to improve domestic capacity for tax and other revenue collection");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.2", "Developed countries to implement fully their official development assistance commitments, including the commitment by many developed countries to achieve the target of 0.7 per cent of ODA/GNI to developing countries and 0.15 to 0.20 per cent of ODA/GNI to least developed countries; ODA providers are encouraged to consider setting a target to provide at least 0.20 per cent of ODA/GNI to least developed countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.3", "Mobilize additional financial resources for developing countries from multiple sources");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.4", "Assist developing countries in attaining long-term debt sustainability through coordinated policies aimed at fostering debt financing, debt relief and debt restructuring, as appropriate, and address the external debt of highly indebted poor countries to reduce debt distress");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.5", "Adopt and implement investment promotion regimes for least developed countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.6", "Enhance North-South, South-South and triangular regional and international cooperation on and access to science, technology and innovation and enhance knowledge sharing on mutually agreed terms, including through improved coordination among existing mechanisms, in particular at the United Nations level, and through a global technology facilitation mechanism");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.7", "Promote the development, transfer, dissemination and diffusion of environmentally sound technologies to developing countries on favourable terms, including on concessional and preferential terms, as mutually agreed");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.8", "Fully operationalize the technology bank and science, technology and innovation capacity-building mechanism for least developed countries by 2017 and enhance the use of enabling technology, in particular information and communications technology");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.9", "Enhance international support for implementing effective and targeted capacity-building in developing countries to support national plans to implement all the sustainable development goals, including through North-South, South-South and triangular cooperation");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.10", "Promote a universal, rules-based, open, non-discriminatory and equitable multilateral trading system under the World Trade Organization, including through the conclusion of negotiations under its Doha Development Agenda");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.11", "Significantly increase the exports of developing countries, in particular with a view to doubling the least developed countries’ share of global exports by 2020");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.12", "Realize timely implementation of duty-free and quota-free market access on a lasting basis for all least developed countries, consistent with World Trade Organization decisions, including by ensuring that preferential rules of origin applicable to imports from least developed countries are transparent and simple, and contribute to facilitating market access");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.13", "Enhance global macroeconomic stability, including through policy coordination and policy coherence");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.14", "Enhance policy coherence for sustainable development");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.15", "Respect each country’s policy space and leadership to establish and implement policies for poverty eradication and sustainable development");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.16", "Enhance the global partnership for sustainable development, complemented by multi-stakeholder partnerships that mobilize and share knowledge, expertise, technology and financial resources, to support the achievement of the sustainable development goals in all countries, in particular developing countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.17", "Encourage and promote effective public, public-private and civil society partnerships, building on the experience and resourcing strategies of partnerships");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.18", "By 2020, enhance capacity-building support to developing countries, including for least developed countries and small island developing States, to increase significantly the availability of high-quality, timely and reliable data disaggregated by income, gender, age, race, ethnicity, migratory status, disability, geographic location and other characteristics relevant in national contexts");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        target = new SDGTargetEntity("Target 17.19", "By 2030, build on existing initiatives to develop measurements of progress on sustainable development that complement gross domestic product, and support statistical capacity-building in developing countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+        
+        sdgEntityRepository.saveAndFlush(partnerships);
     }
 
     private void initTargets() {
