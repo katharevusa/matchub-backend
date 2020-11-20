@@ -714,12 +714,49 @@ public class UserServiceImpl implements UserService {
 
             vo.updateOrganisationAccount(organisation);
 
-            if (vo.getSdgIds().length != 0) {
-                //find the updated SDG and associate with individual 
+//            if (vo.getSdgIds().length != 0) {
+//                //find the updated SDG and associate with individual 
+//                organisation.getSdgs().clear();
+//                for (int i = 0; i < vo.getSdgIds().length; i++) {
+//                    SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
+//                    organisation.getSdgs().add(sdg);
+//                }
+//            }
+            if (!vo.getHashmapSDG().isEmpty()) {
+
+                //clear the old associations first 
                 organisation.getSdgs().clear();
-                for (int i = 0; i < vo.getSdgIds().length; i++) {
-                    SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
-                    organisation.getSdgs().add(sdg);
+
+                List<SelectedTargetEntity> oldSelections = organisation.getSelectedTargets();
+
+                for (SelectedTargetEntity s : oldSelections) {
+                    s.setProfile(null);
+                    s.getSdgTargets().clear();
+                    selectedTargetEntityRepository.delete(s);
+                }
+
+                organisation.getSelectedTargets().clear();
+
+                for (int i = 1; i <= 17; i++) {
+                    if (vo.getHashmapSDG().containsKey(Long.valueOf(i))) {
+                        SDGEntity sdg = sdgEntityRepository.findBySdgId(Long.valueOf(i));
+                        organisation.getSdgs().add(sdg);
+
+                        SelectedTargetEntity selectedTargets = new SelectedTargetEntity();
+                        List<Long> targetIds = vo.getHashmapSDG().get(Long.valueOf(i));
+
+                        for (int j = 0; j < targetIds.size(); j++) {
+                            //find the actual instance of the sdgTarget
+                            SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(targetIds.get(j));
+                            selectedTargets.getSdgTargets().add(sdgTarget);
+                        }
+
+                        selectedTargets.setSdg(sdg);
+                        selectedTargets.setProfile(organisation);
+                        selectedTargetEntityRepository.saveAndFlush(selectedTargets);
+
+                        organisation.getSelectedTargets().add(selectedTargets);
+                    }
                 }
             }
 

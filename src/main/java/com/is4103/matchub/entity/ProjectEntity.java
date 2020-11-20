@@ -130,17 +130,11 @@ public class ProjectEntity {
     private List<FundCampaignEntity> fundsCampaign = new ArrayList<>();
 
     @OneToMany
-    private List<ScheduleEntity> meetings = new ArrayList<>();
-
-    @OneToMany
     private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projects"})
     private List<SDGEntity> sdgs = new ArrayList<>();
-
-    @OneToMany
-    private List<KPIEntity> kpis = new ArrayList<>();
 
     @ManyToMany
     @JsonIgnoreProperties({"hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})

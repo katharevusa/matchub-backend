@@ -98,9 +98,6 @@ public abstract class ProfileEntity extends AccountEntity {
     private List<SDGEntity> sdgs = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<ScheduleEntity> meetings = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
     private List<ProjectEntity> projectsJoined = new ArrayList<>();
 
