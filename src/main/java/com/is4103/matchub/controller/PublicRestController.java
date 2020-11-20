@@ -11,6 +11,7 @@ import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
+import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.exception.DonationOptionNotFoundException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.AttachmentService;
@@ -20,6 +21,7 @@ import com.is4103.matchub.service.OrganisationService;
 import com.is4103.matchub.service.PostService;
 import com.is4103.matchub.service.ProjectService;
 import com.is4103.matchub.service.ResourceCategoryService;
+import com.is4103.matchub.service.SDGService;
 import com.is4103.matchub.service.StripeService;
 import com.is4103.matchub.service.UserService;
 import com.is4103.matchub.vo.IndividualCreateVO;
@@ -79,6 +81,9 @@ public class PublicRestController {
 
     @Autowired
     StripeService stripeService;
+
+    @Autowired
+    SDGService sdgService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/createNewIndividual")
     UserVO createNewIndividual(@Valid @RequestBody IndividualCreateVO createVO) throws MessagingException, IOException {
@@ -177,7 +182,12 @@ public class PublicRestController {
 
     // placed in public so that webhook can work without bearer token
     @RequestMapping(method = RequestMethod.POST, value = "/webhook")
-    public String stripeWebhookListener(@RequestBody String json, HttpServletRequest request)throws DonationOptionNotFoundException{
+    public String stripeWebhookListener(@RequestBody String json, HttpServletRequest request) throws DonationOptionNotFoundException {
         return stripeService.handleWebhookEvent(json, request);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllSdgs")
+    public Page<SDGEntity> getAllSdgs(Pageable pageable) {
+        return sdgService.getAllSdgs(pageable);
     }
 }
