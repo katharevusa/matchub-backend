@@ -12,6 +12,8 @@ import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.entity.SDGTargetEntity;
+import com.is4103.matchub.entity.SelectedTargetEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.DeleteOrganisationVerificationDocumentException;
 import com.is4103.matchub.exception.DeleteProfilePictureException;
@@ -49,6 +51,8 @@ import javax.mail.MessagingException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
+import com.is4103.matchub.repository.SDGTargetEntityRepository;
+import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
@@ -108,6 +112,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AnnouncementEntityRepository announcementEntityRepository;
 
+    @Autowired
+    private SDGTargetEntityRepository sDGTargetEntityRepository;
+
+    @Autowired
+    private SelectedTargetEntityRepository selectedTargetEntityRepository;
+
     @Transactional
     @Override
     public UserVO createIndividual(IndividualCreateVO vo) throws MessagingException, IOException {
@@ -164,9 +174,31 @@ public class UserServiceImpl implements UserService {
 
         //find the SDG and associate with individual 
         individual.getSdgs().clear();
-        for (int i = 0; i < vo.getSdgIds().length; i++) {
-            SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
-            individual.getSdgs().add(sdg);
+//        for (int i = 0; i < vo.getSdgIds().length; i++) {
+//            SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
+//            individual.getSdgs().add(sdg);
+//        }
+        //****************refactored implementation
+        for (int i = 1; i <= 17; i++) {
+            if (vo.getHashmapSDG().containsKey(Long.valueOf(i))) {
+                SDGEntity sdg = sdgEntityRepository.findBySdgId(Long.valueOf(i));
+                individual.getSdgs().add(sdg);
+
+                SelectedTargetEntity selectedTargets = new SelectedTargetEntity();
+                List<Long> targetIds = vo.getHashmapSDG().get(Long.valueOf(i));
+
+                for (int j = 0; j < targetIds.size(); j++) {
+                    //find the actual instance of the sdgTarget
+                    SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(targetIds.get(j));
+                    selectedTargets.getSdgTargets().add(sdgTarget);
+                }
+
+                selectedTargets.setSdg(sdg);
+                selectedTargets.setProfile(individual);
+                selectedTargetEntityRepository.saveAndFlush(selectedTargets);
+
+                individual.getSelectedTargets().add(selectedTargets);
+            }
         }
 
         individual.setDisabled(Boolean.FALSE);

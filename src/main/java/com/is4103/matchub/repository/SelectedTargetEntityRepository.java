@@ -5,15 +5,13 @@
  */
 package com.is4103.matchub.repository;
 
-import com.is4103.matchub.entity.SDGTargetEntity;
+import com.is4103.matchub.entity.SelectedTargetEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  *
  * @author ngjin
  */
-public interface SDGTargetEntityRepository extends JpaRepository<SDGTargetEntity, Long> {
-
-    SDGTargetEntity findBySdgTargetId(Long sdgTargetId);
-
+public interface SelectedTargetEntityRepository extends JpaRepository<SelectedTargetEntity, Long> {
+    
 }
