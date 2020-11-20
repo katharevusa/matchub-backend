@@ -116,5 +116,11 @@ public class FundCampaignController {
     public Page<FundCampaignEntity> searchCampaignByKeyWord(@RequestParam(value = "keyword", required = true)String keyword, Pageable pageable){
         return fundCampaignService.searchCampaign(keyword, pageable);
     }
+    
+    //get all donations by campaign Id
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllDonationsByCampaignId")
+    public List<DonationEntity> getAllDonationsByCampaignId(Long fundCampaignId) throws FundCampaignNotFoundException{
+        return fundCampaignService.getAllDonationsByCampaignId(fundCampaignId);
+    }
 
 }

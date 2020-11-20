@@ -129,12 +129,15 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"taskdoers"})
     private List<TaskEntity> tasks = new ArrayList<>();
-
+    
+    @OneToMany(mappedBy = "respondent")
+    @JsonIgnoreProperties({"respondent"})
+    private List<SurveyResponseEntity> surveyResponses = new ArrayList<>();
+    
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<ChannelEntity> managedChannel = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<ChannelEntity> joinedChannel = new ArrayList<>();
+    @JsonIgnoreProperties({"recievers"})
+    private List<SurveyEntity> surveys = new ArrayList<>();
+    
     
 
     public ProfileEntity(String email, String password) {
