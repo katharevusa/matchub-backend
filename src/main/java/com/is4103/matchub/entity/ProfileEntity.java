@@ -70,7 +70,7 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @Column(nullable = true)
     private Boolean stripeAccountChargesEnabled = false;
-    
+
     // scenario, boolean
     @ElementCollection
     private Map<AnnouncementTypeEnum, Boolean> announcementsSetting = new HashMap<>();
@@ -96,9 +96,6 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projects"})
     private List<SDGEntity> sdgs = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<ScheduleEntity> meetings = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})

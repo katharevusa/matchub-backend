@@ -75,8 +75,6 @@ public class ProjectEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endDate;
 
-
-
     @Column(nullable = false)
     @NotNull
     private ProjectStatusEnum projStatus = ProjectStatusEnum.ON_HOLD;
@@ -84,7 +82,7 @@ public class ProjectEntity {
     @Column(nullable = false)
     @NotNull
     private Integer upvotes = 0;
-    
+
     //****** newly added for Rep points 
     @Column(nullable = false)
     @NotNull
@@ -132,26 +130,19 @@ public class ProjectEntity {
     private List<FundCampaignEntity> fundsCampaign = new ArrayList<>();
 
     @OneToMany
-    private List<ScheduleEntity> meetings = new ArrayList<>();
-
-    @OneToMany
     private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projects"})
     private List<SDGEntity> sdgs = new ArrayList<>();
 
-    @OneToMany
-    private List<KPIEntity> kpis = new ArrayList<>();
-
     @ManyToMany
     @JsonIgnoreProperties({"hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> teamMembers = new ArrayList<>();
-    
+
     @ManyToMany
-    @JsonIgnoreProperties({"projectsFollowing","hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
+    @JsonIgnoreProperties({"projectsFollowing", "hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> projectFollowers = new ArrayList<>();
-    
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projectsOwned", "sdgs", "meetings", "projectsJoined", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
