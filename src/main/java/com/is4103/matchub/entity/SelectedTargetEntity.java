@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
@@ -39,12 +40,14 @@ public class SelectedTargetEntity {
     private SDGEntity sdg;
 
     @OneToMany
-    private List<SDGTargetEntity> targets = new ArrayList<>();
+    private List<SDGTargetEntity> sdgTargets = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(optional = true)
+    @JsonIgnore
     private ProfileEntity profile;
 
-    @ManyToOne
+    @ManyToOne(optional = true)
+    @JsonIgnore
     private ProjectEntity project;
 
     public SelectedTargetEntity(SDGEntity sdg, ProfileEntity profile, ProjectEntity project) {
