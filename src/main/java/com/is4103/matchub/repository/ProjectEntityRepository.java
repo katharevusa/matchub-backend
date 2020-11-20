@@ -16,9 +16,12 @@ public interface ProjectEntityRepository extends JpaRepository<ProjectEntity, Lo
             countQuery = "SELECT COUNT(pe) FROM ProjectEntity pe WHERE pe.projectTitle LIKE %?1%")
     Page<ProjectEntity> search(String search, Pageable pageable);
 
-    @Query(value = " SELECT pe FROM ProjectEntity pe WHERE pe.projCreatorId = :profileId")
-    List<ProjectEntity> getCreatedProjectByProfileId(Long profileId);
+//    @Query(value = " SELECT pe FROM ProjectEntity pe WHERE pe.projCreatorId = :profileId")
+//    List<ProjectEntity> getCreatedProjectByProfileId(Long profileId);
 
+    @Query(value = " SELECT pe FROM ProjectEntity pe JOIN pe.projectOwners po WHERE pe.projCreatorId = :profileId OR po.accountId = :profileId")
+    List<ProjectEntity> getCreatedProjectByProfileId(Long profileId);
+    
     @Query(value = "SELECT pe FROM ProjectEntity pe WHERE pe.projectTitle LIKE %?1% OR pe.projectDescription LIKE %?1% OR pe.country LIKE %?1%",
             countQuery = "SELECT COUNT(pe) FROM ProjectEntity pe WHERE pe.projectTitle LIKE %?1% OR pe.projectDescription LIKE %?1% OR pe.country LIKE %?1%")
     List<ProjectEntity> searchByKeywords(String search);
