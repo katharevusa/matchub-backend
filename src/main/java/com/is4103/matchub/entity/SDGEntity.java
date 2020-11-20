@@ -5,7 +5,6 @@
  */
 package com.is4103.matchub.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +51,6 @@ public class SDGEntity {
     private List<ProjectEntity> projects = new ArrayList<>();
 
     @OneToMany
-    @JsonIgnore
     private List<SDGTargetEntity> targets = new ArrayList<>();
 
     public SDGEntity(String sdgName, String sdgDescription) {
