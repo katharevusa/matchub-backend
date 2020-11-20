@@ -662,12 +662,15 @@ public class UserServiceImpl implements UserService {
                 individual.getSdgs().clear();
 
                 List<SelectedTargetEntity> oldSelections = individual.getSelectedTargets();
-//                individual.getSelectedTargets().clear();
+
                 for (SelectedTargetEntity s : oldSelections) {
                     s.setProfile(null);
+                    s.getSdgTargets().clear();
                     selectedTargetEntityRepository.delete(s);
                 }
-                selectedTargetEntityRepository.flush();
+
+                individual.getSelectedTargets().clear();
+
                 for (int i = 1; i <= 17; i++) {
                     if (vo.getHashmapSDG().containsKey(Long.valueOf(i))) {
                         SDGEntity sdg = sdgEntityRepository.findBySdgId(Long.valueOf(i));
