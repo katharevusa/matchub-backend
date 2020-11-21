@@ -266,4 +266,10 @@ public class SurveyServiceImpl implements SurveyService {
 
 //Set branching to question options   
 //    View all questionnaire responses
+    
+    // get survey by id
+    // create mage survey response
+    
+    
+    
 }

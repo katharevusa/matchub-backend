@@ -100,7 +100,7 @@ public class SurveyController {
         surveyService.deleteQuestionOptions(questionId, questionOptionId);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/branchQuestionOptions")
+    @RequestMapping(method = RequestMethod.PUT, value = "/branchQuestionOptions")
     public QuestionEntity branchQuestionOptions(@RequestParam(value = "questionOptionId", required = true)Long questionOptionId,@RequestParam(value = "branchedQuestionId", required = true) Long branchedQuestionId) throws QuestionOptionNotFoundException, QuestionNotFoundException {
         return surveyService.branchQuestionOptions(questionOptionId, branchedQuestionId);
     }

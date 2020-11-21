@@ -49,11 +49,11 @@ public class SurveyEntity {
     @NotNull
     private LocalDateTime createdDate;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
     @NotNull
     private LocalDateTime openDate;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
     @NotNull
     private LocalDateTime closeDate;
     

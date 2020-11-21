@@ -24,11 +24,11 @@ public class SurveyVO {
     
     private String description;
 
-    @NotNull
+   
     @FutureOrPresent
     private LocalDateTime openDate;
 
-    @NotNull
+   
     @FutureOrPresent
     private LocalDateTime closeDate;
     
@@ -39,9 +39,14 @@ public class SurveyVO {
         if(description!=null){
             surveyEntity.setDescription(description);
         }
+        if(openDate != null){
+            surveyEntity.setOpenDate(openDate);
+        }
         surveyEntity.setCreatedDate(LocalDateTime.now());
-        surveyEntity.setOpenDate(openDate);
-        surveyEntity.setCloseDate(closeDate);
+        if(closeDate != null){
+            surveyEntity.setCloseDate(closeDate);
+        }
+        
         
     }
     

@@ -62,9 +62,11 @@ public class QuestionEntity {
     private SurveyEntity survey;
 
     @OneToMany(mappedBy = "question")
+    @JsonIgnoreProperties({"question"})
     private List<QuestionOptionEntity> options = new ArrayList<>();
 
     @OneToMany(mappedBy = "question")
+    @JsonIgnoreProperties({"question", " selectedOptions"})
     private List<QuestionResponseEntity> questionResponses = new ArrayList<>();
 
 }

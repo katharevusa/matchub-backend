@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,6 +40,7 @@ public class QuestionOptionEntity {
     
     @ManyToOne
     @NotNull
+    @JsonIgnoreProperties({"options","survey", "questionResponses"})
     private QuestionEntity question;
     
     
