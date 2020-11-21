@@ -5,18 +5,19 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.is4103.matchub.enumeration.QuestionTypeEnum;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,45 +26,45 @@ import lombok.NoArgsConstructor;
 
 /**
  *
- * @author ngjin
+ * @author longluqian
  */
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChannelEntity {
+public class QuestionEntity {
 
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long channelId;
+    private Long questionId;
+
+    @Column(nullable = false, length = 1000)
+    @NotNull
+    private String question;
+
+    @Column(nullable = true)
+    private Long nextQuestionId;
+
+    @ElementCollection
+    private Map<Long, Long> optionToQuestion;
 
     @Column(nullable = false)
+    private Boolean hasBranching = false;
+
     @NotNull
-    private String channelTitle;
+    private QuestionTypeEnum questionType;
 
-    @Column(nullable = false)
     @NotNull
-    private String channelDescription;
+    @ManyToOne
+    @JsonIgnoreProperties({"questions"})
+    private SurveyEntity survey;
 
-    
-    @ManyToMany
-    private List<ProfileEntity> channelMembers = new ArrayList<>();
-    
-    @ManyToMany
-    private List<ProfileEntity> channelAdmins = new ArrayList<>();
-    
-    @OneToOne
-    private KanbanBoardEntity kanbanBoard;
-    
-    @ManyToOne(optional = true)
-    @JoinColumn(nullable = true)
-    private ProjectEntity project;
+    @OneToMany(mappedBy = "question")
+    private List<QuestionOptionEntity> options = new ArrayList<>();
 
-    public ChannelEntity(String channelTitle, String channelDescription) {
-        this.channelTitle = channelTitle;
-        this.channelDescription = channelDescription;
-    }
+    @OneToMany(mappedBy = "question")
+    private List<QuestionResponseEntity> questionResponses = new ArrayList<>();
 
 }

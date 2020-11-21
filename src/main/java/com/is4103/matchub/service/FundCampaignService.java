@@ -61,4 +61,6 @@ public interface FundCampaignService {
     public FundCampaignEntity updateFundCampaign(UpdateFundCampaignVO vo) throws FundCampaignNotFoundException;
 
     public Page<FundCampaignEntity> searchCampaign(String key, Pageable pageable);
+    
+    public List<DonationEntity> getAllDonationsByCampaignId(Long fundCampaignId) throws FundCampaignNotFoundException;
 }
