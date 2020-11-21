@@ -30,6 +30,7 @@ import com.stripe.model.PaymentIntent;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -236,6 +237,20 @@ public class FundCampaignServiceImpl implements FundCampaignService {
     public Page<FundCampaignEntity> searchCampaign(String key, Pageable pageable){
         return fundCampaignEntityRepository.searchFundCampaignsByKeyword(key, pageable);
     }
+    
+     //get all donations by campaign Id
+    @Override
+    public List<DonationEntity> getAllDonationsByCampaignId(Long fundCampaignId) throws FundCampaignNotFoundException{
+        FundCampaignEntity fundCampaignEntity = fundCampaignEntityRepository.findById(fundCampaignId).orElseThrow(() -> new FundCampaignNotFoundException("Fund Campaign not found") );
+        List<DonationEntity> listOfDonations =new LinkedList<>();
+        for(DonationOptionEntity d  : fundCampaignEntity.getDonationOptions()){
+            listOfDonations.addAll(d.getDonations());
+            
+        }
+        
+        return listOfDonations;
+        
+    } 
     
     
     
