@@ -6,6 +6,7 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ResourceRequestEntity;
+import com.is4103.matchub.entity.ResourceTransactionEntity;
 import com.is4103.matchub.exception.CreateResourceRequestException;
 import com.is4103.matchub.exception.DeleteResourceRequestException;
 import com.is4103.matchub.exception.ResourceRequestNotFoundException;
@@ -100,6 +101,16 @@ public class ResourceRequestController {
     @RequestMapping(method = RequestMethod.GET, value = "/respondToResourceRequest")
     ResourceRequestEntity respondToResourceRequest(@RequestParam(value = "requestId", required = true) Long requestId, @RequestParam(value = "responderId", required = true) Long responderId, @RequestParam(value = "response", required = true) boolean response) throws ResourceRequestNotFoundException, RespondToResourceRequestException {
         return resourceRequestService.respondToResourceRequest(requestId,responderId, response);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getResourceTransactionForOwnedResources")
+     public List<ResourceTransactionEntity> getResourceTransactionForOwnedResources( @RequestParam(value = "userId", required = true)Long userId){
+         return resourceRequestService.getResourceTransactionForOwnedResources(userId);
+     }
+
+     @RequestMapping(method = RequestMethod.GET, value = "/getResourceTransactionForConsumedResources")
+    public List<ResourceTransactionEntity> getResourceTransactionForConsumedResources(@RequestParam(value = "userId", required = true)Long userId){
+        return resourceRequestService.getResourceTransactionForConsumedResources(userId);
     }
 
   

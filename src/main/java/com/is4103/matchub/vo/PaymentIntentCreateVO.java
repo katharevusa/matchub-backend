@@ -20,6 +20,9 @@ public class PaymentIntentCreateVO {
     
    // compulsory if payment is for resource purchase
     private Long resourceId;
+    private Long projectId;
+    
+    
 
     // compulsory if payment is for donation
     private Long donationOptionId;

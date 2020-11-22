@@ -16,6 +16,7 @@ import com.is4103.matchub.exception.TerminateResourceException;
 import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.vo.ResourceVO;
+import com.stripe.model.PaymentIntent;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -59,22 +60,19 @@ public interface ResourceService {
     public ResourceEntity deletePhotos(Long resourceId, String[] photoToDelete) throws ResourceNotFoundException, IOException, UpdateResourceException;
 
     public ResourceEntity deleteResourceProfilePic(Long resourceId) throws ResourceNotFoundException, UpdateResourceException, IOException;
+
     public List<ResourceEntity> getResourcesByListOfId(List<Long> ids) throws ResourceNotFoundException;
 
     public Page<ResourceEntity> searchResourceByKeywords(String keyword, Pageable pageable);
 
     public Page<ResourceEntity> resourceGlobalSearch(String keyword, List<Long> categoryIds, Boolean availability, String startTime, String endTime, String country, Pageable pageable);
 
-
     public List<ResourceEntity> getMatchedResourcesByProjectId(Long projectId);
 
     public List<ResourceEntity> getSpotlightedResources();
 
     public Page<ResourceEntity> getSpotlightedResources(Pageable pageable);
-    
-     public ResourceTransactionEntity createResourceTransaction(BigDecimal amountPaid, Long payerId, Long resourceId, Long projectId)throws ResourceNotFoundException, ProjectNotFoundException;
 
-}
     
    
-
+}

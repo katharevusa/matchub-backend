@@ -1,6 +1,8 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.exception.DonationOptionNotFoundException;
+import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.vo.PaymentIntentCreateVO;
 import com.stripe.model.AccountLink;
 import com.stripe.model.Balance;
@@ -18,7 +20,7 @@ public interface StripeService {
 
     public PaymentIntent createPaymentIntent(PaymentIntentCreateVO paymentIntentCreateVO);
 
-    public String handleWebhookEvent(String json, HttpServletRequest request)throws DonationOptionNotFoundException;
+     public String handleWebhookEvent(String json, HttpServletRequest request) throws DonationOptionNotFoundException, ResourceNotFoundException, ProjectNotFoundException;
 
     public LoginLink getStripeExpressDashboard(String stripeAccountUid);
 

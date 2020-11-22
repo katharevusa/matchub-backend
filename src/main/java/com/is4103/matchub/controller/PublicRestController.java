@@ -12,6 +12,8 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.exception.DonationOptionNotFoundException;
+import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.BadgeService;
@@ -177,7 +179,7 @@ public class PublicRestController {
 
     // placed in public so that webhook can work without bearer token
     @RequestMapping(method = RequestMethod.POST, value = "/webhook")
-    public String stripeWebhookListener(@RequestBody String json, HttpServletRequest request)throws DonationOptionNotFoundException{
+    public String stripeWebhookListener(@RequestBody String json, HttpServletRequest request)throws DonationOptionNotFoundException, ResourceNotFoundException, ProjectNotFoundException{
         return stripeService.handleWebhookEvent(json, request);
     }
 }
