@@ -64,43 +64,43 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Service
 public class ProjectServiceImpl implements ProjectService {
-    
+
     @Autowired
     private ProjectEntityRepository projectEntityRepository;
-    
+
     @Autowired
     private ProfileEntityRepository profileEntityRepository;
-    
+
     @Autowired
     private SDGEntityRepository sDGEntityRepository;
-    
+
     @Autowired
     private AttachmentService attachmentService;
-    
+
     @Autowired
     private JoinRequestEntityRepository joinRequestEntityRepository;
-    
+
     @Autowired
     private BadgeService badgeService;
-    
+
     @Autowired
     private FirebaseService firebaseService;
-    
+
     @Autowired
     private AnnouncementEntityRepository announcementEntityRepository;
-    
+
     @Autowired
     private AnnouncementService announcementService;
-    
+
     @Autowired
     private ReputationPointsService reputationPointsService;
-    
+
     @Autowired
     private SDGTargetEntityRepository sDGTargetEntityRepository;
-    
+
     @Autowired
     private SelectedTargetEntityRepository selectedTargetEntityRepository;
-    
+
     @Override
     public ProjectEntity createProject(ProjectCreateVO vo) {
         ProjectEntity newProject = new ProjectEntity();
@@ -124,49 +124,49 @@ public class ProjectServiceImpl implements ProjectService {
                 SDGEntity sdg = sDGEntityRepository.findBySdgId(Long.valueOf(i));
                 newProject.getSdgs().add(sdg);
                 sdg.getProjects().add(newProject);
-                
+
                 SelectedTargetEntity selectedTargets = new SelectedTargetEntity();
                 List<Long> targetIds = vo.getHashmapSDG().get(Long.valueOf(i));
-                
+
                 for (int j = 0; j < targetIds.size(); j++) {
                     //find the actual instance of the sdgTarget
                     SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(targetIds.get(j));
                     selectedTargets.getSdgTargets().add(sdgTarget);
                 }
-                
+
                 newProject = projectEntityRepository.saveAndFlush(newProject);
-                
+
                 selectedTargets.setSdg(sdg);
                 selectedTargets.setProject(newProject);
                 selectedTargetEntityRepository.saveAndFlush(selectedTargets);
-                
+
                 newProject.getSelectedTargets().add(selectedTargets);
             }
         }
-        
+
         newProject = projectEntityRepository.saveAndFlush(newProject);
-        
+
         return newProject;
-        
+
     }
-    
+
     @Override
     public ProjectEntity createProject(ProjectEntity newProject, Long creatorId) {
         newProject.setProjCreatorId(creatorId);
         Optional<ProfileEntity> profile = profileEntityRepository.findById(creatorId);
         profile.get().getProjectsOwned().add(newProject);
         newProject.getProjectOwners().add(profile.get());
-        
+
         for (SDGEntity s : newProject.getSdgs()) {
             SDGEntity sDGEntity = sDGEntityRepository.findBySdgId(s.getSdgId());
             sDGEntity.getProjects().add(newProject);
         }
-        
+
         newProject = projectEntityRepository.saveAndFlush(newProject);
         return newProject;
-        
+
     }
-    
+
     @Override
     public ProjectEntity retrieveProjectById(Long id) throws ProjectNotFoundException {
         Optional<ProjectEntity> optionalProjectEntity = projectEntityRepository.findById(id);
@@ -176,14 +176,14 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProjectNotFoundException("Project with id " + id + " does not exist");
         }
     }
-    
+
     @Override
     public ProjectEntity updateProject(ProjectCreateVO vo, Long accountId, Long projectId) throws ProjectNotFoundException, UpdateProjectException {
         Optional<ProjectEntity> optionalProjectEntity = projectEntityRepository.findById(projectId);
         if (optionalProjectEntity.isPresent()) {
             ProjectEntity oldProject = optionalProjectEntity.get();
             Optional<ProfileEntity> updater = profileEntityRepository.findById(accountId);
-            
+
             if (updater.isPresent()) {
                 for (ProfileEntity p : oldProject.getProjectOwners()) {
                     if (p.getAccountId().equals(updater.get().getAccountId())) {
@@ -212,40 +212,40 @@ public class ProjectServiceImpl implements ProjectService {
                             //clear the old associations first 
 //                            oldProject.getSdgs().clear();
                             List<SelectedTargetEntity> oldSelections = oldProject.getSelectedTargets();
-                            
+
                             for (SelectedTargetEntity s : oldSelections) {
                                 s.setProject(null);
                                 s.getSdgTargets().clear();
                                 s.setSdg(null);
 //                                selectedTargetEntityRepository.delete(s);
                             }
-                            
+
                             oldProject.setSelectedTargets(new ArrayList<>());
                             selectedTargetEntityRepository.deleteAll(oldSelections);
-                            
+
                             for (int i = 1; i <= 17; i++) {
                                 if (vo.getHashmapSDG().containsKey(Long.valueOf(i))) {
                                     SDGEntity sdg = sDGEntityRepository.findBySdgId(Long.valueOf(i));
                                     oldProject.getSdgs().add(sdg);
-                                    
+
                                     SelectedTargetEntity selectedTargets = new SelectedTargetEntity();
                                     List<Long> targetIds = vo.getHashmapSDG().get(Long.valueOf(i));
-                                    
+
                                     for (int j = 0; j < targetIds.size(); j++) {
                                         //find the actual instance of the sdgTarget
                                         SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(targetIds.get(j));
                                         selectedTargets.getSdgTargets().add(sdgTarget);
                                     }
-                                    
+
                                     selectedTargets.setSdg(sdg);
                                     selectedTargets.setProject(oldProject);
                                     selectedTargetEntityRepository.saveAndFlush(selectedTargets);
-                                    
+
                                     oldProject.getSelectedTargets().add(selectedTargets);
                                 }
                             }
                         }
-                        
+
                         oldProject = projectEntityRepository.saveAndFlush(oldProject);
                         return oldProject;
                     }
@@ -254,12 +254,12 @@ public class ProjectServiceImpl implements ProjectService {
             } else {
                 throw new UpdateProjectException("Updater does not exist");
             }
-            
+
         } else {
             throw new ProjectNotFoundException("Project with id " + projectId + " does not exist");
         }
     }
-    
+
     @Override
     public void deleteProject(Long projectId, Long accountId) throws DeleteProjectException {
         Optional<ProjectEntity> optionalProjectEntity = projectEntityRepository.findById(projectId);
@@ -272,28 +272,28 @@ public class ProjectServiceImpl implements ProjectService {
                     }
                     oldProject.setProjectOwners(new ArrayList<>());
                     projectEntityRepository.delete(oldProject);
-                    
+
                 } else {
                     throw new DeleteProjectException("Delete project exception: The project has either in progress or completed, can not be deleted");
                 }
-                
+
             } else {
                 throw new DeleteProjectException("Delete project exception: Only project creator can delete project");
             }
         }
     }
-    
+
     @Override
     public List<ProjectEntity> getJoinedProjects(Long profileId) throws UserNotFoundException {
         Optional<ProfileEntity> profile = profileEntityRepository.findById(profileId);
         if (profile.isPresent()) {
             return profile.get().getProjectsJoined();
-            
+
         } else {
             throw new UserNotFoundException(profileId);
         }
     }
-    
+
     @Override
     public List<ProjectEntity> getCreatedProjects(Long profileId) throws UserNotFoundException {
         Optional<ProfileEntity> profile = profileEntityRepository.findById(profileId);
@@ -339,9 +339,9 @@ public class ProjectServiceImpl implements ProjectService {
                 jr.setStatus(JoinRequestStatusEnum.REJECTED);
             }
         }
-        
+
         projectEntityRepository.saveAndFlush(project);
-        
+
     }
 
     // manually complete project for early completion of project, reputation point and review should be given
@@ -359,11 +359,11 @@ public class ProjectServiceImpl implements ProjectService {
         if (!project.getProjCreatorId().equals(profileId)) {
             throw new CompleteProjectException("Only project creator can change the status of a project");
         }
-        
+
         if (project.getProjStatus() != ProjectStatusEnum.ACTIVE) {
             throw new CompleteProjectException("You can only complete active projects");
         }
-        
+
         project.setEndDate(LocalDateTime.now());
         project.setProjStatus(ProjectStatusEnum.COMPLETED);
 
@@ -405,37 +405,37 @@ public class ProjectServiceImpl implements ProjectService {
         for (ProfileEntity p : project.getTeamMembers()) {
             p.getAnnouncements().add(announcementEntity);
         }
-        
+
         announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
         // create notification
         announcementService.createNormalNotification(announcementEntity);
-        
+
     }
-    
+
     @Override
     public Page<ProjectEntity> searchProjectByKeywords(String keyword, Pageable pageable) {
         String[] keywords = keyword.split(" ");
-        
+
         Set<ProjectEntity> temp = new HashSet<>();
-        
+
         for (String s : keywords) {
             temp.addAll(projectEntityRepository.searchByKeywords(s));
         }
-        
+
         List<ProjectEntity> projects = new ArrayList();
         for (ProjectEntity p : temp) {
             projects.add(p);
         }
-        
+
         Long start = pageable.getOffset();
         Long end = (start + pageable.getPageSize()) > projects.size() ? projects.size() : (start + pageable.getPageSize());
         Page<ProjectEntity> pages = new PageImpl<ProjectEntity>(projects.subList(start.intValue(), end.intValue()), pageable, projects.size());
-        
+
         return pages;
     }
-    
+
     @Override
-    public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, String country, ProjectStatusEnum status, Pageable pageable) {
+    public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, List<Long> sdgTargetIds, String country, ProjectStatusEnum status, Pageable pageable) {
         // first search by keywords
 
         List<ProjectEntity> initProjects = new ArrayList();
@@ -443,7 +443,7 @@ public class ProjectServiceImpl implements ProjectService {
             System.err.println("key word is null");
             initProjects = projectEntityRepository.findAll();
         } else {
-            
+
             Set<ProjectEntity> temp = new HashSet<>();
             // search the whole keyword, if empty, then split
             if (projectEntityRepository.searchByKeywords(keyword).isEmpty()) {
@@ -454,7 +454,7 @@ public class ProjectServiceImpl implements ProjectService {
             } else {
                 temp.addAll(projectEntityRepository.searchByKeywords(keyword));
             }
-            
+
             for (ProjectEntity p : temp) {
                 initProjects.add(p);
             }
@@ -507,41 +507,71 @@ public class ProjectServiceImpl implements ProjectService {
             System.err.println("sdg is null");
             resultFilterBySDGs = resultFilterByStatus;
         }
-        
+        //filter by sdgTargets
+        System.out.println("initial result list size: " + resultFilterBySDGs.size());
+        System.out.println("Starting Filtering by SDG targets now****");
+
+        List<ProjectEntity> resultFilterBySDGTargets = new ArrayList();
+        if (!sdgTargetIds.isEmpty()) {
+            for (int j = 0; j < resultFilterBySDGs.size(); j++) {
+                ProjectEntity p = resultFilterBySDGs.get(j);
+                System.err.println("Project Id " + p.getProjectId());
+                boolean contain = false;
+                for (SelectedTargetEntity s : p.getSelectedTargets()) {
+                    contain = false;
+                    List<SDGTargetEntity> sdgTargets = s.getSdgTargets();
+                    for (int i = 0; i < sdgTargets.size() && !contain; i++) {
+                        if (sdgTargetIds.contains(sdgTargets.get(i).getSdgTargetId())) {
+                            System.err.println(" contain sdgTarget " + sdgTargets.get(i).getSdgTargetId());
+                            contain = true;
+                        }
+                        if (contain == true) {
+                            resultFilterBySDGTargets.add(p);
+                        }
+                    }
+
+                }
+
+            }
+        } else {
+            System.err.println("sdg target is null");
+            resultFilterBySDGTargets = resultFilterBySDGs;
+        }
+
         Long start = pageable.getOffset();
-        Long end = (start + pageable.getPageSize()) > resultFilterBySDGs.size() ? resultFilterBySDGs.size() : (start + pageable.getPageSize());
-        Page<ProjectEntity> pages = new PageImpl<ProjectEntity>(resultFilterBySDGs.subList(start.intValue(), end.intValue()), pageable, resultFilterBySDGs.size());
-        
+        Long end = (start + pageable.getPageSize()) > resultFilterBySDGTargets.size() ? resultFilterBySDGTargets.size() : (start + pageable.getPageSize());
+        Page<ProjectEntity> pages = new PageImpl<ProjectEntity>(resultFilterBySDGTargets.subList(start.intValue(), end.intValue()), pageable, resultFilterBySDGTargets.size());
+
         return pages;
-        
+
     }
-    
+
     @Override
     public Page<ProjectEntity> getLaunchedProjects(Pageable pageble) {
         return projectEntityRepository.getLaunchedProjects(pageble);
     }
-    
+
     @Override
     public Page<ProjectEntity> getAllProjects(Pageable pageble) {
         return projectEntityRepository.findAll(pageble);
     }
-    
+
     @Override
     public List<ProjectEntity> getOwnedProjects(Long userId) {
         ProfileEntity user = profileEntityRepository.findById(userId).get();
         return user.getProjectsOwned();
     }
-    
+
     @Override
     public List<ProjectEntity> getSpotlightedProjects() {
         return projectEntityRepository.getSpotlightedProjects();
     }
-    
+
     @Override
     public Page<ProjectEntity> getSpotlightedProjects(Pageable pageable) {
         return projectEntityRepository.getSpotlightedProjects(pageable);
     }
-    
+
     @Override
     public ProjectEntity setProjectProfilePic(Long projectId, String path) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
@@ -550,12 +580,12 @@ public class ProjectServiceImpl implements ProjectService {
         }
         ProjectEntity project = projectOptional.get();
         project.setProjectProfilePic(path);
-        
+
         project = projectEntityRepository.saveAndFlush(project);
-        
+
         return project;
     }
-    
+
     @Override
     public ProjectEntity deleteProjectProfilePic(Long projectId) throws ProjectNotFoundException, UpdateProjectException, IOException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
@@ -568,11 +598,11 @@ public class ProjectServiceImpl implements ProjectService {
         }
         attachmentService.deleteFile(project.getProjectProfilePic());
         project.setProjectProfilePic(null);
-        
+
         return projectEntityRepository.saveAndFlush(project);
-        
+
     }
-    
+
     @Override
     public ProjectEntity uploadPhotos(Long projectId, MultipartFile[] photos) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
@@ -580,16 +610,16 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProjectNotFoundException("Project not exist");
         }
         ProjectEntity project = projectOptional.get();
-        
+
         for (MultipartFile photo : photos) {
             String path = attachmentService.upload(photo);
             project.getPhotos().add(path);
-            
+
         }
         project = projectEntityRepository.saveAndFlush(project);
         return project;
     }
-    
+
     @Override
     public ProjectEntity deletePhotos(Long projectId, String[] photoToDelete) throws ProjectNotFoundException, IOException, UpdateProjectException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
@@ -597,21 +627,21 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProjectNotFoundException("Project not exist");
         }
         ProjectEntity project = projectOptional.get();
-        
+
         for (String s : photoToDelete) {
             if (!project.getPhotos().contains(s)) {
                 throw new UpdateProjectException("Unable to delete photos: photos not found");
             }
         }
-        
+
         for (String s : photoToDelete) {
             project.getPhotos().remove(s);
             attachmentService.deleteFile(s);
         }
-        
+
         return projectEntityRepository.saveAndFlush(project);
     }
-    
+
     @Override
     public ProjectEntity uploadDocuments(Long projectId, MultipartFile[] documents) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
@@ -619,18 +649,18 @@ public class ProjectServiceImpl implements ProjectService {
             throw new ProjectNotFoundException("Project not exist");
         }
         ProjectEntity project = projectOptional.get();
-        
+
         for (MultipartFile photo : documents) {
             String path = attachmentService.upload(photo);
             String name = photo.getOriginalFilename();
             System.err.println("name: " + name);
             project.getDocuments().put(name, path);
-            
+
         }
         project = projectEntityRepository.saveAndFlush(project);
         return project;
     }
-    
+
     @Override
     public ProjectEntity deleteDocuments(Long projectId, String[] docsToDelete) throws IOException, ProjectNotFoundException, UpdateProjectException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
@@ -663,9 +693,9 @@ public class ProjectServiceImpl implements ProjectService {
         //save once all documents are removed successfully
         project.setDocuments(hashmap);
         return projectEntityRepository.saveAndFlush(project);
-        
+
     }
-    
+
     @Override
     public ProjectEntity upvoteProject(Long projectId, Long profileId) throws ProjectNotFoundException, UpvoteProjectException, UserNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
@@ -673,11 +703,11 @@ public class ProjectServiceImpl implements ProjectService {
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Upable to upvote project: Project not exist");
         }
-        
+
         if (projectOptional.get().getProjStatus() == ProjectStatusEnum.COMPLETED) {
             throw new UpvoteProjectException("Unable to upvote completed project");
         }
-        
+
         if (!profOptional.isPresent()) {
             throw new UserNotFoundException("Upable to upvote project: User not found");
         }
@@ -686,7 +716,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (profile.getUpvotedProjectIds().contains(projectId)) {
             throw new UpvoteProjectException("Upable to upvote project: You have already upvoted this project");
         }
-        
+
         if (profile.getDownvotedProjectIds().contains(projectId)) {
             throw new UpvoteProjectException("Upable to upvote project: Please revoke downvote before upvote the project");
         }
@@ -704,30 +734,30 @@ public class ProjectServiceImpl implements ProjectService {
         if (project.getUpvotes() >= 20) {
             project.setProjStatus(ProjectStatusEnum.ACTIVE);
         }
-        
+
         project = projectEntityRepository.saveAndFlush(project);
         System.err.println("upvote: " + project.getUpvotes());
         return project;
-        
+
     }
-    
+
     @Override
     public ProjectEntity downvoteProject(Long projectId, Long profileId) throws ProjectNotFoundException, DownvoteProjectException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
-        
+
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Upable to downvote project: Project not exist");
         }
-        
+
         if (projectOptional.get().getProjStatus() == ProjectStatusEnum.COMPLETED) {
             throw new DownvoteProjectException("Unable to downvote completed project");
         }
-        
+
         if (!profOptional.isPresent()) {
             throw new UserNotFoundException("Upable to downvote project: User not found");
         }
-        
+
         ProjectEntity project = projectOptional.get();
         ProfileEntity profile = profOptional.get();
 
@@ -738,102 +768,102 @@ public class ProjectServiceImpl implements ProjectService {
         if (profile.getDownvotedProjectIds().contains(projectId)) {
             throw new DownvoteProjectException("Upable to downvote project: You have already downvoted this project");
         }
-        
+
         if (profile.getUpvotedProjectIds().contains(projectId)) {
             throw new DownvoteProjectException("Upable to downvote project: Please revoke upvote before downvote the project");
         }
-        
+
         if (project.getUpvotes() == 0) {
             throw new DownvoteProjectException("Unable to downvote project: Minimum 0 upvotes");
         }
-        
+
         if (project.getUpvotes() < 20) {
             project.setProjStatus(ProjectStatusEnum.ON_HOLD);
         }
-        
+
         project.setUpvotes(project.getUpvotes() - 1);
 
         //newly added to keep track of poolpoints
         project.setProjectPoolPoints(100 + project.getUpvotes());
-        
+
         profile.getDownvotedProjectIds().add(projectId);
         project = projectEntityRepository.saveAndFlush(project);
-        
+
         return project;
-        
+
     }
-    
+
     @Override
     public ProjectEntity revokeUpvote(Long projectId, Long profileId) throws ProjectNotFoundException, UserNotFoundException, RevokeUpvoteException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
-        
+
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Unable to revoke upvote: Project not exist");
         }
-        
+
         if (!profOptional.isPresent()) {
             throw new UserNotFoundException("Unable to revoke upvote: User not found");
         }
-        
+
         ProjectEntity project = projectOptional.get();
         ProfileEntity profile = profOptional.get();
-        
+
         if (!profile.getUpvotedProjectIds().contains(projectId)) {
             throw new RevokeUpvoteException("Unable to revoke upvote: You have never upvoted this project");
         }
-        
+
         if (profile.getDownvotedProjectIds().contains(projectId)) {
             throw new RevokeUpvoteException("Unable to revoke upvote: Please revoke downvote before you upvote the project ");
         }
         project.setUpvotes(project.getUpvotes() - 1);
-        
+
         if (project.getUpvotes() < 20) {
             project.setProjStatus(ProjectStatusEnum.ON_HOLD);
         }
         profile.getUpvotedProjectIds().remove(projectId);
         project = projectEntityRepository.saveAndFlush(project);
-        
+
         return project;
-        
+
     }
-    
+
     @Override
     public ProjectEntity revokeDownvote(Long projectId, Long profileId) throws ProjectNotFoundException, UserNotFoundException, RevokeDownvoteException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
-        
+
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Unable to revoke downvote: Project not exist");
         }
-        
+
         if (!profOptional.isPresent()) {
             throw new UserNotFoundException("Unable to revoke downvote: User not found");
         }
-        
+
         ProjectEntity project = projectOptional.get();
         ProfileEntity profile = profOptional.get();
-        
+
         if (!profile.getDownvotedProjectIds().contains(projectId)) {
             throw new RevokeDownvoteException("Unable to revoke downvote: You have never downvoted this project");
         }
-        
+
         if (profile.getUpvotedProjectIds().contains(projectId)) {
             throw new RevokeDownvoteException("Unable to revoke downvote: Please revoke upvote before you downvote the project ");
         }
-        
+
         if (project.getUpvotes() >= 20) {
             project.setProjStatus(ProjectStatusEnum.ACTIVE);
         }
-        
+
         project.setUpvotes(project.getUpvotes() + 1);
         profile.getDownvotedProjectIds().remove(projectId);
         project = projectEntityRepository.saveAndFlush(project);
-        
+
         return project;
-        
+
     }
-    
+
     @Override
     public Page<ProjectEntity> retrieveProjectBySDGIds(List<Long> sdgIds, Pageable pageable) throws ProjectNotFoundException {
         List<ProjectEntity> projects = new ArrayList<>();
@@ -857,15 +887,15 @@ public class ProjectServiceImpl implements ProjectService {
     public JoinRequestEntity createJoinRequest(Long projectId, Long profileId) throws ProjectNotFoundException, JoinProjectException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         Optional<ProfileEntity> profOptional = profileEntityRepository.findById(profileId);
-        
+
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Unable to revoke downvote: Project not exist");
         }
-        
+
         if (!profOptional.isPresent()) {
             throw new UserNotFoundException("Unable to revoke downvote: User not found");
         }
-        
+
         ProjectEntity project = projectOptional.get();
         ProfileEntity requestor = profOptional.get();
 
@@ -883,7 +913,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (project.getTeamMembers().contains(requestor) || project.getProjectOwners().contains(requestor)) {
             throw new JoinProjectException("You are already participating this project");
         }
-        
+
         JoinRequestEntity joinRequest = new JoinRequestEntity();
         joinRequest.setProject(project);
         project.getJoinRequests().add(joinRequest);
@@ -895,17 +925,17 @@ public class ProjectServiceImpl implements ProjectService {
         for (ProfileEntity owner : project.getProjectOwners()) {
             projectOwnerUuids.add(owner.getUuid().toString());
         }
-        
+
         String requestorName = "";
         if (requestor instanceof IndividualEntity) {
             requestorName = ((IndividualEntity) requestor).getFirstName() + " " + ((IndividualEntity) requestor).getLastName();
         } else if (requestor instanceof OrganisationEntity) {
             requestorName = ((OrganisationEntity) requestor).getOrganizationName();
         }
-        
+
         String title = "Join Project Request";
         String body = requestorName + " has applied to join your '" + project.getProjectTitle() + "' project.";
-        
+
         SendNotificationsToUsersVO notificationVO = new SendNotificationsToUsersVO(
                 projectOwnerUuids,
                 AnnouncementTypeEnum.JOIN_PROJ_REQUEST.toString(),
@@ -931,10 +961,10 @@ public class ProjectServiceImpl implements ProjectService {
             p.getAnnouncements().add(announcementEntity);
         }
         announcementEntityRepository.saveAndFlush(announcementEntity);
-        
+
         return joinRequest;
     }
-    
+
     @Override
     public List<ProjectEntity> getProjectsByListOfIds(List<Long> ids) throws ProjectNotFoundException {
         List<ProjectEntity> listOfProjects = new ArrayList<>();
@@ -947,36 +977,36 @@ public class ProjectServiceImpl implements ProjectService {
             } else {
                 throw new ProjectNotFoundException("Project is not found");
             }
-            
+
         }
         return listOfProjects;
-        
+
     }
-    
+
     @Override
     public Page<ProjectEntity> getFollowingProjectsByAccountId(Long accountId, Pageable pageable) {
-        
+
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
-        
+
         List<ProjectEntity> projects = profile.getProjectsFollowing();
-        
+
         Long start = pageable.getOffset();
         Long end = (start + pageable.getPageSize()) > projects.size() ? projects.size() : (start + pageable.getPageSize());
         Page<ProjectEntity> page = new PageImpl<ProjectEntity>(projects.subList(start.intValue(), end.intValue()), pageable, projects.size());
-        
+
         return page;
     }
-    
+
     @Override
     public ProjectEntity addProjectOwner(Long projOwner, Long projOwnerToAdd, Long projectId) throws ProjectNotFoundException, ProjectNotFoundException, UnableToAddProjectOwnerException {
-        
+
         ProfileEntity projOwnerProfile = profileEntityRepository.findById(projOwner)
                 .orElseThrow(() -> new UserNotFoundException(projOwner));
-        
+
         ProfileEntity projOwnerToAddProfile = profileEntityRepository.findById(projOwnerToAdd)
                 .orElseThrow(() -> new UserNotFoundException(projOwnerToAdd));
-        
+
         ProjectEntity project = projectEntityRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Project " + projectId + " cannot be found."));
 
@@ -991,31 +1021,31 @@ public class ProjectServiceImpl implements ProjectService {
             throw new UnableToAddProjectOwnerException("Unable to add new project owner "
                     + "into project: account is already a project owner.");
         }
-        
+
         project.getProjectOwners().add(projOwnerToAddProfile);
         if (project.getTeamMembers().contains(projOwnerToAddProfile)) {
             project.getTeamMembers().remove(projOwnerToAddProfile);
         }
-        
+
         if (projOwnerToAddProfile.getProjectsJoined().contains(project)) {
             projOwnerToAddProfile.getProjectsJoined().remove(project);
         }
         project = projectEntityRepository.saveAndFlush(project);
-        
+
         projOwnerToAddProfile.getProjectsOwned().add(project);
         profileEntityRepository.saveAndFlush(projOwnerToAddProfile);
-        
+
         return project;
     }
-    
+
     @Override
     public ProjectEntity removeProjectOwner(Long editorId, Long projOwnerToRemoveId, Long projectId) throws ProjectNotFoundException, UnableToRemoveProjectOwnerException {
         ProfileEntity editor = profileEntityRepository.findById(editorId)
                 .orElseThrow(() -> new UserNotFoundException(editorId));
-        
+
         ProfileEntity projOwnerToRemove = profileEntityRepository.findById(projOwnerToRemoveId)
                 .orElseThrow(() -> new UserNotFoundException(projOwnerToRemoveId));
-        
+
         ProjectEntity project = projectEntityRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Project " + projectId + " cannot be found."));
 
@@ -1038,7 +1068,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (!project.getTeamMembers().contains(projOwnerToRemove)) {
             project.getTeamMembers().add(projOwnerToRemove);
         }
-        
+
         project = projectEntityRepository.saveAndFlush(project);
 
         //add back to project joined
@@ -1048,29 +1078,29 @@ public class ProjectServiceImpl implements ProjectService {
         // remove from project owned
         projOwnerToRemove.getProjectsOwned().remove(project);
         profileEntityRepository.saveAndFlush(projOwnerToRemove);
-        
+
         return project;
     }
-    
+
     @Override
     public ProjectEntity followProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         Optional<ProfileEntity> profOptional = profileEntityRepository.findById(followerId);
-        
+
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Unable to follow: Project not exist");
         }
-        
+
         if (!profOptional.isPresent()) {
             throw new UserNotFoundException("Unable to follow: User not found");
         }
-        
+
         ProjectEntity project = projectOptional.get();
         ProfileEntity follower = profOptional.get();
         if (project.getProjectFollowers().contains(follower)) {
             throw new FollowProjectException("You are already following this project!");
         }
-        
+
         project.getProjectFollowers().add(follower);
         follower.getProjectsFollowing().add(project);
         project = projectEntityRepository.saveAndFlush(project);
@@ -1083,7 +1113,7 @@ public class ProjectServiceImpl implements ProjectService {
         } else if (follower instanceof OrganisationEntity) {
             followerName = ((OrganisationEntity) follower).getOrganizationName();
         }
-        
+
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
         announcementEntity.setTitle("New Project Follower");
         announcementEntity.setContent("Your project '" + project.getProjectTitle() + "' has a new follower '" + followerName + "'.");
@@ -1100,57 +1130,57 @@ public class ProjectServiceImpl implements ProjectService {
 
         // create notification         
         announcementService.createNormalNotification(announcementEntity);
-        
+
         return project;
     }
-    
+
     @Override
     public void UnfollowProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         Optional<ProfileEntity> profOptional = profileEntityRepository.findById(followerId);
-        
+
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Unable to unfollow project: Project not exist");
         }
-        
+
         if (!profOptional.isPresent()) {
             throw new UserNotFoundException("Unable to unfollow project: User not found");
         }
-        
+
         ProjectEntity project = projectOptional.get();
         ProfileEntity follower = profOptional.get();
         if (!project.getProjectFollowers().contains(follower)) {
             throw new FollowProjectException("You have already unfollowed this project!");
         }
-        
+
         project.getProjectFollowers().remove(follower);
         follower.getProjectsFollowing().remove(project);
         projectEntityRepository.saveAndFlush(project);
         profileEntityRepository.saveAndFlush(follower);
-        
+
     }
-    
+
     @Override
     public List<ProjectEntity> getListOfFollowingProjectsByUserId(Long userId) throws UserNotFoundException {
         Optional<ProfileEntity> profOptional = profileEntityRepository.findById(userId);
         if (!profOptional.isPresent()) {
             throw new UserNotFoundException("Unable to get following projects: User not found");
         }
-        
+
         ProfileEntity user = profOptional.get();
         return user.getProjectsFollowing();
-        
+
     }
-    
+
     @Override
     public List<ProfileEntity> getListOfFollowerByProjectId(Long projectId) throws ProjectNotFoundException {
         Optional<ProjectEntity> projectOptional = projectEntityRepository.findById(projectId);
         if (!projectOptional.isPresent()) {
             throw new ProjectNotFoundException("Unable to get project follower: Project not exist");
         }
-        
+
         ProjectEntity project = projectOptional.get();
         return project.getProjectFollowers();
     }
-    
+
 }

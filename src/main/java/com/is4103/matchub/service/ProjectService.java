@@ -88,7 +88,7 @@ public interface ProjectService {
 
     public void completeProject(Long projectId, Long profileId) throws CompleteProjectException, ProjectNotFoundException;
 
-    public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, String country, ProjectStatusEnum status, Pageable pageable);
+    public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, List<Long> sdgTargetIds, String country, ProjectStatusEnum status, Pageable pageable);
 
     public void UnfollowProject(Long followerId, Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException;
 
