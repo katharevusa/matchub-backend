@@ -19,6 +19,7 @@ import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.enumeration.RequestorEnum;
+import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -1688,6 +1689,13 @@ public class InitServiceImpl implements InitService {
         projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/Bangladesh1.jpg");
         projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/Bangladesh2.jpg");
         projectService.createProject(projectEntity1, 5L);
+
+        long[] sdgTargetIds = LongStream.rangeClosed(1, 5).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 1L, projectEntity1.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(10, 12).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 2L, projectEntity1.getProjectId());
+
         /* create project badge */
         BadgeEntity projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Empowerment in Bangladesh", "https://localhost:8443/api/v1/files/badgeIcons/cities.png");
         projBadge.setProject(projectEntity1);
@@ -1731,6 +1739,13 @@ public class InitServiceImpl implements InitService {
         projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/woman2.jpg");
         projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/woman3.jpg");
         projectService.createProject(projectEntity2, 5L);
+
+        sdgTargetIds = LongStream.rangeClosed(30, 35).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity2.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(41, 44).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 5L, projectEntity2.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Fiancial Literacy Achieved", "https://localhost:8443/api/v1/files/badgeIcons/cities.png");
         projBadge.setProject(projectEntity2);
@@ -1759,6 +1774,13 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural2.jpg");
         projectService.createProject(projectEntity3, 9L);
+
+        sdgTargetIds = LongStream.rangeClosed(5, 7).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 1L, projectEntity3.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(11, 15).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 2L, projectEntity3.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Support For Cambodia", "https://localhost:8443/api/v1/files/badgeIcons/construction.png");
         projBadge.setProject(projectEntity3);
@@ -1791,6 +1813,13 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building3.jpg");
 
         projectService.createProject(projectEntity4, 9L);
+
+        sdgTargetIds = LongStream.rangeClosed(29, 36).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity4.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(41, 47).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 5L, projectEntity4.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "House Builder", "https://localhost:8443/api/v1/files/badgeIcons/construction.png");
         projBadge.setProject(projectEntity4);
@@ -1820,6 +1849,13 @@ public class InitServiceImpl implements InitService {
         projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/water3.jpg");
 
         projectService.createProject(projectEntity5, 9L);
+
+        sdgTargetIds = LongStream.rangeClosed(17, 21).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 3L, projectEntity5.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(48, 51).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 6L, projectEntity5.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Papua New Guinea Reformed", "https://localhost:8443/api/v1/files/badgeIcons/environment.png");
         projBadge.setProject(projectEntity5);
@@ -1886,6 +1922,13 @@ public class InitServiceImpl implements InitService {
         projectEntity7.getPhotos().add("https://localhost:8443/api/v1/files/init/reef3.jpg");
 
         projectService.createProject(projectEntity7, 7L);
+
+        sdgTargetIds = LongStream.rangeClosed(112, 115).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 13L, projectEntity7.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(92, 95).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 11L, projectEntity7.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Reefs Protecter", "https://localhost:8443/api/v1/files/badgeIcons/animal.png");
         projBadge.setProject(projectEntity7);
@@ -1914,6 +1957,16 @@ public class InitServiceImpl implements InitService {
         projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/solar.jpg");
         projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/solar2.jpg");
         projectService.createProject(projectEntity8, 7L);
+
+        sdgTargetIds = LongStream.rangeClosed(18, 25).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 3L, projectEntity8.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(32, 37).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity8.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(39, 44).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 5L, projectEntity8.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Light Up Peruvian Andes", "https://localhost:8443/api/v1/files/badgeIcons/construction.png");
         projBadge.setProject(projectEntity8);
@@ -1942,6 +1995,16 @@ public class InitServiceImpl implements InitService {
         projectEntity9.getPhotos().add("https://localhost:8443/api/v1/files/init/project9photo2.jpg");
         projectEntity9.getPhotos().add("https://localhost:8443/api/v1/files/init/project9photo3.jpg");
         projectService.createProject(projectEntity9, 8L);
+
+        sdgTargetIds = LongStream.rangeClosed(1, 3).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 1L, projectEntity9.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(16, 25).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 3L, projectEntity9.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(32, 35).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity9.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Mother and Child Supporter", "https://localhost:8443/api/v1/files/badgeIcons/gender-equality.png");
         projBadge.setProject(projectEntity9);
@@ -1969,6 +2032,13 @@ public class InitServiceImpl implements InitService {
         projectEntity10.getPhotos().add("https://localhost:8443/api/v1/files/init/project10photo1.jpg");
         projectEntity10.getPhotos().add("https://localhost:8443/api/v1/files/init/project10photo2.jpg");
         projectService.createProject(projectEntity10, 8L);
+
+        sdgTargetIds = LongStream.rangeClosed(1, 6).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 1L, projectEntity10.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(30, 36).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity10.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Supported Youth Employment", "https://localhost:8443/api/v1/files/badgeIcons/partnerships.png");
         projBadge.setProject(projectEntity10);
@@ -1996,6 +2066,10 @@ public class InitServiceImpl implements InitService {
         projectEntity11.getPhotos().add("https://localhost:8443/api/v1/files/init/zebra1.jpeg");
         projectEntity11.getPhotos().add("https://localhost:8443/api/v1/files/init/zebra.jpeg");
         projectService.createProject(projectEntity11, 11L);
+
+        sdgTargetIds = LongStream.rangeClosed(96, 99).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 11L, projectEntity11.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Zebra Protector", "https://localhost:8443/api/v1/files/badgeIcons/animal.png");
         projBadge.setProject(projectEntity11);
@@ -2092,6 +2166,16 @@ public class InitServiceImpl implements InitService {
         completedProject.getSdgs().add(lifeBelowWater);
 
         projectService.createProject(completedProject, 5L);
+
+        long[] sdgTargetIds = LongStream.rangeClosed(51, 55).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 6L, completedProject.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(94, 99).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 11L, completedProject.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(120, 125).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 14L, completedProject.getProjectId());
+
         //set team members 
         ProfileEntity songhwa = profileEntityRepository.findById(Long.valueOf(9)).get();
         completedProject.getTeamMembers().add(songhwa);
@@ -2165,6 +2249,13 @@ public class InitServiceImpl implements InitService {
         completedProject.getSdgs().add(responsibleConsumption);
 
         projectService.createProject(completedProject, 5L);
+
+        sdgTargetIds = LongStream.rangeClosed(91, 99).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 11L, completedProject.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(101, 104).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 12L, completedProject.getProjectId());
+
         //set team members 
         completedProject.getTeamMembers().add(songhwa);
         songhwa.getProjectsJoined().add(completedProject);
@@ -2187,7 +2278,7 @@ public class InitServiceImpl implements InitService {
         profileEntityRepository.save(songhwa);
         /* end of completed project 2 */
 
- /* start of completed project 4 */
+ /* start of completed project 3 */
         projDesc = "End all forms of violence and harmful practices against women and girls, "
                 + "regardless of gender identity and sexual orientation";
         completedProject = new ProjectEntity("End violence Against Women", projDesc, "India", LocalDateTime.parse("2017-02-07T11:45:55"), LocalDateTime.parse("2019-12-28T10:25:55"));
@@ -2204,6 +2295,10 @@ public class InitServiceImpl implements InitService {
         completedProject.getSdgs().add(genderEquality);
 
         projectService.createProject(completedProject, 5L);
+
+        sdgTargetIds = LongStream.rangeClosed(41, 46).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 5L, completedProject.getProjectId());
+
         //set team members 
         completedProject.getTeamMembers().add(songhwa);
         songhwa.getProjectsJoined().add(completedProject);
@@ -2248,6 +2343,10 @@ public class InitServiceImpl implements InitService {
         completedProject.getSdgs().add(qualityEducation);
 
         projectService.createProject(completedProject, 5L);
+
+        sdgTargetIds = LongStream.rangeClosed(31, 34).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, completedProject.getProjectId());
+
         //set team members 
         completedProject.getTeamMembers().add(songhwa);
         songhwa.getProjectsJoined().add(completedProject);
@@ -2524,5 +2623,33 @@ public class InitServiceImpl implements InitService {
         //set bidirectional association
         profile.getSelectedTargets().add(s);
         profileEntityRepository.saveAndFlush(profile);
+    }
+
+    private void associateSDGTargetsWithProject(long[] sdgTargetIds, Long sdgId, Long projectId) {
+        //find the sdg
+        SDGEntity sdg = sdgEntityRepository.findBySdgId(sdgId);
+
+        //find the list of sdgTargets instances
+        List<SDGTargetEntity> sdgTargetlist = sDGTargetEntityRepository.findSDGTargetsByIds(sdgTargetIds);
+
+        ProjectEntity project = null;
+        //find the project
+        try {
+            project = projectService.retrieveProjectById(projectId);
+        } catch (ProjectNotFoundException ex) {
+            System.err.println("error in datainit: associateSDGTargetsWithProject() method");
+        }
+
+        SelectedTargetEntity s = new SelectedTargetEntity();
+
+        s.setProject(project);
+        s.setSdg(sdg);
+        s.getSdgTargets().addAll(sdgTargetlist);
+
+        selectedTargetEntityRepository.saveAndFlush(s);
+
+        //set bidirectional association
+        project.getSelectedTargets().add(s);
+        projectEntityRepository.saveAndFlush(project);
     }
 }
