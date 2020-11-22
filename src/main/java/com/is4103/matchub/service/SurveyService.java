@@ -16,6 +16,7 @@ import com.is4103.matchub.exception.DeleteSurveyException;
 import com.is4103.matchub.exception.QuestionNotFoundException;
 import com.is4103.matchub.exception.QuestionOptionNotFoundException;
 import com.is4103.matchub.exception.SurveyNotFoundException;
+import com.is4103.matchub.vo.CreateFullSurveyResponseVO;
 import com.is4103.matchub.vo.CreateQuestionOptionVO;
 import com.is4103.matchub.vo.CreateQuestionVO;
 import com.is4103.matchub.vo.SurveyVO;
@@ -58,10 +59,12 @@ public interface SurveyService {
     public void deleteQuestion(Long questionId) throws QuestionNotFoundException, DeleteQuestionException, QuestionOptionNotFoundException, DeleteQuestionOptionException;
 
     public List<SurveyResponseEntity> getAllSurveyResponseOfASurvey(Long surveyId) throws SurveyNotFoundException;
-    
+
     public List<QuestionResponseEntity> getAllQuestionResponses(Long questionId) throws QuestionNotFoundException;
-    
+
     public SurveyEntity getSurveyBySurveyId(Long surveyId) throws SurveyNotFoundException;
-    
+
     public List<SurveyEntity> getAllSurveys();
+
+    public SurveyResponseEntity createFullSurveyResponse(CreateFullSurveyResponseVO fullVO) throws SurveyNotFoundException, QuestionNotFoundException, QuestionOptionNotFoundException;
 }

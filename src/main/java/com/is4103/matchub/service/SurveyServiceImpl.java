@@ -25,11 +25,14 @@ import com.is4103.matchub.repository.QuestionOptionEntityRepository;
 import com.is4103.matchub.repository.QuestionResponseEntityRepository;
 import com.is4103.matchub.repository.SurveyEntityRepository;
 import com.is4103.matchub.repository.SurveyResponseEntityRepository;
+import com.is4103.matchub.vo.CreateFullSurveyResponseVO;
 import com.is4103.matchub.vo.CreateQuestionOptionVO;
+import com.is4103.matchub.vo.CreateQuestionResponseVO;
 import com.is4103.matchub.vo.CreateQuestionVO;
 import com.is4103.matchub.vo.SurveyVO;
 import com.is4103.matchub.vo.UpdateQuestionOptionVO;
 import com.is4103.matchub.vo.UpdateQuestionVO;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -314,9 +317,55 @@ public class SurveyServiceImpl implements SurveyService {
         return surveyEntityRepository.findAll();
     }
 
-//    // create mage survey response ( respondent)
-//    public SurveyResponseEntity createFullSurveyResponse(){
-//        
-//    }
+    // create mage survey response ( respondent)
+    public SurveyResponseEntity createFullSurveyResponse(CreateFullSurveyResponseVO fullVO)throws SurveyNotFoundException, QuestionNotFoundException, QuestionOptionNotFoundException{
+        // create  a  survey response and linked to respondent and survey
+        ProfileEntity respondent = profileEntityRepository.findById(fullVO.getRespondentId()).orElseThrow(()-> new UserNotFoundException(fullVO.getRespondentId()));
+        SurveyEntity survey = surveyEntityRepository.findById(fullVO.getRespondentId()).orElseThrow(()-> new SurveyNotFoundException());
+        SurveyResponseEntity surveyResponse = new SurveyResponseEntity();
+        surveyResponse.setTimestamp(LocalDateTime.now());
+      
+        // respondent - survey response
+        surveyResponse.setRespondent(respondent);
+        respondent.getSurveyResponses().add(surveyResponse);
+        
+        // survey - survey response
+        surveyResponse.setSurvey(survey);
+        survey.getSurveyResponses().add(surveyResponse);
+        surveyResponse =  surveyResponseEntityRepository.saveAndFlush(surveyResponse);
+        
+        profileEntityRepository.flush();
+        surveyEntityRepository.flush();
+        
+        // create question responses
+        List<CreateQuestionResponseVO> listOfQuestionResponse = fullVO.getQuestionResponses();
+        for(CreateQuestionResponseVO vo : listOfQuestionResponse){
+            QuestionResponseEntity newQuestionResponse = new QuestionResponseEntity();
+            
+            // question - question response
+           QuestionEntity question = questionEntityRepository.findById(vo.getQuestionId()).orElseThrow(()-> new QuestionNotFoundException());
+           newQuestionResponse.setQuestion(question);
+           question.getQuestionResponses().add(newQuestionResponse);
+           
+           // survey response -> question response
+           surveyResponse.getQuestionResponses().add(newQuestionResponse);
+           
+           // question response -> list of options
+           for(Long id : vo.getSelectedOptionIds()){
+               QuestionOptionEntity option = questionOptionEntityRepository.findById(id).orElseThrow(()-> new QuestionOptionNotFoundException());
+                newQuestionResponse.getSelectedOptions().add(option);
+               
+           }
+           
+           questionResponseEntityRepository.saveAndFlush(newQuestionResponse);
+           questionEntityRepository.flush();
+           surveyEntityRepository.flush();
+           surveyResponseEntityRepository.flush();
+           
+        }
+        
+        return surveyResponseEntityRepository.saveAndFlush(surveyResponse);
+        
+    }
     //
 }

@@ -19,6 +19,6 @@ public class CreateFullSurveyResponseVO {
     public List<CreateQuestionResponseVO> questionResponses = new ArrayList<>();
     public Long surveyId;
 
-    public Long profileId;
+    public Long respondentId;
 
 }

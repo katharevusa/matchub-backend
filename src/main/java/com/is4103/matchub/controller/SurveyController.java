@@ -17,6 +17,7 @@ import com.is4103.matchub.exception.QuestionNotFoundException;
 import com.is4103.matchub.exception.QuestionOptionNotFoundException;
 import com.is4103.matchub.exception.SurveyNotFoundException;
 import com.is4103.matchub.service.SurveyService;
+import com.is4103.matchub.vo.CreateFullSurveyResponseVO;
 import com.is4103.matchub.vo.CreateQuestionOptionVO;
 import com.is4103.matchub.vo.CreateQuestionVO;
 import com.is4103.matchub.vo.SurveyVO;
@@ -118,19 +119,24 @@ public class SurveyController {
         return surveyService.getAllSurveyResponseOfASurvey(surveyId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getAllSurveyResponseOfASurvey")
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllQuestionResponses")
     public List<QuestionResponseEntity> getAllQuestionResponses(@RequestParam(value = "questionId", required = true)Long questionId) throws QuestionNotFoundException {
         return surveyService.getAllQuestionResponses(questionId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getAllSurveyResponseOfASurvey")
+    @RequestMapping(method = RequestMethod.GET, value = "/getSurveyBySurveyId")
     public SurveyEntity getSurveyBySurveyId(@RequestParam(value = "surveyId", required = true)Long surveyId) throws SurveyNotFoundException {
         return surveyService.getSurveyBySurveyId(surveyId);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/getAllSurveyResponseOfASurvey")
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllSurveys")
     public List<SurveyEntity> getAllSurveys() {
         return surveyService.getAllSurveys();
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/createFullSurveyResponse")
+    public SurveyResponseEntity createFullSurveyResponse(@Valid @RequestBody CreateFullSurveyResponseVO fullVO)throws SurveyNotFoundException, QuestionNotFoundException, QuestionOptionNotFoundException{
+        return surveyService.createFullSurveyResponse(fullVO);
     }
 
 }

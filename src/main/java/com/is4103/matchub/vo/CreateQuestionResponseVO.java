@@ -20,7 +20,7 @@ public class CreateQuestionResponseVO {
     
     // list of question option
     
-    public List<QuestionOptionEntity> selectedOptions = new ArrayList<>();
+    public List<Long> selectedOptionIds = new ArrayList<>();
     // question id
     @NotNull
     public Long questionId;
