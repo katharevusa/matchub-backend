@@ -279,6 +279,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     //View all survey responses of one survey  (admin)
+    @Override
     public List<SurveyResponseEntity> getAllSurveyResponseOfASurvey(Long surveyId) throws SurveyNotFoundException {
         SurveyEntity survey = surveyEntityRepository.findById(surveyId).orElseThrow(() -> new SurveyNotFoundException());
         List<SurveyResponseEntity> list = survey.getSurveyResponses();
@@ -291,11 +292,13 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     // view all question responses of one question
+    @Override
     public List<QuestionResponseEntity> getAllQuestionResponses(Long questionId) throws QuestionNotFoundException {
         QuestionEntity question = questionEntityRepository.findById(questionId).orElseThrow(() -> new QuestionNotFoundException());
         return question.getQuestionResponses();
     }
 
+    @Override
     public SurveyEntity getSurveyBySurveyId(Long surveyId) throws SurveyNotFoundException {
         SurveyEntity survey = surveyEntityRepository.findById(surveyId).orElseThrow(() -> new SurveyNotFoundException());
 
@@ -306,6 +309,7 @@ public class SurveyServiceImpl implements SurveyService {
     }
     //  1 get all questionnaires
 
+    @Override
     public List<SurveyEntity> getAllSurveys() {
         return surveyEntityRepository.findAll();
     }
@@ -314,5 +318,5 @@ public class SurveyServiceImpl implements SurveyService {
 //    public SurveyResponseEntity createFullSurveyResponse(){
 //        
 //    }
-    // 。create question will pass you the previou question id for you
+    //
 }

@@ -7,7 +7,9 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.QuestionEntity;
 import com.is4103.matchub.entity.QuestionOptionEntity;
+import com.is4103.matchub.entity.QuestionResponseEntity;
 import com.is4103.matchub.entity.SurveyEntity;
+import com.is4103.matchub.entity.SurveyResponseEntity;
 import com.is4103.matchub.exception.DeleteQuestionException;
 import com.is4103.matchub.exception.DeleteQuestionOptionException;
 import com.is4103.matchub.exception.DeleteSurveyException;
@@ -54,4 +56,12 @@ public interface SurveyService {
     public QuestionEntity branchQuestionOptions(Long questionOptionId, Long branchedQuestionId) throws QuestionOptionNotFoundException, QuestionNotFoundException;
 
     public void deleteQuestion(Long questionId) throws QuestionNotFoundException, DeleteQuestionException, QuestionOptionNotFoundException, DeleteQuestionOptionException;
+
+    public List<SurveyResponseEntity> getAllSurveyResponseOfASurvey(Long surveyId) throws SurveyNotFoundException;
+    
+    public List<QuestionResponseEntity> getAllQuestionResponses(Long questionId) throws QuestionNotFoundException;
+    
+    public SurveyEntity getSurveyBySurveyId(Long surveyId) throws SurveyNotFoundException;
+    
+    public List<SurveyEntity> getAllSurveys();
 }
