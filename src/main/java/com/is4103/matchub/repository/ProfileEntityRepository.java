@@ -119,7 +119,10 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "sdgTarget.sdgTargetId IN :sdgTargetIds")
     Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("sdgIds") Long[] sdgIds, @Param("sdgTargetIds") long[] sdgTargetIds, Pageable pageable);
 
-    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe JOIN pe.selectedTargets selectedTarget JOIN selectedTarget.sdg sdg JOIN selectedTarget.sdgTargets sdgTarget "
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe "
+            + "JOIN pe.selectedTargets selectedTarget "
+            + "JOIN selectedTarget.sdg sdg "
+            + "JOIN selectedTarget.sdgTargets sdgTarget "
             + "WHERE (pe.email LIKE %:search% OR "
             + "pe.country LIKE %:search% OR "
             + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
@@ -129,7 +132,10 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "pe.country LIKE %:country% AND "
             + "sdg.sdgId IN :sdgIds AND "
             + "sdgTarget.sdgTargetId IN :sdgTargetIds",
-            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe JOIN pe.selectedTargets selectedTarget JOIN selectedTarget.sdg sdg JOIN selectedTarget.sdgTargets sdgTarget "
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe "
+            + "JOIN pe.selectedTargets selectedTarget "
+            + "JOIN selectedTarget.sdg sdg "
+            + "JOIN selectedTarget.sdgTargets sdgTarget "
             + "WHERE (pe.email LIKE %:search% OR "
             + "pe.country LIKE %:search% OR "
             + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
