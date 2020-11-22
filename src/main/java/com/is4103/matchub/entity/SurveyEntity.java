@@ -50,11 +50,9 @@ public class SurveyEntity {
     private LocalDateTime createdDate;
 
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
-    @NotNull
     private LocalDateTime openDate;
 
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
-    @NotNull
     private LocalDateTime closeDate;
     
     @NotNull

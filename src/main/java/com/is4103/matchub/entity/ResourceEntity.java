@@ -5,16 +5,13 @@
  */
 package com.is4103.matchub.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.is4103.matchub.enumeration.ResourceTypeEnum;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -22,8 +19,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.validation.constraints.NotNull;
@@ -85,7 +80,15 @@ public class ResourceEntity {
     @Column(nullable = false)
     private Integer units;
 
+    @Column(nullable = true)
     private String resourceProfilePic;
+    
+    @NotNull
+    @Column(nullable = false)
+    private ResourceTypeEnum resourceType;
+    
+    @Column(nullable = true)
+    private BigDecimal price;
 
     @OrderColumn
     @Column(nullable = true)
@@ -107,6 +110,8 @@ public class ResourceEntity {
 
     @Column(nullable = true)
     private String country;
+    
+    
 
     public ResourceEntity(String resourceName, String resourceDescription, Long resourceCategoryId, Long resourceOwnerId, Integer units) {
         this.resourceName = resourceName;
