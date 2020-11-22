@@ -36,7 +36,7 @@ public class SurveyEntity {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long questionnaireId;
+    private Long surveyId;
 
     @NotNull
     @Column(nullable = false)

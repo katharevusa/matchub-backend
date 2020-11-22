@@ -92,67 +92,68 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     @Override
-    public void deleteSurvey(Long surveyId)throws SurveyNotFoundException,DeleteSurveyException, QuestionNotFoundException, DeleteQuestionException, QuestionOptionNotFoundException,DeleteQuestionOptionException{
+    public void deleteSurvey(Long surveyId) throws SurveyNotFoundException, DeleteSurveyException, QuestionNotFoundException, DeleteQuestionException, QuestionOptionNotFoundException, DeleteQuestionOptionException {
         SurveyEntity survey = surveyEntityRepository.findById(surveyId).orElseThrow(() -> new SurveyNotFoundException());
-        if(!survey.getSurveyResponses().isEmpty()){
+        if (!survey.getSurveyResponses().isEmpty()) {
             throw new DeleteSurveyException("Unable to delete the survey as someone has already responded");
         }
-        
-        for(QuestionEntity q : survey.getQuestions()){
+
+        for (QuestionEntity q : survey.getQuestions()) {
             deleteQuestion(q.getQuestionId());
         }
-        
-        for(ProfileEntity p : survey.getRecievers()){
+
+        for (ProfileEntity p : survey.getRecievers()) {
             p.getSurveys().remove(survey);
         }
         survey.setRecievers(new ArrayList<ProfileEntity>());
-        
+
         surveyEntityRepository.delete(survey);
-        
+
     }
 //    
+
     @Override
-    public void clearAllSurveyResponse(Long surveyId)throws SurveyNotFoundException{
+    public void clearAllSurveyResponse(Long surveyId) throws SurveyNotFoundException {
         SurveyEntity survey = surveyEntityRepository.findById(surveyId).orElseThrow(() -> new SurveyNotFoundException());
         List<SurveyResponseEntity> responses = survey.getSurveyResponses();
-        for(SurveyResponseEntity sr : responses){
+        for (SurveyResponseEntity sr : responses) {
             deleteOneSurveyResponse(sr.getSurveyResponseId());
         }
-         surveyEntityRepository.flush();
+        surveyEntityRepository.flush();
     }
-    
-    
+
     @Override
-    public void deleteOneSurveyResponse(Long surveyResponseId){
+    public void deleteOneSurveyResponse(Long surveyResponseId) {
         SurveyResponseEntity surveyResponse = surveyResponseEntityRepository.findById(surveyResponseId).get();
         // association between survey and survey response
         SurveyEntity survey = surveyResponse.getSurvey();
         survey.getSurveyResponses().remove(surveyResponse);
         surveyResponse.setSurvey(null);
-        
+
         // delete all question responses
         List<QuestionResponseEntity> questionResponseEntities = surveyResponse.getQuestionResponses();
-        for(QuestionResponseEntity qr : questionResponseEntities){
+        for (QuestionResponseEntity qr : questionResponseEntities) {
             qr.setSelectedOptions(new ArrayList<>());
             QuestionEntity question = qr.getQuestion();
             question.getQuestionResponses().remove(qr);
             qr.setQuestion(null);
         }
-       
+
         surveyResponse.setQuestionResponses(new ArrayList<>());
         questionResponseEntityRepository.deleteAll(questionResponseEntities);
         surveyResponseEntityRepository.flush();
-        
+
         // remove association between survey response and user
         ProfileEntity profileEntity = surveyResponse.getRespondent();
         profileEntity.getSurveyResponses().remove(surveyResponse);
         surveyResponse.setRespondent(null);
         surveyResponseEntityRepository.delete(surveyResponse);
-        
+
     }
+
     // default that  hasBranch is false
     @Override
-    public QuestionEntity createQuestion(CreateQuestionVO vo) throws SurveyNotFoundException {
+    public QuestionEntity createQuestion(CreateQuestionVO vo) throws SurveyNotFoundException, QuestionNotFoundException {
         SurveyEntity survey = surveyEntityRepository.findById(vo.getSurveyId()).orElseThrow(() -> new SurveyNotFoundException());
         QuestionEntity question = new QuestionEntity();
         vo.createQuestion(question);
@@ -161,22 +162,22 @@ public class SurveyServiceImpl implements SurveyService {
         survey.getQuestions().add(question);
 
         if (question.getQuestionType() == QuestionTypeEnum.MULTIPLE_CHOICE_QUESTION || question.getQuestionType() == QuestionTypeEnum.MULTIPLE_RESPONSE_QUESTION) {
-            // create two options
+            // create one defaut options
             QuestionOptionEntity option1 = new QuestionOptionEntity();
             option1.setOptionContent("Option 1");
             question.getOptions().add(option1);
             option1.setQuestion(question);
-            questionOptionEntityRepository.saveAndFlush(option1);
-
-            QuestionOptionEntity option2 = new QuestionOptionEntity();
-            option2.setOptionContent("Option 2");
-            question.getOptions().add(option2);
-            option2.setQuestion(question);
-            questionOptionEntityRepository.saveAndFlush(option2);
+            option1 = questionOptionEntityRepository.saveAndFlush(option1);
+            question.getOptionToQuestion().put(option1.getQuestionOptionsId(), -1L);
 
         }
         surveyEntityRepository.flush();
-        return questionEntityRepository.saveAndFlush(question);
+        question = questionEntityRepository.saveAndFlush(question);
+        if (vo.getPreviousQuestionId() != null) {
+            QuestionEntity previousQuestion = questionEntityRepository.findById(vo.getPreviousQuestionId()).orElseThrow(()-> new QuestionNotFoundException());
+            previousQuestion.setNextQuestionId(question.getQuestionId());
+        }
+        return question;
 
     }
 
@@ -205,9 +206,10 @@ public class SurveyServiceImpl implements SurveyService {
         questionOption.setOptionContent(createQuestionOptionVO.getOptionContent());
         questionOption.setQuestion(question);
         question.getOptions().add(questionOption);
-
+        questionOption = questionOptionEntityRepository.saveAndFlush(questionOption);
+        question.getOptionToQuestion().put(questionOption.getQuestionOptionsId(), -1L);
         questionEntityRepository.flush();
-        return questionOptionEntityRepository.saveAndFlush(questionOption);
+        return questionOption;
     }
 
     @Override
@@ -236,8 +238,9 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public QuestionEntity branchQuestionOptions(Long questionOptionId, Long branchedQuestionId) throws QuestionOptionNotFoundException, QuestionNotFoundException {
         QuestionOptionEntity questionOptionEntity = questionOptionEntityRepository.findById(questionOptionId).orElseThrow(() -> new QuestionOptionNotFoundException());
-        QuestionEntity branchedQuestion = questionEntityRepository.findById(branchedQuestionId).orElseThrow(() -> new QuestionNotFoundException("Unable to find question"));
-
+        if (branchedQuestionId != -1L) {
+            QuestionEntity branchedQuestion = questionEntityRepository.findById(branchedQuestionId).orElseThrow(() -> new QuestionNotFoundException("Unable to find question"));
+        }
         QuestionEntity question = questionOptionEntity.getQuestion();
         question.setHasBranching(Boolean.TRUE);
         question.getOptionToQuestion().put(questionOptionId, branchedQuestionId);
@@ -245,31 +248,71 @@ public class SurveyServiceImpl implements SurveyService {
         return questionEntityRepository.saveAndFlush(question);
     }
 
+    public QuestionEntity convertToNoBranchingQuestion(Long questionId) throws QuestionNotFoundException {
+        QuestionEntity branchedQuestion = questionEntityRepository.findById(questionId).orElseThrow(() -> new QuestionNotFoundException("Unable to find question"));
+        for (Long k : branchedQuestion.getOptionToQuestion().keySet()) {
+            branchedQuestion.getOptionToQuestion().put(k, -1L);
+        }
+        branchedQuestion.setHasBranching(Boolean.FALSE);
+
+        return questionEntityRepository.saveAndFlush(branchedQuestion);
+    }
+
+    //delete question probably need to check for and remove the optionToQuestion map thing and the nextQuestionId stuff
     @Override
-    public void deleteQuestion(Long questionId) throws QuestionNotFoundException,DeleteQuestionException,QuestionOptionNotFoundException, DeleteQuestionOptionException {
+    public void deleteQuestion(Long questionId) throws QuestionNotFoundException, DeleteQuestionException, QuestionOptionNotFoundException, DeleteQuestionOptionException {
         QuestionEntity questionToBeDeleted = questionEntityRepository.findById(questionId).orElseThrow(() -> new QuestionNotFoundException("Unable to find question"));
-        if(!questionToBeDeleted.getQuestionResponses().isEmpty()){
+        if (!questionToBeDeleted.getQuestionResponses().isEmpty()) {
             throw new DeleteQuestionException();
         }
-        
-        for(QuestionOptionEntity q : questionToBeDeleted.getOptions()){
+
+        for (QuestionOptionEntity q : questionToBeDeleted.getOptions()) {
             deleteQuestionOptions(questionId, q.getQuestionOptionsId());
         }
         // set association between survey and question
         SurveyEntity survey = questionToBeDeleted.getSurvey();
         survey.getQuestions().remove(questionToBeDeleted);
         questionToBeDeleted.setSurvey(null);
-        
+
         questionEntityRepository.delete(questionToBeDeleted);
         surveyEntityRepository.flush();
     }
 
-//Set branching to question options   
-//    View all questionnaire responses
-    
-    // get survey by id
-    // create mage survey response
-    
-    
-    
+    //View all survey responses of one survey  (admin)
+    public List<SurveyResponseEntity> getAllSurveyResponseOfASurvey(Long surveyId) throws SurveyNotFoundException {
+        SurveyEntity survey = surveyEntityRepository.findById(surveyId).orElseThrow(() -> new SurveyNotFoundException());
+        List<SurveyResponseEntity> list = survey.getSurveyResponses();
+        for (SurveyResponseEntity s : list) {
+            for (QuestionResponseEntity qr : s.getQuestionResponses()) {
+                qr.getQuestion();
+            }
+        }
+        return list;
+    }
+
+    // view all question responses of one question
+    public List<QuestionResponseEntity> getAllQuestionResponses(Long questionId) throws QuestionNotFoundException {
+        QuestionEntity question = questionEntityRepository.findById(questionId).orElseThrow(() -> new QuestionNotFoundException());
+        return question.getQuestionResponses();
+    }
+
+    public SurveyEntity getSurveyBySurveyId(Long surveyId) throws SurveyNotFoundException {
+        SurveyEntity survey = surveyEntityRepository.findById(surveyId).orElseThrow(() -> new SurveyNotFoundException());
+
+        for (QuestionEntity q : survey.getQuestions()) {
+            q.getOptions();
+        }
+        return survey;
+    }
+    //  1 get all questionnaires
+
+    public List<SurveyEntity> getAllSurveys() {
+        return surveyEntityRepository.findAll();
+    }
+
+//    // create mage survey response ( respondent)
+//    public SurveyResponseEntity createFullSurveyResponse(){
+//        
+//    }
+    // 。create question will pass you the previou question id for you
 }

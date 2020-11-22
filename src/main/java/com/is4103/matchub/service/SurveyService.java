@@ -39,7 +39,7 @@ public interface SurveyService {
 
     public void deleteOneSurveyResponse(Long surveyResponseId);
 
-    public QuestionEntity createQuestion(CreateQuestionVO vo) throws SurveyNotFoundException;
+    public QuestionEntity createQuestion(CreateQuestionVO vo) throws SurveyNotFoundException, QuestionNotFoundException;
 
     public QuestionEntity updateQuestionNextQuestion(Long questionId, Long branchQuestionId) throws QuestionNotFoundException;
 
