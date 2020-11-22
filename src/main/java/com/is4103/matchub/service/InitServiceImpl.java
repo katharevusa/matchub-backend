@@ -197,6 +197,7 @@ public class InitServiceImpl implements InitService {
         ikjun.setDisabled(Boolean.FALSE);
         ikjun.setIsVerified(Boolean.TRUE);
         ikjun.getRoles().add(ProfileEntity.ROLE_USER);
+        ikjun.getRoles().add(ProfileEntity.ROLE_SYSADMIN);
         ikjun.setJoinDate(LocalDateTime.now());
         //profile & individual attributes
         ikjun.setProfileDescription("Highly Passionate Individual with a love for contributing back to the society!");

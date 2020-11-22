@@ -100,9 +100,13 @@ public class SurveyServiceImpl implements SurveyService {
         if (!survey.getSurveyResponses().isEmpty()) {
             throw new DeleteSurveyException("Unable to delete the survey as someone has already responded");
         }
-
+        // delete all questions
+        List<Long> questionIds = new ArrayList<>();
         for (QuestionEntity q : survey.getQuestions()) {
-            deleteQuestion(q.getQuestionId());
+            questionIds.add(q.getQuestionId());
+        }
+        for (Long id : questionIds) {
+            deleteQuestion(id);
         }
 
         for (ProfileEntity p : survey.getRecievers()) {
@@ -269,10 +273,16 @@ public class SurveyServiceImpl implements SurveyService {
         if (!questionToBeDeleted.getQuestionResponses().isEmpty()) {
             throw new DeleteQuestionException();
         }
-
+        
+        List<Long> questionOptions = new ArrayList<>();
         for (QuestionOptionEntity q : questionToBeDeleted.getOptions()) {
-            deleteQuestionOptions(questionId, q.getQuestionOptionsId());
+            questionOptions.add(q.getQuestionOptionsId());  
         }
+        
+        for(Long id : questionOptions){
+            deleteQuestionOptions(questionId, id);
+        }
+        
         // set association between survey and question
         SurveyEntity survey = questionToBeDeleted.getSurvey();
         survey.getQuestions().remove(questionToBeDeleted);
@@ -371,5 +381,5 @@ public class SurveyServiceImpl implements SurveyService {
         return surveyResponseEntityRepository.saveAndFlush(surveyResponse);
 
     }
-    //
+
 }
