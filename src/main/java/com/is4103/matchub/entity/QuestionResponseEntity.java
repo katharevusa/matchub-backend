@@ -42,7 +42,7 @@ public class QuestionResponseEntity {
 
     @ManyToOne
     @NotNull
-    @JsonIgnoreProperties({"options","survey", "questionResponses"})
+    @JsonIgnoreProperties({"survey", "questionResponses"})
     private QuestionEntity question;
     
     @ManyToMany

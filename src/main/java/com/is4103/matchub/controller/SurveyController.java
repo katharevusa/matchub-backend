@@ -17,6 +17,7 @@ import com.is4103.matchub.exception.QuestionNotFoundException;
 import com.is4103.matchub.exception.QuestionOptionNotFoundException;
 import com.is4103.matchub.exception.SurveyNotFoundException;
 import com.is4103.matchub.service.SurveyService;
+import com.is4103.matchub.vo.AssignRespondentVO;
 import com.is4103.matchub.vo.CreateFullSurveyResponseVO;
 import com.is4103.matchub.vo.CreateQuestionOptionVO;
 import com.is4103.matchub.vo.CreateQuestionVO;
@@ -49,8 +50,8 @@ public class SurveyController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/assignRespondents")
-    public SurveyEntity assignRespondents(List<Long> respondentId, @RequestParam(value = "surveyId", required = true) Long surveyId) throws SurveyNotFoundException {
-        return surveyService.assignRespondents(respondentId, surveyId);
+    public SurveyEntity assignRespondents(@Valid @RequestBody AssignRespondentVO vo) throws SurveyNotFoundException {
+        return surveyService.assignRespondents(vo.getRespondentId(), vo.getSurveyId());
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/updateSurvey")
