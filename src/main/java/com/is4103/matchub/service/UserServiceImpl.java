@@ -1020,7 +1020,7 @@ public class UserServiceImpl implements UserService {
 
             }
         } else {
-            page = profileEntityRepository.globalSearchAllUsers(search, country, sdgIds, pageable);
+            page = profileEntityRepository.globalSearchAllUsers(search, country, sdgIds, sdgTargetIds, pageable);
 
             if (page.isEmpty()) {
                 //spilt the keywords
@@ -1030,7 +1030,7 @@ public class UserServiceImpl implements UserService {
                 Set<ProfileEntity> temp = new HashSet<>();
 
                 for (String s : split) {
-                    temp.addAll(profileEntityRepository.globalSearchAllUsers(s, country, sdgIds, pageable).toList());
+                    temp.addAll(profileEntityRepository.globalSearchAllUsers(s, country, sdgIds, sdgTargetIds, pageable).toList());
                 }
 
                 //convert set into List
