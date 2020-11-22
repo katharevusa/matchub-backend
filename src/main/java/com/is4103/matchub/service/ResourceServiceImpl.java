@@ -9,18 +9,21 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.entity.ResourceTransactionEntity;
+import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.TerminateResourceException;
-import com.is4103.matchub.exception.UnableToSaveResourceException;
 import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
+import com.is4103.matchub.repository.ResourceTransactionEntityRepository;
 import com.is4103.matchub.vo.ResourceVO;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -57,6 +60,9 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Autowired
     ProjectEntityRepository projectEntityRepository;
+    
+    @Autowired
+    ResourceTransactionEntityRepository  resourceTransactionEntityRepository;
 
     @Override
     public ResourceEntity createResource(ResourceVO vo) throws ResourceCategoryNotFoundException, UserNotFoundException {
@@ -463,5 +469,23 @@ public class ResourceServiceImpl implements ResourceService {
         resources = resourceEntityRepository.getMatchedResourcesByProjectId(projectId);
         return resources;
     }
-
+    
+    public ResourceTransactionEntity createResourceTransaction(BigDecimal amountPaid, Long payerId, Long resourceId, Long projectId)throws ResourceNotFoundException, ProjectNotFoundException{
+        ResourceTransactionEntity transactionEntity = new ResourceTransactionEntity();
+        transactionEntity.setAmountPaid(amountPaid);
+        transactionEntity.setPayerId(payerId);
+        transactionEntity.setTransactionTime(LocalDateTime.now());
+        
+        ResourceEntity resource = resourceEntityRepository.findById(resourceId).orElseThrow(()-> new ResourceNotFoundException());
+        ProjectEntity project = projectEntityRepository.findById(projectId).orElseThrow(()->new ProjectNotFoundException());
+        
+        resource.setResourceTransaction(transactionEntity);
+        transactionEntity.setResource(resource);
+        
+        project.getListOfResourceTransactions().add(transactionEntity);
+        transactionEntity.setProject(project);
+        
+        return resourceTransactionEntityRepository.saveAndFlush(transactionEntity);
+        
+    }
 }

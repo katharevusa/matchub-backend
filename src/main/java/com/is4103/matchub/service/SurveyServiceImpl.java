@@ -179,6 +179,7 @@ public class SurveyServiceImpl implements SurveyService {
         if (vo.getPreviousQuestionId() != null) {
             QuestionEntity previousQuestion = questionEntityRepository.findById(vo.getPreviousQuestionId()).orElseThrow(()-> new QuestionNotFoundException());
             previousQuestion.setNextQuestionId(question.getQuestionId());
+            questionEntityRepository.saveAndFlush(previousQuestion);
         }
         return question;
 

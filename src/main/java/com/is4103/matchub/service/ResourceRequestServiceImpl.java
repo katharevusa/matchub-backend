@@ -43,7 +43,7 @@ import org.springframework.stereotype.Service;
  * @author longluqian
  */
 @Service
-public class ResourceRequestImpl implements ResourceRequestService {
+public class ResourceRequestServiceImpl implements ResourceRequestService {
 
     @Autowired
     ResourceRequestEntityRepository resourceRequestEntityRepository;

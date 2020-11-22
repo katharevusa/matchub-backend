@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
  * @author longluqian
  */
 @Service
-public class ResourceCategoryImpl implements ResourceCategoryService{
+public class ResourceCategoryServiceImpl implements ResourceCategoryService{
     
     @Autowired
     ResourceCategoryEntityRepository resourceCategoryEntityRepository;

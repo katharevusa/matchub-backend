@@ -132,6 +132,11 @@ public class ProjectEntity {
     @OneToMany
     private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
 
+ 
+    @OneToMany
+    @JsonIgnoreProperties({"project"})
+    private List<ResourceTransactionEntity> listOfResourceTransactions = new ArrayList<>();
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projects"})
     private List<SDGEntity> sdgs = new ArrayList<>();

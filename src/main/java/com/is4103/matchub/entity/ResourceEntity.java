@@ -20,7 +20,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -110,6 +112,11 @@ public class ResourceEntity {
 
     @Column(nullable = true)
     private String country;
+    
+    //@PrimaryKeyJoinColumn
+    @OneToOne
+    private ResourceTransactionEntity resourceTransaction;
+    
     
     
 

@@ -8,6 +8,8 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.entity.ResourceTransactionEntity;
+import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.TerminateResourceException;
@@ -15,6 +17,7 @@ import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.vo.ResourceVO;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -68,6 +71,8 @@ public interface ResourceService {
     public List<ResourceEntity> getSpotlightedResources();
 
     public Page<ResourceEntity> getSpotlightedResources(Pageable pageable);
+    
+     public ResourceTransactionEntity createResourceTransaction(BigDecimal amountPaid, Long payerId, Long resourceId, Long projectId)throws ResourceNotFoundException, ProjectNotFoundException;
 
 }
     
