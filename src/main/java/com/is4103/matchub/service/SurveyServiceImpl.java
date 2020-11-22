@@ -177,7 +177,7 @@ public class SurveyServiceImpl implements SurveyService {
         surveyEntityRepository.flush();
         question = questionEntityRepository.saveAndFlush(question);
         if (vo.getPreviousQuestionId() != null) {
-            QuestionEntity previousQuestion = questionEntityRepository.findById(vo.getPreviousQuestionId()).orElseThrow(()-> new QuestionNotFoundException());
+            QuestionEntity previousQuestion = questionEntityRepository.findById(vo.getPreviousQuestionId()).orElseThrow(() -> new QuestionNotFoundException());
             previousQuestion.setNextQuestionId(question.getQuestionId());
             questionEntityRepository.saveAndFlush(previousQuestion);
         }
@@ -319,54 +319,57 @@ public class SurveyServiceImpl implements SurveyService {
     }
 
     // create mage survey response ( respondent)
-    public SurveyResponseEntity createFullSurveyResponse(CreateFullSurveyResponseVO fullVO)throws SurveyNotFoundException, QuestionNotFoundException, QuestionOptionNotFoundException{
+    public SurveyResponseEntity createFullSurveyResponse(CreateFullSurveyResponseVO fullVO) throws SurveyNotFoundException, QuestionNotFoundException, QuestionOptionNotFoundException {
         // create  a  survey response and linked to respondent and survey
-        ProfileEntity respondent = profileEntityRepository.findById(fullVO.getRespondentId()).orElseThrow(()-> new UserNotFoundException(fullVO.getRespondentId()));
-        SurveyEntity survey = surveyEntityRepository.findById(fullVO.getRespondentId()).orElseThrow(()-> new SurveyNotFoundException());
+        ProfileEntity respondent = profileEntityRepository.findById(fullVO.getRespondentId()).orElseThrow(() -> new UserNotFoundException(fullVO.getRespondentId()));
+        SurveyEntity survey = surveyEntityRepository.findById(fullVO.getSurveyId()).orElseThrow(() -> new SurveyNotFoundException());
         SurveyResponseEntity surveyResponse = new SurveyResponseEntity();
         surveyResponse.setTimestamp(LocalDateTime.now());
-      
+
         // respondent - survey response
         surveyResponse.setRespondent(respondent);
         respondent.getSurveyResponses().add(surveyResponse);
-        
+
         // survey - survey response
         surveyResponse.setSurvey(survey);
         survey.getSurveyResponses().add(surveyResponse);
-        surveyResponse =  surveyResponseEntityRepository.saveAndFlush(surveyResponse);
-        
+        surveyResponse = surveyResponseEntityRepository.saveAndFlush(surveyResponse);
+
         profileEntityRepository.flush();
         surveyEntityRepository.flush();
-        
+
         // create question responses
         List<CreateQuestionResponseVO> listOfQuestionResponse = fullVO.getQuestionResponses();
-        for(CreateQuestionResponseVO vo : listOfQuestionResponse){
+        for (CreateQuestionResponseVO vo : listOfQuestionResponse) {
             QuestionResponseEntity newQuestionResponse = new QuestionResponseEntity();
-            
+
             // question - question response
-           QuestionEntity question = questionEntityRepository.findById(vo.getQuestionId()).orElseThrow(()-> new QuestionNotFoundException());
-           newQuestionResponse.setQuestion(question);
-           question.getQuestionResponses().add(newQuestionResponse);
-           
-           // survey response -> question response
-           surveyResponse.getQuestionResponses().add(newQuestionResponse);
-           
-           // question response -> list of options
-           for(Long id : vo.getSelectedOptionIds()){
-               QuestionOptionEntity option = questionOptionEntityRepository.findById(id).orElseThrow(()-> new QuestionOptionNotFoundException());
-                newQuestionResponse.getSelectedOptions().add(option);
-               
-           }
-           
-           questionResponseEntityRepository.saveAndFlush(newQuestionResponse);
-           questionEntityRepository.flush();
-           surveyEntityRepository.flush();
-           surveyResponseEntityRepository.flush();
-           
+            QuestionEntity question = questionEntityRepository.findById(vo.getQuestionId()).orElseThrow(() -> new QuestionNotFoundException());
+            newQuestionResponse.setQuestion(question);
+            question.getQuestionResponses().add(newQuestionResponse);
+
+            // survey response -> question response
+            surveyResponse.getQuestionResponses().add(newQuestionResponse);
+            if (question.getQuestionType() == QuestionTypeEnum.OPEN_ENDED_QUESTION) {
+                newQuestionResponse.setResponseInput(vo.getInput());
+            } else {
+                // question response -> list of options
+                for (Long id : vo.getSelectedOptionIds()) {
+                    QuestionOptionEntity option = questionOptionEntityRepository.findById(id).orElseThrow(() -> new QuestionOptionNotFoundException());
+                    newQuestionResponse.getSelectedOptions().add(option);
+
+                }
+            }
+
+            questionResponseEntityRepository.saveAndFlush(newQuestionResponse);
+            questionEntityRepository.flush();
+            surveyEntityRepository.flush();
+            surveyResponseEntityRepository.flush();
+
         }
-        
+
         return surveyResponseEntityRepository.saveAndFlush(surveyResponse);
-        
+
     }
     //
 }

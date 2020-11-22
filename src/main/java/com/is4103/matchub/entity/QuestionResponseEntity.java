@@ -6,6 +6,7 @@
 package com.is4103.matchub.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,6 +46,6 @@ public class QuestionResponseEntity {
     
     @OneToMany
     @JsonIgnoreProperties({"question"})
-    private List<QuestionOptionEntity> selectedOptions;
+    private List<QuestionOptionEntity> selectedOptions = new ArrayList<>();
 
 }
