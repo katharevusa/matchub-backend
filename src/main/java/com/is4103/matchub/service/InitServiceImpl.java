@@ -12,12 +12,14 @@ import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.entity.SDGTargetEntity;
+import com.is4103.matchub.entity.SelectedTargetEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.enumeration.RequestorEnum;
+import com.is4103.matchub.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,7 @@ import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.repository.SDGTargetEntityRepository;
+import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import com.is4103.matchub.vo.PostVO;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import java.math.BigDecimal;
@@ -43,6 +46,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.LongStream;
 
 @Service
 public class InitServiceImpl implements InitService {
@@ -97,6 +101,9 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     SDGTargetEntityRepository sDGTargetEntityRepository;
+
+    @Autowired
+    private SelectedTargetEntityRepository selectedTargetEntityRepository;
 
     @Transactional
     public void init() {
@@ -191,6 +198,18 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         alexLow.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(alexLow);
+
+        long[] sdgTargetIds = LongStream.rangeClosed(1, 7).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 1L, alexLow.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(16, 20).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 3L, alexLow.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(39, 45).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 5L, alexLow.getAccountId());
+
         setNotifications(alexLow);
 
         accountEntityRepository.save(alexLow);
@@ -2370,4 +2389,27 @@ public class InitServiceImpl implements InitService {
         }
     }
 
+    private void associateSDGTargetsWithProfile(long[] sdgTargetIds, Long sdgId, Long accountId) {
+        //find the sdg
+        SDGEntity sdg = sdgEntityRepository.findBySdgId(sdgId);
+
+        //find the list of sdgTargets instances
+        List<SDGTargetEntity> sdgTargetlist = sDGTargetEntityRepository.findSDGTargetsByIds(sdgTargetIds);
+
+        //find the profile
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        SelectedTargetEntity s = new SelectedTargetEntity();
+
+        s.setProfile(profile);
+        s.setSdg(sdg);
+        s.getSdgTargets().addAll(sdgTargetlist);
+
+        selectedTargetEntityRepository.saveAndFlush(s);
+
+        //set bidirectional association
+        profile.getSelectedTargets().add(s);
+        profileEntityRepository.saveAndFlush(profile);
+    }
 }
