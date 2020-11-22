@@ -991,14 +991,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<ProfileEntity> globalSearchAllUsers(String search, String country, Long[] sdgIds, Pageable pageable) {
+    public Page<ProfileEntity> globalSearchAllUsers(String search, String country, Long[] sdgIds, long[] sdgTargetIds, Pageable pageable) {
 
         Page<ProfileEntity> page;
 
         if (search.isEmpty() && country.isEmpty() && sdgIds.length == 0) {
             page = profileEntityRepository.findAll(pageable);
         } else if (country.isEmpty()) {
-            page = profileEntityRepository.globalSearchAllUsers(search, sdgIds, pageable);
+            page = profileEntityRepository.globalSearchAllUsers(search, sdgIds, sdgTargetIds, pageable);
 
             if (page.isEmpty()) {
                 //spilt the keywords
@@ -1008,7 +1008,7 @@ public class UserServiceImpl implements UserService {
                 Set<ProfileEntity> temp = new HashSet<>();
 
                 for (String s : split) {
-                    temp.addAll(profileEntityRepository.globalSearchAllUsers(s, sdgIds, pageable).toList());
+                    temp.addAll(profileEntityRepository.globalSearchAllUsers(s, sdgIds, sdgTargetIds, pageable).toList());
                 }
 
                 //convert set into List

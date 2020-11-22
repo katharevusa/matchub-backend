@@ -94,7 +94,7 @@ public interface UserService {
 
     Page<ProfileEntity> searchAllUsers(String search, Pageable pageable);
 
-    Page<ProfileEntity> globalSearchAllUsers(String search, String country, Long[] sdgIds, Pageable pageable);
+    Page<ProfileEntity> globalSearchAllUsers(String search, String country, Long[] sdgIds, long[] sdgTargetIds, Pageable pageable);
 
     public void setUserStripeAccountUid(String email, String stripeAccountUid);
 
