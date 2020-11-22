@@ -243,8 +243,24 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
         ikjun.setSdgs(sdgs);
 
-        setNotifications(ikjun);
+        accountEntityRepository.saveAndFlush(ikjun);
 
+        sdgTargetIds = LongStream.rangeClosed(21, 27).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 3L, ikjun.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(29, 34).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 4L, ikjun.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(39, 45).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 5L, ikjun.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(91, 100).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 11L, ikjun.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(120, 126).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 14L, ikjun.getAccountId());
+
+        setNotifications(ikjun);
         accountEntityRepository.save(ikjun);
 
         //3rd individual
@@ -270,6 +286,11 @@ public class InitServiceImpl implements InitService {
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         sophia.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(sophia);
+
+        sdgTargetIds = LongStream.rangeClosed(44, 47).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 5L, sophia.getAccountId());
 
         setNotifications(sophia);
         accountEntityRepository.save(sophia);
@@ -299,6 +320,12 @@ public class InitServiceImpl implements InitService {
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         genc.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(genc);
+
+        sdgTargetIds = LongStream.rangeClosed(40, 47).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 5L, genc.getAccountId());
+
         setNotifications(genc);
         accountEntityRepository.saveAndFlush(genc);
 
@@ -324,6 +351,7 @@ public class InitServiceImpl implements InitService {
         networkForGood.setCity("Washington");
         networkForGood.setProfilePhoto("https://localhost:8443/api/v1/files/init/networkforgood.png");
         networkForGood.setFollowing(new HashSet<>(Arrays.asList(alexLow.getAccountId(), ikjun.getAccountId(), Long.valueOf(9), Long.valueOf(11))));
+
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(2)));
@@ -332,6 +360,27 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(10)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
         networkForGood.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(networkForGood);
+
+        sdgTargetIds = LongStream.rangeClosed(1, 4).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 1L, networkForGood.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(10, 12).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 2L, networkForGood.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(30, 34).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 4L, networkForGood.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(66, 69).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 8L, networkForGood.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(82, 89).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 10L, networkForGood.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(91, 99).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 11L, networkForGood.getAccountId());
+
         setNotifications(networkForGood);
         accountEntityRepository.save(networkForGood);
 
@@ -361,6 +410,18 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
         songhwa.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(songhwa);
+
+        sdgTargetIds = LongStream.rangeClosed(48, 54).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 6L, songhwa.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(56, 58).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 7L, songhwa.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(112, 114).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 13L, songhwa.getAccountId());
+
         setNotifications(songhwa);
         accountEntityRepository.save(songhwa);
 
@@ -389,6 +450,7 @@ public class InitServiceImpl implements InitService {
         kfem.setProfilePhoto("https://localhost:8443/api/v1/files/init/kfem.png");
         kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId(), Long.valueOf(11))));
         kfem.setFollowers(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId(), Long.valueOf(11))));
+
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(6)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
@@ -398,6 +460,30 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(15)));
         kfem.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(kfem);
+
+        sdgTargetIds = LongStream.rangeClosed(48, 52).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 6L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(56, 57).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 7L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(92, 96).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 11L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(105, 110).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 12L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(113, 114).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 13L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(119, 125).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 14L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(129, 135).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 15L, kfem.getAccountId());
+
         setNotifications(kfem);
         accountEntityRepository.save(kfem);
 
@@ -427,6 +513,18 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
         jeongha.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(jeongha);
+
+        sdgTargetIds = LongStream.rangeClosed(51, 55).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 6L, jeongha.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(57, 59).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 7L, jeongha.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(114, 116).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 13L, jeongha.getAccountId());
+
         setNotifications(jeongha);
         accountEntityRepository.save(jeongha);
 
@@ -457,6 +555,21 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(4)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         billy.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(billy);
+
+        sdgTargetIds = LongStream.rangeClosed(3, 5).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 1L, billy.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(9, 10).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 2L, billy.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(33, 35).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 4L, billy.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(39, 42).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 5L, billy.getAccountId());
+
         setNotifications(billy);
         accountEntityRepository.save(billy);
     }
