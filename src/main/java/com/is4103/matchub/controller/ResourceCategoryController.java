@@ -6,7 +6,9 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ResourceCategoryEntity;
+import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.service.ResourceCategoryService;
+import com.is4103.matchub.vo.ResourceCategoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,22 +19,32 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  *
  * @author longluqian
- * 
+ *
  */
 @RestController
 @RequestMapping("/authenticated")
 public class ResourceCategoryController {
-    
-    @Autowired 
+
+    @Autowired
     ResourceCategoryService resourceCategoryService;
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/getAllResourceCategories")
     Page<ResourceCategoryEntity> getAllResourceCategories(Pageable pageable) {
-       return resourceCategoryService.getAllResourceCategories(pageable);
+        return resourceCategoryService.getAllResourceCategories(pageable);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceCategoryById")
     ResourceCategoryEntity getResourceCategoryById(Long resourceCategoryId) {
-       return resourceCategoryService.getResourceCategoryById(resourceCategoryId);
+        return resourceCategoryService.getResourceCategoryById(resourceCategoryId);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/getResourceCategoryById")
+    public ResourceCategoryEntity updateResourceCategory(ResourceCategoryVO resourceCategoryVO) throws ResourceCategoryNotFoundException {
+        return resourceCategoryService.updateResourceCategory(resourceCategoryVO);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/getResourceCategoryById")
+    public ResourceCategoryEntity createResourceCategory(ResourceCategoryVO resourceCategoryVO) {
+        return resourceCategoryService.createResourceCategory(resourceCategoryVO);
     }
 }

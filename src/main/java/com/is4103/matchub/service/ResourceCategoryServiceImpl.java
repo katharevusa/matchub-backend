@@ -6,7 +6,10 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ResourceCategoryEntity;
+import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
+import com.is4103.matchub.vo.ResourceCategoryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,23 +20,44 @@ import org.springframework.stereotype.Service;
  * @author longluqian
  */
 @Service
-public class ResourceCategoryServiceImpl implements ResourceCategoryService{
-    
+public class ResourceCategoryServiceImpl implements ResourceCategoryService {
+
     @Autowired
     ResourceCategoryEntityRepository resourceCategoryEntityRepository;
     
-    public ResourceCategoryEntity createResourceCategory(ResourceCategoryEntity resourceCategoryEntity){
-        return resourceCategoryEntityRepository.save(resourceCategoryEntity);
-    }
-    
-    public ResourceCategoryEntity getResourceCategoryById(Long id){
-     return resourceCategoryEntityRepository.findById(id).get();
+    //for data init
+    @Override
+     public ResourceCategoryEntity createResourceCategory(ResourceCategoryEntity resourceCategoryEntity) {
         
+        return resourceCategoryEntityRepository.saveAndFlush(resourceCategoryEntity);
     }
-    public Page<ResourceCategoryEntity> getAllResourceCategories(Pageable page){
-     return resourceCategoryEntityRepository.findAll(page);
-        
+
+    @Override
+    public ResourceCategoryEntity createResourceCategory(ResourceCategoryVO resourceCategoryVO) {
+        ResourceCategoryEntity resourceCategory = new ResourceCategoryEntity();
+        resourceCategoryVO.createResourceCategory(resourceCategory);
+
+        return resourceCategoryEntityRepository.saveAndFlush(resourceCategory);
     }
-    
-    
+
+    @Override
+    public ResourceCategoryEntity updateResourceCategory(ResourceCategoryVO resourceCategoryVO) throws ResourceCategoryNotFoundException{
+        ResourceCategoryEntity resourceCategory = resourceCategoryEntityRepository.findById(resourceCategoryVO.resourceCategoryId).orElseThrow(()-> new ResourceCategoryNotFoundException());
+        resourceCategoryVO.updateResourceCategory(resourceCategory);
+
+        return resourceCategoryEntityRepository.saveAndFlush(resourceCategory);
+    }
+
+    @Override
+    public ResourceCategoryEntity getResourceCategoryById(Long id) {
+        return resourceCategoryEntityRepository.findById(id).get();
+
+    }
+
+    @Override
+    public Page<ResourceCategoryEntity> getAllResourceCategories(Pageable page) {
+        return resourceCategoryEntityRepository.findAll(page);
+
+    }
+
 }
