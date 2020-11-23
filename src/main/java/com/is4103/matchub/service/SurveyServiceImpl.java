@@ -74,11 +74,16 @@ public class SurveyServiceImpl implements SurveyService {
     @Override
     public SurveyEntity assignRespondents(List<Long> respondentId, Long surveyId) throws SurveyNotFoundException {
         SurveyEntity survey = surveyEntityRepository.findById(surveyId).orElseThrow(() -> new SurveyNotFoundException());
+        // remove old associateion
+        for(ProfileEntity user : survey.getRecievers()){
+            user.getSurveys().remove(survey);
+        }    
         survey.setRecievers(new ArrayList<>());
 
+        // establish new association
         for (Long id : respondentId) {
             ProfileEntity user = profileEntityRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-            survey.getRecievers().add(user);
+            survey.getRecievers().add(user);          
             user.getSurveys().add(survey);
         }
         profileEntityRepository.flush();
