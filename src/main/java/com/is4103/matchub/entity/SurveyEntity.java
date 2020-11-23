@@ -63,7 +63,7 @@ public class SurveyEntity {
     private List<SurveyResponseEntity> surveyResponses = new ArrayList<>();
 
     @ManyToMany
-    @JsonIgnoreProperties({"surveys", "projectsFollowing", "hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
+    @JsonIgnoreProperties({"surveyResponses","surveys", "projectsFollowing", "hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> recievers = new ArrayList<>();
 
     @OneToMany

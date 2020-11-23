@@ -44,12 +44,12 @@ public class SurveyResponseEntity {
     
     @NotNull
     @ManyToOne
-    @JsonIgnoreProperties({"surveyResponses","donations","posts","announcements","hostedResources","savedResources","sdgs","projectsJoined","projectsOwned","projectsFollowing","joinRequests", "reviewsReceived","badges","tasks","managedChannel","joinedChannel"})
+    @JsonIgnoreProperties({"surveys","surveyResponses","donations","posts","announcements","hostedResources","savedResources","sdgs","projectsJoined","projectsOwned","projectsFollowing","joinRequests", "reviewsReceived","badges","tasks","managedChannel","joinedChannel"})
     private ProfileEntity respondent;
     
     @NotNull
     @ManyToOne
-    @JsonIgnoreProperties({"surveyResponses"})
+    @JsonIgnoreProperties({"surveyResponses","recievers"})
     private SurveyEntity survey;
     
     @ManyToMany
