@@ -7,6 +7,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
+import com.is4103.matchub.exception.DeleteResourceCategoryException;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.vo.ResourceCategoryVO;
@@ -58,6 +59,15 @@ public class ResourceCategoryServiceImpl implements ResourceCategoryService {
     public Page<ResourceCategoryEntity> getAllResourceCategories(Pageable page) {
         return resourceCategoryEntityRepository.findAll(page);
 
+    }
+    
+    @Override
+    public void deleteResourceCategories(Long resourceCategoryId)throws ResourceCategoryNotFoundException, DeleteResourceCategoryException{
+        ResourceCategoryEntity resourceCategory = resourceCategoryEntityRepository.findById(resourceCategoryId).orElseThrow(()-> new ResourceCategoryNotFoundException());
+        if(resourceCategory.getResources()!=null){
+            throw new DeleteResourceCategoryException("Unable to delete resource category because there are resources assoiciating with it.");
+        }
+        resourceCategoryEntityRepository.delete(resourceCategory);
     }
 
 }

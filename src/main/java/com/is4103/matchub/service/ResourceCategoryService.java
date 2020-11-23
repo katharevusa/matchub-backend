@@ -6,6 +6,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ResourceCategoryEntity;
+import com.is4103.matchub.exception.DeleteResourceCategoryException;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.vo.ResourceCategoryVO;
 import org.springframework.data.domain.Page;
@@ -26,4 +27,6 @@ public interface ResourceCategoryService {
     public ResourceCategoryEntity updateResourceCategory(ResourceCategoryVO resourceCategoryVO) throws ResourceCategoryNotFoundException;
 
      public ResourceCategoryEntity createResourceCategory(ResourceCategoryVO resourceCategoryVO);
+     
+     public void deleteResourceCategories(Long resourceCategoryId)throws ResourceCategoryNotFoundException, DeleteResourceCategoryException;
 }

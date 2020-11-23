@@ -38,12 +38,12 @@ public class ResourceCategoryController {
         return resourceCategoryService.getResourceCategoryById(resourceCategoryId);
     }
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/getResourceCategoryById")
+    @RequestMapping(method = RequestMethod.PUT, value = "/updateResourceCategory")
     public ResourceCategoryEntity updateResourceCategory(ResourceCategoryVO resourceCategoryVO) throws ResourceCategoryNotFoundException {
         return resourceCategoryService.updateResourceCategory(resourceCategoryVO);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/getResourceCategoryById")
+    @RequestMapping(method = RequestMethod.POST, value = "/createResourceCategory")
     public ResourceCategoryEntity createResourceCategory(ResourceCategoryVO resourceCategoryVO) {
         return resourceCategoryService.createResourceCategory(resourceCategoryVO);
     }
