@@ -148,6 +148,10 @@ public class ProjectEntity {
     @JsonIgnoreProperties({"projectsOwned", "sdgs", "meetings", "projectsJoined", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> projectOwners = new ArrayList<>();
 
+    //sdg refactoring
+    @OneToMany
+    private List<SelectedTargetEntity> selectedTargets = new ArrayList<>();
+
     public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate) {
         this.projectTitle = projectTitle;
         this.projectDescription = projectDescription;
