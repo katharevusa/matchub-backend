@@ -6,7 +6,10 @@
 package com.is4103.matchub.vo;
 
 import com.is4103.matchub.entity.IndividualEntity;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotNull;
 import lombok.Data;
@@ -22,7 +25,7 @@ public class IndividualUpdateVO {
     private Long id;
 
     private String countryCode;
-    
+
     private String phoneNumber;
 
     private String country;
@@ -37,14 +40,16 @@ public class IndividualUpdateVO {
 
     private Set<String> skillSet = new HashSet<>();
 
-    private Long[] sdgIds;
+//    private Long[] sdgIds;
+    
+    private Map<Long, List<Long>> hashmapSDG = new HashMap<>();
 
     public void updateIndividualAccount(IndividualEntity individual) {
 
         if (!this.countryCode.isEmpty()) {
             individual.setCountryCode(this.countryCode);
         }
-        
+
         if (!this.phoneNumber.isEmpty()) {
             individual.setPhoneNumber(this.phoneNumber);
         }

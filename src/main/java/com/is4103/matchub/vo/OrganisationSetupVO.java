@@ -10,8 +10,10 @@ import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -56,7 +58,12 @@ public class OrganisationSetupVO {
 
     private Long[] following;
 
-    private Long[] sdgIds;
+//    private Long[] sdgIds;
+    
+    //*****************REFACTORED 
+    // key: sdgId 
+    // value: List of sdgTargetIds that belongs to the sdgId
+    private Map<Long, List<Long>> hashmapSDG = new HashMap<>();
 
     public void setupOrganisationAccount(OrganisationEntity organisation) {
         organisation.setOrganizationDescription(this.organizationDescription);

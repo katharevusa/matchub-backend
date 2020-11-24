@@ -13,6 +13,8 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.entity.SDGTargetEntity;
+import com.is4103.matchub.entity.SelectedTargetEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.JoinRequestStatusEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
@@ -36,6 +38,8 @@ import com.is4103.matchub.repository.JoinRequestEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
+import com.is4103.matchub.repository.SDGTargetEntityRepository;
+import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import com.is4103.matchub.vo.ProjectCreateVO;
 import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.io.IOException;
@@ -91,6 +95,12 @@ public class ProjectServiceImpl implements ProjectService {
     @Autowired
     private ReputationPointsService reputationPointsService;
 
+    @Autowired
+    private SDGTargetEntityRepository sDGTargetEntityRepository;
+
+    @Autowired
+    private SelectedTargetEntityRepository selectedTargetEntityRepository;
+
     @Override
     public ProjectEntity createProject(ProjectCreateVO vo) {
         ProjectEntity newProject = new ProjectEntity();
@@ -103,10 +113,35 @@ public class ProjectServiceImpl implements ProjectService {
         // associate with SDGs
         // need not do newProject.clear() as it is empty since newly instantiated
         // passing in array of SDG ids
-        for (Long sdgId : vo.getSdgs()) {
-            SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdgId);
-            sdgToAssociateWith.getProjects().add(newProject);
-            newProject.getSdgs().add(sdgToAssociateWith);
+//        for (Long sdgId : vo.getSdgs()) {
+//            SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdgId);
+//            sdgToAssociateWith.getProjects().add(newProject);
+//            newProject.getSdgs().add(sdgToAssociateWith);
+//        }
+        //****************refactored implementation
+        for (int i = 1; i <= 17; i++) {
+            if (vo.getHashmapSDG().containsKey(Long.valueOf(i))) {
+                SDGEntity sdg = sDGEntityRepository.findBySdgId(Long.valueOf(i));
+                newProject.getSdgs().add(sdg);
+                sdg.getProjects().add(newProject);
+
+                SelectedTargetEntity selectedTargets = new SelectedTargetEntity();
+                List<Long> targetIds = vo.getHashmapSDG().get(Long.valueOf(i));
+
+                for (int j = 0; j < targetIds.size(); j++) {
+                    //find the actual instance of the sdgTarget
+                    SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(targetIds.get(j));
+                    selectedTargets.getSdgTargets().add(sdgTarget);
+                }
+
+                newProject = projectEntityRepository.saveAndFlush(newProject);
+
+                selectedTargets.setSdg(sdg);
+                selectedTargets.setProject(newProject);
+                selectedTargetEntityRepository.saveAndFlush(selectedTargets);
+
+                newProject.getSelectedTargets().add(selectedTargets);
+            }
         }
 
         newProject = projectEntityRepository.saveAndFlush(newProject);
@@ -164,13 +199,51 @@ public class ProjectServiceImpl implements ProjectService {
                             SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdg.getSdgId());
                             sdgToAssociateWith.getProjects().remove(oldProject);
                         }
-
+//
                         oldProject.setSdgs(new ArrayList<>());
-                        //new association
-                        for (Long sdgId : vo.getSdgs()) {
-                            SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdgId);
-                            sdgToAssociateWith.getProjects().add(oldProject);
-                            oldProject.getSdgs().add(sdgToAssociateWith);
+//                        //new association
+//                        for (Long sdgId : vo.getSdgs()) {
+//                            SDGEntity sdgToAssociateWith = sDGEntityRepository.findBySdgId(sdgId);
+//                            sdgToAssociateWith.getProjects().add(oldProject);
+//                            oldProject.getSdgs().add(sdgToAssociateWith);
+//                        }
+                        if (!vo.getHashmapSDG().isEmpty()) {
+
+                            //clear the old associations first 
+//                            oldProject.getSdgs().clear();
+                            List<SelectedTargetEntity> oldSelections = oldProject.getSelectedTargets();
+
+                            for (SelectedTargetEntity s : oldSelections) {
+                                s.setProject(null);
+                                s.getSdgTargets().clear();
+                                s.setSdg(null);
+//                                selectedTargetEntityRepository.delete(s);
+                            }
+
+                            oldProject.setSelectedTargets(new ArrayList<>());
+                            selectedTargetEntityRepository.deleteAll(oldSelections);
+
+                            for (int i = 1; i <= 17; i++) {
+                                if (vo.getHashmapSDG().containsKey(Long.valueOf(i))) {
+                                    SDGEntity sdg = sDGEntityRepository.findBySdgId(Long.valueOf(i));
+                                    oldProject.getSdgs().add(sdg);
+
+                                    SelectedTargetEntity selectedTargets = new SelectedTargetEntity();
+                                    List<Long> targetIds = vo.getHashmapSDG().get(Long.valueOf(i));
+
+                                    for (int j = 0; j < targetIds.size(); j++) {
+                                        //find the actual instance of the sdgTarget
+                                        SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(targetIds.get(j));
+                                        selectedTargets.getSdgTargets().add(sdgTarget);
+                                    }
+
+                                    selectedTargets.setSdg(sdg);
+                                    selectedTargets.setProject(oldProject);
+                                    selectedTargetEntityRepository.saveAndFlush(selectedTargets);
+
+                                    oldProject.getSelectedTargets().add(selectedTargets);
+                                }
+                            }
                         }
 
                         oldProject = projectEntityRepository.saveAndFlush(oldProject);
@@ -362,7 +435,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, String country, ProjectStatusEnum status, Pageable pageable) {
+    public Page<ProjectEntity> projectGlobalSearch(String keyword, List<Long> sdgIds, List<Long> sdgTargetIds, String country, ProjectStatusEnum status, Pageable pageable) {
         // first search by keywords
 
         List<ProjectEntity> initProjects = new ArrayList();
@@ -434,10 +507,40 @@ public class ProjectServiceImpl implements ProjectService {
             System.err.println("sdg is null");
             resultFilterBySDGs = resultFilterByStatus;
         }
+        //filter by sdgTargets
+        System.out.println("initial result list size: " + resultFilterBySDGs.size());
+        System.out.println("Starting Filtering by SDG targets now****");
+
+        List<ProjectEntity> resultFilterBySDGTargets = new ArrayList();
+        if (!sdgTargetIds.isEmpty()) {
+            for (int j = 0; j < resultFilterBySDGs.size(); j++) {
+                ProjectEntity p = resultFilterBySDGs.get(j);
+                System.err.println("Project Id " + p.getProjectId());
+                boolean contain = false;
+                for (SelectedTargetEntity s : p.getSelectedTargets()) {
+                    contain = false;
+                    List<SDGTargetEntity> sdgTargets = s.getSdgTargets();
+                    for (int i = 0; i < sdgTargets.size() && !contain; i++) {
+                        if (sdgTargetIds.contains(sdgTargets.get(i).getSdgTargetId())) {
+                            System.err.println(" contain sdgTarget " + sdgTargets.get(i).getSdgTargetId());
+                            contain = true;
+                        }
+                        if (contain == true) {
+                            resultFilterBySDGTargets.add(p);
+                        }
+                    }
+
+                }
+
+            }
+        } else {
+            System.err.println("sdg target is null");
+            resultFilterBySDGTargets = resultFilterBySDGs;
+        }
 
         Long start = pageable.getOffset();
-        Long end = (start + pageable.getPageSize()) > resultFilterBySDGs.size() ? resultFilterBySDGs.size() : (start + pageable.getPageSize());
-        Page<ProjectEntity> pages = new PageImpl<ProjectEntity>(resultFilterBySDGs.subList(start.intValue(), end.intValue()), pageable, resultFilterBySDGs.size());
+        Long end = (start + pageable.getPageSize()) > resultFilterBySDGTargets.size() ? resultFilterBySDGTargets.size() : (start + pageable.getPageSize());
+        Page<ProjectEntity> pages = new PageImpl<ProjectEntity>(resultFilterBySDGTargets.subList(start.intValue(), end.intValue()), pageable, resultFilterBySDGTargets.size());
 
         return pages;
 

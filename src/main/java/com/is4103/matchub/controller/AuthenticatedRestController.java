@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.LongStream;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -190,7 +191,15 @@ public class AuthenticatedRestController {
 
     // ************** GLOBAL SEARCH METHOD FOR PROFILE EXPLORATION ************** //
     @RequestMapping(method = RequestMethod.GET, value = "/globalSearchAllUsers")
-    Page<ProfileEntity> globalSearchAllUsers(@RequestParam(value = "search", defaultValue = "") String search, @RequestParam(value = "country", defaultValue = "") String country, @RequestParam(value = "sdgIds", defaultValue = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17") Long[] sdgIds, Pageable pageable) {
-        return userService.globalSearchAllUsers(search, country, sdgIds, pageable);
+    Page<ProfileEntity> globalSearchAllUsers(@RequestParam(value = "search", defaultValue = "") String search,
+            @RequestParam(value = "country", defaultValue = "") String country,
+            @RequestParam(value = "sdgIds", defaultValue = "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17") Long[] sdgIds,
+            @RequestParam(value = "sdgTargetIds", defaultValue = "") long[] sdgTargetIds,
+            Pageable pageable) {
+        
+        if (sdgTargetIds.length == 0) {
+            sdgTargetIds = LongStream.rangeClosed(1, 169).toArray();
+        }
+        return userService.globalSearchAllUsers(search, country, sdgIds, sdgTargetIds, pageable);
     }
 }

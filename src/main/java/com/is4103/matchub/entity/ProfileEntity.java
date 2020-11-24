@@ -137,6 +137,10 @@ public abstract class ProfileEntity extends AccountEntity {
     
     
 
+    //sdg refactoring
+    @OneToMany
+    private List<SelectedTargetEntity> selectedTargets = new ArrayList<>();
+
     public ProfileEntity(String email, String password) {
         super(email, password);
     }
