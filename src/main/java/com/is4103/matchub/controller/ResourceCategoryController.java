@@ -6,14 +6,18 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.ResourceCategoryEntity;
+import com.is4103.matchub.exception.DeleteResourceCategoryException;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.service.ResourceCategoryService;
 import com.is4103.matchub.vo.ResourceCategoryVO;
+import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -34,17 +38,23 @@ public class ResourceCategoryController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getResourceCategoryById")
-    ResourceCategoryEntity getResourceCategoryById(Long resourceCategoryId) {
+    ResourceCategoryEntity getResourceCategoryById(@RequestParam(value = "resourceCategoryId", required = true)Long resourceCategoryId) {
         return resourceCategoryService.getResourceCategoryById(resourceCategoryId);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/updateResourceCategory")
-    public ResourceCategoryEntity updateResourceCategory(ResourceCategoryVO resourceCategoryVO) throws ResourceCategoryNotFoundException {
+    public ResourceCategoryEntity updateResourceCategory(@Valid @RequestBody ResourceCategoryVO resourceCategoryVO) throws ResourceCategoryNotFoundException {
         return resourceCategoryService.updateResourceCategory(resourceCategoryVO);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/createResourceCategory")
-    public ResourceCategoryEntity createResourceCategory(ResourceCategoryVO resourceCategoryVO) {
+    public ResourceCategoryEntity createResourceCategory(@Valid @RequestBody ResourceCategoryVO resourceCategoryVO) {
         return resourceCategoryService.createResourceCategory(resourceCategoryVO);
     }
+    
+    @RequestMapping(method = RequestMethod.DELETE, value = "/deleteResourceCategories")
+    public void deleteResourceCategories(@RequestParam(value = "resourceCategoryId", required = true)Long resourceCategoryId)throws ResourceCategoryNotFoundException, DeleteResourceCategoryException{
+        resourceCategoryService.deleteResourceCategories(resourceCategoryId);
+    }
+    
 }
