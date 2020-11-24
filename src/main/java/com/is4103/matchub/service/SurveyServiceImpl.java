@@ -199,7 +199,7 @@ public class SurveyServiceImpl implements SurveyService {
         QuestionEntity question = questionEntityRepository.findById(questionId).orElseThrow(() -> new QuestionNotFoundException("Unable to find question"));
         QuestionEntity branchQuestion = questionEntityRepository.findById(branchQuestionId).orElseThrow(() -> new QuestionNotFoundException("Unable to find question"));
 
-        question.setNextQuestionId(questionId);
+        question.setNextQuestionId(branchQuestionId);
         return questionEntityRepository.saveAndFlush(question);
     }
 
