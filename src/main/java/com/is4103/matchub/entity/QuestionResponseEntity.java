@@ -38,6 +38,8 @@ public class QuestionResponseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long questionResponseId;
 
+    
+    @Column(nullable = true, length = 2000)
     private String responseInput;
 
     @ManyToOne

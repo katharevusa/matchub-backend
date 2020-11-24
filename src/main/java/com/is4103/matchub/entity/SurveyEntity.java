@@ -42,7 +42,7 @@ public class SurveyEntity {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = true)
+    @Column(nullable = true, length = 2000)
     private String description;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
