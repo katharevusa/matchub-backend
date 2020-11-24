@@ -127,7 +127,7 @@ public class ProjectEntity {
 
     @OneToMany
     @JsonIgnoreProperties({"donationOptions"})
-    private List<FundCampaignEntity> fundsCampaign = new ArrayList<>();
+    private List<FundCampaignEntity> fundCampaigns = new ArrayList<>();
 
     @OneToMany
     private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();

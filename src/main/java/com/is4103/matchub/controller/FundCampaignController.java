@@ -48,7 +48,7 @@ public class FundCampaignController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteFundCampaign")
-    public void deleteFundCampaign(@RequestParam(value = "fundCampaignId", required = true) Long fundCampaignId) throws FundCampaignNotFoundException, DeleteFundCampaignException {
+    public void deleteFundCampaign(@RequestParam(value = "fundCampaignId", required = true) Long fundCampaignId) throws FundCampaignNotFoundException, DeleteFundCampaignException, ProjectNotFoundException {
         fundCampaignService.deleteFundCampaign(fundCampaignId);
     }
 
@@ -108,7 +108,7 @@ public class FundCampaignController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/updateFundCampaign")
-    public FundCampaignEntity updateFundCampaign(UpdateFundCampaignVO vo) throws FundCampaignNotFoundException {
+    public FundCampaignEntity updateFundCampaign(@Valid @RequestBody UpdateFundCampaignVO vo) throws FundCampaignNotFoundException {
         return fundCampaignService.updateFundCampaign(vo);
     }
     
@@ -119,7 +119,7 @@ public class FundCampaignController {
     
     //get all donations by campaign Id
     @RequestMapping(method = RequestMethod.GET, value = "/getAllDonationsByCampaignId")
-    public List<DonationEntity> getAllDonationsByCampaignId(Long fundCampaignId) throws FundCampaignNotFoundException{
+    public List<DonationEntity> getAllDonationsByCampaignId(@RequestParam(value = "fundCampaignId", required = true) Long fundCampaignId) throws FundCampaignNotFoundException{
         return fundCampaignService.getAllDonationsByCampaignId(fundCampaignId);
     }
 
