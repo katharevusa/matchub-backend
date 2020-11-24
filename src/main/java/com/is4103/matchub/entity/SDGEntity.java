@@ -50,6 +50,9 @@ public class SDGEntity {
     @JsonIgnoreProperties({"sdgs", "projectOwners", "joinRequests", "reviews", "projectBadge", "fundsCampaign", "meetings", "listOfRequests", "kpis", "teamMembers", "channels"})
     private List<ProjectEntity> projects = new ArrayList<>();
 
+    @OneToMany
+    private List<SDGTargetEntity> targets = new ArrayList<>();
+
     public SDGEntity(String sdgName, String sdgDescription) {
         this.sdgName = sdgName;
         this.sdgDescription = sdgDescription;

@@ -46,8 +46,13 @@ public class ProjectExplorationController {
 
     // global search for projects with filtering 
     @RequestMapping(method = RequestMethod.GET, value = "/projectGlobalSearch")
-    public Page<ProjectEntity> projectGlobalSearch(@RequestParam(value = "keywords", defaultValue ="") String keywords, @RequestParam(value = "sdgIds", defaultValue ="") List<Long> sdgIds, @RequestParam(value = "country", defaultValue = "") String country,  ProjectStatusEnum status, Pageable pageable) {  
-        return projectService.projectGlobalSearch(keywords, sdgIds, country, status, pageable);
+    public Page<ProjectEntity> projectGlobalSearch(@RequestParam(value = "keywords", defaultValue = "") String keywords,
+            @RequestParam(value = "sdgIds", defaultValue = "") List<Long> sdgIds,
+            @RequestParam(value = "sdgTargetIds", defaultValue = "") List<Long> sdgTargetIds,
+            @RequestParam(value = "country", defaultValue = "") String country,
+            ProjectStatusEnum status,
+            Pageable pageable) {
+        return projectService.projectGlobalSearch(keywords, sdgIds, sdgTargetIds, country, status, pageable);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getAllProjects")
@@ -100,28 +105,25 @@ public class ProjectExplorationController {
     public JoinRequestEntity createJoinRequest(@RequestParam(value = "projectId", required = true) Long projectId, @RequestParam(value = "profileId", required = true) Long profileId) throws ProjectNotFoundException, JoinProjectException {
         return projectService.createJoinRequest(projectId, profileId);
     }
-    
+
     @RequestMapping(method = RequestMethod.DELETE, value = "/UnfollowProject")
-    public void UnfollowProject(@RequestParam(value = "followerId", required = true)Long followerId,@RequestParam(value = "projectId", required = true) Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException{
-     projectService.UnfollowProject(followerId, projectId);
-    }
-    
-    @RequestMapping(method = RequestMethod.GET, value = "/getListOfFollowingProjectsByUserId")
-    public List<ProjectEntity> getListOfFollowingProjectsByUserId(@RequestParam(value = "userId", required = true)Long userId) throws UserNotFoundException{
-       return  projectService.getListOfFollowingProjectsByUserId(userId);
-        
-    }
-    
-    @RequestMapping(method = RequestMethod.GET, value = "/getListOfFollowerByProjectId")
-    public List<ProfileEntity> getListOfFollowerByProjectId(@RequestParam(value = "projectId", required = true)Long projectId)throws ProjectNotFoundException{
-        return projectService.getListOfFollowerByProjectId(projectId);
-    }
-    
-    @RequestMapping(method = RequestMethod.PUT, value = "/followProject")
-    public ProjectEntity followProject(@RequestParam(value = "followerId", required = true)Long followerId, @RequestParam(value = "projectId", required = true)Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException{
-        return projectService.followProject(followerId, projectId);
+    public void UnfollowProject(@RequestParam(value = "followerId", required = true) Long followerId, @RequestParam(value = "projectId", required = true) Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException {
+        projectService.UnfollowProject(followerId, projectId);
     }
 
-    
+    @RequestMapping(method = RequestMethod.GET, value = "/getListOfFollowingProjectsByUserId")
+    public List<ProjectEntity> getListOfFollowingProjectsByUserId(@RequestParam(value = "userId", required = true) Long userId) throws UserNotFoundException {
+        return projectService.getListOfFollowingProjectsByUserId(userId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getListOfFollowerByProjectId")
+    public List<ProfileEntity> getListOfFollowerByProjectId(@RequestParam(value = "projectId", required = true) Long projectId) throws ProjectNotFoundException {
+        return projectService.getListOfFollowerByProjectId(projectId);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/followProject")
+    public ProjectEntity followProject(@RequestParam(value = "followerId", required = true) Long followerId, @RequestParam(value = "projectId", required = true) Long projectId) throws ProjectNotFoundException, UserNotFoundException, FollowProjectException {
+        return projectService.followProject(followerId, projectId);
+    }
 
 }

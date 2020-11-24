@@ -10,8 +10,10 @@ import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
@@ -25,40 +27,38 @@ import lombok.Data;
 @Data
 public class ProjectCreateVO {
 
-   
     @NotNull(message = "Project title can not be null")
     @NotBlank(message = "Project title can not be blank")
     private String projectTitle;
 
-   
     @NotNull(message = "Project description can not be null")
     @NotBlank(message = "Project description can not be blank")
     private String projectDescription;
 
-   
     @NotNull(message = "Country can not be null")
     @NotBlank(message = "Country can not be blank")
     private String country;
 
-   
     @NotNull(message = "Project start time can not be null")
     private LocalDateTime startDate;
 
-    
     @NotNull(message = "Project end time can not be null")
     @FutureOrPresent
     private LocalDateTime endDate;
-    
+
     @NotNull
     private Long projCreatorId;
+
+//    private List<Long> sdgs = new ArrayList<>();
     
-    
-    // setting in project service impl
-    private List<Long> sdgs = new ArrayList<>();
-    
+    //*****************REFACTORED 
+    // key: sdgId 
+    // value: List of sdgTargetIds that belongs to the sdgId
+    private Map<Long, List<Long>> hashmapSDG = new HashMap<>();
+
     private List<String> relatedResources = new ArrayList<>();
-    
-    public void updateProject(ProjectEntity newProject){
+
+    public void updateProject(ProjectEntity newProject) {
         newProject.setProjectTitle(this.projectTitle);
         newProject.setProjectDescription(this.projectDescription);
         newProject.setCountry(this.country);
@@ -66,8 +66,8 @@ public class ProjectCreateVO {
         newProject.setEndDate(this.endDate);
         newProject.setProjCreatorId(projCreatorId);
         newProject.setRelatedResources(relatedResources);
-        System.out.println("com.is4103.matchub.vo.ProjectCreateVO.updateProject(): "+newProject.getCountry());
-        System.out.println("com.is4103.matchub.vo.ProjectCreateVO.updateProject(): "+this.country);
+        System.out.println("com.is4103.matchub.vo.ProjectCreateVO.updateProject(): " + newProject.getCountry());
+        System.out.println("com.is4103.matchub.vo.ProjectCreateVO.updateProject(): " + this.country);
     }
-    
+
 }
