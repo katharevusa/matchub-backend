@@ -54,6 +54,7 @@ public class ResourceCategoryEntity {
     @NotNull
     private Integer perUnit;
     
+    @NotNull
     private String unitName;
 
     public ResourceCategoryEntity(String resourceCategoryName, String resourceCategoryDescription, Integer communityPointsGuideline, Integer perUnit, String unitName) {

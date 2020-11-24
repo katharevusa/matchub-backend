@@ -30,6 +30,8 @@ public class CreateQuestionVO {
     
     private Long surveyId;
     
+    private Long previousQuestionId;
+    
     public void createQuestion(QuestionEntity question){
         question.setQuestion(questionContent);
         question.setQuestionType(questionType);  

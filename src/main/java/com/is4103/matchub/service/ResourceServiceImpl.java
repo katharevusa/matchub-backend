@@ -6,19 +6,18 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ProfileEntity;
-import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.exception.ResourceCategoryNotFoundException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.TerminateResourceException;
-import com.is4103.matchub.exception.UnableToSaveResourceException;
 import com.is4103.matchub.exception.UpdateResourceException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceCategoryEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
+import com.is4103.matchub.repository.ResourceTransactionEntityRepository;
 import com.is4103.matchub.vo.ResourceVO;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -57,6 +56,9 @@ public class ResourceServiceImpl implements ResourceService {
 
     @Autowired
     ProjectEntityRepository projectEntityRepository;
+    
+    @Autowired
+    ResourceTransactionEntityRepository  resourceTransactionEntityRepository;
 
     @Override
     public ResourceEntity createResource(ResourceVO vo) throws ResourceCategoryNotFoundException, UserNotFoundException {
@@ -463,5 +465,6 @@ public class ResourceServiceImpl implements ResourceService {
         resources = resourceEntityRepository.getMatchedResourcesByProjectId(projectId);
         return resources;
     }
-
+    
+    
 }

@@ -8,6 +8,7 @@ package com.is4103.matchub.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.is4103.matchub.enumeration.QuestionTypeEnum;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.Column;
@@ -48,8 +49,9 @@ public class QuestionEntity {
     private Long nextQuestionId;
 
     @ElementCollection
-    private Map<Long, Long> optionToQuestion;
-
+    private Map<Long, Long> optionToQuestion = new HashMap<>();
+    
+ 
     @Column(nullable = false)
     private Boolean hasBranching = false;
 
@@ -62,9 +64,11 @@ public class QuestionEntity {
     private SurveyEntity survey;
 
     @OneToMany(mappedBy = "question")
+    @JsonIgnoreProperties({"question"})
     private List<QuestionOptionEntity> options = new ArrayList<>();
 
     @OneToMany(mappedBy = "question")
+    @JsonIgnoreProperties({"question", " selectedOptions"})
     private List<QuestionResponseEntity> questionResponses = new ArrayList<>();
 
 }

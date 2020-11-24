@@ -817,6 +817,16 @@ public class ExceptionHandlingController {
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
     
+      @ExceptionHandler(value = DeleteResourceCategoryException.class)
+    public ResponseEntity<ExceptionResponse> deleteResourceCategoryException(DeleteResourceCategoryException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to delete the resource category ");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
     
 
 }

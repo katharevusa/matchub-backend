@@ -3,6 +3,8 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.DonationEntity;
 import com.is4103.matchub.enumeration.PaymentScenario;
 import com.is4103.matchub.exception.DonationOptionNotFoundException;
+import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.StripeRuntimeException;
 import com.is4103.matchub.vo.PaymentIntentCreateVO;
 import com.stripe.Stripe;
@@ -41,6 +43,9 @@ public class StripeServiceImpl implements StripeService {
     
     @Autowired
     FundCampaignService fundCampaignService;
+    
+    @Autowired
+    ResourceRequestService resourceRequestService;
 
     @Value("${stripe.sk}")
     private String apiKey;
@@ -155,6 +160,7 @@ public class StripeServiceImpl implements StripeService {
                         // can add on if other fields are needed.
                         .putMetadata("payer_stripe_uid", paymentIntentCreateVO.getPayerStripeUid())
                         .putMetadata("resource_id", paymentIntentCreateVO.getResourceId().toString())
+                        .putMetadata("project_id", paymentIntentCreateVO.getResourceId().toString())
                         .putMetadata("scenario", "ResourcePurchase")
                         .build();
 
@@ -171,7 +177,7 @@ public class StripeServiceImpl implements StripeService {
     }
 
     @Override
-    public String handleWebhookEvent(String json, HttpServletRequest request) throws DonationOptionNotFoundException{
+    public String handleWebhookEvent(String json, HttpServletRequest request) throws DonationOptionNotFoundException, ResourceNotFoundException, ProjectNotFoundException{
 
         String header = request.getHeader("Stripe-Signature");
         // need to generate from stripe CLI and change in application.properties file
@@ -228,13 +234,13 @@ public class StripeServiceImpl implements StripeService {
     }
 
     // to create entities and associate with fund pledge / transaction history / send out notifications with FCM etc.
-    private void handleSuccessfulPaymentIntent(String payerEmail, PaymentIntent paymentIntent)throws DonationOptionNotFoundException{
+    private void handleSuccessfulPaymentIntent(String payerEmail, PaymentIntent paymentIntent)throws DonationOptionNotFoundException, ResourceNotFoundException, ProjectNotFoundException{
 
         // if the payment if for fund campaign, create donation entity
         if(paymentIntent.getMetadata().get("scenario").equals("FundCampaignDonation")){
           fundCampaignService.createDonation(payerEmail, paymentIntent);
         }else if(paymentIntent.getMetadata().get("scenario").equals("ResourcePurchase")){
-            
+           resourceRequestService.createResourceTransaction(payerEmail, paymentIntent);
         }
         
         // to do

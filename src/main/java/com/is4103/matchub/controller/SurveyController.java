@@ -7,7 +7,9 @@ package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.QuestionEntity;
 import com.is4103.matchub.entity.QuestionOptionEntity;
+import com.is4103.matchub.entity.QuestionResponseEntity;
 import com.is4103.matchub.entity.SurveyEntity;
+import com.is4103.matchub.entity.SurveyResponseEntity;
 import com.is4103.matchub.exception.DeleteQuestionException;
 import com.is4103.matchub.exception.DeleteQuestionOptionException;
 import com.is4103.matchub.exception.DeleteSurveyException;
@@ -15,6 +17,8 @@ import com.is4103.matchub.exception.QuestionNotFoundException;
 import com.is4103.matchub.exception.QuestionOptionNotFoundException;
 import com.is4103.matchub.exception.SurveyNotFoundException;
 import com.is4103.matchub.service.SurveyService;
+import com.is4103.matchub.vo.AssignRespondentVO;
+import com.is4103.matchub.vo.CreateFullSurveyResponseVO;
 import com.is4103.matchub.vo.CreateQuestionOptionVO;
 import com.is4103.matchub.vo.CreateQuestionVO;
 import com.is4103.matchub.vo.SurveyVO;
@@ -46,8 +50,8 @@ public class SurveyController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/assignRespondents")
-    public SurveyEntity assignRespondents(List<Long> respondentId, @RequestParam(value = "surveyId", required = true) Long surveyId) throws SurveyNotFoundException {
-        return surveyService.assignRespondents(respondentId, surveyId);
+    public SurveyEntity assignRespondents(@Valid @RequestBody AssignRespondentVO vo) throws SurveyNotFoundException {
+        return surveyService.assignRespondents(vo.getRespondentId(), vo.getSurveyId());
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/updateSurvey")
@@ -56,27 +60,27 @@ public class SurveyController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteSurvey")
-    public void deleteSurvey(@RequestParam(value = "surveyId", required = true)Long surveyId) throws SurveyNotFoundException, DeleteSurveyException, QuestionNotFoundException, DeleteQuestionException, QuestionOptionNotFoundException, DeleteQuestionOptionException {
+    public void deleteSurvey(@RequestParam(value = "surveyId", required = true) Long surveyId) throws SurveyNotFoundException, DeleteSurveyException, QuestionNotFoundException, DeleteQuestionException, QuestionOptionNotFoundException, DeleteQuestionOptionException {
         surveyService.deleteSurvey(surveyId);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/clearAllSurveyResponse")
-    public void clearAllSurveyResponse(@RequestParam(value = "surveyId", required = true)Long surveyId) throws SurveyNotFoundException {
+    public void clearAllSurveyResponse(@RequestParam(value = "surveyId", required = true) Long surveyId) throws SurveyNotFoundException {
         surveyService.clearAllSurveyResponse(surveyId);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteOneSurveyResponse")
-    public void deleteOneSurveyResponse(@RequestParam(value = "surveyResponseId", required = true)Long surveyResponseId) {
+    public void deleteOneSurveyResponse(@RequestParam(value = "surveyResponseId", required = true) Long surveyResponseId) {
         surveyService.deleteOneSurveyResponse(surveyResponseId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/createQuestion")
-    public QuestionEntity createQuestion(@Valid @RequestBody CreateQuestionVO vo) throws SurveyNotFoundException {
+    public QuestionEntity createQuestion(@Valid @RequestBody CreateQuestionVO vo) throws SurveyNotFoundException, QuestionNotFoundException {
         return surveyService.createQuestion(vo);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/updateQuestionNextQuestion")
-    public QuestionEntity updateQuestionNextQuestion(@RequestParam(value = "questionId", required = true)Long questionId,@RequestParam(value = "branchQuestionId", required = true) Long branchQuestionId) throws QuestionNotFoundException {
+    public QuestionEntity updateQuestionNextQuestion(@RequestParam(value = "questionId", required = true) Long questionId, @RequestParam(value = "branchQuestionId", required = true) Long branchQuestionId) throws QuestionNotFoundException {
         return surveyService.updateQuestionNextQuestion(questionId, branchQuestionId);
     }
 
@@ -96,19 +100,44 @@ public class SurveyController {
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteQuestionOptions")
-    public void deleteQuestionOptions(@RequestParam(value = "questionId", required = true)Long questionId,@RequestParam(value = "questionOptionId", required = true) Long questionOptionId) throws QuestionOptionNotFoundException, DeleteQuestionOptionException, QuestionNotFoundException {
+    public void deleteQuestionOptions(@RequestParam(value = "questionId", required = true) Long questionId, @RequestParam(value = "questionOptionId", required = true) Long questionOptionId) throws QuestionOptionNotFoundException, DeleteQuestionOptionException, QuestionNotFoundException {
         surveyService.deleteQuestionOptions(questionId, questionOptionId);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/branchQuestionOptions")
-    public QuestionEntity branchQuestionOptions(@RequestParam(value = "questionOptionId", required = true)Long questionOptionId,@RequestParam(value = "branchedQuestionId", required = true) Long branchedQuestionId) throws QuestionOptionNotFoundException, QuestionNotFoundException {
+    @RequestMapping(method = RequestMethod.PUT, value = "/branchQuestionOptions")
+    public QuestionEntity branchQuestionOptions(@RequestParam(value = "questionOptionId", required = true) Long questionOptionId, @RequestParam(value = "branchedQuestionId", required = true) Long branchedQuestionId) throws QuestionOptionNotFoundException, QuestionNotFoundException {
         return surveyService.branchQuestionOptions(questionOptionId, branchedQuestionId);
     }
 
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteQuestion")
-    public void deleteQuestion(@RequestParam(value = "questionId", required = true)Long questionId) throws QuestionNotFoundException, DeleteQuestionException, QuestionOptionNotFoundException, DeleteQuestionOptionException {
+    public void deleteQuestion(@RequestParam(value = "questionId", required = true) Long questionId) throws QuestionNotFoundException, DeleteQuestionException, QuestionOptionNotFoundException, DeleteQuestionOptionException {
         surveyService.deleteQuestion(questionId);
 
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllSurveyResponseOfASurvey")
+    public List<SurveyResponseEntity> getAllSurveyResponseOfASurvey(@RequestParam(value = "surveyId", required = true)Long surveyId) throws SurveyNotFoundException {
+        return surveyService.getAllSurveyResponseOfASurvey(surveyId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllQuestionResponses")
+    public List<QuestionResponseEntity> getAllQuestionResponses(@RequestParam(value = "questionId", required = true)Long questionId) throws QuestionNotFoundException {
+        return surveyService.getAllQuestionResponses(questionId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getSurveyBySurveyId")
+    public SurveyEntity getSurveyBySurveyId(@RequestParam(value = "surveyId", required = true)Long surveyId) throws SurveyNotFoundException {
+        return surveyService.getSurveyBySurveyId(surveyId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllSurveys")
+    public List<SurveyEntity> getAllSurveys() {
+        return surveyService.getAllSurveys();
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/createFullSurveyResponse")
+    public SurveyResponseEntity createFullSurveyResponse(@Valid @RequestBody CreateFullSurveyResponseVO fullVO)throws SurveyNotFoundException, QuestionNotFoundException, QuestionOptionNotFoundException{
+        return surveyService.createFullSurveyResponse(fullVO);
     }
 
 }

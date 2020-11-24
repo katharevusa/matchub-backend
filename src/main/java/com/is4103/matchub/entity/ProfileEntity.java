@@ -132,7 +132,7 @@ public abstract class ProfileEntity extends AccountEntity {
     private List<SurveyResponseEntity> surveyResponses = new ArrayList<>();
     
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"recievers"})
+    @JsonIgnoreProperties({"recievers","surveyResponses"})
     private List<SurveyEntity> surveys = new ArrayList<>();
     
     

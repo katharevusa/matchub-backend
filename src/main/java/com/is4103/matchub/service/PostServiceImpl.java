@@ -259,27 +259,6 @@ public class PostServiceImpl implements PostService {
         post.getListOfComments().add(newComment);
         post = postEntityRepository.saveAndFlush(post);
 
-        ProfileEntity commenter = profileEntityRepository.findById(newComment.getAccountId()).get();
-        String commenterName = "";
-        if (commenter instanceof IndividualEntity) {
-            commenterName = ((IndividualEntity) commenter).getFirstName() + " " + ((IndividualEntity) commenter).getLastName();
-        } else if (commenter instanceof OrganisationEntity) {
-            commenterName = ((OrganisationEntity) commenter).getOrganizationName();
-        }
-
-        AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle("Check out a new comment from " + commenterName + " for your post!");
-        announcementEntity.setContent(post.getContent());
-        announcementEntity.setTimestamp(LocalDateTime.now());
-        announcementEntity.setType(AnnouncementTypeEnum.NEW_POST_COMMENT);
-        announcementEntity.setPostId(postId);
-        // association
-        announcementEntity.getNotifiedUsers().add(post.getPostCreator());
-        post.getPostCreator().getAnnouncements().add(announcementEntity);
-        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
-
-        // create notification
-        announcementService.createNormalNotification(announcementEntity);
         return post;
 
     }
@@ -309,28 +288,28 @@ public class PostServiceImpl implements PostService {
         post.getLikedUsersId().add(likerId);
         post = postEntityRepository.saveAndFlush(post);
 
-//        // announcements
-//        ProfileEntity liker = profileEntityRepository.findById(likerId).get();
-//        String likerName = "";
-//        if (liker instanceof IndividualEntity) {
-//            likerName = ((IndividualEntity) liker).getFirstName() + " " + ((IndividualEntity) liker).getLastName();
-//        } else if (liker instanceof OrganisationEntity) {
-//            likerName = ((OrganisationEntity) liker).getOrganizationName();
-//        }
-//
-//        AnnouncementEntity announcementEntity = new AnnouncementEntity();
-//        announcementEntity.setTitle("A new like from " + likerName + " for your post!");
-//        announcementEntity.setContent(post.getContent());
-//        announcementEntity.setTimestamp(LocalDateTime.now());
-//        announcementEntity.setType(AnnouncementTypeEnum.NEW_POST_LIKE);
-//        announcementEntity.setPostId(postId);
-//        // association
-//        announcementEntity.getNotifiedUsers().add(post.getPostCreator());
-//        post.getPostCreator().getAnnouncements().add(announcementEntity);
-//        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
-//
-//        // create notification
-//        announcementService.createNormalNotification(announcementEntity);
+        // announcements
+        ProfileEntity liker = profileEntityRepository.findById(likerId).get();
+        String likerName = "";
+        if (liker instanceof IndividualEntity) {
+            likerName = ((IndividualEntity) liker).getFirstName() + " " + ((IndividualEntity) liker).getLastName();
+        } else if (liker instanceof OrganisationEntity) {
+            likerName = ((OrganisationEntity) liker).getOrganizationName();
+        }
+
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        announcementEntity.setTitle("A new like from " + likerName + " for your post!");
+        announcementEntity.setContent(post.getContent());
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.NEW_POST_LIKE);
+        announcementEntity.setPostId(postId);
+        // association
+        announcementEntity.getNotifiedUsers().add(post.getPostCreator());
+        post.getPostCreator().getAnnouncements().add(announcementEntity);
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification
+        announcementService.createNormalNotification(announcementEntity);
         return post;
 
     }

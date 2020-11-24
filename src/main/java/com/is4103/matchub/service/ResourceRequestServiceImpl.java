@@ -13,22 +13,29 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
+import com.is4103.matchub.entity.ResourceTransactionEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.enumeration.RequestorEnum;
 import com.is4103.matchub.exception.CreateResourceRequestException;
 import com.is4103.matchub.exception.DeleteResourceRequestException;
+import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.ResourceRequestNotFoundException;
 import com.is4103.matchub.exception.RespondToResourceRequestException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
+import com.is4103.matchub.repository.ResourceTransactionEntityRepository;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import com.is4103.matchub.vo.SendNotificationsToUsersVO;
+import com.stripe.model.PaymentIntent;
 import static io.grpc.internal.ConscryptLoader.isPresent;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +50,7 @@ import org.springframework.stereotype.Service;
  * @author longluqian
  */
 @Service
-public class ResourceRequestImpl implements ResourceRequestService {
+public class ResourceRequestServiceImpl implements ResourceRequestService {
 
     @Autowired
     ResourceRequestEntityRepository resourceRequestEntityRepository;
@@ -65,6 +72,9 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
     @Autowired
     AnnouncementService announcementService;
+    
+    @Autowired
+    ResourceTransactionEntityRepository resourceTransactionEntityRepository;
 
     // create resource request: Project owner initiate request (projectownerId, projectId, resourceId, unitsRequired
     @Override
@@ -519,6 +529,44 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
         }
         return resourceRequests;
+    }
+    
+    @Override
+    public List<ResourceTransactionEntity> getResourceTransactionForOwnedResources(Long userId){
+        ProfileEntity user = profileEntityRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        List<ResourceEntity> resources = user.getHostedResources();
+        List<ResourceTransactionEntity> transactions = new ArrayList<>();
+        for(ResourceEntity resource: resources){
+           transactions.add(resource.getResourceTransaction());
+        }
+        return transactions;
+    }
+
+    @Override
+    public List<ResourceTransactionEntity> getResourceTransactionForConsumedResources(Long userId){
+        ProfileEntity user = profileEntityRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        return resourceTransactionEntityRepository.getResourceTransactionsByPayerId(userId);
+    }
+    
+    @Override
+    public ResourceTransactionEntity createResourceTransaction(String payerEmail, PaymentIntent paymentIntent)throws ResourceNotFoundException, ProjectNotFoundException{
+        ResourceTransactionEntity transactionEntity = new ResourceTransactionEntity();
+        transactionEntity.setAmountPaid(BigDecimal.valueOf(paymentIntent.getAmount()).divide(BigDecimal.valueOf(100)));
+        ProfileEntity payer = profileEntityRepository.findByEmail(payerEmail).orElseThrow(() -> new UserNotFoundException(payerEmail));
+        transactionEntity.setPayerId(payer.getAccountId());
+        transactionEntity.setTransactionTime(LocalDateTime.now());
+        
+        ResourceEntity resource = resourceEntityRepository.findById(Long.parseLong(paymentIntent.getMetadata().get("resource_id"))).orElseThrow(()-> new ResourceNotFoundException());
+        ProjectEntity project = projectEntityRepository.findById(Long.parseLong(paymentIntent.getMetadata().get("project_id"))).orElseThrow(()->new ProjectNotFoundException());
+        
+        resource.setResourceTransaction(transactionEntity);
+        transactionEntity.setResource(resource);
+        
+        project.getListOfResourceTransactions().add(transactionEntity);
+        transactionEntity.setProject(project);
+        
+        return resourceTransactionEntityRepository.saveAndFlush(transactionEntity);
+        
     }
 
 }

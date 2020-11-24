@@ -36,7 +36,7 @@ public class SurveyEntity {
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long questionnaireId;
+    private Long surveyId;
 
     @NotNull
     @Column(nullable = false)
@@ -49,12 +49,10 @@ public class SurveyEntity {
     @NotNull
     private LocalDateTime createdDate;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    @NotNull
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime openDate;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
-    @NotNull
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime closeDate;
     
     @NotNull
@@ -65,7 +63,7 @@ public class SurveyEntity {
     private List<SurveyResponseEntity> surveyResponses = new ArrayList<>();
 
     @ManyToMany
-    @JsonIgnoreProperties({"surveys", "projectsFollowing", "hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
+    @JsonIgnoreProperties({"surveyResponses","surveys", "projectsFollowing", "hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> recievers = new ArrayList<>();
 
     @OneToMany
