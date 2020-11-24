@@ -34,7 +34,7 @@ public class QuestionOptionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long questionOptionsId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     @NotNull
     private String optionContent;
     
