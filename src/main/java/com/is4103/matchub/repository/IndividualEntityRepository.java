@@ -34,4 +34,6 @@ public interface IndividualEntityRepository extends JpaRepository<IndividualEnti
 
     @Query(value = "SELECT i FROM IndividualEntity i ORDER BY i.reputationPoints DESC")
     List<IndividualEntity> individualLeaderboard();
+    
+    List<IndividualEntity> findByEmail(String email);
 }
