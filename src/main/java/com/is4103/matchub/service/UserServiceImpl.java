@@ -118,9 +118,14 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private SelectedTargetEntityRepository selectedTargetEntityRepository;
 
+    public UserServiceImpl(AccountEntityRepository accountEntityRepository) {
+        this.accountEntityRepository = accountEntityRepository;
+    }
+
     @Transactional
     @Override
     public UserVO createIndividual(IndividualCreateVO vo) throws MessagingException, IOException {
+//        System.out.println("sdfs");
         Optional<AccountEntity> oldAccount = accountEntityRepository.findByEmail(vo.getEmail());
         if (oldAccount.isPresent()) {
             throw new EmailExistException(vo.getEmail());
@@ -131,9 +136,10 @@ public class UserServiceImpl implements UserService {
         //typecast the individual account into a generic account to persist it in DB
         AccountEntity newAccount = (AccountEntity) newIndividual;
         newAccount = accountEntityRepository.save(newAccount);
+//        System.out.println("sdfs");
 
         //auto trigger the sendVerificationEmail method
-        emailService.sendVerificationEmail(newAccount);
+//        emailService.sendVerificationEmail(newAccount);
 
         return UserVO.of(newAccount);
 
