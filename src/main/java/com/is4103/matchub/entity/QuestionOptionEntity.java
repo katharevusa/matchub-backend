@@ -5,11 +5,13 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,31 +20,29 @@ import lombok.NoArgsConstructor;
 
 /**
  *
- * @author ngjin
+ * @author longluqian
  */
 @Entity
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class KPIEntity {
+public class QuestionOptionEntity {
 
     @Id
     @Column(nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long kpiId;
+    private Long questionOptionsId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2000)
     @NotNull
-    private String title;
-
-    @Column(nullable = false)
+    private String optionContent;
+    
+    @ManyToOne
     @NotNull
-    private String description;
-
-    public KPIEntity(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
+    @JsonIgnoreProperties({"options","survey", "questionResponses"})
+    private QuestionEntity question;
+    
+    
 
 }

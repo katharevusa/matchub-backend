@@ -5,16 +5,13 @@
  */
 package com.is4103.matchub.entity;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.is4103.matchub.enumeration.ResourceTypeEnum;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -22,10 +19,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -60,55 +57,67 @@ public class ResourceEntity {
     @Column(nullable = true)
     @ElementCollection(fetch = FetchType.LAZY, targetClass = String.class)
     private List<String> uploadedFiles = new ArrayList<>();
-    
+
     @NotNull
     private boolean available = Boolean.TRUE;
-    
+
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime startTime;
-    
+
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime endTime;
-    
+
     @OneToMany
-    private List<ResourceRequestEntity> listOfRequests;
-    
-    
+    private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
+
     @Column(nullable = false)
     @NotNull
     private Long resourceCategoryId;
-    
+
     @Column(nullable = false)
     @NotNull
     private Long resourceOwnerId;
-    
+
     @NotNull
     @Column(nullable = false)
     private Integer units;
-      
+
+    @Column(nullable = true)
     private String resourceProfilePic;
     
+    @NotNull
+    @Column(nullable = false)
+    private ResourceTypeEnum resourceType;
+    
+    @Column(nullable = true)
+    private BigDecimal price;
+
     @OrderColumn
     @Column(nullable = true)
     @ElementCollection(fetch = FetchType.LAZY, targetClass = String.class)
     private List<String> photos = new ArrayList<>();
-    
+
     //Key: filename, Value = docPath
     @ElementCollection
     private Map<String, String> documents = new HashMap<>();
-    
-    
+
     @Column(nullable = false)
     private Boolean spotlight = Boolean.FALSE;
-    
+
     @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime spotlightEndTime;
-    
+
     @Column(nullable = true)
     private Long matchedProjectId;
-    
+
     @Column(nullable = true)
     private String country;
+    
+    //@PrimaryKeyJoinColumn
+    @OneToOne
+    private ResourceTransactionEntity resourceTransaction;
+    
+    
     
 
     public ResourceEntity(String resourceName, String resourceDescription, Long resourceCategoryId, Long resourceOwnerId, Integer units) {
@@ -118,7 +127,7 @@ public class ResourceEntity {
         this.resourceOwnerId = resourceOwnerId;
         this.units = units;
     }
-    
+
     public ResourceEntity(String resourceName, String resourceDescription, Integer units) {
         this.resourceName = resourceName;
         this.resourceDescription = resourceDescription;
@@ -132,17 +141,5 @@ public class ResourceEntity {
         this.endTime = endTime;
         this.units = units;
     }
-    
-    
-    
-
-    
-
-    
-    
-
-  
-
-    
 
 }

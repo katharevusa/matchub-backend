@@ -30,6 +30,7 @@ import com.stripe.model.PaymentIntent;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -68,7 +69,7 @@ public class FundCampaignServiceImpl implements FundCampaignService {
         createFundCampaignVO.createFundCampaign(fundCampaignEntity);
         ProfileEntity profile = profileEntityRepository.findById(fundCampaignEntity.getPayeeId())
                 .orElseThrow(() -> new UserNotFoundException(createFundCampaignVO.getPayeeId()));
-        if (profile.getStripeAccountUid()==null) {
+        if (profile.getStripeAccountUid() == null) {
             throw new CreateFundCampaignException("The payee has not set up stripe account");
 
         } else if (!profile.getStripeAccountChargesEnabled()) {
@@ -79,7 +80,7 @@ public class FundCampaignServiceImpl implements FundCampaignService {
                 .orElseThrow(() -> new ProjectNotFoundException("Unable to find project"));
 
         fundCampaignEntity.setStripeAccountUid(profile.getStripeAccountUid());
-        project.getFundsCampaign().add(fundCampaignEntity);
+        project.getFundCampaigns().add(fundCampaignEntity);
         fundCampaignEntity = fundCampaignEntityRepository.saveAndFlush(fundCampaignEntity);
 
         // set default donation option
@@ -87,14 +88,12 @@ public class FundCampaignServiceImpl implements FundCampaignService {
         donationOption.setAmount(BigDecimal.valueOf(10.00));
         donationOption.setOptionDescription("Default donation option");
         donationOption.setFundCampaign(fundCampaignEntity);
-
+        fundCampaignEntity.getDonationOptions().add(donationOption);
         donationOption = donationOptionEntityRepository.saveAndFlush(donationOption);
 
-        fundCampaignEntity.getDonationOptions().add(donationOption);
         return fundCampaignEntityRepository.saveAndFlush(fundCampaignEntity);
 
     }
-   
 
     @Override
     public boolean activateFundCampaign(Long fundCampaignId) throws FundCampaignNotFoundException {
@@ -111,7 +110,7 @@ public class FundCampaignServiceImpl implements FundCampaignService {
     }
 
     @Override
-    public void deleteFundCampaign(Long fundCampaignId) throws FundCampaignNotFoundException, DeleteFundCampaignException {
+    public void deleteFundCampaign(Long fundCampaignId) throws FundCampaignNotFoundException, DeleteFundCampaignException, ProjectNotFoundException {
         FundCampaignEntity fundCampaignEntity = fundCampaignEntityRepository.findById(fundCampaignId).orElseThrow(() -> new FundCampaignNotFoundException("Unable to find fund campaign"));
         List<DonationOptionEntity> options = fundCampaignEntity.getDonationOptions();
         for (DonationOptionEntity d : options) {
@@ -121,6 +120,11 @@ public class FundCampaignServiceImpl implements FundCampaignService {
         }
         fundCampaignEntity.setDonationOptions(new ArrayList<>());
         donationOptionEntityRepository.deleteAll(options);
+
+        //remove association between project and fund campaign
+        ProjectEntity project = projectEntityRepository.findById(fundCampaignEntity.getProjectId()).orElseThrow(() -> new ProjectNotFoundException());
+        project.getFundCampaigns().remove(fundCampaignEntity);
+
         fundCampaignEntityRepository.delete(fundCampaignEntity);
         donationEntityRepository.flush();
         fundCampaignEntityRepository.flush();
@@ -171,77 +175,84 @@ public class FundCampaignServiceImpl implements FundCampaignService {
         // associate donation with donation options
         donation.setDonationOption(donationOption);
         donationOption.getDonations().add(donation);
-        
 
         FundCampaignEntity fundCampaignEntity = donationOption.getFundCampaign();
         fundCampaignEntity.setCurrentAmountRaised(fundCampaignEntity.getCurrentAmountRaised().add(donation.getDonatedAmount()));
         donationEntityRepository.save(donation);
 
     }
-    
+
     @Override
-    public List<DonationEntity> getPastDonationsByUserId(Long userId){
-         ProfileEntity profile = profileEntityRepository.findById(userId)
+    public List<DonationEntity> getPastDonationsByUserId(Long userId) {
+        ProfileEntity profile = profileEntityRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
-         
-         return profile.getDonations();
+
+        return profile.getDonations();
     }
-    
+
     @Override
-    public List<DonationEntity> getDonationsByOptionId(Long optionId)throws DonationOptionNotFoundException{
-        DonationOptionEntity donationOption =  donationOptionEntityRepository.findById(optionId).orElseThrow(()-> new DonationOptionNotFoundException("Donation option not found"));
+    public List<DonationEntity> getDonationsByOptionId(Long optionId) throws DonationOptionNotFoundException {
+        DonationOptionEntity donationOption = donationOptionEntityRepository.findById(optionId).orElseThrow(() -> new DonationOptionNotFoundException("Donation option not found"));
         return donationOption.getDonations();
     }
-    
+
     @Override
-    public List<FundCampaignEntity> getFundCampaignsByProjectId(Long projectId)throws ProjectNotFoundException{
+    public List<FundCampaignEntity> getFundCampaignsByProjectId(Long projectId) throws ProjectNotFoundException {
         ProjectEntity project = projectEntityRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Unable to find project"));
-        return project.getFundsCampaign();
+        return project.getFundCampaigns();
     }
-    
+
     @Override
-    public List<FundCampaignEntity> getFundCampaignsByPayeeId(Long payeeId )throws UserNotFoundException{
+    public List<FundCampaignEntity> getFundCampaignsByPayeeId(Long payeeId) throws UserNotFoundException {
         ProfileEntity profile = profileEntityRepository.findById(payeeId)
                 .orElseThrow(() -> new UserNotFoundException(payeeId));
-        
+
         List<FundCampaignEntity> fundCampaigns = fundCampaignEntityRepository.getFundCampaignsByPayeeId(payeeId);
-        for(FundCampaignEntity f : fundCampaigns){
+        for (FundCampaignEntity f : fundCampaigns) {
             f.getDonationOptions();
         }
         return fundCampaigns;
-        
+
     }
-    
+
     @Override
-    public FundCampaignEntity getFundCampaignByFundCampaignId(Long fundCampaignId)throws  FundCampaignNotFoundException{
-        FundCampaignEntity fundCampaignEntity = fundCampaignEntityRepository.findById(fundCampaignId).orElseThrow(() -> new FundCampaignNotFoundException("Fund Campaign not found") );
+    public FundCampaignEntity getFundCampaignByFundCampaignId(Long fundCampaignId) throws FundCampaignNotFoundException {
+        FundCampaignEntity fundCampaignEntity = fundCampaignEntityRepository.findById(fundCampaignId).orElseThrow(() -> new FundCampaignNotFoundException("Fund Campaign not found"));
         return fundCampaignEntity;
     }
-    
-    
-    @Override 
-    public List<FundCampaignEntity> getAllFundCampaignEntity(){
+
+    @Override
+    public List<FundCampaignEntity> getAllFundCampaignEntity() {
         return fundCampaignEntityRepository.findAll();
     }
-    
-    @Override 
-    public FundCampaignEntity updateFundCampaign(UpdateFundCampaignVO vo)throws FundCampaignNotFoundException{
-        FundCampaignEntity fundCampaignEntity = fundCampaignEntityRepository.findById(vo.getCampaignId()).orElseThrow(() -> new FundCampaignNotFoundException("Fund Campaign not found") );
+
+    @Override
+    public FundCampaignEntity updateFundCampaign(UpdateFundCampaignVO vo) throws FundCampaignNotFoundException {
+        FundCampaignEntity fundCampaignEntity = fundCampaignEntityRepository.findById(vo.getCampaignId()).orElseThrow(() -> new FundCampaignNotFoundException("Fund Campaign not found"));
         vo.updateFundCampaign(fundCampaignEntity);
         return fundCampaignEntityRepository.saveAndFlush(fundCampaignEntity);
     }
-    
+
     @Override
-    public Page<FundCampaignEntity> searchCampaign(String key, Pageable pageable){
+    public Page<FundCampaignEntity> searchCampaign(String key, Pageable pageable) {
         return fundCampaignEntityRepository.searchFundCampaignsByKeyword(key, pageable);
     }
-    
-    
-    
-    
-    
-        
+
+    //get all donations by campaign Id
+    @Override
+    public List<DonationEntity> getAllDonationsByCampaignId(Long fundCampaignId) throws FundCampaignNotFoundException {
+        FundCampaignEntity fundCampaignEntity = fundCampaignEntityRepository.findById(fundCampaignId).orElseThrow(() -> new FundCampaignNotFoundException("Fund Campaign not found"));
+        List<DonationEntity> listOfDonations = new LinkedList<>();
+        for (DonationOptionEntity d : fundCampaignEntity.getDonationOptions()) {
+            listOfDonations.addAll(d.getDonations());
+
+        }
+
+        return listOfDonations;
+
+    }
+
 //    public List<FundCampaignEntity> fundCampaignGlobalSearch(){
 //        
 //    }
@@ -249,5 +260,4 @@ public class FundCampaignServiceImpl implements FundCampaignService {
 ////campaignDescription
 ////endDate
 //    }
-
 }

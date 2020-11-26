@@ -42,3 +42,4 @@ src/main/java/edu/cmu/lti/jawjaw/util/Configuration.java
 
 ### VS Code ###
 .vscode/
+/nbproject/

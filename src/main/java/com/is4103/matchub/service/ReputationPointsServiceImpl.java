@@ -393,7 +393,7 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
         System.out.println("Issue Points to Fund Donors method****************");
 
-        List<FundCampaignEntity> fundCampaigns = project.getFundsCampaign();
+        List<FundCampaignEntity> fundCampaigns = project.getFundCampaigns();
 
         for (FundCampaignEntity f : fundCampaigns) {
             //get a list of donations for that fund campaign 

@@ -70,7 +70,7 @@ public abstract class ProfileEntity extends AccountEntity {
 
     @Column(nullable = true)
     private Boolean stripeAccountChargesEnabled = false;
-    
+
     // scenario, boolean
     @ElementCollection
     private Map<AnnouncementTypeEnum, Boolean> announcementsSetting = new HashMap<>();
@@ -96,9 +96,6 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projects"})
     private List<SDGEntity> sdgs = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<ScheduleEntity> meetings = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"joinRequests", "reviews", "projectBadge", "fundsCampaign", "listOfRequests", "sdgs", "kpis", "teamMembers", "channels", "projectOwners"})
@@ -129,13 +126,20 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"taskdoers"})
     private List<TaskEntity> tasks = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<ChannelEntity> managedChannel = new ArrayList<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    private List<ChannelEntity> joinedChannel = new ArrayList<>();
     
+    @OneToMany(mappedBy = "respondent")
+    @JsonIgnoreProperties({"respondent"})
+    private List<SurveyResponseEntity> surveyResponses = new ArrayList<>();
+    
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties({"recievers","surveyResponses"})
+    private List<SurveyEntity> surveys = new ArrayList<>();
+    
+    
+
+    //sdg refactoring
+    @OneToMany
+    private List<SelectedTargetEntity> selectedTargets = new ArrayList<>();
 
     public ProfileEntity(String email, String password) {
         super(email, password);

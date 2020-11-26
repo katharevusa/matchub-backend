@@ -13,22 +13,29 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
+import com.is4103.matchub.entity.ResourceTransactionEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.enumeration.RequestorEnum;
 import com.is4103.matchub.exception.CreateResourceRequestException;
 import com.is4103.matchub.exception.DeleteResourceRequestException;
+import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.ResourceRequestNotFoundException;
 import com.is4103.matchub.exception.RespondToResourceRequestException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.AnnouncementEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
+import com.is4103.matchub.repository.ResourceTransactionEntityRepository;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import com.is4103.matchub.vo.SendNotificationsToUsersVO;
+import com.stripe.model.PaymentIntent;
 import static io.grpc.internal.ConscryptLoader.isPresent;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +50,7 @@ import org.springframework.stereotype.Service;
  * @author longluqian
  */
 @Service
-public class ResourceRequestImpl implements ResourceRequestService {
+public class ResourceRequestServiceImpl implements ResourceRequestService {
 
     @Autowired
     ResourceRequestEntityRepository resourceRequestEntityRepository;
@@ -65,6 +72,9 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
     @Autowired
     AnnouncementService announcementService;
+    
+    @Autowired
+    ResourceTransactionEntityRepository resourceTransactionEntityRepository;
 
     // create resource request: Project owner initiate request (projectownerId, projectId, resourceId, unitsRequired
     @Override
@@ -114,7 +124,7 @@ public class ResourceRequestImpl implements ResourceRequestService {
         // create announcement (notify resource owner)
         ProfileEntity resourceOwner = profileEntityRepository.findById(resource.getResourceOwnerId()).get();
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle("Project '"+project.getProjectTitle()+"' wants your resource "+resource.getResourceName());
+        announcementEntity.setTitle("Project '" + project.getProjectTitle() + "' wants your resource " + resource.getResourceName());
         announcementEntity.setContent(resourceRequest.getMessage());
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.REQUEST_FOR_RESOURCE);
@@ -129,6 +139,70 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
         return resourceRequest;
 
+    }
+
+    //for data init only 
+    public ResourceRequestEntity createResourceRequestResourceOwner(Long projectId, Long requestorId, Long resourceId, Integer units) throws CreateResourceRequestException {
+
+        System.out.println("Here******: DATA INIT RESOURCE REQUESTS");
+
+        if (!resourceEntityRepository.findById(resourceId).isPresent()) {
+            throw new CreateResourceRequestException("Unable to create resource request: resource not found");
+        }
+        ResourceEntity resource = resourceEntityRepository.findById(resourceId).get();
+
+        if (!projectEntityRepository.findById(projectId).isPresent()) {
+            throw new CreateResourceRequestException("Unable to create resource request: project not found");
+        }
+        ProjectEntity project = projectEntityRepository.findById(projectId).get();
+
+        ResourceRequestEntity resourceRequest = new ResourceRequestEntity();
+
+        resourceRequest.setRequestorId(requestorId);
+        resourceRequest.setProjectId(projectId);
+        resourceRequest.setResourceId(resourceId);
+        resourceRequest.setUnitsRequired(units);
+        resourceRequest.setRequestorEnum(RequestorEnum.RESOURCE_OWNER);
+
+        System.out.println("Here******1");
+        resourceRequest = resourceRequestEntityRepository.save(resourceRequest);
+        project.getListOfRequests().add(resourceRequest);
+        resource.getListOfRequests().add(resourceRequest);
+        System.out.println("Here******2");
+        resourceRequest = resourceRequestEntityRepository.saveAndFlush(resourceRequest);
+        System.out.println("Here******3");
+        projectEntityRepository.saveAndFlush(project);
+        System.out.println("Here******4");
+        resourceEntityRepository.saveAndFlush(resource);
+        resourceRequest.setMessage("Hello! I would like to make a donation.");
+
+        // create announcement (notify project owner)
+        List<ProfileEntity> projectOwners = project.getProjectOwners();
+        AnnouncementEntity announcementEntity = new AnnouncementEntity();
+        ProfileEntity resourceOwner = profileEntityRepository.findById(resource.getResourceOwnerId()).get();
+        String resourceOwnerName = "";
+        if (resourceOwner instanceof IndividualEntity) {
+            resourceOwnerName = ((IndividualEntity) resourceOwner).getFirstName() + " " + ((IndividualEntity) resourceOwner).getLastName();
+        } else if (resourceOwner instanceof OrganisationEntity) {
+            resourceOwnerName = ((OrganisationEntity) resourceOwner).getOrganizationName();
+        }
+
+        announcementEntity.setTitle(resourceOwnerName + " wants to donate '" + resource.getResourceName() + "' to your project '" + project.getProjectTitle() + "'.");
+        announcementEntity.setContent(resourceRequest.getMessage());
+        announcementEntity.setTimestamp(LocalDateTime.now());
+        announcementEntity.setType(AnnouncementTypeEnum.DONATE_TO_PROJECT);
+        announcementEntity.setResourceRequestId(resourceRequest.getRequestId());
+        // association
+        announcementEntity.getNotifiedUsers().addAll(projectOwners);
+        for (ProfileEntity p : projectOwners) {
+            p.getAnnouncements().add(announcementEntity);
+        }
+        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+        // create notification         
+        announcementService.createNormalNotification(announcementEntity);
+
+        return resourceRequest;
     }
 
     //Create Resource Donation Request
@@ -186,9 +260,8 @@ public class ResourceRequestImpl implements ResourceRequestService {
         } else if (resourceOwner instanceof OrganisationEntity) {
             resourceOwnerName = ((OrganisationEntity) resourceOwner).getOrganizationName();
         }
-        
-        
-        announcementEntity.setTitle(resourceOwnerName+" wants to donate '"+resource.getResourceName()+"' to your project '"+project.getProjectTitle()+"'.");
+
+        announcementEntity.setTitle(resourceOwnerName + " wants to donate '" + resource.getResourceName() + "' to your project '" + project.getProjectTitle() + "'.");
         announcementEntity.setContent(resourceRequest.getMessage());
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.DONATE_TO_PROJECT);
@@ -258,7 +331,6 @@ public class ResourceRequestImpl implements ResourceRequestService {
 //
 //        // create notification         
 //        announcementService.createNormalNotification(announcementEntity);
-
         resourceRequestEntityRepository.delete(request);
 
     }
@@ -457,6 +529,44 @@ public class ResourceRequestImpl implements ResourceRequestService {
 
         }
         return resourceRequests;
+    }
+    
+    @Override
+    public List<ResourceTransactionEntity> getResourceTransactionForOwnedResources(Long userId){
+        ProfileEntity user = profileEntityRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        List<ResourceEntity> resources = user.getHostedResources();
+        List<ResourceTransactionEntity> transactions = new ArrayList<>();
+        for(ResourceEntity resource: resources){
+           transactions.add(resource.getResourceTransaction());
+        }
+        return transactions;
+    }
+
+    @Override
+    public List<ResourceTransactionEntity> getResourceTransactionForConsumedResources(Long userId){
+        ProfileEntity user = profileEntityRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+        return resourceTransactionEntityRepository.getResourceTransactionsByPayerId(userId);
+    }
+    
+    @Override
+    public ResourceTransactionEntity createResourceTransaction(String payerEmail, PaymentIntent paymentIntent)throws ResourceNotFoundException, ProjectNotFoundException{
+        ResourceTransactionEntity transactionEntity = new ResourceTransactionEntity();
+        transactionEntity.setAmountPaid(BigDecimal.valueOf(paymentIntent.getAmount()).divide(BigDecimal.valueOf(100)));
+        ProfileEntity payer = profileEntityRepository.findByEmail(payerEmail).orElseThrow(() -> new UserNotFoundException(payerEmail));
+        transactionEntity.setPayerId(payer.getAccountId());
+        transactionEntity.setTransactionTime(LocalDateTime.now());
+        
+        ResourceEntity resource = resourceEntityRepository.findById(Long.parseLong(paymentIntent.getMetadata().get("resource_id"))).orElseThrow(()-> new ResourceNotFoundException());
+        ProjectEntity project = projectEntityRepository.findById(Long.parseLong(paymentIntent.getMetadata().get("project_id"))).orElseThrow(()->new ProjectNotFoundException());
+        
+        resource.setResourceTransaction(transactionEntity);
+        transactionEntity.setResource(resource);
+        
+        project.getListOfResourceTransactions().add(transactionEntity);
+        transactionEntity.setProject(project);
+        
+        return resourceTransactionEntityRepository.saveAndFlush(transactionEntity);
+        
     }
 
 }

@@ -38,7 +38,7 @@ public interface FundCampaignService {
 
     public DonationOptionEntity createDonationOption(CreateDonationOptionVO vo) throws FundCampaignNotFoundException;
 
-    public void deleteFundCampaign(Long fundCampaignId) throws FundCampaignNotFoundException, DeleteFundCampaignException;
+    public void deleteFundCampaign(Long fundCampaignId) throws FundCampaignNotFoundException, DeleteFundCampaignException, ProjectNotFoundException;
 
     public boolean deactivateFundCampaign(Long fundCampaignId) throws FundCampaignNotFoundException;
 
@@ -61,4 +61,6 @@ public interface FundCampaignService {
     public FundCampaignEntity updateFundCampaign(UpdateFundCampaignVO vo) throws FundCampaignNotFoundException;
 
     public Page<FundCampaignEntity> searchCampaign(String key, Pageable pageable);
+    
+    public List<DonationEntity> getAllDonationsByCampaignId(Long fundCampaignId) throws FundCampaignNotFoundException;
 }

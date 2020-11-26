@@ -12,6 +12,8 @@ import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.entity.SDGTargetEntity;
+import com.is4103.matchub.entity.SelectedTargetEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.exception.DeleteOrganisationVerificationDocumentException;
 import com.is4103.matchub.exception.DeleteProfilePictureException;
@@ -49,6 +51,8 @@ import javax.mail.MessagingException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
+import com.is4103.matchub.repository.SDGTargetEntityRepository;
+import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
@@ -108,9 +112,20 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AnnouncementEntityRepository announcementEntityRepository;
 
+    @Autowired
+    private SDGTargetEntityRepository sDGTargetEntityRepository;
+
+    @Autowired
+    private SelectedTargetEntityRepository selectedTargetEntityRepository;
+
+    public UserServiceImpl(AccountEntityRepository accountEntityRepository) {
+        this.accountEntityRepository = accountEntityRepository;
+    }
+
     @Transactional
     @Override
     public UserVO createIndividual(IndividualCreateVO vo) throws MessagingException, IOException {
+//        System.out.println("sdfs");
         Optional<AccountEntity> oldAccount = accountEntityRepository.findByEmail(vo.getEmail());
         if (oldAccount.isPresent()) {
             throw new EmailExistException(vo.getEmail());
@@ -121,9 +136,10 @@ public class UserServiceImpl implements UserService {
         //typecast the individual account into a generic account to persist it in DB
         AccountEntity newAccount = (AccountEntity) newIndividual;
         newAccount = accountEntityRepository.save(newAccount);
+//        System.out.println("sdfs");
 
         //auto trigger the sendVerificationEmail method
-        emailService.sendVerificationEmail(newAccount);
+//        emailService.sendVerificationEmail(newAccount);
 
         return UserVO.of(newAccount);
 
@@ -164,9 +180,31 @@ public class UserServiceImpl implements UserService {
 
         //find the SDG and associate with individual 
         individual.getSdgs().clear();
-        for (int i = 0; i < vo.getSdgIds().length; i++) {
-            SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
-            individual.getSdgs().add(sdg);
+//        for (int i = 0; i < vo.getSdgIds().length; i++) {
+//            SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
+//            individual.getSdgs().add(sdg);
+//        }
+        //****************refactored implementation
+        for (int i = 1; i <= 17; i++) {
+            if (vo.getHashmapSDG().containsKey(Long.valueOf(i))) {
+                SDGEntity sdg = sdgEntityRepository.findBySdgId(Long.valueOf(i));
+                individual.getSdgs().add(sdg);
+
+                SelectedTargetEntity selectedTargets = new SelectedTargetEntity();
+                List<Long> targetIds = vo.getHashmapSDG().get(Long.valueOf(i));
+
+                for (int j = 0; j < targetIds.size(); j++) {
+                    //find the actual instance of the sdgTarget
+                    SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(targetIds.get(j));
+                    selectedTargets.getSdgTargets().add(sdgTarget);
+                }
+
+                selectedTargets.setSdg(sdg);
+                selectedTargets.setProfile(individual);
+                selectedTargetEntityRepository.saveAndFlush(selectedTargets);
+
+                individual.getSelectedTargets().add(selectedTargets);
+            }
         }
 
         individual.setDisabled(Boolean.FALSE);
@@ -194,9 +232,32 @@ public class UserServiceImpl implements UserService {
 
         //find the SDG and associate with organisation 
         organisation.getSdgs().clear();
-        for (int i = 0; i < vo.getSdgIds().length; i++) {
-            SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
-            organisation.getSdgs().add(sdg);
+//        for (int i = 0; i < vo.getSdgIds().length; i++) {
+//            SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
+//            organisation.getSdgs().add(sdg);
+//        }
+
+        //****************refactored implementation
+        for (int i = 1; i <= 17; i++) {
+            if (vo.getHashmapSDG().containsKey(Long.valueOf(i))) {
+                SDGEntity sdg = sdgEntityRepository.findBySdgId(Long.valueOf(i));
+                organisation.getSdgs().add(sdg);
+
+                SelectedTargetEntity selectedTargets = new SelectedTargetEntity();
+                List<Long> targetIds = vo.getHashmapSDG().get(Long.valueOf(i));
+
+                for (int j = 0; j < targetIds.size(); j++) {
+                    //find the actual instance of the sdgTarget
+                    SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(targetIds.get(j));
+                    selectedTargets.getSdgTargets().add(sdgTarget);
+                }
+
+                selectedTargets.setSdg(sdg);
+                selectedTargets.setProfile(organisation);
+                selectedTargetEntityRepository.saveAndFlush(selectedTargets);
+
+                organisation.getSelectedTargets().add(selectedTargets);
+            }
         }
 
         organisation.setDisabled(Boolean.FALSE);
@@ -593,12 +654,49 @@ public class UserServiceImpl implements UserService {
 
             vo.updateIndividualAccount(individual);
 
-            if (vo.getSdgIds().length != 0) {
-                //find the updated SDG and associate with individual 
+//            if (vo.getSdgIds().length != 0) {
+//                //find the updated SDG and associate with individual 
+//            individual.getSdgs().clear();
+//                for (int i = 0; i < vo.getSdgIds().length; i++) {
+//                    SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
+//                    individual.getSdgs().add(sdg);
+//                }
+//            }
+            if (!vo.getHashmapSDG().isEmpty()) {
+
+                //clear the old associations first 
                 individual.getSdgs().clear();
-                for (int i = 0; i < vo.getSdgIds().length; i++) {
-                    SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
-                    individual.getSdgs().add(sdg);
+
+                List<SelectedTargetEntity> oldSelections = individual.getSelectedTargets();
+
+                for (SelectedTargetEntity s : oldSelections) {
+                    s.setProfile(null);
+                    s.getSdgTargets().clear();
+                    selectedTargetEntityRepository.delete(s);
+                }
+
+                individual.getSelectedTargets().clear();
+
+                for (int i = 1; i <= 17; i++) {
+                    if (vo.getHashmapSDG().containsKey(Long.valueOf(i))) {
+                        SDGEntity sdg = sdgEntityRepository.findBySdgId(Long.valueOf(i));
+                        individual.getSdgs().add(sdg);
+
+                        SelectedTargetEntity selectedTargets = new SelectedTargetEntity();
+                        List<Long> targetIds = vo.getHashmapSDG().get(Long.valueOf(i));
+
+                        for (int j = 0; j < targetIds.size(); j++) {
+                            //find the actual instance of the sdgTarget
+                            SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(targetIds.get(j));
+                            selectedTargets.getSdgTargets().add(sdgTarget);
+                        }
+
+                        selectedTargets.setSdg(sdg);
+                        selectedTargets.setProfile(individual);
+                        selectedTargetEntityRepository.saveAndFlush(selectedTargets);
+
+                        individual.getSelectedTargets().add(selectedTargets);
+                    }
                 }
             }
 
@@ -622,12 +720,49 @@ public class UserServiceImpl implements UserService {
 
             vo.updateOrganisationAccount(organisation);
 
-            if (vo.getSdgIds().length != 0) {
-                //find the updated SDG and associate with individual 
+//            if (vo.getSdgIds().length != 0) {
+//                //find the updated SDG and associate with individual 
+//                organisation.getSdgs().clear();
+//                for (int i = 0; i < vo.getSdgIds().length; i++) {
+//                    SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
+//                    organisation.getSdgs().add(sdg);
+//                }
+//            }
+            if (!vo.getHashmapSDG().isEmpty()) {
+
+                //clear the old associations first 
                 organisation.getSdgs().clear();
-                for (int i = 0; i < vo.getSdgIds().length; i++) {
-                    SDGEntity sdg = sdgEntityRepository.findBySdgId(vo.getSdgIds()[i]);
-                    organisation.getSdgs().add(sdg);
+
+                List<SelectedTargetEntity> oldSelections = organisation.getSelectedTargets();
+
+                for (SelectedTargetEntity s : oldSelections) {
+                    s.setProfile(null);
+                    s.getSdgTargets().clear();
+                    selectedTargetEntityRepository.delete(s);
+                }
+
+                organisation.getSelectedTargets().clear();
+
+                for (int i = 1; i <= 17; i++) {
+                    if (vo.getHashmapSDG().containsKey(Long.valueOf(i))) {
+                        SDGEntity sdg = sdgEntityRepository.findBySdgId(Long.valueOf(i));
+                        organisation.getSdgs().add(sdg);
+
+                        SelectedTargetEntity selectedTargets = new SelectedTargetEntity();
+                        List<Long> targetIds = vo.getHashmapSDG().get(Long.valueOf(i));
+
+                        for (int j = 0; j < targetIds.size(); j++) {
+                            //find the actual instance of the sdgTarget
+                            SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(targetIds.get(j));
+                            selectedTargets.getSdgTargets().add(sdgTarget);
+                        }
+
+                        selectedTargets.setSdg(sdg);
+                        selectedTargets.setProfile(organisation);
+                        selectedTargetEntityRepository.saveAndFlush(selectedTargets);
+
+                        organisation.getSelectedTargets().add(selectedTargets);
+                    }
                 }
             }
 
@@ -862,14 +997,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Page<ProfileEntity> globalSearchAllUsers(String search, String country, Long[] sdgIds, Pageable pageable) {
+    public Page<ProfileEntity> globalSearchAllUsers(String search, String country, Long[] sdgIds, long[] sdgTargetIds, Pageable pageable) {
 
         Page<ProfileEntity> page;
 
         if (search.isEmpty() && country.isEmpty() && sdgIds.length == 0) {
             page = profileEntityRepository.findAll(pageable);
         } else if (country.isEmpty()) {
-            page = profileEntityRepository.globalSearchAllUsers(search, sdgIds, pageable);
+            page = profileEntityRepository.globalSearchAllUsers(search, sdgIds, sdgTargetIds, pageable);
 
             if (page.isEmpty()) {
                 //spilt the keywords
@@ -879,7 +1014,7 @@ public class UserServiceImpl implements UserService {
                 Set<ProfileEntity> temp = new HashSet<>();
 
                 for (String s : split) {
-                    temp.addAll(profileEntityRepository.globalSearchAllUsers(s, sdgIds, pageable).toList());
+                    temp.addAll(profileEntityRepository.globalSearchAllUsers(s, sdgIds, sdgTargetIds, pageable).toList());
                 }
 
                 //convert set into List
@@ -891,7 +1026,7 @@ public class UserServiceImpl implements UserService {
 
             }
         } else {
-            page = profileEntityRepository.globalSearchAllUsers(search, country, sdgIds, pageable);
+            page = profileEntityRepository.globalSearchAllUsers(search, country, sdgIds, sdgTargetIds, pageable);
 
             if (page.isEmpty()) {
                 //spilt the keywords
@@ -901,7 +1036,7 @@ public class UserServiceImpl implements UserService {
                 Set<ProfileEntity> temp = new HashSet<>();
 
                 for (String s : split) {
-                    temp.addAll(profileEntityRepository.globalSearchAllUsers(s, country, sdgIds, pageable).toList());
+                    temp.addAll(profileEntityRepository.globalSearchAllUsers(s, country, sdgIds, sdgTargetIds, pageable).toList());
                 }
 
                 //convert set into List

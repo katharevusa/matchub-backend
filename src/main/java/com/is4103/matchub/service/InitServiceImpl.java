@@ -11,12 +11,17 @@ import com.is4103.matchub.entity.ResourceEntity;
 import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.entity.SDGTargetEntity;
+import com.is4103.matchub.entity.SelectedTargetEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.enumeration.RequestorEnum;
+import com.is4103.matchub.enumeration.ResourceTypeEnum;
+import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,7 +35,10 @@ import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
+import com.is4103.matchub.repository.SDGTargetEntityRepository;
+import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import com.is4103.matchub.vo.PostVO;
+import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
@@ -40,6 +48,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.LongStream;
 
 @Service
 public class InitServiceImpl implements InitService {
@@ -89,11 +98,22 @@ public class InitServiceImpl implements InitService {
     @Autowired
     PostService postService;
 
+    @Autowired
+    ResourceRequestService resourceRequestService;
+
+    @Autowired
+    SDGTargetEntityRepository sDGTargetEntityRepository;
+
+    @Autowired
+    private SelectedTargetEntityRepository selectedTargetEntityRepository;
+
     @Transactional
     public void init() {
         // testing:
 
+        //init sdg and sdgTargets 
         initSDG();
+
         initUsers();
         initResourceCategories();
         initResources();
@@ -113,6 +133,8 @@ public class InitServiceImpl implements InitService {
 
         initPost();
 
+        //init resource requests
+        initResourceRequests();
 //        firebaseService.getChannelDetails("s");
         // init kanbanboard for project 3
     }
@@ -178,6 +200,18 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         alexLow.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(alexLow);
+
+        long[] sdgTargetIds = LongStream.rangeClosed(1, 7).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 1L, alexLow.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(16, 20).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 3L, alexLow.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(39, 45).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 5L, alexLow.getAccountId());
+
         setNotifications(alexLow);
 
         accountEntityRepository.save(alexLow);
@@ -189,6 +223,7 @@ public class InitServiceImpl implements InitService {
         ikjun.setDisabled(Boolean.FALSE);
         ikjun.setIsVerified(Boolean.TRUE);
         ikjun.getRoles().add(ProfileEntity.ROLE_USER);
+        ikjun.getRoles().add(ProfileEntity.ROLE_SYSADMIN);
         ikjun.setJoinDate(LocalDateTime.now());
         //profile & individual attributes
         ikjun.setProfileDescription("Highly Passionate Individual with a love for contributing back to the society!");
@@ -211,8 +246,24 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
         ikjun.setSdgs(sdgs);
 
+        accountEntityRepository.saveAndFlush(ikjun);
+
+        sdgTargetIds = LongStream.rangeClosed(21, 27).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 3L, ikjun.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(29, 34).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 4L, ikjun.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(39, 45).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 5L, ikjun.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(91, 100).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 11L, ikjun.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(120, 126).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 14L, ikjun.getAccountId());
+
         setNotifications(ikjun);
-        
         accountEntityRepository.save(ikjun);
 
         //3rd individual
@@ -238,7 +289,12 @@ public class InitServiceImpl implements InitService {
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         sophia.setSdgs(sdgs);
-        
+
+        accountEntityRepository.saveAndFlush(sophia);
+
+        sdgTargetIds = LongStream.rangeClosed(44, 47).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 5L, sophia.getAccountId());
+
         setNotifications(sophia);
         accountEntityRepository.save(sophia);
 
@@ -267,6 +323,12 @@ public class InitServiceImpl implements InitService {
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         genc.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(genc);
+
+        sdgTargetIds = LongStream.rangeClosed(40, 47).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 5L, genc.getAccountId());
+
         setNotifications(genc);
         accountEntityRepository.saveAndFlush(genc);
 
@@ -292,6 +354,7 @@ public class InitServiceImpl implements InitService {
         networkForGood.setCity("Washington");
         networkForGood.setProfilePhoto("https://localhost:8443/api/v1/files/init/networkforgood.png");
         networkForGood.setFollowing(new HashSet<>(Arrays.asList(alexLow.getAccountId(), ikjun.getAccountId(), Long.valueOf(9), Long.valueOf(11))));
+
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(1)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(2)));
@@ -300,6 +363,27 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(10)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(11)));
         networkForGood.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(networkForGood);
+
+        sdgTargetIds = LongStream.rangeClosed(1, 4).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 1L, networkForGood.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(10, 12).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 2L, networkForGood.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(30, 34).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 4L, networkForGood.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(66, 69).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 8L, networkForGood.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(82, 89).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 10L, networkForGood.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(91, 99).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 11L, networkForGood.getAccountId());
+
         setNotifications(networkForGood);
         accountEntityRepository.save(networkForGood);
 
@@ -329,6 +413,18 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
         songhwa.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(songhwa);
+
+        sdgTargetIds = LongStream.rangeClosed(48, 54).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 6L, songhwa.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(56, 58).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 7L, songhwa.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(112, 114).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 13L, songhwa.getAccountId());
+
         setNotifications(songhwa);
         accountEntityRepository.save(songhwa);
 
@@ -357,6 +453,7 @@ public class InitServiceImpl implements InitService {
         kfem.setProfilePhoto("https://localhost:8443/api/v1/files/init/kfem.png");
         kfem.setFollowing(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId(), Long.valueOf(11))));
         kfem.setFollowers(new HashSet<>(Arrays.asList(ikjun.getAccountId(), songhwa.getAccountId(), Long.valueOf(11))));
+
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(6)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
@@ -366,6 +463,30 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(14)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(15)));
         kfem.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(kfem);
+
+        sdgTargetIds = LongStream.rangeClosed(48, 52).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 6L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(56, 57).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 7L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(92, 96).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 11L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(105, 110).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 12L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(113, 114).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 13L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(119, 125).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 14L, kfem.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(129, 135).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 15L, kfem.getAccountId());
+
         setNotifications(kfem);
         accountEntityRepository.save(kfem);
 
@@ -395,6 +516,18 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(7)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(13)));
         jeongha.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(jeongha);
+
+        sdgTargetIds = LongStream.rangeClosed(51, 55).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 6L, jeongha.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(57, 59).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 7L, jeongha.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(114, 116).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 13L, jeongha.getAccountId());
+
         setNotifications(jeongha);
         accountEntityRepository.save(jeongha);
 
@@ -425,61 +558,819 @@ public class InitServiceImpl implements InitService {
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(4)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(5)));
         billy.setSdgs(sdgs);
+
+        accountEntityRepository.saveAndFlush(billy);
+
+        sdgTargetIds = LongStream.rangeClosed(3, 5).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 1L, billy.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(9, 10).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 2L, billy.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(33, 35).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 4L, billy.getAccountId());
+
+        sdgTargetIds = LongStream.rangeClosed(39, 42).toArray();
+        associateSDGTargetsWithProfile(sdgTargetIds, 5L, billy.getAccountId());
+
         setNotifications(billy);
         accountEntityRepository.save(billy);
     }
 
     private void initSDG() {
+        //sdg 1
         SDGEntity noPoverty = new SDGEntity("No Poverty", "End poverty in all its forms everywhere");
         sdgEntityRepository.save(noPoverty);
 
+        //init sdg1 targets
+        SDGTargetEntity target = new SDGTargetEntity("Target 1.1", "By 2030, eradicate extreme poverty for all people everywhere, currently measured as people living on less than $1.25 a day");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.2", "By 2030, reduce at least by half the proportion of men, women and children of all ages living in poverty in all its dimensions according to national definitions");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.3", "Implement nationally appropriate social protection systems and measures for all, including floors, and by 2030 achieve substantial coverage of the poor and the vulnerable");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.4", "By 2030, ensure that all men and women, in particular the poor and the vulnerable, have equal rights to economic resources, as well as access to basic services, ownership and control over land and other forms of property, inheritance, natural resources, appropriate new technology and financial services, including microfinance");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.5", "By 2030, build the resilience of the poor and those in vulnerable situations and reduce their exposure and vulnerability to climate-related extreme events and other economic, social and environmental shocks and disasters");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.a", "Ensure significant mobilization of resources from a variety of sources, including through enhanced development cooperation, in order to provide adequate and predictable means for developing countries, in particular least developed countries, to implement programmes and policies to end poverty in all its dimensions");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 1.b", "Create sound policy frameworks at the national, regional and international levels, based on pro-poor and gender-sensitive development strategies, to support accelerated investment in poverty eradication actions");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        noPoverty.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(noPoverty);
+
+        //sdg 2
         SDGEntity zeroHunger = new SDGEntity("Zero Hunger", "End hunger, achieve food security and improved nutrition and promote sustainable agriculture");
         sdgEntityRepository.save(zeroHunger);
 
+        //init sdg2 targets
+        target = new SDGTargetEntity("Target 2.1", "By 2030, end hunger and ensure access by all people, in particular the poor and people in vulnerable situations, including infants, to safe, nutritious and sufficient food all year round");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        zeroHunger.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 2.2", "By 2030, end all forms of malnutrition, including achieving, by 2025, the internationally agreed targets on stunting and wasting in children under 5 years of age, and address the nutritional needs of adolescent girls, pregnant and lactating women and older persons");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        zeroHunger.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 2.3", "By 2030, double the agricultural productivity and incomes of small-scale food producers, in particular women, indigenous peoples, family farmers, pastoralists and fishers, including through secure and equal access to land, other productive resources and inputs, knowledge, financial services, markets and opportunities for value addition and non-farm employment");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        zeroHunger.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 2.4", "By 2030, ensure sustainable food production systems and implement resilient agricultural practices that increase productivity and production, that help maintain ecosystems, that strengthen capacity for adaptation to climate change, extreme weather, drought, flooding and other disasters and that progressively improve land and soil quality");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        zeroHunger.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 2.5", "By 2020, maintain the genetic diversity of seeds, cultivated plants and farmed and domesticated animals and their related wild species, including through soundly managed and diversified seed and plant banks at the national, regional and international levels, and promote access to and fair and equitable sharing of benefits arising from the utilization of genetic resources and associated traditional knowledge, as internationally agreed");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        zeroHunger.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 2.a", "Increase investment, including through enhanced international cooperation, in rural infrastructure, agricultural research and extension services, technology development and plant and livestock gene banks in order to enhance agricultural productive capacity in developing countries, in particular least developed countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        zeroHunger.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 2.b", "Correct and prevent trade restrictions and distortions in world agricultural markets, including through the parallel elimination of all forms of agricultural export subsidies and all export measures with equivalent effect, in accordance with the mandate of the Doha Development Round");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        zeroHunger.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 2.c", "Adopt measures to ensure the proper functioning of food commodity markets and their derivatives and facilitate timely access to market information, including on food reserves, in order to help limit extreme food price volatility");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        zeroHunger.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(zeroHunger);
+
+        //sdg 3
         SDGEntity goodHealth = new SDGEntity("Good Health and Well-being", "Ensure healthy lives and promote well-being for all at all ages");
         sdgEntityRepository.save(goodHealth);
 
+        //init sdg3 targets
+        target = new SDGTargetEntity("Target 3.1", "By 2030, reduce the global maternal mortality ratio to less than 70 per 100,000 live births");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.2", "By 2030, end preventable deaths of newborns and children under 5 years of age, with all countries aiming to reduce neonatal mortality to at least as low as 12 per 1,000 live births and under-5 mortality to at least as low as 25 per 1,000 live births");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.3", "By 2030, end the epidemics of AIDS, tuberculosis, malaria and neglected tropical diseases and combat hepatitis, water-borne diseases and other communicable diseases");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.4", "By 2030, reduce by one third premature mortality from non-communicable diseases through prevention and treatment and promote mental health and well-being");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.5", "Strengthen the prevention and treatment of substance abuse, including narcotic drug abuse and harmful use of alcohol");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.6", "By 2020, halve the number of global deaths and injuries from road traffic accidents");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.7", "By 2030, ensure universal access to sexual and reproductive health-care services, including for family planning, information and education, and the integration of reproductive health into national strategies and programmes");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.8", "Achieve universal health coverage, including financial risk protection, access to quality essential health-care services and access to safe, effective, quality and affordable essential medicines and vaccines for all");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.9", "By 2030, substantially reduce the number of deaths and illnesses from hazardous chemicals and air, water and soil pollution and contamination");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.a", "Strengthen the implementation of the World Health Organization Framework Convention on Tobacco Control in all countries, as appropriate");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.b", "Support the research and development of vaccines and medicines for the communicable and non-communicable diseases that primarily affect developing countries, provide access to affordable essential medicines and vaccines, in accordance with the Doha Declaration on the TRIPS Agreement and Public Health, which affirms the right of developing countries to use to the full the provisions in the Agreement on Trade-Related Aspects of Intellectual Property Rights regarding flexibilities to protect public health, and, in particular, provide access to medicines for all");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.c", "Substantially increase health financing and the recruitment, development, training and retention of the health workforce in developing countries, especially in least developed countries and small island developing States");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 3.d", "Strengthen the capacity of all countries, in particular developing countries, for early warning, risk reduction and management of national and global health risks");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        goodHealth.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(goodHealth);
+
+        //sdg 4
         SDGEntity qualityEducation = new SDGEntity("Quality Education", "Ensure inclusive and equitable quality education and promote lifelong learning opportunities for all");
         sdgEntityRepository.save(qualityEducation);
 
+        target = new SDGTargetEntity("Target 4.1", "By 2030, ensure that all girls and boys complete free, equitable and quality primary and secondary education leading to relevant and effective learning outcomes");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        qualityEducation.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 4.2", "By 2030, ensure that all girls and boys have access to quality early childhood development, care and pre-primary education so that they are ready for primary education");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        qualityEducation.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 4.3", "By 2030, ensure equal access for all women and men to affordable and quality technical, vocational and tertiary education, including university");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        qualityEducation.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 4.4", "By 2030, substantially increase the number of youth and adults who have relevant skills, including technical and vocational skills, for employment, decent jobs and entrepreneurship");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        qualityEducation.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 4.5", "By 2030, eliminate gender disparities in education and ensure equal access to all levels of education and vocational training for the vulnerable, including persons with disabilities, indigenous peoples and children in vulnerable situations");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        qualityEducation.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 4.6", "By 2030, ensure that all youth and a substantial proportion of adults, both men and women, achieve literacy and numeracy");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        qualityEducation.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 4.7", "By 2030, ensure that all learners acquire the knowledge and skills needed to promote sustainable development, including, among others, through education for sustainable development and sustainable lifestyles, human rights, gender equality, promotion of a culture of peace and non-violence, global citizenship and appreciation of cultural diversity and of culture’s contribution to sustainable development");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        qualityEducation.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 4.a", "Build and upgrade education facilities that are child, disability and gender sensitive and provide safe, non-violent, inclusive and effective learning environments for all");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        qualityEducation.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 4.b", "By 2020, substantially expand globally the number of scholarships available to developing countries, in particular least developed countries, small island developing States and African countries, for enrolment in higher education, including vocational training and information and communications technology, technical, engineering and scientific programmes, in developed countries and other developing countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        qualityEducation.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 4.c", "By 2030, substantially increase the supply of qualified teachers, including through international cooperation for teacher training in developing countries, especially least developed countries and small island developing States");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        qualityEducation.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(qualityEducation);
+
+        //sdg 5
         SDGEntity genderEquality = new SDGEntity("Gender Equality", "Achieve gender equality and empower all women and girls");
         sdgEntityRepository.save(genderEquality);
 
+        //init sdg5 targets
+        target = new SDGTargetEntity("Target 5.1", "End all forms of discrimination against all women and girls everywhere");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        genderEquality.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 5.2", "Eliminate all forms of violence against all women and girls in the public and private spheres, including trafficking and sexual and other types of exploitation");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        genderEquality.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 5.3", "Eliminate all harmful practices, such as child, early and forced marriage and female genital mutilation");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        genderEquality.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 5.4", "Recognize and value unpaid care and domestic work through the provision of public services, infrastructure and social protection policies and the promotion of shared responsibility within the household and the family as nationally appropriate");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        genderEquality.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 5.5", "Ensure women’s full and effective participation and equal opportunities for leadership at all levels of decision-making in political, economic and public life");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        genderEquality.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 5.6", "Ensure universal access to sexual and reproductive health and reproductive rights as agreed in accordance with the Programme of Action of the International Conference on Population and Development and the Beijing Platform for Action and the outcome documents of their review conferences");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        genderEquality.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 5.a", "Undertake reforms to give women equal rights to economic resources, as well as access to ownership and control over land and other forms of property, financial services, inheritance and natural resources, in accordance with national laws");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        genderEquality.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 5.b", "Enhance the use of enabling technology, in particular information and communications technology, to promote the empowerment of women");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        genderEquality.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 5.c", "Adopt and strengthen sound policies and enforceable legislation for the promotion of gender equality and the empowerment of all women and girls at all levels");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        genderEquality.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(genderEquality);
+
+        //sdg 6
         SDGEntity cleanWater = new SDGEntity("Clean Water and Sanitation", "Ensure availability and sustainable management of water and sanitation for all");
         sdgEntityRepository.save(cleanWater);
 
+        //init sdg6 targets
+        target = new SDGTargetEntity("Target 6.1", "By 2030, achieve universal and equitable access to safe and affordable drinking water for all");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 6.2", "By 2030, achieve access to adequate and equitable sanitation and hygiene for all and end open defecation, paying special attention to the needs of women and girls and those in vulnerable situations");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 6.3", "By 2030, improve water quality by reducing pollution, eliminating dumping and minimizing release of hazardous chemicals and materials, halving the proportion of untreated wastewater and substantially increasing recycling and safe reuse globally");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 6.4", "By 2030, substantially increase water-use efficiency across all sectors and ensure sustainable withdrawals and supply of freshwater to address water scarcity and substantially reduce the number of people suffering from water scarcity");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 6.5", "By 2030, implement integrated water resources management at all levels, including through transboundary cooperation as appropriate");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 6.6", "By 2020, protect and restore water-related ecosystems, including mountains, forests, wetlands, rivers, aquifers and lakes");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 6.a", "By 2030, expand international cooperation and capacity-building support to developing countries in water- and sanitation-related activities and programmes, including water harvesting, desalination, water efficiency, wastewater treatment, recycling and reuse technologies");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 6.b", "Support and strengthen the participation of local communities in improving water and sanitation management");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanWater.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(cleanWater);
+
+        //sdg 7
         SDGEntity cleanEnergy = new SDGEntity("Affordable and Clean Energy", "Ensure access to affordable, reliable, sustainable and modern energy for all");
         sdgEntityRepository.save(cleanEnergy);
 
+        //init sdg7 targets
+        target = new SDGTargetEntity("Target 7.1", "By 2030, ensure universal access to affordable, reliable and modern energy services");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanEnergy.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 7.2", "By 2030, increase substantially the share of renewable energy in the global energy mix");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanEnergy.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 7.3", "By 2030, double the global rate of improvement in energy efficiency");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanEnergy.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 7.a", "By 2030, enhance international cooperation to facilitate access to clean energy research and technology, including renewable energy, energy efficiency and advanced and cleaner fossil-fuel technology, and promote investment in energy infrastructure and clean energy technology");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanEnergy.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 7.b", "By 2030, expand infrastructure and upgrade technology for supplying modern and sustainable energy services for all in developing countries, in particular least developed countries, small island developing States, and land-locked developing countries, in accordance with their respective programmes of support");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        cleanEnergy.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(cleanEnergy);
+
+        //sdg 8
         SDGEntity economicGrowth = new SDGEntity("Decent Work and Economic Growth", "Promote sustained, inclusive and sustainable economic growth, full and productive employment and decent work for all");
         sdgEntityRepository.save(economicGrowth);
 
+        //init sdg8 targets
+        target = new SDGTargetEntity("Target 8.1", "Sustain per capita economic growth in accordance with national circumstances and, in particular, at least 7 per cent gross domestic product growth per annum in the least developed countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.2", "Achieve higher levels of economic productivity through diversification, technological upgrading and innovation, including through a focus on high-value added and labour-intensive sectors");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.3", "Promote development-oriented policies that support productive activities, decent job creation, entrepreneurship, creativity and innovation, and encourage the formalization and growth of micro-, small- and medium-sized enterprises, including through access to financial services");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.4", "Improve progressively, through 2030, global resource efficiency in consumption and production and endeavour to decouple economic growth from environmental degradation, in accordance with the 10-year framework of programmes on sustainable consumption and production, with developed countries taking the lead");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.5", "By 2030, achieve full and productive employment and decent work for all women and men, including for young people and persons with disabilities, and equal pay for work of equal value");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.6", "By 2020, substantially reduce the proportion of youth not in employment, education or training");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.7", "Take immediate and effective measures to eradicate forced labour, end modern slavery and human trafficking and secure the prohibition and elimination of the worst forms of child labour, including recruitment and use of child soldiers, and by 2025 end child labour in all its forms");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.8", "Protect labour rights and promote safe and secure working environments for all workers, including migrant workers, in particular women migrants, and those in precarious employment");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.9", "By 2030, devise and implement policies to promote sustainable tourism that creates jobs and promotes local culture and products");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.10", "Strengthen the capacity of domestic financial institutions to encourage and expand access to banking, insurance and financial services for all");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.a", "Increase Aid for Trade support for developing countries, in particular least developed countries, including through the Enhanced Integrated Framework for Trade-Related Technical Assistance to Least Developed Countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 8.b", "By 2020, develop and operationalize a global strategy for youth employment and implement the Global Jobs Pact of the International Labour Organization");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        economicGrowth.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(economicGrowth);
+
+        //sdg 9
         SDGEntity industryInnovationInfrastructure = new SDGEntity("Industry, Innovation and Infrastructure", "Build resilient infrastructure, promote inclusive and sustainable industrialization and foster innovation");
         sdgEntityRepository.save(industryInnovationInfrastructure);
 
+        //init sdg9 targets
+        target = new SDGTargetEntity("Target 9.1", "Develop quality, reliable, sustainable and resilient infrastructure, including regional and transborder infrastructure, to support economic development and human well-being, with a focus on affordable and equitable access for all");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        industryInnovationInfrastructure.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 9.2", "Promote inclusive and sustainable industrialization and, by 2030, significantly raise industry’s share of employment and gross domestic product, in line with national circumstances, and double its share in least developed countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        industryInnovationInfrastructure.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 9.3", "Increase the access of small-scale industrial and other enterprises, in particular in developing countries, to financial services, including affordable credit, and their integration into value chains and markets");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        industryInnovationInfrastructure.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 9.4", "By 2030, upgrade infrastructure and retrofit industries to make them sustainable, with increased resource-use efficiency and greater adoption of clean and environmentally sound technologies and industrial processes, with all countries taking action in accordance with their respective capabilities");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        industryInnovationInfrastructure.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 9.5", "Enhance scientific research, upgrade the technological capabilities of industrial sectors in all countries, in particular developing countries, including, by 2030, encouraging innovation and substantially increasing the number of research and development workers per 1 million people and public and private research and development spending");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        industryInnovationInfrastructure.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 9.a", "Facilitate sustainable and resilient infrastructure development in developing countries through enhanced financial, technological and technical support to African countries, least developed countries, landlocked developing countries and small island developing States");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        industryInnovationInfrastructure.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 9.b", "Support domestic technology development, research and innovation in developing countries, including by ensuring a conducive policy environment for, inter alia, industrial diversification and value addition to commodities");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        industryInnovationInfrastructure.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 9.c", "Significantly increase access to information and communications technology and strive to provide universal and affordable access to the Internet in least developed countries by 2020");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        industryInnovationInfrastructure.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(industryInnovationInfrastructure);
+
+        //sdg 10
         SDGEntity reduceInequalities = new SDGEntity("Reduce Inequalities", "Reduce inequality within and among countries");
         sdgEntityRepository.save(reduceInequalities);
 
+        //init sdg10 targets
+        target = new SDGTargetEntity("Target 10.1", "By 2030, progressively achieve and sustain income growth of the bottom 40 per cent of the population at a rate higher than the national average");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        reduceInequalities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 10.2", "By 2030, empower and promote the social, economic and political inclusion of all, irrespective of age, sex, disability, race, ethnicity, origin, religion or economic or other status");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        reduceInequalities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 10.3", "Ensure equal opportunity and reduce inequalities of outcome, including by eliminating discriminatory laws, policies and practices and promoting appropriate legislation, policies and action in this regard");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        reduceInequalities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 10.4", "Adopt policies, especially fiscal, wage and social protection policies, and progressively achieve greater equality");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        reduceInequalities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 10.5", "Improve the regulation and monitoring of global financial markets and institutions and strengthen the implementation of such regulations");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        reduceInequalities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 10.6", "Ensure enhanced representation and voice for developing countries in decision-making in global international economic and financial institutions in order to deliver more effective, credible, accountable and legitimate institutions");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        reduceInequalities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 10.7", "Facilitate orderly, safe, regular and responsible migration and mobility of people, including through the implementation of planned and well-managed migration policies");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        reduceInequalities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 10.a", "Implement the principle of special and differential treatment for developing countries, in particular least developed countries, in accordance with World Trade Organization agreements");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        reduceInequalities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 10.b", "Encourage official development assistance and financial flows, including foreign direct investment, to States where the need is greatest, in particular least developed countries, African countries, small island developing States and landlocked developing countries, in accordance with their national plans and programmes");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        reduceInequalities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 10.c", "By 2030, reduce to less than 3 per cent the transaction costs of migrant remittances and eliminate remittance corridors with costs higher than 5 per cent");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        reduceInequalities.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(reduceInequalities);
+
+        //sdg 11
         SDGEntity sustainableCities = new SDGEntity("Sustainable Cities and Communities", "Make cities and human settlements inclusive, safe, resilient and sustainable");
         sdgEntityRepository.save(sustainableCities);
 
+        //init sdg11 targets
+        target = new SDGTargetEntity("Target 11.1", "By 2030, ensure access for all to adequate, safe and affordable housing and basic services and upgrade slums");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.2", "By 2030, provide access to safe, affordable, accessible and sustainable transport systems for all, improving road safety, notably by expanding public transport, with special attention to the needs of those in vulnerable situations, women, children, persons with disabilities and older persons");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.3", "By 2030, enhance inclusive and sustainable urbanization and capacity for participatory, integrated and sustainable human settlement planning and management in all countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.4", "Strengthen efforts to protect and safeguard the world’s cultural and natural heritage");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.5", "By 2030, significantly reduce the number of deaths and the number of people affected and substantially decrease the direct economic losses relative to global gross domestic product caused by disasters, including water-related disasters, with a focus on protecting the poor and people in vulnerable situations");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.6", "By 2030, reduce the adverse per capita environmental impact of cities, including by paying special attention to air quality and municipal and other waste management");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.7", "By 2030, provide universal access to safe, inclusive and accessible, green and public spaces, in particular for women and children, older persons and persons with disabilities");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.a", "Support positive economic, social and environmental links between urban, per-urban and rural areas by strengthening national and regional development planning");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.b", "By 2020, substantially increase the number of cities and human settlements adopting and implementing integrated policies and plans towards inclusion, resource efficiency, mitigation and adaptation to climate change, resilience to disasters, and develop and implement, in line with the Sendai Framework for Disaster Risk Reduction 2015-2030, holistic disaster risk management at all levels");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 11.c", "Support least developed countries, including through financial and technical assistance, in building sustainable and resilient buildings utilizing local materials");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        sustainableCities.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(sustainableCities);
+
+        //sdg 12
         SDGEntity responsibleConsumption = new SDGEntity("Responsible Consumption and Production", "Ensure sustainable consumption and production patterns");
         sdgEntityRepository.save(responsibleConsumption);
 
+        //init sdg12 targets
+        target = new SDGTargetEntity("Target 12.1", "Implement the 10-year framework of programmes on sustainable consumption and production, all countries taking action, with developed countries taking the lead, taking into account the development and capabilities of developing countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.2", "By 2030, achieve the sustainable management and efficient use of natural resources");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.3", "By 2030, halve per capita global food waste at the retail and consumer levels and reduce food losses along production and supply chains, including post-harvest losses");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.4", "By 2020, achieve the environmentally sound management of chemicals and all wastes throughout their life cycle, in accordance with agreed international frameworks, and significantly reduce their release to air, water and soil in order to minimize their adverse impacts on human health and the environment");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.5", "By 2030, substantially reduce waste generation through prevention, reduction, recycling and reuse");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.6", "Encourage companies, especially large and transnational companies, to adopt sustainable practices and to integrate sustainability information into their reporting cycle");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.7", "Promote public procurement practices that are sustainable, in accordance with national policies and priorities");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.8", "By 2030, ensure that people everywhere have the relevant information and awareness for sustainable development and lifestyles in harmony with nature");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.a", "Support developing countries to strengthen their scientific and technological capacity to move towards more sustainable patterns of consumption and production");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.b", "Develop and implement tools to monitor sustainable development impacts for sustainable tourism that creates jobs and promotes local culture and products");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 12.c", "Rationalize inefficient fossil-fuel subsidies that encourage wasteful consumption by removing market distortions, in accordance with national circumstances, including by restructuring taxation and phasing out those harmful subsidies, where they exist, to reflect their environmental impacts, taking fully into account the specific needs and conditions of developing countries and minimizing the possible adverse impacts on their development in a manner that protects the poor and the affected communities");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        responsibleConsumption.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(responsibleConsumption);
+
+        //sdg 13
         SDGEntity climateAction = new SDGEntity("Climate Action", "Take urgent action to combat climate change and its impacts");
         sdgEntityRepository.save(climateAction);
 
+        //init sdg13 targets
+        target = new SDGTargetEntity("Target 13.1", "Strengthen resilience and adaptive capacity to climate-related hazards and natural disasters in all countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        climateAction.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 13.2", "Integrate climate change measures into national policies, strategies and planning");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        climateAction.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 13.3", "Improve education, awareness-raising and human and institutional capacity on climate change mitigation, adaptation, impact reduction and early warning");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        climateAction.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 13.a", "Implement the commitment undertaken by developed-country parties to the United Nations Framework Convention on Climate Change to a goal of mobilizing jointly $100 billion annually by 2020 from all sources to address the needs of developing countries in the context of meaningful mitigation actions and transparency on implementation and fully operationalize the Green Climate Fund through its capitalization as soon as possible");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        climateAction.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 13.b", "Promote mechanisms for raising capacity for effective climate change-related planning and management in least developed countries and small island developing States, including focusing on women, youth and local and marginalized communities &lt;br&gt; &lt;br&gt;* Acknowledging that the United Nations Framework Convention on Climate Change is the primary international, &lt;br&gt;intergovernmental forum for negotiating the global response to climate change.");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        climateAction.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(climateAction);
+
+        //sdg 14
         SDGEntity lifeBelowWater = new SDGEntity("Life Below Water", "Conserve and sustainably use the oceans, seas and marine resources for sustainable development");
         sdgEntityRepository.save(lifeBelowWater);
 
+        //init sdg14 targets
+        target = new SDGTargetEntity("Target 14.1", "By 2025, prevent and significantly reduce marine pollution of all kinds, in particular from land-based activities, including marine debris and nutrient pollution");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.2", "By 2020, sustainably manage and protect marine and coastal ecosystems to avoid significant adverse impacts, including by strengthening their resilience, and take action for their restoration in order to achieve healthy and productive oceans");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.3", "Minimize and address the impacts of ocean acidification, including through enhanced scientific cooperation at all levels");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.4", "By 2020, effectively regulate harvesting and end overfishing, illegal, unreported and unregulated fishing and destructive fishing practices and implement science-based management plans, in order to restore fish stocks in the shortest time feasible, at least to levels that can produce maximum sustainable yield as determined by their biological characteristics");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.5", "By 2020, conserve at least 10 per cent of coastal and marine areas, consistent with national and international law and based on the best available scientific information");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.6", "By 2020, prohibit certain forms of fisheries subsidies which contribute to overcapacity and overfishing, eliminate subsidies that contribute to illegal, unreported and unregulated fishing and refrain from introducing new such subsidies, recognizing that appropriate and effective special and differential treatment for developing and least developed countries should be an integral part of the World Trade Organization fisheries subsidies negotiation");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.7", "By 2030, increase the economic benefits to Small Island developing States and least developed countries from the sustainable use of marine resources, including through sustainable management of fisheries, aquaculture and tourism");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.a", "Increase scientific knowledge, develop research capacity and transfer marine technology, taking into account the Intergovernmental Oceanographic Commission Criteria and Guidelines on the Transfer of Marine Technology, in order to improve ocean health and to enhance the contribution of marine biodiversity to the development of developing countries, in particular small island developing States and least developed countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.b", "Provide access for small-scale artisanal fishers to marine resources and markets");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 14.c", "Enhance the conservation and sustainable use of oceans and their resources by implementing international law as reflected in UNCLOS, which provides the legal framework for the conservation and sustainable use of oceans and their resources, as recalled in paragraph 158 of The Future We Want");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeBelowWater.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(lifeBelowWater);
+
+        //sdg 15
         SDGEntity lifeOnLand = new SDGEntity("Life On Land", "Protect, restore and promote sustainable use of terrestrial ecosystems, sustainably manage forests, combat desertification, and halt and reverse land degradation and halt biodiversity loss");
         sdgEntityRepository.save(lifeOnLand);
 
+        //init sdg15 targets
+        target = new SDGTargetEntity("Target 15.1", "By 2020, ensure the conservation, restoration and sustainable use of terrestrial and inland freshwater ecosystems and their services, in particular forests, wetlands, mountains and drylands, in line with obligations under international agreements");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.2", "By 2020, promote the implementation of sustainable management of all types of forests, halt deforestation, restore degraded forests and substantially increase afforestation and reforestation globally");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.3", "By 2030, combat desertification, restore degraded land and soil, including land affected by desertification, drought and floods, and strive to achieve a land degradation-neutral world");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.4", "By 2030, ensure the conservation of mountain ecosystems, including their biodiversity, in order to enhance their capacity to provide benefits that are essential for sustainable development");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.5", "Take urgent and significant action to reduce the degradation of natural habitats, halt the loss of biodiversity and, by 2020, protect and prevent the extinction of threatened species");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.6", "Promote fair and equitable sharing of the benefits arising from the utilization of genetic resources and promote appropriate access to such resources, as internationally agreed");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.7", "Take urgent action to end poaching and trafficking of protected species of flora and fauna and address both demand and supply of illegal wildlife products");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.8", "By 2020, introduce measures to prevent the introduction and significantly reduce the impact of invasive alien species on land and water ecosystems and control or eradicate the priority species");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.9", "By 2020, integrate ecosystem and biodiversity values into national and local planning, development processes, poverty reduction strategies and accounts");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.a", "Mobilize and significantly increase financial resources from all sources to conserve and sustainably use biodiversity and ecosystems");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.b", "Mobilize significant resources from all sources and at all levels to finance sustainable forest management and provide adequate incentives to developing countries to advance such management, including for conservation and reforestation");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 15.c", "Enhance global support for efforts to combat poaching and trafficking of protected species, including by increasing the capacity of local communities to pursue sustainable livelihood opportunities");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        lifeOnLand.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(lifeOnLand);
+
+        //sdg 16
         SDGEntity peaceJustice = new SDGEntity("Peace, Justice and Strong Institutions", "Promote peaceful and inclusive societies for sustainable development, provide access to justice for all and build effective, accountable and inclusive institutions at all levels");
         sdgEntityRepository.save(peaceJustice);
 
+        //init sdg16 targets
+        target = new SDGTargetEntity("Target 16.1", "Significantly reduce all forms of violence and related death rates everywhere");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.2", "End abuse, exploitation, trafficking and all forms of violence against and torture of children");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.3", "Promote the rule of law at the national and international levels and ensure equal access to justice for all");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.4", "By 2030, significantly reduce illicit financial and arms flows, strengthen the recovery and return of stolen assets and combat all forms of organized crime");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.5", "Substantially reduce corruption and bribery in all their forms");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.6", "Develop effective, accountable and transparent institutions at all levels");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.7", "Ensure responsive, inclusive, participatory and representative decision-making at all levels");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.8", "Broaden and strengthen the participation of developing countries in the institutions of global governance");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.9", "By 2030, provide legal identity for all, including birth registration");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.10", "Ensure public access to information and protect fundamental freedoms, in accordance with national legislation and international agreements");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.a", "Strengthen relevant national institutions, including through international cooperation, for building capacity at all levels, in particular in developing countries, to prevent violence and combat terrorism and crime");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 16.b", "Promote and enforce non-discriminatory laws and policies for sustainable development");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        peaceJustice.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(peaceJustice);
+
+        //sdg 17
         SDGEntity partnerships = new SDGEntity("Partnerships for the Goals", "Strengthen the means of implementation and revitalize the global partnership for sustainable development");
         sdgEntityRepository.save(partnerships);
+
+        //init sdg17 targets
+        target = new SDGTargetEntity("Target 17.1", "Strengthen domestic resource mobilization, including through international support to developing countries, to improve domestic capacity for tax and other revenue collection");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.2", "Developed countries to implement fully their official development assistance commitments, including the commitment by many developed countries to achieve the target of 0.7 per cent of ODA/GNI to developing countries and 0.15 to 0.20 per cent of ODA/GNI to least developed countries; ODA providers are encouraged to consider setting a target to provide at least 0.20 per cent of ODA/GNI to least developed countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.3", "Mobilize additional financial resources for developing countries from multiple sources");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.4", "Assist developing countries in attaining long-term debt sustainability through coordinated policies aimed at fostering debt financing, debt relief and debt restructuring, as appropriate, and address the external debt of highly indebted poor countries to reduce debt distress");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.5", "Adopt and implement investment promotion regimes for least developed countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.6", "Enhance North-South, South-South and triangular regional and international cooperation on and access to science, technology and innovation and enhance knowledge sharing on mutually agreed terms, including through improved coordination among existing mechanisms, in particular at the United Nations level, and through a global technology facilitation mechanism");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.7", "Promote the development, transfer, dissemination and diffusion of environmentally sound technologies to developing countries on favourable terms, including on concessional and preferential terms, as mutually agreed");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.8", "Fully operationalize the technology bank and science, technology and innovation capacity-building mechanism for least developed countries by 2017 and enhance the use of enabling technology, in particular information and communications technology");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.9", "Enhance international support for implementing effective and targeted capacity-building in developing countries to support national plans to implement all the sustainable development goals, including through North-South, South-South and triangular cooperation");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.10", "Promote a universal, rules-based, open, non-discriminatory and equitable multilateral trading system under the World Trade Organization, including through the conclusion of negotiations under its Doha Development Agenda");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.11", "Significantly increase the exports of developing countries, in particular with a view to doubling the least developed countries’ share of global exports by 2020");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.12", "Realize timely implementation of duty-free and quota-free market access on a lasting basis for all least developed countries, consistent with World Trade Organization decisions, including by ensuring that preferential rules of origin applicable to imports from least developed countries are transparent and simple, and contribute to facilitating market access");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.13", "Enhance global macroeconomic stability, including through policy coordination and policy coherence");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.14", "Enhance policy coherence for sustainable development");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.15", "Respect each country’s policy space and leadership to establish and implement policies for poverty eradication and sustainable development");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.16", "Enhance the global partnership for sustainable development, complemented by multi-stakeholder partnerships that mobilize and share knowledge, expertise, technology and financial resources, to support the achievement of the sustainable development goals in all countries, in particular developing countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.17", "Encourage and promote effective public, public-private and civil society partnerships, building on the experience and resourcing strategies of partnerships");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.18", "By 2020, enhance capacity-building support to developing countries, including for least developed countries and small island developing States, to increase significantly the availability of high-quality, timely and reliable data disaggregated by income, gender, age, race, ethnicity, migratory status, disability, geographic location and other characteristics relevant in national contexts");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        target = new SDGTargetEntity("Target 17.19", "By 2030, build on existing initiatives to develop measurements of progress on sustainable development that complement gross domestic product, and support statistical capacity-building in developing countries");
+        sDGTargetEntityRepository.saveAndFlush(target);
+        partnerships.getTargets().add(target);
+
+        sdgEntityRepository.saveAndFlush(partnerships);
     }
 
     public void initResourceCategories() {
@@ -519,6 +1410,7 @@ public class InitServiceImpl implements InitService {
         bread.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_bread.jpg");
         bread.getPhotos().add("https://localhost:8443/api/v1/files/init/bread2.jpg");
         bread.setCountry("Singapore");
+        bread.setResourceType(ResourceTypeEnum.FREE);
 
         //spotlight resource1
         bread.setSpotlight(true);
@@ -532,6 +1424,7 @@ public class InitServiceImpl implements InitService {
         classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_classroom.jpg");
         classroom.getPhotos().add("https://localhost:8443/api/v1/files/init/classroom.jpg");
         classroom.setCountry("Cambodia");
+        classroom.setResourceType(ResourceTypeEnum.FREE);
 
         //spotlight resource2
         classroom.setSpotlight(true);
@@ -545,6 +1438,7 @@ public class InitServiceImpl implements InitService {
         water.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_water.jpg");
         water.getPhotos().add("https://localhost:8443/api/v1/files/init/water1.jpg");
         water.setCountry("Cambodia");
+        water.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(water, 3L, 5L);
 //4
         ResourceEntity laptop = new ResourceEntity("Laptop", "10 Laptop for free rent", LocalDateTime.parse("2021-06-05T11:50:55"), LocalDateTime.parse("2021-07-05T11:50:55"), 10);
@@ -552,6 +1446,8 @@ public class InitServiceImpl implements InitService {
         laptop.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_laptop.jpg");
         laptop.getPhotos().add("https://localhost:8443/api/v1/files/init/laptop.jpg");
         laptop.setCountry("Bangladesh");
+        laptop.setResourceType(ResourceTypeEnum.PAID);
+        laptop.setPrice(BigDecimal.valueOf(1000.00));
         resourceService.createResource(laptop, 4L, 7L);
 //5
         ResourceEntity bus = new ResourceEntity("Bus", "1 BUS free for rent for 1 day ", LocalDateTime.parse("2021-09-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
@@ -559,12 +1455,15 @@ public class InitServiceImpl implements InitService {
         bus.getPhotos().add("https://localhost:8443/api/v1/files/init/resource_bus.jpg");
         bus.getPhotos().add("https://localhost:8443/api/v1/files/init/bus.jpg");
         bus.setCountry("Singapore");
+        bus.setResourceType(ResourceTypeEnum.PAID);
+        bus.setPrice(BigDecimal.valueOf(50.00));
         resourceService.createResource(bus, 5L, 8L);
         //6      
         ResourceEntity lamp = new ResourceEntity("Lamp", "Would like to donate 100 lamps for free to help the needy ", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
         lamp.setResourceProfilePic("https://localhost:8443/api/v1/files/init/lampResource.jpg");
         lamp.getPhotos().add("https://localhost:8443/api/v1/files/init/lampResource.jpg");
         lamp.setCountry("Peru");
+        lamp.setResourceType(ResourceTypeEnum.FREE);  
         resourceService.createResource(lamp, 4L, 9L);
         //7     
 //        ResourceEntity turtleFood = new ResourceEntity("Turtle Food", "Some free turtle food for free donation ", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 150);
@@ -578,6 +1477,7 @@ public class InitServiceImpl implements InitService {
         clothes.setResourceProfilePic("https://localhost:8443/api/v1/files/init/clothes.jpg");
         clothes.getPhotos().add("https://localhost:8443/api/v1/files/init/clothes.jpg");
         clothes.setCountry("Australia");
+        clothes.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(clothes, 7L, 9L);
 
         //9   
@@ -585,6 +1485,7 @@ public class InitServiceImpl implements InitService {
         dictionary.setResourceProfilePic("https://localhost:8443/api/v1/files/init/dictionary.jpg");
         dictionary.getPhotos().add("https://localhost:8443/api/v1/files/init/dictionary.jpg");
         dictionary.setCountry("Cambodia");
+        dictionary.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(dictionary, 6L, 4L);
 
         //10
@@ -592,6 +1493,7 @@ public class InitServiceImpl implements InitService {
         charger.setResourceProfilePic("https://localhost:8443/api/v1/files/init/charger.jpg");
         charger.getPhotos().add("https://localhost:8443/api/v1/files/init/charger.jpg");
         charger.setCountry("Bangladesh");
+        charger.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(charger, 4L, 9L);
 
         //11
@@ -599,6 +1501,7 @@ public class InitServiceImpl implements InitService {
         cereal.setResourceProfilePic("https://localhost:8443/api/v1/files/init/cereal.jpg");
         cereal.getPhotos().add("https://localhost:8443/api/v1/files/init/cereal.jpg");
         cereal.setCountry("Malawi");
+        cereal.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(cereal, 1L, 7L);
 
         //12
@@ -606,6 +1509,7 @@ public class InitServiceImpl implements InitService {
         apple.setResourceProfilePic("https://localhost:8443/api/v1/files/init/apples.jpg");
         apple.getPhotos().add("https://localhost:8443/api/v1/files/init/apples.jpg");
         apple.setCountry("Malawi");
+        apple.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(apple, 1L, 7L);
 
         //13
@@ -613,6 +1517,7 @@ public class InitServiceImpl implements InitService {
         bedframe.setResourceProfilePic("https://localhost:8443/api/v1/files/init/bedframe.jpg");
         bedframe.getPhotos().add("https://localhost:8443/api/v1/files/init/bedframe.jpg");
         bedframe.setCountry("Cambodia");
+        bedframe.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(bedframe, 2L, 4L);
 
         //14
@@ -620,6 +1525,7 @@ public class InitServiceImpl implements InitService {
         door.setResourceProfilePic("https://localhost:8443/api/v1/files/init/door.jpg");
         door.getPhotos().add("https://localhost:8443/api/v1/files/init/door.jpg");
         door.setCountry("Cambodia");
+        door.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(door, 2L, 4L);
 
         //15
@@ -627,6 +1533,7 @@ public class InitServiceImpl implements InitService {
         detergent.setResourceProfilePic("https://localhost:8443/api/v1/files/init/detergent.jpg");
         detergent.getPhotos().add("https://localhost:8443/api/v1/files/init/detergent.jpg");
         detergent.setCountry("Pakistan");
+        detergent.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(detergent, 3L, 6L);
 
         //16
@@ -634,6 +1541,7 @@ public class InitServiceImpl implements InitService {
         dustbin.setResourceProfilePic("https://localhost:8443/api/v1/files/init/dustbin.jpg");
         dustbin.getPhotos().add("https://localhost:8443/api/v1/files/init/dustbin.jpg");
         dustbin.setCountry("Indonesia");
+        dustbin.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(dustbin, 3L, 6L);
 
         //17
@@ -641,6 +1549,7 @@ public class InitServiceImpl implements InitService {
         torchlight.setResourceProfilePic("https://localhost:8443/api/v1/files/init/torchlight.jpg");
         torchlight.getPhotos().add("https://localhost:8443/api/v1/files/init/torchlight.jpg");
         torchlight.setCountry("Peru");
+        torchlight.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(torchlight, 4L, 10L);
 
         //18
@@ -648,6 +1557,7 @@ public class InitServiceImpl implements InitService {
         pacifier.setResourceProfilePic("https://localhost:8443/api/v1/files/init/pacifier.jpg");
         pacifier.getPhotos().add("https://localhost:8443/api/v1/files/init/pacifier.jpg");
         pacifier.setCountry("Indonesia");
+        pacifier.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(pacifier, 4L, 5L);
 
         //19
@@ -655,6 +1565,7 @@ public class InitServiceImpl implements InitService {
         vege.setResourceProfilePic("https://localhost:8443/api/v1/files/init/vegetable.jpg");
         vege.getPhotos().add("https://localhost:8443/api/v1/files/init/vegetable.jpg");
         vege.setCountry("Kenya");
+        vege.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(vege, 1L, 6L);
 
         //20
@@ -662,6 +1573,7 @@ public class InitServiceImpl implements InitService {
         glasses.setResourceProfilePic("https://localhost:8443/api/v1/files/init/glasses.jpg");
         glasses.getPhotos().add("https://localhost:8443/api/v1/files/init/glasses.jpg");
         glasses.setCountry("Australia");
+        glasses.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(glasses, 4L, 11L);
 
         //21
@@ -669,84 +1581,98 @@ public class InitServiceImpl implements InitService {
         toiletpaper.setResourceProfilePic("https://localhost:8443/api/v1/files/init/toiletpaper.jpg");
         toiletpaper.getPhotos().add("https://localhost:8443/api/v1/files/init/toiletpaper.jpg");
         toiletpaper.setCountry("Nepal");
+        toiletpaper.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(toiletpaper, 3L, 5L);
 
         ResourceEntity pears = new ResourceEntity("Pears", "20kg of fresh pears", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 20);
         pears.setResourceProfilePic("https://localhost:8443/api/v1/files/init/pears.jpg");
         pears.getPhotos().add("https://localhost:8443/api/v1/files/init/pears.jpg");
         pears.setCountry("Malawi");
+        pears.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(pears, 1L, 10L);
 
         ResourceEntity grapes = new ResourceEntity("Grapes", "20kg of fresh grapes", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 20);
         grapes.setResourceProfilePic("https://localhost:8443/api/v1/files/init/grapes.jpg");
         grapes.getPhotos().add("https://localhost:8443/api/v1/files/init/grapes.jpg");
         grapes.setCountry("Singapore");
+        grapes.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(grapes, 1L, 10L);
 
         ResourceEntity paintDye = new ResourceEntity("Paint Dye", "10kg of NIPPON colour dye of different colours each (White, whitewash, light blue, black, yellow)", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10);
         paintDye.setResourceProfilePic("https://localhost:8443/api/v1/files/init/paintdye.jpg");
         paintDye.getPhotos().add("https://localhost:8443/api/v1/files/init/paintdye.jpg");
         paintDye.setCountry("Malaysia");
+        paintDye.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(paintDye, 4L, 4L);
 
         ResourceEntity bodyWash = new ResourceEntity("Body Wash", "100 bottles of body wash", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 100);
         bodyWash.setResourceProfilePic("https://localhost:8443/api/v1/files/init/bodywash.png");
         bodyWash.getPhotos().add("https://localhost:8443/api/v1/files/init/bodywash.png");
         bodyWash.setCountry("Malaysia");
+        bodyWash.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(bodyWash, 9L, 6L);
 
         ResourceEntity garbageBag = new ResourceEntity("Garbage Bags", "10,000 new garbage bags", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 10000);
         garbageBag.setResourceProfilePic("https://localhost:8443/api/v1/files/init/garbageBag.jpg");
         garbageBag.getPhotos().add("https://localhost:8443/api/v1/files/init/garbageBag.jpg");
         garbageBag.setCountry("Thailand");
+        garbageBag.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(garbageBag, 4L, 7L);
 
         ResourceEntity headphone = new ResourceEntity("Headphones", "250 brand new SONY headphones", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 200);
         headphone.setResourceProfilePic("https://localhost:8443/api/v1/files/init/headphone.jpeg");
         headphone.getPhotos().add("https://localhost:8443/api/v1/files/init/headphone.jpeg");
         headphone.setCountry("Singapore");
+        headphone.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(headphone, 4L, 12L);
 
         ResourceEntity computerMouse = new ResourceEntity("Computer Mouse", "170 used wired computer mouse, can be easily connected with computer/laptops via USB", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 170);
         computerMouse.setResourceProfilePic("https://localhost:8443/api/v1/files/init/computerMouse.jpg");
         computerMouse.getPhotos().add("https://localhost:8443/api/v1/files/init/computerMouse.jpg");
         computerMouse.setCountry("Singapore");
+        computerMouse.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(computerMouse, 4L, 12L);
 
         ResourceEntity keyboard = new ResourceEntity("Keyboard", "188 used Keyboards, can be easily connected with computer/laptops via USB or Bluetooth", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 188);
         keyboard.setResourceProfilePic("https://localhost:8443/api/v1/files/init/keyboard.jpg");
         keyboard.getPhotos().add("https://localhost:8443/api/v1/files/init/keyboard.jpg");
         keyboard.setCountry("Singapore");
+        keyboard.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(keyboard, 4L, 12L);
 
         ResourceEntity floorPlan = new ResourceEntity("Floor Plans", "Floors Plans available, contact me for more details", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         floorPlan.setResourceProfilePic("https://localhost:8443/api/v1/files/init/floorplan.png");
         floorPlan.getPhotos().add("https://localhost:8443/api/v1/files/init/floorplan.png");
         floorPlan.setCountry("Cambodia");
+        floorPlan.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(floorPlan, 8L, 10L);
 
         ResourceEntity shovel = new ResourceEntity("Shovel", "Shovel available, contact me for more details", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         shovel.setResourceProfilePic("https://localhost:8443/api/v1/files/init/shovel.jpg");
         shovel.getPhotos().add("https://localhost:8443/api/v1/files/init/shovel.jpg");
         shovel.setCountry("Cambodia");
+        shovel.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(shovel, 4L, 10L);
 
         ResourceEntity spade = new ResourceEntity("Gardening Spade", "Gardening Spade available", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 28);
         spade.setResourceProfilePic("https://localhost:8443/api/v1/files/init/spade.jpg");
         spade.getPhotos().add("https://localhost:8443/api/v1/files/init/spade.jpg");
         spade.setCountry("Singapore");
+        spade.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(spade, 4L, 10L);
 
         ResourceEntity sofa = new ResourceEntity("Sofa", "5 sets of used sofa available for donation", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 1000);
         sofa.setResourceProfilePic("https://localhost:8443/api/v1/files/init/sofa.jpg");
         sofa.getPhotos().add("https://localhost:8443/api/v1/files/init/sofa.jpg");
         sofa.setCountry("Singapore");
+        sofa.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(sofa, 9L, 7L);
 
         ResourceEntity chair = new ResourceEntity("Chair", "500 Brand New Chairs", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 500);
         chair.setResourceProfilePic("https://localhost:8443/api/v1/files/init/chair.jpg");
         chair.getPhotos().add("https://localhost:8443/api/v1/files/init/chair.jpg");
         chair.setCountry("Singapore");
+        chair.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(chair, 9L, 7L);
 
         //22
@@ -800,6 +1726,13 @@ public class InitServiceImpl implements InitService {
         projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/Bangladesh1.jpg");
         projectEntity1.getPhotos().add("https://localhost:8443/api/v1/files/init/Bangladesh2.jpg");
         projectService.createProject(projectEntity1, 5L);
+
+        long[] sdgTargetIds = LongStream.rangeClosed(1, 5).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 1L, projectEntity1.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(10, 12).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 2L, projectEntity1.getProjectId());
+
         /* create project badge */
         BadgeEntity projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Empowerment in Bangladesh", "https://localhost:8443/api/v1/files/badgeIcons/cities.png");
         projBadge.setProject(projectEntity1);
@@ -843,6 +1776,13 @@ public class InitServiceImpl implements InitService {
         projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/woman2.jpg");
         projectEntity2.getPhotos().add("https://localhost:8443/api/v1/files/init/woman3.jpg");
         projectService.createProject(projectEntity2, 5L);
+
+        sdgTargetIds = LongStream.rangeClosed(30, 35).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity2.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(41, 44).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 5L, projectEntity2.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Fiancial Literacy Achieved", "https://localhost:8443/api/v1/files/badgeIcons/cities.png");
         projBadge.setProject(projectEntity2);
@@ -871,6 +1811,13 @@ public class InitServiceImpl implements InitService {
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural.jpg");
         projectEntity3.getPhotos().add("https://localhost:8443/api/v1/files/init/rural2.jpg");
         projectService.createProject(projectEntity3, 9L);
+
+        sdgTargetIds = LongStream.rangeClosed(5, 7).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 1L, projectEntity3.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(11, 15).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 2L, projectEntity3.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Support For Cambodia", "https://localhost:8443/api/v1/files/badgeIcons/construction.png");
         projBadge.setProject(projectEntity3);
@@ -903,6 +1850,13 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building3.jpg");
 
         projectService.createProject(projectEntity4, 9L);
+
+        sdgTargetIds = LongStream.rangeClosed(29, 36).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity4.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(41, 47).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 5L, projectEntity4.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "House Builder", "https://localhost:8443/api/v1/files/badgeIcons/construction.png");
         projBadge.setProject(projectEntity4);
@@ -932,6 +1886,13 @@ public class InitServiceImpl implements InitService {
         projectEntity5.getPhotos().add("https://localhost:8443/api/v1/files/init/water3.jpg");
 
         projectService.createProject(projectEntity5, 9L);
+
+        sdgTargetIds = LongStream.rangeClosed(17, 21).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 3L, projectEntity5.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(48, 51).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 6L, projectEntity5.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Papua New Guinea Reformed", "https://localhost:8443/api/v1/files/badgeIcons/environment.png");
         projBadge.setProject(projectEntity5);
@@ -998,6 +1959,13 @@ public class InitServiceImpl implements InitService {
         projectEntity7.getPhotos().add("https://localhost:8443/api/v1/files/init/reef3.jpg");
 
         projectService.createProject(projectEntity7, 7L);
+
+        sdgTargetIds = LongStream.rangeClosed(112, 115).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 13L, projectEntity7.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(92, 95).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 11L, projectEntity7.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Reefs Protecter", "https://localhost:8443/api/v1/files/badgeIcons/animal.png");
         projBadge.setProject(projectEntity7);
@@ -1026,6 +1994,16 @@ public class InitServiceImpl implements InitService {
         projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/solar.jpg");
         projectEntity8.getPhotos().add("https://localhost:8443/api/v1/files/init/solar2.jpg");
         projectService.createProject(projectEntity8, 7L);
+
+        sdgTargetIds = LongStream.rangeClosed(18, 25).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 3L, projectEntity8.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(32, 37).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity8.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(39, 44).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 5L, projectEntity8.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Light Up Peruvian Andes", "https://localhost:8443/api/v1/files/badgeIcons/construction.png");
         projBadge.setProject(projectEntity8);
@@ -1054,6 +2032,16 @@ public class InitServiceImpl implements InitService {
         projectEntity9.getPhotos().add("https://localhost:8443/api/v1/files/init/project9photo2.jpg");
         projectEntity9.getPhotos().add("https://localhost:8443/api/v1/files/init/project9photo3.jpg");
         projectService.createProject(projectEntity9, 8L);
+
+        sdgTargetIds = LongStream.rangeClosed(1, 3).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 1L, projectEntity9.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(16, 25).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 3L, projectEntity9.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(32, 35).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity9.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Mother and Child Supporter", "https://localhost:8443/api/v1/files/badgeIcons/gender-equality.png");
         projBadge.setProject(projectEntity9);
@@ -1081,6 +2069,13 @@ public class InitServiceImpl implements InitService {
         projectEntity10.getPhotos().add("https://localhost:8443/api/v1/files/init/project10photo1.jpg");
         projectEntity10.getPhotos().add("https://localhost:8443/api/v1/files/init/project10photo2.jpg");
         projectService.createProject(projectEntity10, 8L);
+
+        sdgTargetIds = LongStream.rangeClosed(1, 6).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 1L, projectEntity10.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(30, 36).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity10.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Supported Youth Employment", "https://localhost:8443/api/v1/files/badgeIcons/partnerships.png");
         projBadge.setProject(projectEntity10);
@@ -1108,6 +2103,10 @@ public class InitServiceImpl implements InitService {
         projectEntity11.getPhotos().add("https://localhost:8443/api/v1/files/init/zebra1.jpeg");
         projectEntity11.getPhotos().add("https://localhost:8443/api/v1/files/init/zebra.jpeg");
         projectService.createProject(projectEntity11, 11L);
+
+        sdgTargetIds = LongStream.rangeClosed(96, 99).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 11L, projectEntity11.getProjectId());
+
         /* create project badge */
         projBadge = new BadgeEntity(BadgeTypeEnum.PROJECT_SPECIFIC, "Zebra Protector", "https://localhost:8443/api/v1/files/badgeIcons/animal.png");
         projBadge.setProject(projectEntity11);
@@ -1204,6 +2203,16 @@ public class InitServiceImpl implements InitService {
         completedProject.getSdgs().add(lifeBelowWater);
 
         projectService.createProject(completedProject, 5L);
+
+        long[] sdgTargetIds = LongStream.rangeClosed(51, 55).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 6L, completedProject.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(94, 99).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 11L, completedProject.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(120, 125).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 14L, completedProject.getProjectId());
+
         //set team members 
         ProfileEntity songhwa = profileEntityRepository.findById(Long.valueOf(9)).get();
         completedProject.getTeamMembers().add(songhwa);
@@ -1277,6 +2286,13 @@ public class InitServiceImpl implements InitService {
         completedProject.getSdgs().add(responsibleConsumption);
 
         projectService.createProject(completedProject, 5L);
+
+        sdgTargetIds = LongStream.rangeClosed(91, 99).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 11L, completedProject.getProjectId());
+
+        sdgTargetIds = LongStream.rangeClosed(101, 104).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 12L, completedProject.getProjectId());
+
         //set team members 
         completedProject.getTeamMembers().add(songhwa);
         songhwa.getProjectsJoined().add(completedProject);
@@ -1299,7 +2315,7 @@ public class InitServiceImpl implements InitService {
         profileEntityRepository.save(songhwa);
         /* end of completed project 2 */
 
- /* start of completed project 4 */
+ /* start of completed project 3 */
         projDesc = "End all forms of violence and harmful practices against women and girls, "
                 + "regardless of gender identity and sexual orientation";
         completedProject = new ProjectEntity("End violence Against Women", projDesc, "India", LocalDateTime.parse("2017-02-07T11:45:55"), LocalDateTime.parse("2019-12-28T10:25:55"));
@@ -1316,6 +2332,10 @@ public class InitServiceImpl implements InitService {
         completedProject.getSdgs().add(genderEquality);
 
         projectService.createProject(completedProject, 5L);
+
+        sdgTargetIds = LongStream.rangeClosed(41, 46).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 5L, completedProject.getProjectId());
+
         //set team members 
         completedProject.getTeamMembers().add(songhwa);
         songhwa.getProjectsJoined().add(completedProject);
@@ -1360,6 +2380,10 @@ public class InitServiceImpl implements InitService {
         completedProject.getSdgs().add(qualityEducation);
 
         projectService.createProject(completedProject, 5L);
+
+        sdgTargetIds = LongStream.rangeClosed(31, 34).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 4L, completedProject.getProjectId());
+
         //set team members 
         completedProject.getTeamMembers().add(songhwa);
         songhwa.getProjectsJoined().add(completedProject);
@@ -1434,6 +2458,22 @@ public class InitServiceImpl implements InitService {
             projectService.createJoinRequest(1L, 7L);
         } catch (Exception e) {
             System.err.println("Error in init join request");
+        }
+
+    }
+
+    private void initResourceRequests() {
+
+        try {
+            resourceRequestService.createResourceRequestResourceOwner(1L, 9L, 6L, 12);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            resourceRequestService.createResourceRequestResourceOwner(1L, 11L, 19L, 10);
+        } catch (Exception e) {
+            System.err.println("Error in init resource request for projectId 1: Eyeglasses");
         }
 
     }
@@ -1598,4 +2638,55 @@ public class InitServiceImpl implements InitService {
         }
     }
 
+    private void associateSDGTargetsWithProfile(long[] sdgTargetIds, Long sdgId, Long accountId) {
+        //find the sdg
+        SDGEntity sdg = sdgEntityRepository.findBySdgId(sdgId);
+
+        //find the list of sdgTargets instances
+        List<SDGTargetEntity> sdgTargetlist = sDGTargetEntityRepository.findSDGTargetsByIds(sdgTargetIds);
+
+        //find the profile
+        ProfileEntity profile = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException(accountId));
+
+        SelectedTargetEntity s = new SelectedTargetEntity();
+
+        s.setProfile(profile);
+        s.setSdg(sdg);
+        s.getSdgTargets().addAll(sdgTargetlist);
+
+        selectedTargetEntityRepository.saveAndFlush(s);
+
+        //set bidirectional association
+        profile.getSelectedTargets().add(s);
+        profileEntityRepository.saveAndFlush(profile);
+    }
+
+    private void associateSDGTargetsWithProject(long[] sdgTargetIds, Long sdgId, Long projectId) {
+        //find the sdg
+        SDGEntity sdg = sdgEntityRepository.findBySdgId(sdgId);
+
+        //find the list of sdgTargets instances
+        List<SDGTargetEntity> sdgTargetlist = sDGTargetEntityRepository.findSDGTargetsByIds(sdgTargetIds);
+
+        ProjectEntity project = null;
+        //find the project
+        try {
+            project = projectService.retrieveProjectById(projectId);
+        } catch (ProjectNotFoundException ex) {
+            System.err.println("error in datainit: associateSDGTargetsWithProject() method");
+        }
+
+        SelectedTargetEntity s = new SelectedTargetEntity();
+
+        s.setProject(project);
+        s.setSdg(sdg);
+        s.getSdgTargets().addAll(sdgTargetlist);
+
+        selectedTargetEntityRepository.saveAndFlush(s);
+
+        //set bidirectional association
+        project.getSelectedTargets().add(s);
+        projectEntityRepository.saveAndFlush(project);
+    }
 }

@@ -75,8 +75,6 @@ public class ProjectEntity {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime endDate;
 
-
-
     @Column(nullable = false)
     @NotNull
     private ProjectStatusEnum projStatus = ProjectStatusEnum.ON_HOLD;
@@ -84,7 +82,7 @@ public class ProjectEntity {
     @Column(nullable = false)
     @NotNull
     private Integer upvotes = 0;
-    
+
     //****** newly added for Rep points 
     @Column(nullable = false)
     @NotNull
@@ -129,36 +127,35 @@ public class ProjectEntity {
 
     @OneToMany
     @JsonIgnoreProperties({"donationOptions"})
-    private List<FundCampaignEntity> fundsCampaign = new ArrayList<>();
-
-    @OneToMany
-    private List<ScheduleEntity> meetings = new ArrayList<>();
+    private List<FundCampaignEntity> fundCampaigns = new ArrayList<>();
 
     @OneToMany
     private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
+
+ 
+    @OneToMany
+    @JsonIgnoreProperties({"project"})
+    private List<ResourceTransactionEntity> listOfResourceTransactions = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projects"})
     private List<SDGEntity> sdgs = new ArrayList<>();
 
-    @OneToMany
-    private List<KPIEntity> kpis = new ArrayList<>();
-
     @ManyToMany
     @JsonIgnoreProperties({"hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> teamMembers = new ArrayList<>();
-    
-    @ManyToMany
-    @JsonIgnoreProperties({"projectsFollowing","hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
-    private List<ProfileEntity> projectFollowers = new ArrayList<>();
-    
 
-    @OneToMany(mappedBy = "project")
-    private List<ChannelEntity> channels = new ArrayList<>();
+    @ManyToMany
+    @JsonIgnoreProperties({"projectsFollowing", "hostedResources", "sdgs", "meetings", "projectsJoined", "projectsOwned", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
+    private List<ProfileEntity> projectFollowers = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"projectsOwned", "sdgs", "meetings", "projectsJoined", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> projectOwners = new ArrayList<>();
+
+    //sdg refactoring
+    @OneToMany
+    private List<SelectedTargetEntity> selectedTargets = new ArrayList<>();
 
     public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate) {
         this.projectTitle = projectTitle;

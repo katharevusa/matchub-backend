@@ -13,8 +13,10 @@ import com.is4103.matchub.validation.ValueOfEnum;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -36,11 +38,11 @@ public class IndividualSetupVO {
     private String[] skillSet;
 
     private Long[] projectFollowing;
-    
+
     @ValueOfEnum(enumClass = GenderEnum.class)
     @NotNull(message = "gender can not be null.")
     private String genderEnum;
-    
+
     @NotNull(message = "Country Code can not be null.")
     @NotBlank(message = "Country Code can not be blank.")
     private String countryCode;
@@ -59,7 +61,12 @@ public class IndividualSetupVO {
 
     private Long[] following;
 
-    private Long[] sdgIds;
+//    private Long[] sdgIds;
+    
+    //*****************REFACTORED 
+    // key: sdgId 
+    // value: List of sdgTargetIds that belongs to the sdgId
+    private Map<Long, List<Long>> hashmapSDG = new HashMap<>();
 
     public void setupIndividualAccount(IndividualEntity individual) {
         individual.setProfileDescription(this.profileDescription);
@@ -73,7 +80,7 @@ public class IndividualSetupVO {
         Set<Long> longSet = new HashSet<>(Arrays.asList(this.projectFollowing));
 //        individual.getProjectFollowing().clear();
 //        individual.setProjectFollowing(longSet);
-        
+
         individual.setGenderEnum(GenderEnum.valueOf(this.genderEnum));
 
         individual.setCountryCode(this.countryCode);
@@ -85,9 +92,9 @@ public class IndividualSetupVO {
         longSet = new HashSet<>(Arrays.asList(this.following));
         individual.getFollowing().clear();
         individual.setFollowing(longSet);
-        
+
         //set the announcement setting, true by default
-        for(AnnouncementTypeEnum a : AnnouncementTypeEnum.values()){
+        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
             individual.getAnnouncementsSetting().put(a, Boolean.TRUE);
         }
 

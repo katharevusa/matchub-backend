@@ -6,11 +6,15 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.ResourceRequestEntity;
+import com.is4103.matchub.entity.ResourceTransactionEntity;
 import com.is4103.matchub.exception.CreateResourceRequestException;
 import com.is4103.matchub.exception.DeleteResourceRequestException;
+import com.is4103.matchub.exception.ProjectNotFoundException;
+import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.ResourceRequestNotFoundException;
 import com.is4103.matchub.exception.RespondToResourceRequestException;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
+import com.stripe.model.PaymentIntent;
 import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +26,8 @@ import org.springframework.data.domain.Pageable;
 public interface ResourceRequestService {
 
     public ResourceRequestEntity createResourceRequestProjectOwner(ResourceRequestCreateVO vo) throws CreateResourceRequestException;
+
+    public ResourceRequestEntity createResourceRequestResourceOwner(Long projectId, Long requestorId, Long resourceId, Integer units) throws CreateResourceRequestException;
 
     public ResourceRequestEntity createResourceRequestResourceOwner(ResourceRequestCreateVO vo) throws CreateResourceRequestException;
 
@@ -42,7 +48,14 @@ public interface ResourceRequestService {
     public List<ResourceRequestEntity> getAllOutgoingResourceRequests(Long userId);
 
     public List<ResourceRequestEntity> getAllIncomingResourceRequests(Long userId);
-    
+
     public List<ResourceRequestEntity> getAllOutgoingDonationRequests(Long userId);
+    
+     public List<ResourceTransactionEntity> getResourceTransactionForOwnedResources(Long userId);
+
+    public List<ResourceTransactionEntity> getResourceTransactionForConsumedResources(Long userId);
+    
+    public ResourceTransactionEntity createResourceTransaction(String payerEmail, PaymentIntent paymentIntent) throws ResourceNotFoundException, ProjectNotFoundException;
+
 
 }

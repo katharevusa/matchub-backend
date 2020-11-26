@@ -6,12 +6,16 @@
 package com.is4103.matchub.repository;
 
 import com.is4103.matchub.entity.DonationEntity;
+import com.is4103.matchub.entity.FundCampaignEntity;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  *
  * @author longluqian
  */
 public interface DonationEntityRepository extends JpaRepository<DonationEntity, Long> {
+    
     
 }
