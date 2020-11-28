@@ -23,6 +23,7 @@ import com.is4103.matchub.repository.ResourceRequestEntityRepository;
 import com.is4103.matchub.vo.AnnouncementSettingVO;
 import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -270,6 +271,48 @@ public class AnnouncementImpl implements AnnouncementService {
            user.getAnnouncementsSetting().replace(k, vo.getNewSetting().get(k));
         }
         return profileEntityRepository.saveAndFlush(user);
+    }
+    
+    @Override
+    public List<AnnouncementEntity> getFollowingProjectAnnouncements(Long userId) {
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+        List<ProjectEntity> listOfFollowingProjects = user.getProjectsFollowing();
+        List<AnnouncementEntity> announcements = new ArrayList<>();
+        for (ProjectEntity p : listOfFollowingProjects) {
+            announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
+        }
+
+        Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
+
+        return announcements;
+    }
+
+    @Override
+    public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId) {
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+        List<ProjectEntity> listOfFollowingProjects = user.getProjectsOwned();
+        List<AnnouncementEntity> announcements = new ArrayList<>();
+        for (ProjectEntity p : listOfFollowingProjects) {
+            announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
+        }
+
+        Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
+
+        return announcements;
+    }
+
+    @Override
+    public List<AnnouncementEntity> getJoinedProjectAnnouncements(Long userId) {
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+        List<ProjectEntity> listOfFollowingProjects = user.getProjectsJoined();
+        List<AnnouncementEntity> announcements = new ArrayList<>();
+        for (ProjectEntity p : listOfFollowingProjects) {
+            announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
+        }
+
+        Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
+
+        return announcements;
     }
     
 }

@@ -41,7 +41,7 @@ public class AnnouncementEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long announcementId;
     
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     @NotNull
     private String title;
 

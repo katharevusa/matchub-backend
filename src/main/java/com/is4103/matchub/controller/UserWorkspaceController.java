@@ -110,21 +110,7 @@ public class UserWorkspaceController {
     }
     
     
-    @RequestMapping(method = RequestMethod.GET, value = "/getFollowingProjectAnnouncements")
-    public List<AnnouncementEntity> getFollowingProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
-        return postService.getFollowingProjectAnnouncements(userId);
-    }
-    
-    @RequestMapping(method = RequestMethod.GET, value = "/getOwnedProjectAnnouncements")
-    public List<AnnouncementEntity> getOwnedProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
-        return postService.getOwnedProjectAnnouncements(userId);
-    }
-    
-    @RequestMapping(method = RequestMethod.GET, value = "/getJoinedProjectAnnouncements")
-    public List<AnnouncementEntity> getJoinedProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
-        return postService.getJoinedProjectAnnouncements(userId);
-    }
-    
+   
     @RequestMapping(method = RequestMethod.POST, value = "/repost")
     public PostEntity repost(@RequestParam(value = "originalPostId", required = true)Long originalPostId,@Valid @RequestBody PostVO vo)throws RepostException{
         return postService.repost(originalPostId, vo);

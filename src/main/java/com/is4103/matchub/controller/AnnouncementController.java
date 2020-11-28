@@ -31,82 +31,98 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/authenticated")
 public class AnnouncementController {
     @Autowired
-    AnnouncementService announcement;
+    AnnouncementService announcementService;
     
     
-    //create project announcement for a project 
+    //create project announcementService for a project 
     @RequestMapping(method = RequestMethod.POST, value = "/createProjectPublicAnnouncement")
     public AnnouncementEntity createProjectPublicAnnouncement(@Valid @RequestBody AnnouncementVO newAnnouncementVO) throws CreateAnnouncementException{
         
-        return announcement.createProjectPublicAnnouncement(newAnnouncementVO);
+        return announcementService.createProjectPublicAnnouncement(newAnnouncementVO);
          
     }
     
     @RequestMapping(method = RequestMethod.GET, value = "/viewProjectPublicAnnouncements")
     public List<AnnouncementEntity> viewProjectPublicAnnouncements(@RequestParam(value = "projectId", defaultValue = "")Long projectId){
-        return announcement.viewProjectPublicAnnouncements(projectId);
+        return announcementService.viewProjectPublicAnnouncements(projectId);
     }
     
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProjectPublicAnnouncement")
     public void deleteProjectPublicAnnouncement(@RequestParam(value = "announcementId",required = true)Long announcementId,@RequestParam(value = "userId",required = true) Long userId) throws DeleteAnnouncementException{
-        announcement.deleteProjectPublicAnnouncement(announcementId, userId);
+        announcementService.deleteProjectPublicAnnouncement(announcementId, userId);
     }
     
     @RequestMapping(method = RequestMethod.POST, value = "/createProjectInternalAnnouncement")
     public AnnouncementEntity createProjectInternalAnnouncement(@Valid @RequestBody AnnouncementVO newAnnouncementVO) throws CreateAnnouncementException{
-        return announcement.createProjectInternalAnnouncement(newAnnouncementVO);
+        return announcementService.createProjectInternalAnnouncement(newAnnouncementVO);
         
     }
     
     @RequestMapping(method = RequestMethod.GET, value = "/viewProjectInternalAnnouncements")
     public List<AnnouncementEntity> viewProjectInternalAnnouncements(@RequestParam(value = "projectId",required = true)Long projectId){
-        return announcement.viewProjectInternalAnnouncements(projectId);
+        return announcementService.viewProjectInternalAnnouncements(projectId);
     }
     
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteProjectInternalAnnouncement")
     public void deleteProjectInternalAnnouncement(@RequestParam(value = "announcementId",required = true)Long announcementId,@RequestParam(value = "userId",required = true) Long userId) throws DeleteAnnouncementException{
-        announcement.deleteProjectInternalAnnouncement(announcementId,userId);
+        announcementService.deleteProjectInternalAnnouncement(announcementId,userId);
     }
     
-    // delete an announcement of an user(only remove from user's side)
+    // delete an announcementService of an user(only remove from user's side)
     @RequestMapping(method = RequestMethod.DELETE, value = "/deleteAnAnnouncementForUser")
     public void deleteAnAnnouncementForUser(@RequestParam(value = "announcementId",required = true)Long announcementId, @RequestParam(value = "userId",required = true)Long userId){
-        announcement.deleteAnAnnouncementForUser(announcementId,userId);
+        announcementService.deleteAnAnnouncementForUser(announcementId,userId);
     }
 
        
-    // get a particular announcement
+    // get a particular announcementService
     @RequestMapping(method = RequestMethod.GET, value = "/getAnnouncementById")
     public AnnouncementEntity getAnnouncementById(@RequestParam(value = "announcementId",required = true)Long announcementId){
-       return announcement.getAnnouncementById(announcementId);
+       return announcementService.getAnnouncementById(announcementId);
     }
 
     // get user's all announcements
     @RequestMapping(method = RequestMethod.GET, value = "/getAnnouncementsByUserId")
     public List<AnnouncementEntity> getAnnouncementsByUserId(@RequestParam(value = "userId",required = true)Long userId){
-        return announcement.getAnnouncementsByUserId(userId);
+        return announcementService.getAnnouncementsByUserId(userId);
     }
     
     //read-receipt to backend
     @RequestMapping(method = RequestMethod.PUT, value = "/viewAnnouncement")
     public void viewAnnouncement(@RequestParam(value = "announcementId",required = true)Long announcementId,@RequestParam(value = "viewerId",required = true) Long viewerId){
-         announcement.viewAnnouncement(announcementId, viewerId);
+         announcementService.viewAnnouncement(announcementId, viewerId);
     }
     
     //clear all announcements
     @RequestMapping(method = RequestMethod.DELETE, value = "/clearAllAnnouncementsForUser")
     public void clearAllAnnouncementsForUser( @RequestParam(value = "userId",required = true) Long userId){
-        announcement.clearAllAnnouncemnents(userId);
+        announcementService.clearAllAnnouncemnents(userId);
     }
     // read all announcements
     @RequestMapping(method = RequestMethod.PUT, value = "/viewAllAnnouncements")
     public void viewAllAnnouncements(@RequestParam(value = "userId",required = true) Long userId){
-         announcement.readAllAnnouncements(userId);
+         announcementService.readAllAnnouncements(userId);
     }
     
     @RequestMapping(method = RequestMethod.PUT, value = "/updateAnnouncementSettinge")
      public ProfileEntity updateAnnouncementSettinge(@Valid @RequestBody AnnouncementSettingVO vo)throws UserNotFoundException{
-      return  announcement.updateAnnouncementSettinge(vo);
+      return  announcementService.updateAnnouncementSettinge(vo);
     }
+     
+     @RequestMapping(method = RequestMethod.GET, value = "/getFollowingProjectAnnouncements")
+    public List<AnnouncementEntity> getFollowingProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
+        return announcementService.getFollowingProjectAnnouncements(userId);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getOwnedProjectAnnouncements")
+    public List<AnnouncementEntity> getOwnedProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
+        return announcementService.getOwnedProjectAnnouncements(userId);
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getJoinedProjectAnnouncements")
+    public List<AnnouncementEntity> getJoinedProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
+        return announcementService.getJoinedProjectAnnouncements(userId);
+    }
+    
     
 }

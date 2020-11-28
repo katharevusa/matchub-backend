@@ -20,6 +20,7 @@ import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.enumeration.RequestorEnum;
 import com.is4103.matchub.enumeration.ResourceTypeEnum;
+import com.is4103.matchub.exception.LikePostException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -2560,6 +2561,7 @@ public class InitServiceImpl implements InitService {
 
     private void initPost() {
         // user 2
+        try{
         PostVO post1 = new PostVO();
         post1.setPostCreatorId(2L);
         post1.setContent("What a nice day!");
@@ -2630,6 +2632,9 @@ public class InitServiceImpl implements InitService {
         post12.setPostCreatorId(7L);
         post12.setContent("Red square The days ahead will be very consequential for the state of the world. The resurgence of COVID-19 and the US Presidential Election are just two of the issues that will weigh heavily on our future. During these days, standing firm for the #SDGs is a good way to stay grounded.");
         postService.createPostDataInit(post12);
+        }catch(LikePostException ex){
+            ex.printStackTrace();
+        }
     }
 
     private void setNotifications(ProfileEntity profileEntity) {
