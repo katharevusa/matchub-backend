@@ -107,7 +107,7 @@ public class OrganisationServiceTest {
 
         try {
             OrganisationEntity organisation = organisationEntityRepository.findById(7L).get();
-            Assert.assertTrue(!organisation.getEmployees().contains(9L));
+            Assert.assertTrue(!organisation.getEmployees().contains(12L));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
