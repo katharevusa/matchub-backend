@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.OrganisationNotFoundException;
 import com.is4103.matchub.exception.UnableToAddKAHToOrganisationException;
 import com.is4103.matchub.exception.UnableToAddMemberToOrganisationException;
+import com.is4103.matchub.exception.UnableToRemoveKAHFromOrganisationException;
 import com.is4103.matchub.exception.UnableToRemoveMemberFromOrganisationException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.repository.OrganisationEntityRepository;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -66,7 +68,7 @@ public class OrganisationServiceTest {
     private OrganisationEntityRepository organisationEntityRepository;
 
     @Test
-    @Order(4)
+    @Transactional
     public void testAddMemberToOrganisation() {
 
         organisationService.addMemberToOrganisation(7L, 4L);
@@ -81,25 +83,25 @@ public class OrganisationServiceTest {
     }
 
     @Test(expected = OrganisationNotFoundException.class)
-    @Order(1)
+    @Transactional
     public void testAddMemberToOrganisationOrganisationNotFoundException() {
         organisationService.addMemberToOrganisation(20L, 4L);
     }
 
     @Test(expected = UserNotFoundException.class)
-    @Order(2)
+    @Transactional
     public void testAddMemberToOrganisationUserNotFoundException() {
         organisationService.addMemberToOrganisation(7L, 20L);
     }
 
     @Test(expected = UnableToAddMemberToOrganisationException.class)
-    @Order(3)
+    @Transactional
     public void testAddMemberToOrganisationUnableToAddMemberToOrganisationException() {
         organisationService.addMemberToOrganisation(7L, 6L);
     }
 
     @Test
-    @Order(8)
+    @Transactional
     public void testRemoveMemberFromOrganisation() {
 
         organisationService.removeMemberFromOrganisation(7L, 12L);
@@ -113,25 +115,25 @@ public class OrganisationServiceTest {
     }
 
     @Test(expected = OrganisationNotFoundException.class)
-    @Order(5)
+    @Transactional
     public void testRemoveMemberFromOrganisationOrganisationNotFoundException() {
         organisationService.removeMemberFromOrganisation(20L, 4L);
     }
 
     @Test(expected = UserNotFoundException.class)
-    @Order(6)
+    @Transactional
     public void testRemoveMemberFromOrganisationUserNotFoundException() {
         organisationService.removeMemberFromOrganisation(7L, 20L);
     }
 
     @Test(expected = UnableToRemoveMemberFromOrganisationException.class)
-    @Order(7)
+    @Transactional
     public void testRemoveMemberFromOrganisationUnableToRemoveMemberFromOrganisationException() {
         organisationService.removeMemberFromOrganisation(7L, 9L);
     }
 
     @Test
-    @Order(10)
+    @Transactional
     public void testViewOrganisationMembers() {
         Pageable pageable = PageRequest.of(0, 20);
         Page<ProfileEntity> results = organisationService.viewOrganisationMembers(8L, pageable);
@@ -140,47 +142,75 @@ public class OrganisationServiceTest {
     }
 
     @Test(expected = OrganisationNotFoundException.class)
-    @Order(9)
+    @Transactional
     public void testViewOrganisationMembersOrganisationNotFoundException() {
         Pageable pageable = PageRequest.of(0, 20);
         organisationService.viewOrganisationMembers(20L, pageable);
     }
 
     @Test
-    @Order(14)
+    @Transactional
     public void testAddKahToOrganisation() {
         organisationService.addMemberToOrganisation(7L, 11L);
         organisationService.addKahToOrganisation(7L, 11L);
-        
+
         try {
             OrganisationEntity organisation = organisationEntityRepository.findById(7L).get();
-            Assert.assertTrue(!organisation.getKahs().contains(12L));
+            Assert.assertTrue(organisation.getKahs().contains(11L));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     @Test(expected = OrganisationNotFoundException.class)
-    @Order(11)
+    @Transactional
     public void testAddKahToOrganisationOrganisationNotFoundException() {
         organisationService.addKahToOrganisation(20L, 4L);
     }
 
     @Test(expected = UserNotFoundException.class)
-    @Order(12)
+    @Transactional
     public void testAddKahToOrganisationUserNotFoundException() {
         organisationService.addKahToOrganisation(7L, 20L);
     }
 
     @Test(expected = UnableToAddKAHToOrganisationException.class)
-    @Order(13)
+    @Transactional
     public void testAddKahToOrganisationUnableToAddKAHToOrganisationException() {
         organisationService.addKahToOrganisation(7L, 6L);
     }
-    
+
     @Test
+    @Transactional
     public void testRemoveKahFromOrganisation() {
+
         organisationService.removeKahFromOrganisation(7L, 6L);
+
+        try {
+            OrganisationEntity organisation = organisationEntityRepository.findById(7L).get();
+            Assert.assertTrue(!organisation.getKahs().contains(6L));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
+    @Test(expected = OrganisationNotFoundException.class)
+    @Transactional
+    public void testRemoveKahFromOrganisationOrganisationNotFoundException() {
+        organisationService.removeKahFromOrganisation(20L, 4L);
+    }
+    
+    @Test(expected = UserNotFoundException.class)
+    @Transactional
+    public void testRemoveKahFromOrganisationUserNotFoundException() {
+        organisationService.removeKahFromOrganisation(7L, 20L);
+    }
+    
+    @Test(expected = UnableToRemoveKAHFromOrganisationException.class)
+    @Transactional
+    public void testRemoveKahFromOrganisationUnableToRemoveKAHFromOrganisationException() {
+        organisationService.removeKahFromOrganisation(7L, 12L);
+    }
+
+    
 }
