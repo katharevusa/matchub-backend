@@ -199,18 +199,49 @@ public class OrganisationServiceTest {
     public void testRemoveKahFromOrganisationOrganisationNotFoundException() {
         organisationService.removeKahFromOrganisation(20L, 4L);
     }
-    
+
     @Test(expected = UserNotFoundException.class)
     @Transactional
     public void testRemoveKahFromOrganisationUserNotFoundException() {
         organisationService.removeKahFromOrganisation(7L, 20L);
     }
-    
+
     @Test(expected = UnableToRemoveKAHFromOrganisationException.class)
     @Transactional
     public void testRemoveKahFromOrganisationUnableToRemoveKAHFromOrganisationException() {
         organisationService.removeKahFromOrganisation(7L, 12L);
     }
 
-    
+    @Test
+    @Transactional
+    public void testViewOrganisationKAHs() {
+        Pageable pageable = PageRequest.of(0, 20);
+        Page<ProfileEntity> results = organisationService.viewOrganisationKAHs(8L, pageable);
+
+        Assert.assertTrue(results.getContent().size() == 1);
+    }
+
+    @Test(expected = OrganisationNotFoundException.class)
+    @Transactional
+    public void testViewOrganisationKAHsOrganisationNotFoundException() {
+        Pageable pageable = PageRequest.of(0, 20);
+        organisationService.viewOrganisationKAHs(20L, pageable);
+    }
+
+    @Test
+    @Transactional
+    public void testSearchMembers() {
+        Pageable pageable = PageRequest.of(0, 20);
+        Page<ProfileEntity> results = organisationService.searchMembers(7L, "Sophia", pageable);
+
+        Assert.assertTrue(results.getContent().size() == 1);
+    }
+
+    @Test(expected = OrganisationNotFoundException.class)
+    @Transactional
+    public void testSearchMembersOrganisationNotFoundException() {
+        Pageable pageable = PageRequest.of(0, 20);
+        organisationService.searchMembers(20L, "", pageable);
+    }
+
 }
