@@ -91,7 +91,7 @@ public class PostServiceTest {
     }
 
     @Test
-    public void testCreatePostSuccessful() {
+    public void testCreatePost() {
         PostVO postvo = new PostVO();
         postvo.setPostCreatorId(5L);
         postvo.setContent("Hello everyone!");
@@ -130,7 +130,7 @@ public class PostServiceTest {
 //        }
 //    }
     @Test
-    public void testGetPostByIdSuccessful() {
+    public void testGetPostById() {
         PostEntity post = postService.getPostById(1L);
         Assert.assertNotNull(post);
     }
@@ -142,7 +142,7 @@ public class PostServiceTest {
     }
 
     @Test
-    public void testGetPostsByAccountIdSuccessful() {
+    public void testGetPostsByAccountId() {
         /* use case: viewing profile page posts */
         Page<PostEntity> postList = postService.getPostsByAccountId(5L, PageRequest.of(0, 5));
         Assert.assertTrue(postList.getTotalElements() != 0);
@@ -154,7 +154,7 @@ public class PostServiceTest {
     }
 
     @Test
-    public void testUpdatePostSuccessful() {
+    public void testUpdatePost() {
         PostVO postVO = new PostVO();
         postVO.setContent("Updated content");
         postVO.setPostCreatorId(5L);
@@ -180,10 +180,10 @@ public class PostServiceTest {
 // 
 
     @Test( )
-    public void testDeletePostSuccessful() {
+    public void testDeletePost() {
         try {
             postService.deletePost(1L, 2L);
-           Assert.assertTrue( !postEntityRepository.findById(1L).isPresent());
+           Assert.assertTrue(!postEntityRepository.findById(1L).isPresent());
         } catch (IOException ex) {
             ex.printStackTrace();
         } 
@@ -209,7 +209,7 @@ public class PostServiceTest {
     }
 
     @Test
-    public void testAddCommentTestSuccessful() {
+    public void testAddCommentTest() {
         CommentVO vo = new CommentVO();
         vo.setAccountId(3L);
         vo.setContent("Nice post!");
@@ -227,7 +227,7 @@ public class PostServiceTest {
     }
 
     @Test
-    public void testDeleteCommentSuccessful() {
+    public void testDeleteComment() {
         try {
             int oldPostCommentsSize = postEntityRepository.findById(1L).get().getListOfComments().size();
             CommentEntity comment = commentEntityRepository.findById(1L).get();
@@ -247,7 +247,7 @@ public class PostServiceTest {
     }
 
     @Test
-    public void testLikeAPostSuccessful() throws LikePostException {
+    public void testLikeAPost() throws LikePostException {
         PostEntity post = postEntityRepository.findById(1L).get();
         Long oldLikeNumber = post.getLikes();
         post = postService.likeAPost(1L, 5L);
@@ -261,7 +261,7 @@ public class PostServiceTest {
     }
 
     @Test
-    public void testUnlikeAPostSuccessful() throws LikePostException {
+    public void testUnlikeAPost() throws LikePostException {
         PostEntity post = postEntityRepository.findById(1L).get();
         Long oldLikeNumber = post.getLikes();
         post = postService.unLikeAPost(1L, 4L);
@@ -276,13 +276,13 @@ public class PostServiceTest {
     }
 
     @Test
-    public void testGetListOfLikersSuccessful() {
+    public void testGetListOfLikers() {
         PostEntity post = postEntityRepository.findById(1L).get();
         Assert.assertTrue(post.getLikedUsersId().size() == postService.getListOfLikers(1L).size());
     }
 
     @Test
-    public void testRepostSuccessful() throws RepostException {
+    public void testRepost() throws RepostException {
         PostVO postVO = new PostVO();
         postVO.setContent("repost");
         postVO.setPostCreatorId(4L);

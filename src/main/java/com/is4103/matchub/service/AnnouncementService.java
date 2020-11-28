@@ -52,5 +52,4 @@ public interface AnnouncementService {
     
     public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId);
     
-    public List<AnnouncementEntity> getJoinedProjectAnnouncements(Long userId);
 }

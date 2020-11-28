@@ -117,12 +117,6 @@ public class AnnouncementController {
     @RequestMapping(method = RequestMethod.GET, value = "/getOwnedProjectAnnouncements")
     public List<AnnouncementEntity> getOwnedProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
         return announcementService.getOwnedProjectAnnouncements(userId);
-    }
-    
-    @RequestMapping(method = RequestMethod.GET, value = "/getJoinedProjectAnnouncements")
-    public List<AnnouncementEntity> getJoinedProjectAnnouncements(@RequestParam(value = "userId", required = true)Long userId){
-        return announcementService.getJoinedProjectAnnouncements(userId);
-    }
-    
-    
+    }   
+       
 }

@@ -1,6 +1,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.AnnouncementEntity;
 import com.is4103.matchub.entity.BadgeEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
@@ -20,6 +21,7 @@ import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.RequestStatusEnum;
 import com.is4103.matchub.enumeration.RequestorEnum;
 import com.is4103.matchub.enumeration.ResourceTypeEnum;
+import com.is4103.matchub.exception.CreateAnnouncementException;
 import com.is4103.matchub.exception.LikePostException;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.exception.UserNotFoundException;
@@ -38,6 +40,7 @@ import com.is4103.matchub.repository.ReviewEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.repository.SDGTargetEntityRepository;
 import com.is4103.matchub.repository.SelectedTargetEntityRepository;
+import com.is4103.matchub.vo.AnnouncementVO;
 import com.is4103.matchub.vo.PostVO;
 import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import java.math.BigDecimal;
@@ -107,6 +110,9 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     private SelectedTargetEntityRepository selectedTargetEntityRepository;
+
+    @Autowired
+    private AnnouncementService announcementService;
 
     @Transactional
     public void init() {
@@ -1464,7 +1470,7 @@ public class InitServiceImpl implements InitService {
         lamp.setResourceProfilePic("https://localhost:8443/api/v1/files/init/lampResource.jpg");
         lamp.getPhotos().add("https://localhost:8443/api/v1/files/init/lampResource.jpg");
         lamp.setCountry("Peru");
-        lamp.setResourceType(ResourceTypeEnum.FREE);  
+        lamp.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(lamp, 4L, 9L);
         //7     
 //        ResourceEntity turtleFood = new ResourceEntity("Turtle Food", "Some free turtle food for free donation ", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 150);
@@ -1742,8 +1748,8 @@ public class InitServiceImpl implements InitService {
         projectEntity1.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity1);
         /* end of project badge */
-
- /* add team member into this project */
+        
+        /* add team member into this project */
         ProfileEntity songhwa = profileEntityRepository.findById(Long.valueOf(9)).get();
         projectEntity1.getTeamMembers().add(songhwa);
         songhwa.getProjectsJoined().add(projectEntity1);
@@ -1751,6 +1757,17 @@ public class InitServiceImpl implements InitService {
         profileEntityRepository.save(songhwa);
         projectEntityRepository.save(projectEntity1);
         /* end of add team member */
+        
+        try {
+            AnnouncementVO announcementVO = new AnnouncementVO();
+            announcementVO.setContent("We are going to launch our project soon");
+            announcementVO.setCreatorId(5L);
+            announcementVO.setProjectId(1L);
+            announcementVO.setTitle("title");
+            AnnouncementEntity announcementEntity = announcementService.createProjectPublicAnnouncement(announcementVO);
+        } catch (CreateAnnouncementException ex) {
+            ex.printStackTrace();
+        }
 
         ProjectEntity projectEntity2 = new ProjectEntity("Women's financial literacy, Malawi", "CARE will work with 20,000 women from 1,000 village savings and loans groups in Lilongwe, Dowa and Kasungu Districts, to overcome chronic hunger by expanding their farms or micro-businesses. We hope to receive donations of various nutritious food like fruits.", "Malawi", LocalDateTime.parse("2019-03-05T11:50:55"), LocalDateTime.parse("2021-06-05T11:50:55"));
         projectEntity2.getSdgs().add(genderEquality);
@@ -2561,78 +2578,78 @@ public class InitServiceImpl implements InitService {
 
     private void initPost() {
         // user 2
-        try{
-        PostVO post1 = new PostVO();
-        post1.setPostCreatorId(2L);
-        post1.setContent("What a nice day!");
-        postService.createPostDataInit(post1);
+        try {
+            PostVO post1 = new PostVO();
+            post1.setPostCreatorId(2L);
+            post1.setContent("What a nice day!");
+            postService.createPostDataInit(post1);
 
-        PostVO post2 = new PostVO();
-        post2.setPostCreatorId(2L);
-        post2.setContent("Hi my dear friends, I am planning to launch a new project related to saving the earth from global warming! Hit me up if you are interested to join :D");
-        postService.createPostDataInit(post2);
+            PostVO post2 = new PostVO();
+            post2.setPostCreatorId(2L);
+            post2.setContent("Hi my dear friends, I am planning to launch a new project related to saving the earth from global warming! Hit me up if you are interested to join :D");
+            postService.createPostDataInit(post2);
 
-        // user 3
-        PostVO post3 = new PostVO();
-        post3.setPostCreatorId(3L);
-        post3.setContent("Hi my dear friends, I am planning to launch a new project related to saving the earth from global warming! Hit me up if you are interested to join :D");
-        postService.createPostDataInit(post3);
+            // user 3
+            PostVO post3 = new PostVO();
+            post3.setPostCreatorId(3L);
+            post3.setContent("Hi my dear friends, I am planning to launch a new project related to saving the earth from global warming! Hit me up if you are interested to join :D");
+            postService.createPostDataInit(post3);
 
-        PostVO post4 = new PostVO();
-        post4.setPostCreatorId(3L);
-        post4.setContent("Today marks my ten years as a green campaigner! Really proud of myself");
-        postService.createPostDataInit(post4);
+            PostVO post4 = new PostVO();
+            post4.setPostCreatorId(3L);
+            post4.setContent("Today marks my ten years as a green campaigner! Really proud of myself");
+            postService.createPostDataInit(post4);
 
-        // user 4
-        PostVO post5 = new PostVO();
-        post5.setPostCreatorId(4L);
-        post5.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
-        postService.createPostDataInit(post5);
+            // user 4
+            PostVO post5 = new PostVO();
+            post5.setPostCreatorId(4L);
+            post5.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
+            postService.createPostDataInit(post5);
 
-        PostVO post6 = new PostVO();
-        post6.setPostCreatorId(4L);
-        post6.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
-        postService.createPostDataInit(post6);
+            PostVO post6 = new PostVO();
+            post6.setPostCreatorId(4L);
+            post6.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
+            postService.createPostDataInit(post6);
 
-        // user 5
-        PostVO post7 = new PostVO();
-        post7.setPostCreatorId(5L);
-        post7.setContent("Good morning folks! \n"
-                + "Let's talk about #SDGs and contribute our quota. \n"
-                + "Have a wonderful week. More win$ #WealthSecrets");
-        postService.createPostDataInit(post7);
+            // user 5
+            PostVO post7 = new PostVO();
+            post7.setPostCreatorId(5L);
+            post7.setContent("Good morning folks! \n"
+                    + "Let's talk about #SDGs and contribute our quota. \n"
+                    + "Have a wonderful week. More win$ #WealthSecrets");
+            postService.createPostDataInit(post7);
 
-        PostVO post8 = new PostVO();
-        post8.setPostCreatorId(5L);
-        post8.setContent("Reducing the amount of “stuff” you consume has the greatest benefits for the planet. It’s best to avoid waste in the first place, so think more carefully about your purchases.Re-using items saves the natural resources and energy needed to manufacture new ones.");
-        postService.createPostDataInit(post8);
+            PostVO post8 = new PostVO();
+            post8.setPostCreatorId(5L);
+            post8.setContent("Reducing the amount of “stuff” you consume has the greatest benefits for the planet. It’s best to avoid waste in the first place, so think more carefully about your purchases.Re-using items saves the natural resources and energy needed to manufacture new ones.");
+            postService.createPostDataInit(post8);
 
-        // user 6
-        PostVO post9 = new PostVO();
-        post9.setPostCreatorId(6L);
-        post9.setContent("Saving our planet, lifting people out of poverty, advancing economic growth... these are one and the same fight. We must connect the dots between climate change, energy shortages, global health, food security and women's empowerment\" - Ban Ki-moon");
-        postService.createPostDataInit(post9);
+            // user 6
+            PostVO post9 = new PostVO();
+            post9.setPostCreatorId(6L);
+            post9.setContent("Saving our planet, lifting people out of poverty, advancing economic growth... these are one and the same fight. We must connect the dots between climate change, energy shortages, global health, food security and women's empowerment\" - Ban Ki-moon");
+            postService.createPostDataInit(post9);
 
-        PostVO post10 = new PostVO();
-        post10.setPostCreatorId(6L);
-        post10.setContent("Rural development is crucial for meeting the #SDGs.\n"
-                + "\n"
-                + "Our projects transform rural communities economically and socially, while promoting gender equality and inclusiveness.\n"
-                + "\n"
-                + "Investing in rural people is investing in a brighter future for everyone.");
-        postService.createPostDataInit(post10);
+            PostVO post10 = new PostVO();
+            post10.setPostCreatorId(6L);
+            post10.setContent("Rural development is crucial for meeting the #SDGs.\n"
+                    + "\n"
+                    + "Our projects transform rural communities economically and socially, while promoting gender equality and inclusiveness.\n"
+                    + "\n"
+                    + "Investing in rural people is investing in a brighter future for everyone.");
+            postService.createPostDataInit(post10);
 
-        // user 7
-        PostVO post11 = new PostVO();
-        post11.setPostCreatorId(7L);
-        post11.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
-        postService.createPostDataInit(post11);
+            // user 7
+            PostVO post11 = new PostVO();
+            post11.setPostCreatorId(7L);
+            post11.setContent("Food is life and thus agriculture ain't Only a basic necessity but a survival technique that all has to adopt in order to be alive!\n" + "s");
+            postService.createPostDataInit(post11);
 
-        PostVO post12 = new PostVO();
-        post12.setPostCreatorId(7L);
-        post12.setContent("Red square The days ahead will be very consequential for the state of the world. The resurgence of COVID-19 and the US Presidential Election are just two of the issues that will weigh heavily on our future. During these days, standing firm for the #SDGs is a good way to stay grounded.");
-        postService.createPostDataInit(post12);
-        }catch(LikePostException ex){
+            PostVO post12 = new PostVO();
+            post12.setPostCreatorId(7L);
+            post12.setContent("Red square The days ahead will be very consequential for the state of the world. The resurgence of COVID-19 and the US Presidential Election are just two of the issues that will weigh heavily on our future. During these days, standing firm for the #SDGs is a good way to stay grounded.");
+            postService.createPostDataInit(post12);
+        } catch (LikePostException ex) {
             ex.printStackTrace();
         }
     }

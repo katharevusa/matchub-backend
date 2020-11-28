@@ -68,7 +68,7 @@ public class AnnouncementImpl implements AnnouncementService {
         for(ProfileEntity p : project.getProjectFollowers()){
             p.getAnnouncements().add(newAnnouncementEntity);
         }
-        //Incomplete: getFollowers and notify them        
+             
         SendNotificationsToUsersVO sendNotificationsToUsersVO = new SendNotificationsToUsersVO();
         sendNotificationsToUsersVO.setTitle(newAnnouncementEntity.getTitle());
         sendNotificationsToUsersVO.setBody(newAnnouncementEntity.getContent());
@@ -299,20 +299,5 @@ public class AnnouncementImpl implements AnnouncementService {
         Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
 
         return announcements;
-    }
-
-    @Override
-    public List<AnnouncementEntity> getJoinedProjectAnnouncements(Long userId) {
-        ProfileEntity user = profileEntityRepository.findById(userId).get();
-        List<ProjectEntity> listOfFollowingProjects = user.getProjectsJoined();
-        List<AnnouncementEntity> announcements = new ArrayList<>();
-        for (ProjectEntity p : listOfFollowingProjects) {
-            announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
-        }
-
-        Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
-
-        return announcements;
-    }
-    
+    }  
 }
