@@ -111,24 +111,6 @@ public class PostServiceTest {
         PostEntity post = postService.createPost(postvo);
     }
 
-//    // have issue
-//    @Test
-//    public void uploadPhotosSuccessful() {
-//        try {
-//
-//            PostEntity post = postService.getPostById(1L);
-//            final InputStream inputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("test.png");
-//            final MockMultipartFile avatar = new MockMultipartFile("test.png", "test.png", "image/png", inputStream);
-//            MockMultipartFile[] avatarList = new MockMultipartFile[1];
-//            avatarList[0] = avatar;
-//            postService.uploadPhotos(1L, avatarList);
-//            int newPhotoSize = post.getPhotos().size();
-//            Assert.assertTrue(newPhotoSize != 0);
-//
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//    }
     @Test
     public void testGetPostById() {
         PostEntity post = postService.getPostById(1L);
@@ -298,5 +280,5 @@ public class PostServiceTest {
         postVO.setPostCreatorId(4L);
         PostEntity post = postService.repost(30L, postVO);
     }
-    // delete photos, upload photos
+
 }
