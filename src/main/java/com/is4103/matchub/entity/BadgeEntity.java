@@ -55,8 +55,6 @@ public class BadgeEntity {
     private String icon;
 
     @ManyToMany(fetch = FetchType.LAZY)
-//    @JsonIgnsore
-//    @JsonIdentityInfo(generator = what thing)
     @JsonIgnoreProperties({"posts", "hostedResources", "sdgs", "projectsJoined", "projectsOwned", "reviewsReceived", "badges", "likedPosts"})
     private List<ProfileEntity> profiles = new ArrayList<>();
 

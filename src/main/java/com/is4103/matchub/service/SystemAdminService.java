@@ -5,10 +5,21 @@
  */
 package com.is4103.matchub.service;
 
+import java.util.Map;
+
 /**
  *
  * @author longluqian
  */
 public interface SystemAdminService {
-    
+
+    public int getTotalNumberOfUser();
+
+    public int getTotalNumberOfResource();
+
+    public int getTotalNumberOfProject();
+
+    public int getTotalNumberOfFundCampaign();
+
+    public Map<String, Integer> getLastFiveUserNumberData();
 }
