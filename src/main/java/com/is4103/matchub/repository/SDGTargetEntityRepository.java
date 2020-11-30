@@ -21,5 +21,9 @@ public interface SDGTargetEntityRepository extends JpaRepository<SDGTargetEntity
     @Query(value = "SELECT DISTINCT sdgTarget FROM SDGTargetEntity sdgTarget "
             + "WHERE sdgTarget.sdgTargetId IN :sdgTargetIds")
     List<SDGTargetEntity> findSDGTargetsByIds(long[] sdgTargetIds);
+    
+    @Query(value = "SELECT sdgTarget FROM SDGTargetEntity sdgTarget "
+            + "WHERE sdgTarget.sdgTargetNumbering LIKE %:sdgTargetNumbering%")
+    SDGTargetEntity findBySdgTargetNumbering(String sdgTargetNumbering);
 
 }
