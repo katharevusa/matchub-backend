@@ -15,4 +15,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface DataMappingService {
 
     void importIndividuals(MultipartFile file) throws IOException;
+
+    void importOrganisations(MultipartFile file) throws IOException;
 }

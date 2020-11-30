@@ -30,5 +30,10 @@ public class DataMappingController {
     void importIndividuals(@RequestParam(value = "file") MultipartFile file) throws IOException {
         dataMappingService.importIndividuals(file);
     }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/importOrganisations")
+    void importOrganisations(@RequestParam(value = "file") MultipartFile file) throws IOException {
+        dataMappingService.importOrganisations(file);
+    }
 
 }

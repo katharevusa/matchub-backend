@@ -6,6 +6,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.IndividualEntity;
+import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.entity.SDGTargetEntity;
@@ -86,7 +87,7 @@ public class DataMappingServiceImpl implements DataMappingService {
                 newInd.setEmail(row.getCell(3).getStringCellValue());
 
                 //country 
-                if (row.getCell(9).getStringCellValue() == null) {
+                if (row.getCell(9) == null) {
                     newInd.setCountry("");
                 } else {
                     newInd.setCountry(row.getCell(9).getStringCellValue());
@@ -103,7 +104,11 @@ public class DataMappingServiceImpl implements DataMappingService {
                 newInd.setFirstName(row.getCell(1).getStringCellValue());
 
                 //last name 
-                newInd.setLastName(row.getCell(2).getStringCellValue());
+                if (row.getCell(2) == null) {
+                    newInd.setLastName("");
+                } else {
+                    newInd.setLastName(row.getCell(2).getStringCellValue());
+                }
 
                 //gender - hardcoded to be MALE
                 newInd.setGenderEnum(GenderEnum.MALE);
@@ -142,6 +147,88 @@ public class DataMappingServiceImpl implements DataMappingService {
 
                 //save the updated changes of the individual into database 
                 individualEntityRepository.saveAndFlush(newInd);
+
+            }
+        }
+    }
+
+    @Override
+    public void importOrganisations(MultipartFile file) throws IOException {
+
+        XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+        XSSFSheet worksheet = workbook.getSheetAt(0);
+
+        for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
+            if (index > 0) {
+
+                XSSFRow row = worksheet.getRow(index);
+
+                OrganisationEntity newOrg = new OrganisationEntity();
+
+                //predefined
+                String[] roles = {"AccountEntity.ROLE_USER"};
+                newOrg.getRoles().addAll(Arrays.asList(roles));
+
+                newOrg.setUuid(UUID.randomUUID());
+
+                //set password to a default value first
+                newOrg.setPassword(passwordEncoder.encode("password"));
+
+                //read in from excel sheet
+                //email 
+                newOrg.setEmail(row.getCell(2).getStringCellValue());
+
+                //country 
+                if (row.getCell(7) == null) {
+                    newOrg.setCountry("");
+                } else {
+                    newOrg.setCountry(row.getCell(7).getStringCellValue());
+                }
+
+                //city
+                if (row.getCell(8) == null) {
+                    newOrg.setCity("");
+                } else {
+                    newOrg.setCity(row.getCell(8).getStringCellValue());
+                }
+
+                //organisation name
+                newOrg.setOrganizationName(row.getCell(1).getStringCellValue());
+
+                //organisation description
+                if (row.getCell(3) == null) {
+                    newOrg.setOrganizationDescription("");
+                } else {
+                    newOrg.setOrganizationDescription(row.getCell(3).getStringCellValue());
+                }
+
+                //create the organisation
+                organisationEntityRepository.saveAndFlush(newOrg);
+
+                //set the associations 
+                if (row.getCell(5) != null) {
+                    //read in sdg value 
+                    long sdgNumber = (long) row.getCell(5).getNumericCellValue();
+
+                    //find the actual instance of the sdg
+                    SDGEntity sdg = sdgEntityRepository.findBySdgId(sdgNumber);
+                    newOrg.getSdgs().add(sdg);
+
+                    //read in sdg target value 
+                    if (row.getCell(6) != null) {
+                        String sdgTargetValue = row.getCell(6).getStringCellValue();
+
+                        //find the actual instance of the sdg target 
+                        SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetNumbering(sdgTargetValue);
+
+                        //create selectedTargets
+                        associateSDGTargetsWithProfile(sdgTarget.getSdgTargetId(), sdgNumber, newOrg.getAccountId());
+                    }
+
+                }
+
+                //save the updated changes of the organisation into database 
+                organisationEntityRepository.saveAndFlush(newOrg);
 
             }
         }
