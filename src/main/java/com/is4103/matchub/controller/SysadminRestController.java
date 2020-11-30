@@ -67,4 +67,14 @@ public class SysadminRestController {
         return systemAdminService.getLastFiveUserNumberData();
 
     }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/getLastFiveTransactionNumberData")
+     public Map<String, Integer> getLastFiveTransactionNumberData(){
+         return  systemAdminService.getLastFiveTransactionNumberData();
+     }
+    
+     @RequestMapping(method = RequestMethod.GET, value = "/getProjectsNumberWithDifferentStatus")
+    public Map<String, Integer> getProjectsNumberWithDifferentStatus(){
+        return systemAdminService.getProjectsNumberWithDifferentStatus();
+    }
 }

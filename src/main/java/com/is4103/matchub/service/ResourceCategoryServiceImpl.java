@@ -64,7 +64,7 @@ public class ResourceCategoryServiceImpl implements ResourceCategoryService {
     @Override
     public void deleteResourceCategories(Long resourceCategoryId)throws ResourceCategoryNotFoundException, DeleteResourceCategoryException{
         ResourceCategoryEntity resourceCategory = resourceCategoryEntityRepository.findById(resourceCategoryId).orElseThrow(()-> new ResourceCategoryNotFoundException());
-        if(resourceCategory.getResources()!=null){
+        if(resourceCategory.getResources().isEmpty()){
             throw new DeleteResourceCategoryException("Unable to delete resource category because there are resources assoiciating with it.");
         }
         resourceCategoryEntityRepository.delete(resourceCategory);

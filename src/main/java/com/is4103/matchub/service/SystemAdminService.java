@@ -22,4 +22,8 @@ public interface SystemAdminService {
     public int getTotalNumberOfFundCampaign();
 
     public Map<String, Integer> getLastFiveUserNumberData();
+    
+    public Map<String, Integer> getLastFiveTransactionNumberData();
+    
+    public Map<String, Integer> getProjectsNumberWithDifferentStatus();
 }

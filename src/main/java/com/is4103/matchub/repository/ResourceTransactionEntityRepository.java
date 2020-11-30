@@ -6,6 +6,7 @@
 package com.is4103.matchub.repository;
 
 import com.is4103.matchub.entity.ResourceTransactionEntity;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,4 +20,7 @@ public interface ResourceTransactionEntityRepository extends JpaRepository<Resou
     
     @Query(value = "SELECT rt FROM ResourceTransactionEntity rt WHERE rt.payerId = :payerId")
     public List<ResourceTransactionEntity> getResourceTransactionsByPayerId(Long payerId);
+    
+    @Query(value = "SELECT DISTINCT rt FROM ResourceTransactionEntity rt WHERE rt.transactionTime BETWEEN ?1 AND ?2 ")
+    List<ResourceTransactionEntity> findResourceTransactionEntityByTransactionTime(LocalDateTime from, LocalDateTime to);
 }
