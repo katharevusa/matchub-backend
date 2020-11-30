@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
 //        System.out.println("sdfs");
 
         //auto trigger the sendVerificationEmail method
-//        emailService.sendVerificationEmail(newAccount);
+        emailService.sendVerificationEmail(newAccount);
 
         return UserVO.of(newAccount);
 
