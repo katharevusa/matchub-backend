@@ -15,6 +15,7 @@ import com.is4103.matchub.vo.ChangePasswordVO;
 import com.is4103.matchub.vo.DeleteFilesVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 import javax.mail.MessagingException;
 import org.springframework.data.domain.Page;
@@ -60,7 +61,8 @@ public interface UserService {
 
 //    Page<AccountEntity> getAccountsByUuid(GetAccountsByUuidVO vo, Pageable pageable);
 //    List<AccountEntity> getAllAccounts();
-//    List<AccountEntity> getAllActiveAccounts();
+    List<AccountEntity> getAllActiveAccounts();
+
     Page<AccountEntity> getAllAccounts(Pageable pageable);
 
     Page<AccountEntity> getAllActiveAccounts(Pageable pageable);

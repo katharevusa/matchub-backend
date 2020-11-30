@@ -7,6 +7,7 @@ package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.BadgeEntity;
+import com.is4103.matchub.entity.CompetitionEntity;
 import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
@@ -18,6 +19,7 @@ import com.is4103.matchub.exception.ResourceNotFoundException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.service.AttachmentService;
 import com.is4103.matchub.service.BadgeService;
+import com.is4103.matchub.service.CompetitionService;
 import com.is4103.matchub.service.EmailService;
 import com.is4103.matchub.service.OrganisationService;
 import com.is4103.matchub.service.PostService;
@@ -32,6 +34,7 @@ import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
 import com.is4103.matchub.vo.UserVO;
+import com.is4103.matchub.vo.VoterVO;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -86,6 +89,9 @@ public class PublicRestController {
 
     @Autowired
     SDGService sdgService;
+
+    @Autowired
+    CompetitionService competitionService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/createNewIndividual")
     UserVO createNewIndividual(@Valid @RequestBody IndividualCreateVO createVO) throws MessagingException, IOException {
@@ -185,12 +191,59 @@ public class PublicRestController {
     // placed in public so that webhook can work without bearer token
     @RequestMapping(method = RequestMethod.POST, value = "/webhook")
 
-    public String stripeWebhookListener(@RequestBody String json, HttpServletRequest request)throws DonationOptionNotFoundException, ResourceNotFoundException, ProjectNotFoundException{
+    public String stripeWebhookListener(@RequestBody String json, HttpServletRequest request) throws DonationOptionNotFoundException, ResourceNotFoundException, ProjectNotFoundException {
         return stripeService.handleWebhookEvent(json, request);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getAllSdgs")
     public Page<SDGEntity> getAllSdgs(Pageable pageable) {
         return sdgService.getAllSdgs(pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getCompetitionById")
+    public CompetitionEntity getCompetitionByCompetitionId(@RequestParam(value = "competitionId", required = true) Long competitionId) {
+        return competitionService.retrieveCompetitionById(competitionId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/registerAsVoter")
+    public void registerAsVoter(@Valid @RequestBody VoterVO vo, @RequestParam(value = "competitionId", required = true) Long competitionId) throws IOException, MessagingException {
+        competitionService.registerAsVoter(vo, competitionId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getCompetitionProjects")
+    public List<ProjectEntity> getCompetitionProjects(@RequestParam(value = "competitionId", required = true) Long competitionId) {
+        return competitionService.retrieveProjectsByCompetitionId(competitionId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/castVoteForCompetitionProject")
+    public void castVoteForCompetitionProject(@RequestParam(value = "competitionId", required = true) Long competitionId,
+            @RequestParam(value = "projectId", required = true) Long projectId,
+            @RequestParam(value = "voterSecret", required = true) String voterSecret) throws ProjectNotFoundException {
+        competitionService.castVoteForCompetitionProject(competitionId, projectId, voterSecret);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getCompetitionProjectsBySdg")
+    public List<ProjectEntity> getCompetitionProjectsBySdg(@RequestParam(value = "competitionId", required = true) Long competitionId,
+            @RequestParam(value = "sdgId", required = true) Long sdgId,
+            @RequestParam(value = "sdgTargetIds", required = true, defaultValue = "") long[] sdgTargetIds) {
+
+        if (sdgTargetIds.length == 0) {
+            SDGEntity sdg = sdgService.getSdgBySdgId(sdgId);
+
+            long[] defaultSdgTargetIds = new long[sdg.getTargets().size()];
+
+            for (int i = 0; i < sdg.getTargets().size(); i++) {
+                defaultSdgTargetIds[i] = sdg.getTargets().get(i).getSdgTargetId();
+            }
+
+            sdgTargetIds = defaultSdgTargetIds;
+        }
+
+        return competitionService.retrieveProjectsByCompetitionIdAndSdgIdAndSdgTargets(competitionId, sdgId, sdgTargetIds);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getSdgBySdgId")
+    public SDGEntity getSdgBySdgId(@RequestParam(value = "sdgId", required = true) Long sdgId) {
+        return sdgService.getSdgBySdgId(sdgId);
     }
 }

@@ -1872,6 +1872,9 @@ public class InitServiceImpl implements InitService {
 
         projectService.createProject(projectEntity4, 9L);
 
+        sdgTargetIds = LongStream.rangeClosed(18, 21).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 3L, projectEntity4.getProjectId());
+
         sdgTargetIds = LongStream.rangeClosed(29, 36).toArray();
         associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity4.getProjectId());
 

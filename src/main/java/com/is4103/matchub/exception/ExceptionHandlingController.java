@@ -776,7 +776,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = QuestionOptionNotFoundException.class)
     public ResponseEntity<ExceptionResponse> questionOptionNotFoundException(QuestionOptionNotFoundException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -786,7 +786,7 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(value = DeleteQuestionOptionException.class)
     public ResponseEntity<ExceptionResponse> deleteQuestionOptionException(DeleteQuestionOptionException ex) {
         ExceptionResponse response = new ExceptionResponse();
@@ -796,8 +796,8 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-     @ExceptionHandler(value = DeleteQuestionException.class)
+
+    @ExceptionHandler(value = DeleteQuestionException.class)
     public ResponseEntity<ExceptionResponse> deleteQuestionException(DeleteQuestionException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to delete the question ");
@@ -806,8 +806,8 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-      @ExceptionHandler(value = DeleteSurveyException.class)
+
+    @ExceptionHandler(value = DeleteSurveyException.class)
     public ResponseEntity<ExceptionResponse> deleteSurveyException(DeleteSurveyException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to delete the survey ");
@@ -816,8 +816,8 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-      @ExceptionHandler(value = DeleteResourceCategoryException.class)
+
+    @ExceptionHandler(value = DeleteResourceCategoryException.class)
     public ResponseEntity<ExceptionResponse> deleteResourceCategoryException(DeleteResourceCategoryException ex) {
         ExceptionResponse response = new ExceptionResponse();
         response.setErrorCode("Unable to delete the resource category ");
@@ -826,7 +826,85 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
-    
-    
+
+    @ExceptionHandler(value = CompetitionNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> competitionNotFound(CompetitionNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Competition not found for given id");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnableToDeleteCompetitionException.class)
+    public ResponseEntity<ExceptionResponse> competitionNotFound(UnableToDeleteCompetitionException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to delete competition due to presence of joined projects");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnableToUpdateCompetitionException.class)
+    public ResponseEntity<ExceptionResponse> unableToUpdateCompetition(UnableToUpdateCompetitionException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to update competition due to an error");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnableToCreateVotingDetailsException.class)
+    public ResponseEntity<ExceptionResponse> unableToCreateVotingDetails(UnableToCreateVotingDetailsException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to create voter details due to an error");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnableToVoteForProjectException.class)
+    public ResponseEntity<ExceptionResponse> unableToVoteForProject(UnableToVoteForProjectException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to vote for project due to an error");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = VoterCredentialException.class)
+    public ResponseEntity<ExceptionResponse> voterCredentialException(VoterCredentialException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Voter Credentials not found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = UnableToJoinCompetitionException.class)
+    public ResponseEntity<ExceptionResponse> unableToJoinCompetition(UnableToJoinCompetitionException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to join competition due to an error found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = SDGEntityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> unableToFindSDG(SDGEntityNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to find SDG due to an error found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 
 }
