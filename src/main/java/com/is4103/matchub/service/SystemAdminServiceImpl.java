@@ -6,13 +6,15 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
+import com.is4103.matchub.helper.StatisticsWrapper;
 import com.is4103.matchub.repository.DonationEntityRepository;
 import com.is4103.matchub.repository.FundCampaignEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.ProjectEntityRepository;
 import com.is4103.matchub.repository.ResourceEntityRepository;
 import com.is4103.matchub.repository.ResourceTransactionEntityRepository;
-import java.time.LocalDate;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
@@ -67,51 +69,57 @@ public class SystemAdminServiceImpl implements SystemAdminService {
     }
 
     @Override
-    public Map<String, Integer> getLastFiveUserNumberData() {
+    public StatisticsWrapper getLastFiveUserNumberData() {
 
-        Map<String, Integer> map = new HashMap<>();
-        
+        String[] months = new String[6];
+        Object[] values = new Object[6];
+
         for (int i = 0; i < 6; i++) {
             LocalDateTime startMonth = YearMonth.now().atDay(1).minus(i, ChronoUnit.MONTHS).atStartOfDay();
             LocalDateTime startOfNextMonth = startMonth.plus(1, ChronoUnit.MONTHS);
-            
+
             // make into capital case
-            map.put(startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toLowerCase(), profileEntityRepository.findUsersByJoinDate(startMonth, startOfNextMonth).size());
+            months[5 - i] = startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toLowerCase();
+            values[5 - i] = profileEntityRepository.findUsersByJoinDate(startMonth, startOfNextMonth).size();
         }
 
-        return map;
+        return new StatisticsWrapper(months, values);
     }
 
 //Monthly transactions meaning last 5 month monthly total transactions is it
     @Override
-    public Map<String, Integer> getLastFiveTransactionNumberData() {
-        Map<String, Integer> map = new HashMap<>();
-        LocalDateTime currentTime = LocalDateTime.now();
+    public StatisticsWrapper getLastFiveTransactionNumberData() {
 
-        LocalDateTime lastOneMonthTime = currentTime.minus(1, ChronoUnit.MONTHS);
-        LocalDateTime lastTwoMonthTime = currentTime.minus(2, ChronoUnit.MONTHS);
-        LocalDateTime lastThreeMonthTime = currentTime.minus(3, ChronoUnit.MONTHS);
-        LocalDateTime lastFourMonthTime = currentTime.minus(4, ChronoUnit.MONTHS);
-        LocalDateTime lastFiveMonthTime = currentTime.minus(5, ChronoUnit.MONTHS);
+        String[] months = new String[6];
+        Object[] values = new Object[6];
 
-        int lastMonth = resourceTransactionEntityRepository.findResourceTransactionEntityByTransactionTime(lastOneMonthTime, currentTime).size()
-                + donationEntityRepository.findDonationsByTransactionTime(lastOneMonthTime, currentTime).size();
-        int secondLastMonth = resourceTransactionEntityRepository.findResourceTransactionEntityByTransactionTime(lastTwoMonthTime, lastOneMonthTime).size()
-                + donationEntityRepository.findDonationsByTransactionTime(lastTwoMonthTime, lastOneMonthTime).size();
-        int ThirdLastMonth = resourceTransactionEntityRepository.findResourceTransactionEntityByTransactionTime(lastThreeMonthTime, lastTwoMonthTime).size()
-                + donationEntityRepository.findDonationsByTransactionTime(lastThreeMonthTime, lastTwoMonthTime).size();
-        int FourthLastMonth = resourceTransactionEntityRepository.findResourceTransactionEntityByTransactionTime(lastFourMonthTime, lastThreeMonthTime).size()
-                + donationEntityRepository.findDonationsByTransactionTime(lastFourMonthTime, lastThreeMonthTime).size();
-        int FifthLastMonth = resourceTransactionEntityRepository.findResourceTransactionEntityByTransactionTime(lastFiveMonthTime, lastFourMonthTime).size()
-                + donationEntityRepository.findDonationsByTransactionTime(lastFiveMonthTime, lastFourMonthTime).size();
+        for (int i = 0; i < 6; i++) {
+            LocalDateTime startMonth = YearMonth.now().atDay(1).minus(i, ChronoUnit.MONTHS).atStartOfDay();
+            LocalDateTime startOfNextMonth = startMonth.plus(1, ChronoUnit.MONTHS);
 
-        map.put("last month data", lastMonth);
-        map.put("last second month data", secondLastMonth);
-        map.put("last third month data", ThirdLastMonth);
-        map.put("last fourth month data", FourthLastMonth);
-        map.put("last fifth month data", FifthLastMonth);
+            // make into capital case
+            months[5 - i] = startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toLowerCase();
 
-        return map;
+            // getting resource transaction total sum
+            BigDecimal amount = resourceTransactionEntityRepository.findResourceTransactionEntityByTransactionTime(startMonth, startOfNextMonth)
+                    .stream()
+                    .map(x -> x.getAmountPaid())
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)
+                    // convert to thousands so chart scale won't be too big
+                    .divide(BigDecimal.valueOf(1000), 2, RoundingMode.CEILING);
+
+            // getting donations total sum
+            amount = donationEntityRepository.findDonationsByTransactionTime(startMonth, startOfNextMonth)
+                    .stream()
+                    .map(x -> x.getDonatedAmount())
+                    .reduce(amount, BigDecimal::add)
+                    // convert to thousands so chart scale won't be too big
+                    .divide(BigDecimal.valueOf(1000), 2, RoundingMode.CEILING);
+
+            values[5 - i] = amount;
+        }
+
+        return new StatisticsWrapper(months, values);
     }
 
     @Override

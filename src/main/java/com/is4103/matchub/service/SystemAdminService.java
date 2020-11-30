@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.helper.StatisticsWrapper;
 import java.util.Map;
 
 /**
@@ -21,9 +22,9 @@ public interface SystemAdminService {
 
     public int getTotalNumberOfFundCampaign();
 
-    public Map<String, Integer> getLastFiveUserNumberData();
-    
-    public Map<String, Integer> getLastFiveTransactionNumberData();
-    
+    public StatisticsWrapper getLastFiveUserNumberData();
+
+    public StatisticsWrapper getLastFiveTransactionNumberData();
+
     public Map<String, Integer> getProjectsNumberWithDifferentStatus();
 }
