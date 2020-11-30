@@ -32,7 +32,7 @@ public class IndividualEntity extends ProfileEntity {
 //    @NotNull
     private GenderEnum genderEnum;
 
-    @Column(nullable = true, length = 1000)
+    @Column(nullable = true, length = 2000, columnDefinition="TEXT")
     private String profileDescription;
 
 
