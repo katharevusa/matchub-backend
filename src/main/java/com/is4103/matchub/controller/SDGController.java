@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -21,12 +22,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/authenticated")
 public class SDGController {
-    
+
     @Autowired
     SDGService sdgService;
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/getAllSdgs")
     public Page<SDGEntity> getAllSdgs(Pageable pageable) {
         return sdgService.getAllSdgs(pageable);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getSdgBySdgId")
+    public SDGEntity getSdgBySdgId(@RequestParam(value = "sdgId", required = true) Long sdgId) {
+        return sdgService.getSdgBySdgId(sdgId);
     }
 }

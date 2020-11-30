@@ -16,4 +16,6 @@ import org.springframework.data.domain.Pageable;
 public interface SDGService {
 
     Page<SDGEntity> getAllSdgs(Pageable pageable);
+
+    SDGEntity getSdgBySdgId(Long sdgId);
 }

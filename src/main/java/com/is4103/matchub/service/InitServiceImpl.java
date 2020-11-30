@@ -1463,7 +1463,7 @@ public class InitServiceImpl implements InitService {
         lamp.setResourceProfilePic("https://localhost:8443/api/v1/files/init/lampResource.jpg");
         lamp.getPhotos().add("https://localhost:8443/api/v1/files/init/lampResource.jpg");
         lamp.setCountry("Peru");
-        lamp.setResourceType(ResourceTypeEnum.FREE);  
+        lamp.setResourceType(ResourceTypeEnum.FREE);
         resourceService.createResource(lamp, 4L, 9L);
         //7     
 //        ResourceEntity turtleFood = new ResourceEntity("Turtle Food", "Some free turtle food for free donation ", LocalDateTime.parse("2020-10-20T11:50:55"), LocalDateTime.parse("2021-09-21T11:50:55"), 150);
@@ -1850,6 +1850,9 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building3.jpg");
 
         projectService.createProject(projectEntity4, 9L);
+
+        sdgTargetIds = LongStream.rangeClosed(18, 21).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 3L, projectEntity4.getProjectId());
 
         sdgTargetIds = LongStream.rangeClosed(29, 36).toArray();
         associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity4.getProjectId());
