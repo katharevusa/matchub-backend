@@ -27,14 +27,11 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.vo.CommentVO;
 import com.is4103.matchub.vo.PostVO;
 import java.io.IOException;
-import static java.lang.Long.max;
-import static java.lang.Long.min;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -69,7 +66,7 @@ public class PostServiceImpl implements PostService {
 
     @Transactional
     @Override
-    public PostEntity createPost(PostVO vo) {
+    public PostEntity createPost(PostVO vo) throws UserNotFoundException {
 
         ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
                 .orElseThrow(() -> new UserNotFoundException(vo.getPostCreatorId()));
@@ -121,7 +118,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void createPostDataInit(PostVO vo) {
+    public void createPostDataInit(PostVO vo)throws LikePostException{
         ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
                 .orElseThrow(() -> new UserNotFoundException(vo.getPostCreatorId()));
 
@@ -131,9 +128,16 @@ public class PostServiceImpl implements PostService {
 
         vo.updatePost(newPost);
         newPost.setLikes(20L);
-         
 
         newPost = postEntityRepository.saveAndFlush(newPost);
+        if (newPost.getPostId() == 1L) {
+            CommentVO commentVO = new CommentVO();
+            commentVO.setAccountId(3L);
+            commentVO.setContent("Nice post!");
+
+             newPost = addComment(commentVO, 1L);
+             likeAPost(newPost.getPostId(), 4L);
+        }
 
         //set associations
         profile.getPosts().add(newPost);
@@ -161,22 +165,23 @@ public class PostServiceImpl implements PostService {
     public PostEntity getPostById(Long postId) {
         PostEntity post = postEntityRepository.findById(postId)
                 .orElseThrow(() -> new PostNotFoundException("PostId: " + postId + " cannot be found"));
-
+        post.getPhotos();
         return post;
     }
 
     @Override
-    public Page<PostEntity> getPostsByAccountId(Long id, Pageable pageable) {
+    public Page<PostEntity> getPostsByAccountId(Long id, Pageable pageable) throws UserNotFoundException {
         /* use case: viewing profile page posts */
+        System.err.println("Reach here");
         ProfileEntity profile = profileEntityRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
-
+        System.err.println("Reach here 2");
         return postEntityRepository.getPostsByAccountId(id, pageable);
     }
 
     @Transactional
     @Override
-    public PostEntity updatePost(Long postId, PostVO vo) {
+    public PostEntity updatePost(Long postId, PostVO vo) throws PostNotFoundException, UpdatePostException {
 
         ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
                 .orElseThrow(() -> new UserNotFoundException(vo.getPostCreatorId()));
@@ -249,11 +254,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PostEntity addComment(CommentVO newCommentVO, Long postId) {
+    public PostEntity addComment(CommentVO newCommentVO, Long postId) throws PostNotFoundException {
 
         CommentEntity newComment = new CommentEntity();
         newCommentVO.createPostComment(newComment);
-        PostEntity post = postEntityRepository.findById(postId).get();
+        PostEntity post = postEntityRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Unable to find post"));
 
         newComment = commentEntityRepository.saveAndFlush(newComment);
         post.getListOfComments().add(newComment);
@@ -284,7 +289,7 @@ public class PostServiceImpl implements PostService {
             throw new LikePostException("You have already liked this post");
         }
         Long oldLikes = post.getLikes();
-        post.setLikes(oldLikes+1);
+        post.setLikes(oldLikes + 1);
         post.getLikedUsersId().add(likerId);
         post = postEntityRepository.saveAndFlush(post);
 
@@ -321,7 +326,7 @@ public class PostServiceImpl implements PostService {
             throw new LikePostException("You have never liked this post");
         }
         Long oldLikes = post.getLikes();
-        post.setLikes(oldLikes-1);
+        post.setLikes(oldLikes - 1);
         post.getLikedUsersId().remove(likerId);
         return postEntityRepository.saveAndFlush(post);
 
@@ -358,48 +363,7 @@ public class PostServiceImpl implements PostService {
         return posts;
     }
 
-    @Override
-    public List<AnnouncementEntity> getFollowingProjectAnnouncements(Long userId) {
-        ProfileEntity user = profileEntityRepository.findById(userId).get();
-        List<ProjectEntity> listOfFollowingProjects = user.getProjectsFollowing();
-        List<AnnouncementEntity> announcements = new ArrayList<>();
-        for (ProjectEntity p : listOfFollowingProjects) {
-            announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
-        }
-
-        Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
-
-        return announcements;
-    }
-
-    @Override
-    public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId) {
-        ProfileEntity user = profileEntityRepository.findById(userId).get();
-        List<ProjectEntity> listOfFollowingProjects = user.getProjectsOwned();
-        List<AnnouncementEntity> announcements = new ArrayList<>();
-        for (ProjectEntity p : listOfFollowingProjects) {
-            announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
-        }
-
-        Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
-
-        return announcements;
-    }
-
-    @Override
-    public List<AnnouncementEntity> getJoinedProjectAnnouncements(Long userId) {
-        ProfileEntity user = profileEntityRepository.findById(userId).get();
-        List<ProjectEntity> listOfFollowingProjects = user.getProjectsJoined();
-        List<AnnouncementEntity> announcements = new ArrayList<>();
-        for (ProjectEntity p : listOfFollowingProjects) {
-            announcements.addAll(announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(p.getProjectId(), AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT));
-        }
-
-        Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
-
-        return announcements;
-    }
-
+    
     @Override
     public PostEntity repost(Long originalPostId, PostVO vo) throws RepostException, UserNotFoundException {
         ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
@@ -412,12 +376,6 @@ public class PostServiceImpl implements PostService {
         }
 
         PostEntity originalPost = originalPostOpt.get();
-//        
-//        Optional<PostEntity> originalPostOpt = postEntityRepository.findById(originalPost.getOriginalPostId());
-//        // if original post is deleted, then cannot repost
-//        if(!originalPostOpt.isPresent()){
-//            throw new RepostException("Sorry the original post is deleted, cannot repost");
-//        }
 
         PostEntity newPost = new PostEntity();
         newPost.setTimeCreated(LocalDateTime.now());

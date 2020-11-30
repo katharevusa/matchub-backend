@@ -47,4 +47,9 @@ public interface AnnouncementService {
     public void clearAllAnnouncemnents(Long userId);
     
     public ProfileEntity updateAnnouncementSettinge(AnnouncementSettingVO vo)throws UserNotFoundException;
+    
+     public List<AnnouncementEntity> getFollowingProjectAnnouncements(Long userId);
+    
+    public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId);
+    
 }

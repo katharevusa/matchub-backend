@@ -7,11 +7,13 @@ package com.is4103.matchub.vo;
 
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import javax.validation.constraints.NotNull;
+import lombok.Data;
 
 /**
  *
  * @author longluqian
  */
+@Data
 public class ResourceCategoryVO {
      
     @NotNull (message = "resource category name can not be null" )
