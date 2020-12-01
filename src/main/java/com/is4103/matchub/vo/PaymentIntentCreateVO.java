@@ -31,4 +31,5 @@ public class PaymentIntentCreateVO {
     
     @NotNull(message = "payment scenario can not be null.")
     private PaymentScenario paymentScenario;
+    private String ReceiptEmail;
 }
