@@ -31,7 +31,7 @@ public interface OrganisationEntityRepository extends JpaRepository<Organisation
             countQuery = "SELECT COUNT(o) FROM OrganisationEntity o ORDER BY o.reputationPoints DESC")
     Page<OrganisationEntity> organisationalLeaderboard(Pageable pageable);
 
-    @Query(value = "SELECT o FROM OrganisationEntity o ORDER BY o.reputationPoints DESC")
+    @Query(value = "SELECT o FROM OrganisationEntity o WHERE o.disabled = FALSE ORDER BY o.reputationPoints DESC")
     List<OrganisationEntity> organisationalLeaderboard();
 
 //    @Query(value = "SELECT o FROM OrganisationEntity o WHERE :accountId IN o.employees")

@@ -32,7 +32,7 @@ public interface IndividualEntityRepository extends JpaRepository<IndividualEnti
             countQuery = "SELECT COUNT(i) FROM IndividualEntity i ORDER BY i.reputationPoints DESC")
     Page<IndividualEntity> individualLeaderboard(Pageable pageable);
 
-    @Query(value = "SELECT i FROM IndividualEntity i ORDER BY i.reputationPoints DESC")
+    @Query(value = "SELECT i FROM IndividualEntity i WHERE i.disabled = FALSE ORDER BY i.reputationPoints DESC")
     List<IndividualEntity> individualLeaderboard();
     
     List<IndividualEntity> findByEmail(String email);
