@@ -435,7 +435,8 @@ public class MatchingServiceImpl implements MatchingService {
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 
-        if (profile.getCountry() == null && profile.getProjectsFollowing().isEmpty()) {
+        if ((profile.getCountry() == null || profile.getCountry().equals("")) && profile.getProjectsFollowing().isEmpty()) {
+            System.out.println("Entered this block");
             List<ProfileEntity> results = new ArrayList<>();
             Page<ProfileEntity> page = new PageImpl<>(results);
             return page;
@@ -448,18 +449,20 @@ public class MatchingServiceImpl implements MatchingService {
         List<ProjectEntity> projectsFollowing = profile.getProjectsFollowing();
 
         if (projectsFollowing.isEmpty()) {
-            recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, pageable);
 
             if (followingIds.size() == 0) {
                 recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), country, pageable);
+            } else {
+                recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, pageable);
             }
 
         } else {
-            //get profiles with same country + same project that profile is following 
-            recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
 
             if (followingIds.size() == 0) {
                 recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), country, projectsFollowing, pageable);
+            } else {
+                //get profiles with same country + same project that profile is following 
+                recommendations = profileEntityRepository.recommendProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
             }
 
         }
@@ -470,8 +473,8 @@ public class MatchingServiceImpl implements MatchingService {
     public Page<ProfileEntity> recommendIndividualProfiles(Long accountId, Pageable pageable) {
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
-        
-        if (profile.getCountry() == null && profile.getProjectsFollowing().isEmpty()) {
+
+        if ((profile.getCountry() == null || profile.getCountry().equals("")) && profile.getProjectsFollowing().isEmpty()) {
             List<ProfileEntity> results = new ArrayList<>();
             Page<ProfileEntity> page = new PageImpl<>(results);
             return page;
@@ -484,18 +487,20 @@ public class MatchingServiceImpl implements MatchingService {
         List<ProjectEntity> projectsFollowing = profile.getProjectsFollowing();
 
         if (projectsFollowing.isEmpty()) {
-            recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), followingIds, country, pageable);
 
             if (followingIds.size() == 0) {
                 recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), country, pageable);
+            } else {
+                recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), followingIds, country, pageable);
             }
 
         } else {
-            //get profiles with same country + same project that profile is following 
-            recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
 
             if (followingIds.size() == 0) {
                 recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), country, projectsFollowing, pageable);
+            } else {
+                //get profiles with same country + same project that profile is following 
+                recommendations = profileEntityRepository.recommendIndividualProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
             }
 
         }
@@ -507,8 +512,8 @@ public class MatchingServiceImpl implements MatchingService {
     public Page<ProfileEntity> recommendOrganisationProfiles(Long accountId, Pageable pageable) {
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
-        
-        if (profile.getCountry() == null && profile.getProjectsFollowing().isEmpty()) {
+
+        if ((profile.getCountry() == null || profile.getCountry().equals("")) && profile.getProjectsFollowing().isEmpty()) {
             List<ProfileEntity> results = new ArrayList<>();
             Page<ProfileEntity> page = new PageImpl<>(results);
             return page;
@@ -521,18 +526,20 @@ public class MatchingServiceImpl implements MatchingService {
         List<ProjectEntity> projectsFollowing = profile.getProjectsFollowing();
 
         if (projectsFollowing.isEmpty()) {
-            recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), followingIds, country, pageable);
 
             if (followingIds.size() == 0) {
                 recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), country, pageable);
+            } else {
+                recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), followingIds, country, pageable);
             }
 
         } else {
-            //get profiles with same country + same project that profile is following 
-            recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
 
             if (followingIds.size() == 0) {
                 recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), country, projectsFollowing, pageable);
+            } else {
+                //get profiles with same country + same project that profile is following 
+                recommendations = profileEntityRepository.recommendOrganisationProfiles(profile.getAccountId(), followingIds, country, projectsFollowing, pageable);
             }
 
         }
