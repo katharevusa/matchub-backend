@@ -120,6 +120,40 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "sdgTarget.sdgTargetId IN :sdgTargetIds")
     Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("sdgIds") Long[] sdgIds, @Param("sdgTargetIds") long[] sdgTargetIds, Pageable pageable);
 
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe JOIN pe.sdgs sdg "
+            + "WHERE (pe.email LIKE %:search% OR "
+            + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
+            + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.lastName IS NOT NULL AND (CONCAT(pe.firstName, ' ', pe.lastName) LIKE %:search% OR CONCAT(pe.lastName, ' ', pe.firstName) LIKE %:search%)) OR "
+            + "pe.country LIKE %:search%) AND "
+            + "sdg.sdgId IN :sdgIds",
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe JOIN pe.sdgs sdg "
+            + "WHERE (pe.email LIKE %:search% OR "
+            + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
+            + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.lastName IS NOT NULL AND (CONCAT(pe.firstName, ' ', pe.lastName) LIKE %:search% OR CONCAT(pe.lastName, ' ', pe.firstName) LIKE %:search%)) OR "
+            + "pe.country LIKE %:search%) AND "
+            + "sdg.sdgId IN :sdgIds")
+    Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("sdgIds") Long[] sdgIds, Pageable pageable);
+    
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe "
+            + "WHERE pe.email LIKE %:search% OR "
+            + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
+            + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.lastName IS NOT NULL AND (CONCAT(pe.firstName, ' ', pe.lastName) LIKE %:search% OR CONCAT(pe.lastName, ' ', pe.firstName) LIKE %:search%)) OR "
+            + "pe.country LIKE %:search%",
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe "
+            + "WHERE pe.email LIKE %:search% OR "
+            + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
+            + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.lastName IS NOT NULL AND (CONCAT(pe.firstName, ' ', pe.lastName) LIKE %:search% OR CONCAT(pe.lastName, ' ', pe.firstName) LIKE %:search%)) OR "
+            + "pe.country LIKE %:search%")
+    Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, Pageable pageable);
+
     @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe "
             + "JOIN pe.selectedTargets selectedTarget "
             + "JOIN selectedTarget.sdg sdg "
@@ -148,6 +182,46 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
             + "sdgTarget.sdgTargetId IN :sdgTargetIds")
     Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("country") String country, @Param("sdgIds") Long[] sdgIds, @Param("sdgTargetIds") long[] sdgTargetIds, Pageable pageable);
 
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe "
+            + "JOIN pe.sdgs sdg "
+            + "WHERE (pe.email LIKE %:search% OR "
+            + "pe.country LIKE %:search% OR "
+            + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
+            + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.lastName IS NOT NULL AND (CONCAT(pe.firstName, ' ', pe.lastName) LIKE %:search% OR CONCAT(pe.lastName, ' ', pe.firstName) LIKE %:search%))) AND "
+            + "pe.country LIKE %:country% AND "
+            + "sdg.sdgId IN :sdgIds",
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe "
+            + "JOIN pe.sdgs sdg "
+            + "WHERE (pe.email LIKE %:search% OR "
+            + "pe.country LIKE %:search% OR "
+            + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
+            + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.lastName IS NOT NULL AND (CONCAT(pe.firstName, ' ', pe.lastName) LIKE %:search% OR CONCAT(pe.lastName, ' ', pe.firstName) LIKE %:search%))) AND "
+            + "pe.country LIKE %:country% AND "
+            + "sdg.sdgId IN :sdgIds")
+    Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("country") String country, @Param("sdgIds") Long[] sdgIds, Pageable pageable);
+
+     @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe "
+            + "WHERE pe.email LIKE %:search% OR "
+            + "pe.country LIKE %:search% OR "
+            + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
+            + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.lastName IS NOT NULL AND (CONCAT(pe.firstName, ' ', pe.lastName) LIKE %:search% OR CONCAT(pe.lastName, ' ', pe.firstName) LIKE %:search%)) AND "
+            + "pe.country LIKE %:country% ",
+            countQuery = "SELECT DISTINCT COUNT(pe) FROM ProfileEntity pe "
+            + "WHERE pe.email LIKE %:search% OR "
+            + "pe.country LIKE %:search% OR "
+            + "(pe.organizationName IS NOT NULL AND pe.organizationName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.firstName LIKE %:search%) OR "
+            + "(pe.lastName IS NOT NULL AND pe.lastName LIKE %:search%) OR "
+            + "(pe.firstName IS NOT NULL AND pe.lastName IS NOT NULL AND (CONCAT(pe.firstName, ' ', pe.lastName) LIKE %:search% OR CONCAT(pe.lastName, ' ', pe.firstName) LIKE %:search%)) AND "
+            + "pe.country LIKE %:country%")
+    Page<ProfileEntity> globalSearchAllUsers(@Param("search") String search, @Param("country") String country, Pageable pageable);
+    
     @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe "
             + "WHERE pe.accountId <> ?1 AND "
             + "pe.accountId NOT IN ?2 AND "
@@ -290,5 +364,5 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
 
     @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe WHERE pe.joinDate BETWEEN ?1 AND ?2 ")
     List<ProfileEntity> findUsersByJoinDate(LocalDateTime from, LocalDateTime to);
-    
+
 }

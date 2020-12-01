@@ -552,7 +552,7 @@ public class UserServiceImpl implements UserService {
     public List<AccountEntity> getAllActiveAccounts() {
         return accountEntityRepository.findAllActiveAccounts();
     }
-    
+
     @Override
     public Page<AccountEntity> getAllActiveAccounts(Pageable pageable) {
         return accountEntityRepository.findAllActiveAccounts(pageable);
@@ -1004,6 +1004,7 @@ public class UserServiceImpl implements UserService {
 
         if (search.isEmpty() && country.isEmpty() && sdgIds.length == 0) {
             page = profileEntityRepository.findAll(pageable);
+            return page;
         } else if (country.isEmpty()) {
             page = profileEntityRepository.globalSearchAllUsers(search, sdgIds, sdgTargetIds, pageable);
 
@@ -1046,6 +1047,106 @@ public class UserServiceImpl implements UserService {
                 Long start = pageable.getOffset();
                 Long end = (start + pageable.getPageSize()) > resultsList.size() ? resultsList.size() : (start + pageable.getPageSize());
                 page = new PageImpl<ProfileEntity>(resultsList.subList(start.intValue(), end.intValue()), pageable, resultsList.size());
+
+            }
+        }
+
+        //query without selected sdgTargets for profile
+        if (page.getContent().size() == 0) {
+            if (country.isEmpty()) {
+                page = profileEntityRepository.globalSearchAllUsers(search, sdgIds, pageable);
+
+                if (page.isEmpty()) {
+                    //spilt the keywords
+                    search = search.trim();
+                    String[] split = search.split(" ");
+
+                    Set<ProfileEntity> temp = new HashSet<>();
+
+                    for (String s : split) {
+                        temp.addAll(profileEntityRepository.globalSearchAllUsers(s, sdgIds, pageable).toList());
+                    }
+
+                    //convert set into List
+                    List<ProfileEntity> resultsList = new ArrayList<>(temp);
+
+                    Long start = pageable.getOffset();
+                    Long end = (start + pageable.getPageSize()) > resultsList.size() ? resultsList.size() : (start + pageable.getPageSize());
+                    page = new PageImpl<ProfileEntity>(resultsList.subList(start.intValue(), end.intValue()), pageable, resultsList.size());
+
+                }
+            } else {
+                page = profileEntityRepository.globalSearchAllUsers(search, country, sdgIds, pageable);
+
+                if (page.isEmpty()) {
+                    //spilt the keywords
+                    search = search.trim();
+                    String[] split = search.split(" ");
+
+                    Set<ProfileEntity> temp = new HashSet<>();
+
+                    for (String s : split) {
+                        temp.addAll(profileEntityRepository.globalSearchAllUsers(s, country, sdgIds, pageable).toList());
+                    }
+
+                    //convert set into List
+                    List<ProfileEntity> resultsList = new ArrayList<>(temp);
+
+                    Long start = pageable.getOffset();
+                    Long end = (start + pageable.getPageSize()) > resultsList.size() ? resultsList.size() : (start + pageable.getPageSize());
+                    page = new PageImpl<ProfileEntity>(resultsList.subList(start.intValue(), end.intValue()), pageable, resultsList.size());
+
+                }
+
+            }
+        }
+
+        //query without sdgs for profile
+        if (page.getContent().size() == 0) {
+            if (country.isEmpty()) {
+                page = profileEntityRepository.globalSearchAllUsers(search, pageable);
+
+                if (page.isEmpty()) {
+                    //spilt the keywords
+                    search = search.trim();
+                    String[] split = search.split(" ");
+
+                    Set<ProfileEntity> temp = new HashSet<>();
+
+                    for (String s : split) {
+                        temp.addAll(profileEntityRepository.globalSearchAllUsers(s, pageable).toList());
+                    }
+
+                    //convert set into List
+                    List<ProfileEntity> resultsList = new ArrayList<>(temp);
+
+                    Long start = pageable.getOffset();
+                    Long end = (start + pageable.getPageSize()) > resultsList.size() ? resultsList.size() : (start + pageable.getPageSize());
+                    page = new PageImpl<ProfileEntity>(resultsList.subList(start.intValue(), end.intValue()), pageable, resultsList.size());
+
+                }
+            } else {
+                page = profileEntityRepository.globalSearchAllUsers(search, country, pageable);
+
+                if (page.isEmpty()) {
+                    //spilt the keywords
+                    search = search.trim();
+                    String[] split = search.split(" ");
+
+                    Set<ProfileEntity> temp = new HashSet<>();
+
+                    for (String s : split) {
+                        temp.addAll(profileEntityRepository.globalSearchAllUsers(s, country, pageable).toList());
+                    }
+
+                    //convert set into List
+                    List<ProfileEntity> resultsList = new ArrayList<>(temp);
+
+                    Long start = pageable.getOffset();
+                    Long end = (start + pageable.getPageSize()) > resultsList.size() ? resultsList.size() : (start + pageable.getPageSize());
+                    page = new PageImpl<ProfileEntity>(resultsList.subList(start.intValue(), end.intValue()), pageable, resultsList.size());
+
+                }
 
             }
         }
