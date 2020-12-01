@@ -24,7 +24,6 @@ import edu.cmu.lti.jawjaw.pobj.POS;
 import edu.cmu.lti.lexical_db.ILexicalDatabase;
 import edu.cmu.lti.lexical_db.NictWordNet;
 import edu.cmu.lti.lexical_db.data.Concept;
-import edu.cmu.lti.ws4j.Relatedness;
 import edu.cmu.lti.ws4j.RelatednessCalculator;
 import edu.cmu.lti.ws4j.impl.HirstStOnge;
 import edu.cmu.lti.ws4j.impl.JiangConrath;
@@ -35,15 +34,14 @@ import edu.cmu.lti.ws4j.impl.Path;
 import edu.cmu.lti.ws4j.impl.Resnik;
 import edu.cmu.lti.ws4j.impl.WuPalmer;
 import edu.cmu.lti.ws4j.util.WS4JConfiguration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -437,6 +435,12 @@ public class MatchingServiceImpl implements MatchingService {
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
 
+        if (profile.getCountry() == null && profile.getProjectsFollowing().isEmpty()) {
+            List<ProfileEntity> results = new ArrayList<>();
+            Page<ProfileEntity> page = new PageImpl<>(results);
+            return page;
+        }
+
         Page<ProfileEntity> recommendations;
 
         String country = profile.getCountry();
@@ -466,6 +470,12 @@ public class MatchingServiceImpl implements MatchingService {
     public Page<ProfileEntity> recommendIndividualProfiles(Long accountId, Pageable pageable) {
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
+        
+        if (profile.getCountry() == null && profile.getProjectsFollowing().isEmpty()) {
+            List<ProfileEntity> results = new ArrayList<>();
+            Page<ProfileEntity> page = new PageImpl<>(results);
+            return page;
+        }
 
         Page<ProfileEntity> recommendations;
 
@@ -497,6 +507,12 @@ public class MatchingServiceImpl implements MatchingService {
     public Page<ProfileEntity> recommendOrganisationProfiles(Long accountId, Pageable pageable) {
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
+        
+        if (profile.getCountry() == null && profile.getProjectsFollowing().isEmpty()) {
+            List<ProfileEntity> results = new ArrayList<>();
+            Page<ProfileEntity> page = new PageImpl<>(results);
+            return page;
+        }
 
         Page<ProfileEntity> recommendations;
 
