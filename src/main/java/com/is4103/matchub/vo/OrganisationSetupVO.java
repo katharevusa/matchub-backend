@@ -8,6 +8,7 @@ package com.is4103.matchub.vo;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -68,6 +69,8 @@ public class OrganisationSetupVO {
     public void setupOrganisationAccount(OrganisationEntity organisation) {
         organisation.setOrganizationDescription(this.organizationDescription);
         organisation.setAddress(this.address);
+        
+        organisation.setJoinDate(LocalDateTime.now());
 
         //convert array to set
         Set<Long> longSet = new HashSet<>(Arrays.asList(this.employees));
