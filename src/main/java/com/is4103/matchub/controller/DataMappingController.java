@@ -7,7 +7,7 @@ package com.is4103.matchub.controller;
 
 import com.is4103.matchub.service.DataMappingService;
 import java.io.IOException;
-import java.util.List;
+import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,20 +30,30 @@ public class DataMappingController {
     void importIndividuals(@RequestParam(value = "file") MultipartFile file) throws IOException {
         dataMappingService.importIndividuals(file);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/importOrganisations")
     void importOrganisations(@RequestParam(value = "file") MultipartFile file) throws IOException {
         dataMappingService.importOrganisations(file);
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/template_individual")
     void retrieveCommonTemplateIndividual() {
         dataMappingService.retrieveCommonTemplateIndividual();
     }
-    
+
     @RequestMapping(method = RequestMethod.GET, value = "/template_organisation")
     void retrieveCommonTemplateOrganisation() {
         dataMappingService.retrieveCommonTemplateOrganisation();
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/importIndividualsSendEmail")
+    void importIndividualsSendEmail(@RequestParam(value = "file") MultipartFile file) throws MessagingException, IOException {
+        dataMappingService.importIndividualsSendEmail(file);
+    }
+    
+    @RequestMapping(method = RequestMethod.POST, value = "/importOrganisationsSendEmail")
+    void importOrganisationsSendEmail(@RequestParam(value = "file") MultipartFile file) throws MessagingException, IOException {
+        dataMappingService.importOrganisationsSendEmail(file);
     }
 
 }

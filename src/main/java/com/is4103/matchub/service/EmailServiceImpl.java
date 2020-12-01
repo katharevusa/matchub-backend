@@ -190,4 +190,45 @@ public class EmailServiceImpl implements EmailService {
         message.setText(body);
         emailSender.send(message);
     }
+
+    @Async
+    @Override
+    public void sendOnboardingEmail(ProfileEntity profile, String randomGeneratedPassword) throws MessagingException, IOException {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        String name = "";
+
+        if (profile instanceof IndividualEntity) {
+            IndividualEntity i = (IndividualEntity) profile;
+            name = i.getFirstName() + " " + i.getLastName();
+        } else if (profile instanceof OrganisationEntity) {
+            OrganisationEntity o = (OrganisationEntity) profile;
+            name = o.getOrganizationName();
+        }
+
+        String subject = "A MatcHub account has been created on your behalf!";
+
+        String body = "Dear " + name + ", " + "\n\nYour data had been imported into Matchub. To simplify "
+                + "your onboarding process, we have already imported your basic information.";
+
+        body += "\n\nYour Login Credentials:\n";
+        body += "Username: " + profile.getEmail();
+        body += "\nPassword: " + randomGeneratedPassword;
+        body += "\n\nVisit MatcHub today to complete your account setup: ";
+
+        if (profile instanceof IndividualEntity) {
+            body += "http://localhost:3000/setupIndividualProfile/" + profile.getUuid();
+        } else { //must be an organisation
+            body += "http://localhost:3000/setupOrganisationProfile/" + profile.getUuid();
+        }
+
+        body += "\n\nThank you!\n\nRegards,\nMatcHub";
+
+        message.setFrom("matchubcommunity@gmail.com");
+
+        message.setTo(profile.getEmail());
+        message.setSubject(subject);
+        message.setText(body);
+        emailSender.send(message);
+    }
 }

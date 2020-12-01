@@ -29,4 +29,5 @@ public interface EmailService {
 
     public void sendExistingUserVotingDetailsEmail(ProfileEntity profile, VoterCredentialEntity voterCredential, CompetitionEntity competition) throws MessagingException, IOException;
 
+    void sendOnboardingEmail(ProfileEntity profile, String randomGeneratedPassword) throws MessagingException, IOException;
 }
