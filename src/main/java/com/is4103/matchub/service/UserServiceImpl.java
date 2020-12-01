@@ -548,10 +548,11 @@ public class UserServiceImpl implements UserService {
         return accountEntityRepository.findAll(pageable);
     }
 
-//    @Override
-//    public List<AccountEntity> getAllActiveAccounts() {
-//        return accountEntityRepository.findAllActiveAccounts();
-//    }
+    @Override
+    public List<AccountEntity> getAllActiveAccounts() {
+        return accountEntityRepository.findAllActiveAccounts();
+    }
+    
     @Override
     public Page<AccountEntity> getAllActiveAccounts(Pageable pageable) {
         return accountEntityRepository.findAllActiveAccounts(pageable);

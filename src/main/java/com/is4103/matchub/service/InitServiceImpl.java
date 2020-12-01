@@ -46,10 +46,13 @@ import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.LongStream;
@@ -1868,6 +1871,9 @@ public class InitServiceImpl implements InitService {
         projectEntity4.getPhotos().add("https://localhost:8443/api/v1/files/init/building3.jpg");
 
         projectService.createProject(projectEntity4, 9L);
+
+        sdgTargetIds = LongStream.rangeClosed(18, 21).toArray();
+        associateSDGTargetsWithProject(sdgTargetIds, 3L, projectEntity4.getProjectId());
 
         sdgTargetIds = LongStream.rangeClosed(29, 36).toArray();
         associateSDGTargetsWithProject(sdgTargetIds, 4L, projectEntity4.getProjectId());
