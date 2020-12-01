@@ -35,5 +35,15 @@ public class DataMappingController {
     void importOrganisations(@RequestParam(value = "file") MultipartFile file) throws IOException {
         dataMappingService.importOrganisations(file);
     }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/template_individual")
+    void retrieveCommonTemplateIndividual() {
+        dataMappingService.retrieveCommonTemplateIndividual();
+    }
+    
+    @RequestMapping(method = RequestMethod.GET, value = "/template_organisation")
+    void retrieveCommonTemplateOrganisation() {
+        dataMappingService.retrieveCommonTemplateOrganisation();
+    }
 
 }

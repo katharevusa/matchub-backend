@@ -272,4 +272,14 @@ public class DataMappingServiceImpl implements DataMappingService {
         profile.getSelectedTargets().add(s);
         profileEntityRepository.saveAndFlush(profile);
     }
+
+    @Override
+    public String retrieveCommonTemplateIndividual() {
+        return "https://localhost:8443/api/v1/files/commonTemplate/Template_Individual.xlsx";
+    }
+
+    @Override
+    public String retrieveCommonTemplateOrganisation() {
+        return "https://localhost:8443/api/v1/files/commonTemplate/Template_Organisation.xlsx";
+    }
 }
