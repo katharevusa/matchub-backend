@@ -5,7 +5,10 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
+import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.helper.StatisticsWrapper;
 import com.is4103.matchub.repository.DonationEntityRepository;
 import com.is4103.matchub.repository.FundCampaignEntityRepository;
@@ -18,7 +21,9 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -79,14 +84,13 @@ public class SystemAdminServiceImpl implements SystemAdminService {
             LocalDateTime startOfNextMonth = startMonth.plus(1, ChronoUnit.MONTHS);
 
             // make into capital case
-            months[5 - i] = startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toLowerCase();
+            months[5 - i] = startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toUpperCase();
             values[5 - i] = profileEntityRepository.findUsersByJoinDate(startMonth, startOfNextMonth).size();
         }
 
         return new StatisticsWrapper(months, values);
     }
 
-//Monthly transactions meaning last 5 month monthly total transactions is it
     @Override
     public StatisticsWrapper getLastFiveTransactionNumberData() {
 
@@ -98,7 +102,7 @@ public class SystemAdminServiceImpl implements SystemAdminService {
             LocalDateTime startOfNextMonth = startMonth.plus(1, ChronoUnit.MONTHS);
 
             // make into capital case
-            months[5 - i] = startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toLowerCase();
+            months[5 - i] = startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toUpperCase();
 
             // getting resource transaction total sum
             BigDecimal amount = resourceTransactionEntityRepository.findResourceTransactionEntityByTransactionTime(startMonth, startOfNextMonth)
@@ -132,6 +136,26 @@ public class SystemAdminServiceImpl implements SystemAdminService {
 
         return map;
 
+    }
+
+    @Override
+    public List<ProfileEntity> updatePlatformAdmins(List<Long> newAdminNumber) {
+        // remove all users' admin right
+        List<ProfileEntity> oldAdmins = profileEntityRepository.findAdminUsers();
+        List<ProfileEntity> newAdmins = new ArrayList<>();
+        for(ProfileEntity p: oldAdmins){
+            p.getRoles().remove(AccountEntity.ROLE_SYSADMIN);
+        }
+        
+        // add new admin right 
+        for(Long id : newAdminNumber){
+            ProfileEntity user = profileEntityRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
+            user.getRoles().add(AccountEntity.ROLE_SYSADMIN);
+            newAdmins.add(user);
+        }
+        
+        profileEntityRepository.saveAll(newAdmins);
+        return profileEntityRepository.findAdminUsers();
     }
 
 }

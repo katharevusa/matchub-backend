@@ -5,7 +5,9 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.helper.StatisticsWrapper;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -27,4 +29,6 @@ public interface SystemAdminService {
     public StatisticsWrapper getLastFiveTransactionNumberData();
 
     public Map<String, Integer> getProjectsNumberWithDifferentStatus();
+    
+    public List<ProfileEntity> updatePlatformAdmins(List<Long> newAdminNumber);
 }
