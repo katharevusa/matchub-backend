@@ -5,8 +5,10 @@
  */
 package com.is4103.matchub.repository;
 
+import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -286,5 +288,12 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
     Optional<ProfileEntity> findByEmail(String email);
 
     Optional<ProfileEntity> findByStripeAccountUid(String stripeAccountUid);
+
+    @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe WHERE pe.joinDate BETWEEN ?1 AND ?2 ")
+    List<ProfileEntity> findUsersByJoinDate(LocalDateTime from, LocalDateTime to);
+
+
+    @Query(value =" SELECT pe FROM ProfileEntity pe JOIN pe.roles per WHERE per = 'SYSADMIN'")
+    List<ProfileEntity> findAdminUsers();
 
 }

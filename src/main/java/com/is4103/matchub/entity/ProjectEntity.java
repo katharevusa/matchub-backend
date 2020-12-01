@@ -11,10 +11,8 @@ import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -23,6 +21,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
@@ -113,6 +112,11 @@ public class ProjectEntity {
     @ElementCollection
     private Map<String, String> documents = new HashMap<>();
 
+    // new variable for aau9
+    @Column(nullable = false)
+    @NotNull
+    private Integer competitionVotes = 0;
+
     //*********************Associations Below******************
     @OneToMany
     private List<JoinRequestEntity> joinRequests = new ArrayList<>();
@@ -132,7 +136,6 @@ public class ProjectEntity {
     @OneToMany
     private List<ResourceRequestEntity> listOfRequests = new ArrayList<>();
 
- 
     @OneToMany
     @JsonIgnoreProperties({"project"})
     private List<ResourceTransactionEntity> listOfResourceTransactions = new ArrayList<>();
@@ -156,6 +159,11 @@ public class ProjectEntity {
     //sdg refactoring
     @OneToMany
     private List<SelectedTargetEntity> selectedTargets = new ArrayList<>();
+
+    // new aau9
+    @ManyToOne
+    @JsonIgnoreProperties({"projects, voterCredentials"})
+    private CompetitionEntity competition;
 
     public ProjectEntity(String projectTitle, String projectDescription, String country, LocalDateTime startDate, LocalDateTime endDate) {
         this.projectTitle = projectTitle;

@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.exception.DeleteCommentException;
 import com.is4103.matchub.exception.LikePostException;
+import com.is4103.matchub.exception.PostNotFoundException;
 import com.is4103.matchub.exception.RepostException;
 import com.is4103.matchub.vo.CommentVO;
 import com.is4103.matchub.vo.PostVO;
@@ -41,7 +42,7 @@ public interface PostService {
 
     public PostEntity deleteComment(Long commentId, Long postId, Long deletorId) throws DeleteCommentException;
 
-    public PostEntity addComment(CommentVO newCommentVO, Long postId);
+    public PostEntity addComment(CommentVO newCommentVO, Long postId)throws PostNotFoundException;
 
     public PostEntity likeAPost(Long postId, Long likerId) throws LikePostException;
 
@@ -51,13 +52,9 @@ public interface PostService {
     
     public List<PostEntity> getFollowingUserPosts(Long userId);
     
-    public List<AnnouncementEntity> getFollowingProjectAnnouncements(Long userId);
-    
-    public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId);
-    
-    public List<AnnouncementEntity> getJoinedProjectAnnouncements(Long userId);
-    
     public PostEntity repost(Long previousPostId, PostVO vo)throws RepostException;
     
-    public void createPostDataInit(PostVO vo);
+    public void createPostDataInit(PostVO vo)throws LikePostException;
+
+   
 }
