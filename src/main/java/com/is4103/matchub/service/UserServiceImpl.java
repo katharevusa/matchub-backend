@@ -1260,6 +1260,7 @@ public class UserServiceImpl implements UserService {
         accountToClaim.setIsVerified(Boolean.TRUE);
         accountToClaim.setDisabled(Boolean.FALSE);
         accountToClaim.setPassword(passwordEncoder.encode(randomGeneratedPassword));
+        accountToClaim.setJoinDate(LocalDateTime.now());
 
         accountToClaim = accountEntityRepository.saveAndFlush(accountToClaim);
 
