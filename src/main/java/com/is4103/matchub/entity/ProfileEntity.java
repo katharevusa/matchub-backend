@@ -126,16 +126,14 @@ public abstract class ProfileEntity extends AccountEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnoreProperties({"taskdoers"})
     private List<TaskEntity> tasks = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "respondent")
     @JsonIgnoreProperties({"respondent"})
     private List<SurveyResponseEntity> surveyResponses = new ArrayList<>();
-    
+
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"recievers","surveyResponses"})
+    @JsonIgnoreProperties({"recievers", "surveyResponses"})
     private List<SurveyEntity> surveys = new ArrayList<>();
-    
-    
 
     //sdg refactoring
     @OneToMany

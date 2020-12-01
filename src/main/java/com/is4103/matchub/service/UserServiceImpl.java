@@ -7,6 +7,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.AnnouncementEntity;
+import com.is4103.matchub.entity.ClaimRequestEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
@@ -15,11 +16,14 @@ import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.entity.SDGTargetEntity;
 import com.is4103.matchub.entity.SelectedTargetEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
+import com.is4103.matchub.enumeration.ClaimRequestStatusEnum;
+import com.is4103.matchub.exception.ClaimRequestNotFoundException;
 import com.is4103.matchub.exception.DeleteOrganisationVerificationDocumentException;
 import com.is4103.matchub.exception.DeleteProfilePictureException;
 import com.is4103.matchub.exception.UserNotFoundException;
 import com.is4103.matchub.exception.EmailExistException;
 import com.is4103.matchub.exception.ResourceNotFoundException;
+import com.is4103.matchub.exception.UnableToClaimProfileException;
 import com.is4103.matchub.exception.UnableToFollowProfileException;
 import com.is4103.matchub.exception.UnableToRemoveFollowerException;
 import com.is4103.matchub.exception.UnableToSaveResourceException;
@@ -27,6 +31,7 @@ import com.is4103.matchub.exception.UnableToUnfollowProfileException;
 import com.is4103.matchub.exception.UnableToUnsaveResourceException;
 import com.is4103.matchub.exception.UpdateProfileException;
 import com.is4103.matchub.exception.UploadOrganisationVerificationDocException;
+import com.is4103.matchub.helper.RandomAlphanumericString;
 import com.is4103.matchub.vo.UserVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -35,6 +40,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.is4103.matchub.repository.AccountEntityRepository;
 import com.is4103.matchub.repository.AnnouncementEntityRepository;
+import com.is4103.matchub.repository.ClaimRequestEntityRepository;
 import com.is4103.matchub.repository.IndividualEntityRepository;
 import com.is4103.matchub.repository.OrganisationEntityRepository;
 import com.is4103.matchub.repository.ProfileEntityRepository;
@@ -56,6 +62,7 @@ import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import com.is4103.matchub.vo.IndividualUpdateVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
+import com.is4103.matchub.vo.ClaimRequestVO;
 import com.is4103.matchub.vo.DeleteFilesVO;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -118,6 +125,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private SelectedTargetEntityRepository selectedTargetEntityRepository;
 
+    @Autowired
+    private ClaimRequestEntityRepository claimRequestEntityRepository;
+
     public UserServiceImpl(AccountEntityRepository accountEntityRepository) {
         this.accountEntityRepository = accountEntityRepository;
     }
@@ -140,7 +150,6 @@ public class UserServiceImpl implements UserService {
 
         //auto trigger the sendVerificationEmail method
 //        emailService.sendVerificationEmail(newAccount);
-
         return UserVO.of(newAccount);
 
     }
@@ -552,7 +561,7 @@ public class UserServiceImpl implements UserService {
     public List<AccountEntity> getAllActiveAccounts() {
         return accountEntityRepository.findAllActiveAccounts();
     }
-    
+
     @Override
     public Page<AccountEntity> getAllActiveAccounts(Pageable pageable) {
         return accountEntityRepository.findAllActiveAccounts(pageable);
@@ -1081,5 +1090,100 @@ public class UserServiceImpl implements UserService {
         profile.setStripeAccountChargesEnabled(true);
 
         profileEntityRepository.saveAndFlush(profile);
+    }
+
+    @Transactional
+    @Override
+    public ClaimRequestEntity createClaimRequest(ClaimRequestVO vo) {
+        ProfileEntity profileEntityToClaim = profileEntityRepository.findById(vo.getAccountId())
+                .orElseThrow(() -> new UserNotFoundException("User with id " + vo.getAccountId() + " does not exist"));
+
+        if (profileEntityToClaim.getIsVerified()) {
+            throw new UnableToClaimProfileException("Profile is already in use by another party.");
+        }
+
+        ClaimRequestEntity newClaimRequest = new ClaimRequestEntity();
+        newClaimRequest.setEmail(vo.getEmail());
+        newClaimRequest.setProfile(profileEntityToClaim);
+
+        return claimRequestEntityRepository.saveAndFlush(newClaimRequest);
+    }
+
+    @Transactional
+    @Override
+    public ClaimRequestEntity uploadPhotos(Long claimRequestId, MultipartFile[] photos) {
+        ClaimRequestEntity claimRequest = claimRequestEntityRepository.findById(claimRequestId)
+                .orElseThrow(() -> new ClaimRequestNotFoundException("User with id " + claimRequestId + " does not exist"));
+
+        for (MultipartFile photo : photos) {
+            String path = attachmentService.upload(photo);
+            claimRequest.getPhotos().add(path);
+
+        }
+        return claimRequestEntityRepository.saveAndFlush(claimRequest);
+    }
+
+    @Transactional
+    @Override
+    public ClaimRequestEntity uploadDocuments(Long claimRequestId, MultipartFile[] documents) {
+        ClaimRequestEntity claimRequest = claimRequestEntityRepository.findById(claimRequestId)
+                .orElseThrow(() -> new ClaimRequestNotFoundException("User with id " + claimRequestId + " does not exist"));
+
+        for (MultipartFile photo : documents) {
+            String path = attachmentService.upload(photo);
+            String name = photo.getOriginalFilename();
+            System.err.println("name: " + name);
+            claimRequest.getVerificationDoc().put(name, path);
+
+        }
+        return claimRequestEntityRepository.saveAndFlush(claimRequest);
+    }
+
+    @Transactional
+    @Override
+    public List<ClaimRequestEntity> getAllClaimRequests() {
+        return claimRequestEntityRepository.findAll();
+    }
+
+    @Transactional
+    @Override
+    public void approveClaimRequest(Long claimRequestId) throws IOException, MessagingException {
+        ClaimRequestEntity claimRequest = claimRequestEntityRepository.findById(claimRequestId)
+                .orElseThrow(() -> new ClaimRequestNotFoundException("User with id " + claimRequestId + " does not exist"));
+
+        String randomGeneratedPassword = RandomAlphanumericString.randomString(12);
+
+        AccountEntity accountToClaim = (AccountEntity) claimRequest.getProfile();
+        accountToClaim.setEmail(claimRequest.getEmail());
+        accountToClaim.setIsVerified(Boolean.TRUE);
+        accountToClaim.setDisabled(Boolean.FALSE);
+        accountToClaim.setPassword(passwordEncoder.encode(randomGeneratedPassword));
+
+        accountToClaim = accountEntityRepository.saveAndFlush(accountToClaim);
+
+        claimRequest.setClaimRequestStatus(ClaimRequestStatusEnum.APPROVED);
+        claimRequestEntityRepository.saveAndFlush(claimRequest);
+
+        emailService.sendClaimRequestSuccessEmail(accountToClaim, randomGeneratedPassword);
+
+        List<ClaimRequestEntity> remainingPendingClaimRequests = claimRequestEntityRepository.findRemainingPendingClaimRequests(claimRequest, claimRequest.getProfile());
+
+        for (ClaimRequestEntity remainingClaimRequest : remainingPendingClaimRequests) {
+            rejectClaimRequest(remainingClaimRequest.getClaimRequestId());
+        }
+    }
+
+    @Transactional
+    @Override
+    public void rejectClaimRequest(Long claimRequestId) throws IOException, MessagingException {
+        ClaimRequestEntity claimRequest = claimRequestEntityRepository.findById(claimRequestId)
+                .orElseThrow(() -> new ClaimRequestNotFoundException("User with id " + claimRequestId + " does not exist"));
+
+        claimRequest.setClaimRequestStatus(ClaimRequestStatusEnum.REJECTED);
+        claimRequestEntityRepository.saveAndFlush(claimRequest);
+
+        AccountEntity accountToClaim = (AccountEntity) claimRequest.getProfile();
+
+        emailService.sendClaimRequestFailureEmail(claimRequest, accountToClaim);
     }
 }
