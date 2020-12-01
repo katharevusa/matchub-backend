@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.repository;
 
+import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import java.time.LocalDateTime;
@@ -290,5 +291,9 @@ public interface ProfileEntityRepository extends JpaRepository<ProfileEntity, Lo
 
     @Query(value = "SELECT DISTINCT pe FROM ProfileEntity pe WHERE pe.joinDate BETWEEN ?1 AND ?2 ")
     List<ProfileEntity> findUsersByJoinDate(LocalDateTime from, LocalDateTime to);
-    
+
+
+    @Query(value =" SELECT pe FROM ProfileEntity pe JOIN pe.roles per WHERE per = 'SYSADMIN'")
+    List<ProfileEntity> findAdminUsers();
+
 }
