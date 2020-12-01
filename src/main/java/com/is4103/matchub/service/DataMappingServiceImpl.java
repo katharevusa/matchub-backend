@@ -21,6 +21,7 @@ import com.is4103.matchub.repository.SDGTargetEntityRepository;
 import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import static edu.stanford.nlp.stats.Counters.product;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -136,11 +137,18 @@ public class DataMappingServiceImpl implements DataMappingService {
                     if (row.getCell(8) != null) {
                         String sdgTargetValue = row.getCell(8).getStringCellValue();
 
-                        //find the actual instance of the sdg target 
-                        SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetNumbering(sdgTargetValue);
+                        //split based on commas and trim                        
+                        String[] result = Arrays.stream(sdgTargetValue.split(",")).map(String::trim).toArray(String[]::new);
+
+                        List<Long> list = new ArrayList<>();
+                        for (String s : result) {
+                            //find the actual instance of the sdg target 
+                            SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetNumbering(s);
+                            list.add(sdgTarget.getSdgTargetId());
+                        }
 
                         //create selectedTargets
-                        associateSDGTargetsWithProfile(sdgTarget.getSdgTargetId(), sdgNumber, newInd.getAccountId());
+                        associateSDGTargetsWithProfile(list, sdgNumber, newInd.getAccountId());
                     }
 
                 }
@@ -218,11 +226,18 @@ public class DataMappingServiceImpl implements DataMappingService {
                     if (row.getCell(6) != null) {
                         String sdgTargetValue = row.getCell(6).getStringCellValue();
 
-                        //find the actual instance of the sdg target 
-                        SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetNumbering(sdgTargetValue);
+                        //split based on commas and trim                        
+                        String[] result = Arrays.stream(sdgTargetValue.split(",")).map(String::trim).toArray(String[]::new);
+
+                        List<Long> list = new ArrayList<>();
+                        for (String s : result) {
+                            //find the actual instance of the sdg target 
+                            SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetNumbering(s);
+                            list.add(sdgTarget.getSdgTargetId());
+                        }
 
                         //create selectedTargets
-                        associateSDGTargetsWithProfile(sdgTarget.getSdgTargetId(), sdgNumber, newOrg.getAccountId());
+                        associateSDGTargetsWithProfile(list, sdgNumber, newOrg.getAccountId());
                     }
 
                 }
@@ -234,12 +249,12 @@ public class DataMappingServiceImpl implements DataMappingService {
         }
     }
 
-    private void associateSDGTargetsWithProfile(Long sdgTargetId, Long sdgId, Long accountId) {
+    private void associateSDGTargetsWithProfile(List<Long> sdgTargetIds, Long sdgId, Long accountId) {
         //find the sdg
         SDGEntity sdg = sdgEntityRepository.findBySdgId(sdgId);
 
         //find the list of sdgTargets instances
-        SDGTargetEntity sdgTarget = sDGTargetEntityRepository.findBySdgTargetId(sdgTargetId);
+        List<SDGTargetEntity> sdgTargetlist = sDGTargetEntityRepository.findSDGTargetsByIds(sdgTargetIds);
 
         //find the profile
         ProfileEntity profile = profileEntityRepository.findById(accountId)
@@ -249,7 +264,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
         s.setProfile(profile);
         s.setSdg(sdg);
-        s.getSdgTargets().add(sdgTarget);
+        s.getSdgTargets().addAll(sdgTargetlist);
 
         selectedTargetEntityRepository.saveAndFlush(s);
 
