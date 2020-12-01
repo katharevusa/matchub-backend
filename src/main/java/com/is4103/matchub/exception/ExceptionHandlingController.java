@@ -906,5 +906,25 @@ public class ExceptionHandlingController {
 
         return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
     }
+    
+    @ExceptionHandler(value = UnableToClaimProfileException.class)
+    public ResponseEntity<ExceptionResponse> unableToClaimProfile(UnableToClaimProfileException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to claim profile due to an error found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(value = ClaimRequestNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> claimRequestNotFound(ClaimRequestNotFoundException ex) {
+        ExceptionResponse response = new ExceptionResponse();
+        response.setErrorCode("Unable to find claim request due to an error found");
+        response.setErrorMessage(ex.getMessage());
+        response.setErrors(ValidationUtil.fromError(ex.getMessage()));
+
+        return new ResponseEntity<ExceptionResponse>(response, HttpStatus.BAD_REQUEST);
+    }
 
 }

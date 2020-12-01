@@ -7,6 +7,7 @@ package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.BadgeEntity;
+import com.is4103.matchub.entity.ClaimRequestEntity;
 import com.is4103.matchub.entity.CompetitionEntity;
 import com.is4103.matchub.entity.PostEntity;
 import com.is4103.matchub.entity.ProfileEntity;
@@ -33,6 +34,7 @@ import com.is4103.matchub.vo.IndividualSetupVO;
 import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
+import com.is4103.matchub.vo.ClaimRequestVO;
 import com.is4103.matchub.vo.UserVO;
 import com.is4103.matchub.vo.VoterVO;
 import java.io.IOException;
@@ -245,5 +247,20 @@ public class PublicRestController {
     @RequestMapping(method = RequestMethod.GET, value = "/getSdgBySdgId")
     public SDGEntity getSdgBySdgId(@RequestParam(value = "sdgId", required = true) Long sdgId) {
         return sdgService.getSdgBySdgId(sdgId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/createClaimRequest")
+    public ClaimRequestEntity createClaimRequest(@Valid @RequestBody ClaimRequestVO claimRequestVO) {
+        return userService.createClaimRequest(claimRequestVO);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/updateClaimRequest/uploadPhotos")
+    public ClaimRequestEntity uploadPhotos(@RequestParam(value = "photos") MultipartFile[] photos, @RequestParam("claimRequestId") Long claimRequestId) {
+        return userService.uploadPhotos(claimRequestId, photos);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/updateClaimRequest/uploadDocuments")
+    public ClaimRequestEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, @RequestParam("claimRequestId") Long claimRequestId) {
+        return userService.uploadDocuments(claimRequestId, documents);
     }
 }
