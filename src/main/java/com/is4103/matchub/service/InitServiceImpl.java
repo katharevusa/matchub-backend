@@ -3,6 +3,7 @@ package com.is4103.matchub.service;
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.AnnouncementEntity;
 import com.is4103.matchub.entity.BadgeEntity;
+import com.is4103.matchub.entity.CompetitionEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
@@ -15,6 +16,7 @@ import com.is4103.matchub.entity.SDGTargetEntity;
 import com.is4103.matchub.entity.SelectedTargetEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
+import com.is4103.matchub.enumeration.CompetitionStatusEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import com.is4103.matchub.enumeration.ResourceTypeEnum;
@@ -38,6 +40,7 @@ import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.repository.SDGTargetEntityRepository;
 import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import com.is4103.matchub.vo.AnnouncementVO;
+import com.is4103.matchub.vo.CompetitionVO;
 import com.is4103.matchub.vo.PostVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -54,61 +57,64 @@ import java.util.stream.LongStream;
 public class InitServiceImpl implements InitService {
 
     @Autowired
-    AccountEntityRepository accountEntityRepository;
+    private AccountEntityRepository accountEntityRepository;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    ProjectEntityRepository projectEntityRepository;
+    private ProjectEntityRepository projectEntityRepository;
 
     @Autowired
-    ProjectService projectService;
+    private ProjectService projectService;
 
     @Autowired
-    SDGEntityRepository sdgEntityRepository;
+    private SDGEntityRepository sdgEntityRepository;
 
     @Autowired
-    ResourceCategoryService resourceCategoryService;
+    private ResourceCategoryService resourceCategoryService;
 
     @Autowired
-    ResourceService resourceService;
+    private ResourceService resourceService;
 
     @Autowired
-    ResourceEntityRepository resourceEntityRepository;
+    private ResourceEntityRepository resourceEntityRepository;
 
     @Autowired
-    ProfileEntityRepository profileEntityRepository;
+    private ProfileEntityRepository profileEntityRepository;
 
     @Autowired
-    ResourceCategoryEntityRepository resourceCategoryEntityRepository;
+    private ResourceCategoryEntityRepository resourceCategoryEntityRepository;
 
     @Autowired
-    ReviewEntityRepository reviewEntityRepository;
+    private ReviewEntityRepository reviewEntityRepository;
 
     @Autowired
-    BadgeEntityRepository badgeEntityRepository;
+    private BadgeEntityRepository badgeEntityRepository;
 
     @Autowired
-    FirebaseService firebaseService;
+    private FirebaseService firebaseService;
 
     @Autowired
-    ResourceRequestEntityRepository resourceRequestEntityRepository;
+    private ResourceRequestEntityRepository resourceRequestEntityRepository;
 
     @Autowired
-    PostService postService;
+    private PostService postService;
 
     @Autowired
-    ResourceRequestService resourceRequestService;
+    private ResourceRequestService resourceRequestService;
 
     @Autowired
-    SDGTargetEntityRepository sDGTargetEntityRepository;
+    private SDGTargetEntityRepository sDGTargetEntityRepository;
 
     @Autowired
     private SelectedTargetEntityRepository selectedTargetEntityRepository;
 
     @Autowired
     private AnnouncementService announcementService;
+    
+    @Autowired
+    private CompetitionService competitionService;
     
     @Transactional
     public void init() {
@@ -141,7 +147,7 @@ public class InitServiceImpl implements InitService {
 //        firebaseService.getChannelDetails("s");
         // init kanbanboard for project 3
         
-     
+        initCompetitions();
     }
 
     private void initUsers() {
@@ -2711,5 +2717,23 @@ public class InitServiceImpl implements InitService {
         //set bidirectional association
         project.getSelectedTargets().add(s);
         projectEntityRepository.saveAndFlush(project);
+    }
+    
+    public void initCompetitions(){
+        try{
+        CompetitionVO competitionVO = new CompetitionVO();
+        competitionVO.setCompetitionDescription("Competition description");
+        competitionVO.setCompetitionTitle("competitionTitle");
+        competitionVO.setCompetitionStatus(CompetitionStatusEnum.ACTIVE);
+        competitionVO.setStartDate(LocalDateTime.parse("2017-02-07T11:45:55"));
+        competitionVO.setEndDate(LocalDateTime.parse("2018-02-07T11:45:55"));
+        competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
+        CompetitionEntity competition1 =  competitionService.createCompetition(competitionVO);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 1L);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 2L);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 3L);
+        }catch(ProjectNotFoundException ex){
+            ex.printStackTrace();
+        }
     }
 }
