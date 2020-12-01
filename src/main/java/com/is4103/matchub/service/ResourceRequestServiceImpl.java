@@ -570,8 +570,6 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
         transactionEntity.setProject(project);    
         resource.setAvailable(false);
         
-        resourceEntityRepository.save(resource);
-        projectEntityRepository.flush();
         return resourceTransactionEntityRepository.saveAndFlush(transactionEntity);
     }
 
