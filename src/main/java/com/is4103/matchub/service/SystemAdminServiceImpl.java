@@ -157,5 +157,10 @@ public class SystemAdminServiceImpl implements SystemAdminService {
         profileEntityRepository.saveAll(newAdmins);
         return profileEntityRepository.findAdminUsers();
     }
+    
+     @Override
+    public List<ProfileEntity> getCurrentPlatformAdmin() {
+        return profileEntityRepository.findAdminUsers();
+    }
 
 }

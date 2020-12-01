@@ -31,4 +31,6 @@ public interface SystemAdminService {
     public Map<String, Integer> getProjectsNumberWithDifferentStatus();
     
     public List<ProfileEntity> updatePlatformAdmins(List<Long> newAdminNumber);
+    
+    public List<ProfileEntity> getCurrentPlatformAdmin();
 }

@@ -78,9 +78,14 @@ public class SysadminRestController {
     public Map<String, Integer> getProjectsNumberWithDifferentStatus() {
         return systemAdminService.getProjectsNumberWithDifferentStatus();
     }
-    
+
     @RequestMapping(method = RequestMethod.PUT, value = "/updatePlatformAdmins")
-    public List<ProfileEntity> updatePlatformAdmins(@RequestParam(value = "newAdminNumber", required = true) List<Long> newAdminNumber){
+    public List<ProfileEntity> updatePlatformAdmins(@RequestParam(value = "newAdminNumber", required = true) List<Long> newAdminNumber) {
         return systemAdminService.updatePlatformAdmins(newAdminNumber);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getCurrentPlatformAdmin")
+    public List<ProfileEntity> getCurrentPlatformAdmin() {
+        return systemAdminService.getCurrentPlatformAdmin();
     }
 }
