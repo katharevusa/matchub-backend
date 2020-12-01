@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
@@ -19,7 +20,6 @@ import com.is4103.matchub.repository.ProfileEntityRepository;
 import com.is4103.matchub.repository.SDGEntityRepository;
 import com.is4103.matchub.repository.SDGTargetEntityRepository;
 import com.is4103.matchub.repository.SelectedTargetEntityRepository;
-import static edu.stanford.nlp.stats.Counters.product;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,7 +75,7 @@ public class DataMappingServiceImpl implements DataMappingService {
                 IndividualEntity newInd = new IndividualEntity();
 
                 //predefined
-                String[] roles = {"AccountEntity.ROLE_USER"};
+                String[] roles = {AccountEntity.ROLE_USER};
                 newInd.getRoles().addAll(Arrays.asList(roles));
 
                 newInd.setUuid(UUID.randomUUID());
@@ -174,7 +174,7 @@ public class DataMappingServiceImpl implements DataMappingService {
                 OrganisationEntity newOrg = new OrganisationEntity();
 
                 //predefined
-                String[] roles = {"AccountEntity.ROLE_USER"};
+                String[] roles = {AccountEntity.ROLE_USER};
                 newOrg.getRoles().addAll(Arrays.asList(roles));
 
                 newOrg.setUuid(UUID.randomUUID());
