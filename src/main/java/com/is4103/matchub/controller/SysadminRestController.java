@@ -6,6 +6,8 @@
 package com.is4103.matchub.controller;
 
 import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.ProfileEntity;
+import com.is4103.matchub.helper.StatisticsWrapper;
 import com.is4103.matchub.service.SystemAdminService;
 import com.is4103.matchub.service.UserService;
 import java.util.List;
@@ -13,9 +15,9 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -28,7 +30,7 @@ public class SysadminRestController {
 
     @Autowired
     UserService userService;
-    
+
     @Autowired
     SystemAdminService systemAdminService;
 
@@ -63,8 +65,27 @@ public class SysadminRestController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/getLastFiveUserNumberData")
-    public Map<String, Integer> getLastFiveUserNumberData() {
+    public StatisticsWrapper getLastFiveUserNumberData() {
         return systemAdminService.getLastFiveUserNumberData();
+    }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/getLastFiveTransactionNumberData")
+    public StatisticsWrapper getLastFiveTransactionNumberData() {
+        return systemAdminService.getLastFiveTransactionNumberData();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getProjectsNumberWithDifferentStatus")
+    public Map<String, Integer> getProjectsNumberWithDifferentStatus() {
+        return systemAdminService.getProjectsNumberWithDifferentStatus();
+    }
+
+    @RequestMapping(method = RequestMethod.PUT, value = "/updatePlatformAdmins")
+    public List<ProfileEntity> updatePlatformAdmins(@RequestParam(value = "newAdminNumber", required = true) List<Long> newAdminNumber) {
+        return systemAdminService.updatePlatformAdmins(newAdminNumber);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getCurrentPlatformAdmin")
+    public List<ProfileEntity> getCurrentPlatformAdmin() {
+        return systemAdminService.getCurrentPlatformAdmin();
     }
 }

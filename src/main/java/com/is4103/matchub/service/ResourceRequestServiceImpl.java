@@ -72,7 +72,7 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
 
     @Autowired
     AnnouncementService announcementService;
-    
+
     @Autowired
     ResourceTransactionEntityRepository resourceTransactionEntityRepository;
 
@@ -530,43 +530,49 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
         }
         return resourceRequests;
     }
-    
+
+    //problem
     @Override
-    public List<ResourceTransactionEntity> getResourceTransactionForOwnedResources(Long userId){
-        ProfileEntity user = profileEntityRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+    public List<ResourceTransactionEntity> getResourceTransactionForOwnedResources(Long userId) {
+        ProfileEntity user = profileEntityRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         List<ResourceEntity> resources = user.getHostedResources();
         List<ResourceTransactionEntity> transactions = new ArrayList<>();
-        for(ResourceEntity resource: resources){
-           transactions.add(resource.getResourceTransaction());
+        for (ResourceEntity resource : resources) {
+            if (resource.getResourceTransaction() != null) {
+                transactions.add(resource.getResourceTransaction());
+            }
         }
         return transactions;
     }
 
     @Override
-    public List<ResourceTransactionEntity> getResourceTransactionForConsumedResources(Long userId){
-        ProfileEntity user = profileEntityRepository.findById(userId).orElseThrow(()-> new UserNotFoundException(userId));
+    public List<ResourceTransactionEntity> getResourceTransactionForConsumedResources(Long userId) {
+        ProfileEntity user = profileEntityRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         return resourceTransactionEntityRepository.getResourceTransactionsByPayerId(userId);
     }
-    
+
     @Override
-    public ResourceTransactionEntity createResourceTransaction(String payerEmail, PaymentIntent paymentIntent)throws ResourceNotFoundException, ProjectNotFoundException{
+    public ResourceTransactionEntity createResourceTransaction(String payerEmail, PaymentIntent paymentIntent) throws ResourceNotFoundException, ProjectNotFoundException {
         ResourceTransactionEntity transactionEntity = new ResourceTransactionEntity();
         transactionEntity.setAmountPaid(BigDecimal.valueOf(paymentIntent.getAmount()).divide(BigDecimal.valueOf(100)));
         ProfileEntity payer = profileEntityRepository.findByEmail(payerEmail).orElseThrow(() -> new UserNotFoundException(payerEmail));
         transactionEntity.setPayerId(payer.getAccountId());
         transactionEntity.setTransactionTime(LocalDateTime.now());
-        
-        ResourceEntity resource = resourceEntityRepository.findById(Long.parseLong(paymentIntent.getMetadata().get("resource_id"))).orElseThrow(()-> new ResourceNotFoundException());
-        ProjectEntity project = projectEntityRepository.findById(Long.parseLong(paymentIntent.getMetadata().get("project_id"))).orElseThrow(()->new ProjectNotFoundException());
-        
+
+        ResourceEntity resource = resourceEntityRepository.findById(Long.parseLong(paymentIntent.getMetadata().get("resource_id"))).orElseThrow(() -> new ResourceNotFoundException());
+        ProjectEntity project = projectEntityRepository.findById(Long.parseLong(paymentIntent.getMetadata().get("project_id"))).orElseThrow(() -> new ProjectNotFoundException());
+
         resource.setResourceTransaction(transactionEntity);
         transactionEntity.setResource(resource);
-        
+
         project.getListOfResourceTransactions().add(transactionEntity);
         transactionEntity.setProject(project);
         
-        return resourceTransactionEntityRepository.saveAndFlush(transactionEntity);
+        resourceEntityRepository.flush();
+        projectEntityRepository.flush();
         
+        return resourceTransactionEntityRepository.saveAndFlush(transactionEntity);
+
     }
 
 }

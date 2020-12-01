@@ -2,6 +2,7 @@ package com.is4103.matchub.repository;
 
 import com.is4103.matchub.entity.AccountEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.enumeration.ProjectStatusEnum;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -93,4 +94,6 @@ public interface ProjectEntityRepository extends JpaRepository<ProjectEntity, Lo
             countQuery = "SELECT COUNT(pe) FROM ProjectEntity pe WHERE pe.spotlight = TRUE ORDER BY pe.spotlightEndTime DESC")
     Page<ProjectEntity> getSpotlightedProjects(Pageable pageable);
 
+    @Query(value = "SELECT p FROM ProjectEntity p WHERE p.projStatus = :projectStatus")
+    List<ProjectEntity> getProjectsByStatus(ProjectStatusEnum projectStatus);
 }

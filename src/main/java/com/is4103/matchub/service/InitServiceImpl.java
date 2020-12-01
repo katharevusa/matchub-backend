@@ -9,7 +9,6 @@ import com.is4103.matchub.entity.ProfileEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.ResourceCategoryEntity;
 import com.is4103.matchub.entity.ResourceEntity;
-import com.is4103.matchub.entity.ResourceRequestEntity;
 import com.is4103.matchub.entity.ReviewEntity;
 import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.entity.SDGTargetEntity;
@@ -18,8 +17,6 @@ import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.BadgeTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.enumeration.ProjectStatusEnum;
-import com.is4103.matchub.enumeration.RequestStatusEnum;
-import com.is4103.matchub.enumeration.RequestorEnum;
 import com.is4103.matchub.enumeration.ResourceTypeEnum;
 import com.is4103.matchub.exception.CreateAnnouncementException;
 import com.is4103.matchub.exception.LikePostException;
@@ -42,17 +39,13 @@ import com.is4103.matchub.repository.SDGTargetEntityRepository;
 import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import com.is4103.matchub.vo.AnnouncementVO;
 import com.is4103.matchub.vo.PostVO;
-import com.is4103.matchub.vo.ResourceRequestCreateVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.LongStream;
@@ -116,7 +109,7 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     private AnnouncementService announcementService;
-
+    
     @Transactional
     public void init() {
         // testing:
@@ -147,6 +140,8 @@ public class InitServiceImpl implements InitService {
         initResourceRequests();
 //        firebaseService.getChannelDetails("s");
         // init kanbanboard for project 3
+        
+     
     }
 
     private void initUsers() {
