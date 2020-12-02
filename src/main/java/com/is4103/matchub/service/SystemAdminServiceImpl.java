@@ -84,7 +84,7 @@ public class SystemAdminServiceImpl implements SystemAdminService {
             LocalDateTime startOfNextMonth = startMonth.plus(1, ChronoUnit.MONTHS);
 
             // make into capital case
-            months[5 - i] = startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toUpperCase();
+            months[5 - i] = startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toLowerCase();
             values[5 - i] = profileEntityRepository.findUsersByJoinDate(startMonth, startOfNextMonth).size();
         }
 
@@ -102,7 +102,7 @@ public class SystemAdminServiceImpl implements SystemAdminService {
             LocalDateTime startOfNextMonth = startMonth.plus(1, ChronoUnit.MONTHS);
 
             // make into capital case
-            months[5 - i] = startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toUpperCase();
+            months[5 - i] = startMonth.getMonth().toString().substring(0, 1) + startMonth.getMonth().toString().substring(1).toLowerCase();
 
             // getting resource transaction total sum
             BigDecimal amount = resourceTransactionEntityRepository.findResourceTransactionEntityByTransactionTime(startMonth, startOfNextMonth)

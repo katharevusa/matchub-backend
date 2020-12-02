@@ -74,6 +74,8 @@ public class ResourceVO {
         newResource.setResourceType(resourceType);
         if(resourceType.equals(ResourceTypeEnum.PAID)){
             newResource.setPrice(price); 
+        }else{
+            newResource.setPrice(null);
         }
     }
     
@@ -90,6 +92,8 @@ public class ResourceVO {
         newResource.setResourceType(resourceType);
         if(resourceType.equals(ResourceTypeEnum.PAID)){
             newResource.setPrice(price); 
+        }else {
+            newResource.setPrice(null);
         }
     }
    
