@@ -37,20 +37,20 @@ public class DataMappingController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/template_individual")
-    void retrieveCommonTemplateIndividual() {
-        dataMappingService.retrieveCommonTemplateIndividual();
+    String retrieveCommonTemplateIndividual() {
+        return dataMappingService.retrieveCommonTemplateIndividual();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/template_organisation")
-    void retrieveCommonTemplateOrganisation() {
-        dataMappingService.retrieveCommonTemplateOrganisation();
+    String retrieveCommonTemplateOrganisation() {
+        return dataMappingService.retrieveCommonTemplateOrganisation();
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/importIndividualsSendEmail")
     void importIndividualsSendEmail(@RequestParam(value = "file") MultipartFile file) throws MessagingException, IOException {
         dataMappingService.importIndividualsSendEmail(file);
     }
-    
+
     @RequestMapping(method = RequestMethod.POST, value = "/importOrganisationsSendEmail")
     void importOrganisationsSendEmail(@RequestParam(value = "file") MultipartFile file) throws MessagingException, IOException {
         dataMappingService.importOrganisationsSendEmail(file);
