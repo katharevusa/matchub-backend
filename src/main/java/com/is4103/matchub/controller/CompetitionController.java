@@ -146,7 +146,7 @@ public class CompetitionController {
         competitionService.castVoteForCompetitionProject(competitionId, projectId, voterSecret);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/getCompetitionResults")
+    @RequestMapping(method = RequestMethod.GET, value = "/getCompetitionResults")
     public List<ProjectEntity> getCompetitionResults(@RequestParam(value = "competitionId", required = true) Long competitionId) throws ProjectNotFoundException {
         return competitionService.retrieveCompetitionResults(competitionId);
     }
