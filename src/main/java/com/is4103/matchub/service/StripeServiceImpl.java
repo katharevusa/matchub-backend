@@ -437,7 +437,7 @@ public class StripeServiceImpl implements StripeService {
                         // can add on if other fields are needed.
                         .putMetadata("payer_stripe_uid", paymentIntentCreateVO.getPayerStripeUid())
                         .putMetadata("resource_id", paymentIntentCreateVO.getResourceId().toString())
-                        .putMetadata("project_id", paymentIntentCreateVO.getResourceId().toString())
+                        .putMetadata("project_id", paymentIntentCreateVO.getProjectId().toString())
                         .putMetadata("scenario", "ResourcePurchase")
                         .build();
 
