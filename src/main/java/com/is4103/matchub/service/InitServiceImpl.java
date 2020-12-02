@@ -2729,9 +2729,9 @@ public class InitServiceImpl implements InitService {
         competitionVO.setEndDate(LocalDateTime.parse("2018-02-07T11:45:55"));
         competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
         CompetitionEntity competition1 =  competitionService.createCompetition(competitionVO);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 1L);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 2L);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 3L);
+//        competitionService.joinCompetition(competition1.getCompetitionId(), 1L);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 2L, 5L);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 3L, 9L);
         }catch(ProjectNotFoundException ex){
             ex.printStackTrace();
         }

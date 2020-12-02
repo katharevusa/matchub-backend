@@ -50,34 +50,34 @@ import com.is4103.matchub.repository.VoterCredentialEntityRepository;
 public class CompetitionServiceImpl implements CompetitionService {
 
     @Autowired
-    CompetitionEntityRepository competitionEntityRepository;
+    private CompetitionEntityRepository competitionEntityRepository;
 
     @Autowired
-    ProjectEntityRepository projectEntityRepository;
+    private ProjectEntityRepository projectEntityRepository;
 
     @Autowired
-    ProfileEntityRepository profileEntityRepository;
+    private ProfileEntityRepository profileEntityRepository;
 
     @Autowired
-    AccountEntityRepository accountEntityRepository;
+    private AccountEntityRepository accountEntityRepository;
 
     @Autowired
-    VoterCredentialEntityRepository voterCredentialEntityRepository;
+    private VoterCredentialEntityRepository voterCredentialEntityRepository;
 
     @Autowired
-    SDGEntityRepository sdgEntityRepository;
+    private SDGEntityRepository sdgEntityRepository;
 
     @Autowired
-    AttachmentService attachmentService;
+    private AttachmentService attachmentService;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
     @Transactional
     @Override
@@ -185,6 +185,12 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Transactional
     @Override
+    public List<CompetitionEntity> retrieveAllPastCompetitions() {
+        return competitionEntityRepository.findPastCompetitions();
+    }
+
+    @Transactional
+    @Override
     public CompetitionEntity retrieveCompetitionById(Long competitionId) {
         return competitionEntityRepository.findById(competitionId)
                 .orElseThrow(() -> new CompetitionNotFoundException("Competition with id " + competitionId + " does not exist"));
@@ -216,12 +222,25 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Transactional
     @Override
-    public ProjectEntity joinCompetition(Long competitionId, Long projectId) throws ProjectNotFoundException {
+    public ProjectEntity joinCompetition(Long competitionId, Long projectId, Long accountId) throws ProjectNotFoundException {
         CompetitionEntity competitionToAssociateWith = competitionEntityRepository.findById(competitionId)
                 .orElseThrow(() -> new CompetitionNotFoundException("Competition with id " + competitionId + " does not exist"));
 
         ProjectEntity projectToAssociateWith = projectEntityRepository.findById(projectId)
                 .orElseThrow(() -> new ProjectNotFoundException("Project with id " + projectId + " does not exist"));
+
+        ProfileEntity profileToCheckIfEnteredBefore = profileEntityRepository.findById(accountId)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + projectId + " does not exist"));
+
+        List<ProjectEntity> userJoinedCompetitionProjects = competitionEntityRepository.findUserJoinedCompetitionProjects(competitionToAssociateWith, accountId);
+
+        if (projectToAssociateWith.getProjCreatorId() != accountId) {
+            throw new UnableToJoinCompetitionException("You are unable to join the competition with this project as your are not its creator.");
+        }
+
+        if (userJoinedCompetitionProjects.size() != 0) {
+            throw new UnableToJoinCompetitionException("You have already entered this competition before with another project.");
+        }
 
         if (projectToAssociateWith.getCompetition() != null) {
             throw new UnableToJoinCompetitionException("Project has already been entered into a competition before.");
@@ -302,7 +321,7 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Transactional
     @Override
-    public void registerAsVoter(VoterVO vo, Long competitionId) throws IOException, MessagingException {
+    public VoterCredentialEntity registerAsVoter(VoterVO vo, Long competitionId) throws IOException, MessagingException {
 
         CompetitionEntity competition = competitionEntityRepository.findById(competitionId)
                 .orElseThrow(() -> new CompetitionNotFoundException("Competition with id " + competitionId + " does not exist"));
@@ -342,11 +361,13 @@ public class CompetitionServiceImpl implements CompetitionService {
         newIndividual = (IndividualEntity) newAccount;
 
         emailService.sendVoterRegisterEmail(newIndividual, randomGeneratedPassword, voterCredential, competition);
+
+        return voterCredential;
     }
 
     @Transactional
     @Override
-    public void createVotingDetailsForExistingUsers(Long competitionId, Long accountId) throws IOException, MessagingException {
+    public VoterCredentialEntity createVotingDetailsForExistingUsers(Long competitionId, Long accountId) throws IOException, MessagingException {
 
         CompetitionEntity competition = competitionEntityRepository.findById(competitionId)
                 .orElseThrow(() -> new CompetitionNotFoundException("Competition with id " + competitionId + " does not exist"));
@@ -371,6 +392,8 @@ public class CompetitionServiceImpl implements CompetitionService {
         competition = competitionEntityRepository.saveAndFlush(competition);
 
         emailService.sendExistingUserVotingDetailsEmail(profileToIssueVotingDetailsTo, voterCredential, competition);
+
+        return voterCredential;
     }
 
     @Transactional
@@ -405,5 +428,11 @@ public class CompetitionServiceImpl implements CompetitionService {
         voterCredential.setIsUsed(Boolean.TRUE);
         projectEntityRepository.saveAndFlush(projectToVoteFor);
         voterCredentialEntityRepository.saveAndFlush(voterCredential);
+    }
+
+    @Transactional
+    @Override
+    public List<ProjectEntity> retrieveCompetitionResults(Long competitionId) {
+        return competitionEntityRepository.findCompetitionResults(competitionId);
     }
 }
