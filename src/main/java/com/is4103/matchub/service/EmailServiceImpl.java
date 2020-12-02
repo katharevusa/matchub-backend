@@ -216,6 +216,7 @@ public class EmailServiceImpl implements EmailService {
         body += "\n\nYour Login Credentials:\n";
         body += "Username: " + profile.getEmail();
         body += "\nPassword: " + randomGeneratedPassword;
+        body += "\n\nVisit MatcHub today and login now: http://localhost:3000/login";
 
         body += "\n\nWe can't wait to see you inside!";
 
