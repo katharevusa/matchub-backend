@@ -569,7 +569,7 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
         project.getListOfResourceTransactions().add(transactionEntity);
         transactionEntity.setProject(project);    
         resource.setAvailable(false);
-        
+
         return resourceTransactionEntityRepository.saveAndFlush(transactionEntity);
     }
 
