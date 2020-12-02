@@ -41,48 +41,48 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Service
 public class DataMappingServiceImpl implements DataMappingService {
-
+    
     @Autowired
     PasswordEncoder passwordEncoder;
-
+    
     @Autowired
     private SDGEntityRepository sdgEntityRepository;
-
+    
     @Autowired
     private ProfileEntityRepository profileEntityRepository;
-
+    
     @Autowired
     private IndividualEntityRepository individualEntityRepository;
-
+    
     @Autowired
     private OrganisationEntityRepository organisationEntityRepository;
-
+    
     @Autowired
     private SelectedTargetEntityRepository selectedTargetEntityRepository;
-
+    
     @Autowired
     private SDGTargetEntityRepository sDGTargetEntityRepository;
-
+    
     @Autowired
     private EmailService emailService;
-
+    
     @Override
     public void importIndividuals(MultipartFile file) throws IOException {
-
+        
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
-
+        
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             if (index > 0) {
-
+                
                 XSSFRow row = worksheet.getRow(index);
-
+                
                 IndividualEntity newInd = new IndividualEntity();
 
                 //predefined
                 String[] roles = {AccountEntity.ROLE_USER};
                 newInd.getRoles().addAll(Arrays.asList(roles));
-
+                
                 newInd.setUuid(UUID.randomUUID());
 
                 //set password to a default value first
@@ -144,7 +144,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
                         //split based on commas and trim                        
                         String[] result = Arrays.stream(sdgTargetValue.split(",")).map(String::trim).toArray(String[]::new);
-
+                        
                         List<Long> list = new ArrayList<>();
                         for (String s : result) {
                             //find the actual instance of the sdg target 
@@ -155,33 +155,33 @@ public class DataMappingServiceImpl implements DataMappingService {
                         //create selectedTargets
                         associateSDGTargetsWithProfile(list, sdgNumber, newInd.getAccountId());
                     }
-
+                    
                 }
 
                 //save the updated changes of the individual into database 
                 individualEntityRepository.saveAndFlush(newInd);
-
+                
             }
         }
     }
-
+    
     @Override
     public void importOrganisations(MultipartFile file) throws IOException {
-
+        
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
-
+        
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             if (index > 0) {
-
+                
                 XSSFRow row = worksheet.getRow(index);
-
+                
                 OrganisationEntity newOrg = new OrganisationEntity();
 
                 //predefined
                 String[] roles = {AccountEntity.ROLE_USER};
                 newOrg.getRoles().addAll(Arrays.asList(roles));
-
+                
                 newOrg.setUuid(UUID.randomUUID());
 
                 //set password to a default value first
@@ -233,7 +233,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
                         //split based on commas and trim                        
                         String[] result = Arrays.stream(sdgTargetValue.split(",")).map(String::trim).toArray(String[]::new);
-
+                        
                         List<Long> list = new ArrayList<>();
                         for (String s : result) {
                             //find the actual instance of the sdg target 
@@ -244,33 +244,33 @@ public class DataMappingServiceImpl implements DataMappingService {
                         //create selectedTargets
                         associateSDGTargetsWithProfile(list, sdgNumber, newOrg.getAccountId());
                     }
-
+                    
                 }
 
                 //save the updated changes of the organisation into database 
                 organisationEntityRepository.saveAndFlush(newOrg);
-
+                
             }
         }
     }
-
+    
     @Override
     public void importIndividualsSendEmail(MultipartFile file) throws MessagingException, IOException {
-
+        
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
-
+        
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             if (index > 0) {
-
+                
                 XSSFRow row = worksheet.getRow(index);
-
+                
                 IndividualEntity newInd = new IndividualEntity();
 
                 //predefined
                 String[] roles = {AccountEntity.ROLE_USER};
                 newInd.getRoles().addAll(Arrays.asList(roles));
-
+                
                 newInd.setUuid(UUID.randomUUID());
 
                 //set password to a default value first
@@ -333,7 +333,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
                         //split based on commas and trim                        
                         String[] result = Arrays.stream(sdgTargetValue.split(",")).map(String::trim).toArray(String[]::new);
-
+                        
                         List<Long> list = new ArrayList<>();
                         for (String s : result) {
                             //find the actual instance of the sdg target 
@@ -344,36 +344,40 @@ public class DataMappingServiceImpl implements DataMappingService {
                         //create selectedTargets
                         associateSDGTargetsWithProfile(list, sdgNumber, newInd.getAccountId());
                     }
-
+                    
                 }
+
+                //set disable to false and isVerified to true
+                newInd.setDisabled(Boolean.FALSE);
+                newInd.setIsVerified(Boolean.TRUE);
 
                 //save the updated changes of the individual into database 
                 individualEntityRepository.saveAndFlush(newInd);
 
                 //send email 
                 emailService.sendOnboardingEmail(newInd, randomGeneratedPassword);
-
+                
             }
         }
     }
-
+    
     @Override
     public void importOrganisationsSendEmail(MultipartFile file) throws MessagingException, IOException {
-
+        
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
-
+        
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             if (index > 0) {
-
+                
                 XSSFRow row = worksheet.getRow(index);
-
+                
                 OrganisationEntity newOrg = new OrganisationEntity();
 
                 //predefined
                 String[] roles = {AccountEntity.ROLE_USER};
                 newOrg.getRoles().addAll(Arrays.asList(roles));
-
+                
                 newOrg.setUuid(UUID.randomUUID());
 
                 //set password to a random string 
@@ -426,7 +430,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
                         //split based on commas and trim                        
                         String[] result = Arrays.stream(sdgTargetValue.split(",")).map(String::trim).toArray(String[]::new);
-
+                        
                         List<Long> list = new ArrayList<>();
                         for (String s : result) {
                             //find the actual instance of the sdg target 
@@ -437,9 +441,13 @@ public class DataMappingServiceImpl implements DataMappingService {
                         //create selectedTargets
                         associateSDGTargetsWithProfile(list, sdgNumber, newOrg.getAccountId());
                     }
-
+                    
                 }
 
+                //set disable to false and isVerified to true
+                newOrg.setDisabled(Boolean.FALSE);
+                newOrg.setIsVerified(Boolean.TRUE);
+                
                 //save the updated changes of the organisation into database 
                 organisationEntityRepository.saveAndFlush(newOrg);
 
@@ -448,7 +456,7 @@ public class DataMappingServiceImpl implements DataMappingService {
             }
         }
     }
-
+    
     private void associateSDGTargetsWithProfile(List<Long> sdgTargetIds, Long sdgId, Long accountId) {
         //find the sdg
         SDGEntity sdg = sdgEntityRepository.findBySdgId(sdgId);
@@ -459,25 +467,25 @@ public class DataMappingServiceImpl implements DataMappingService {
         //find the profile
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
-
+        
         SelectedTargetEntity s = new SelectedTargetEntity();
-
+        
         s.setProfile(profile);
         s.setSdg(sdg);
         s.getSdgTargets().addAll(sdgTargetlist);
-
+        
         selectedTargetEntityRepository.saveAndFlush(s);
 
         //set bidirectional association
         profile.getSelectedTargets().add(s);
         profileEntityRepository.saveAndFlush(profile);
     }
-
+    
     @Override
     public String retrieveCommonTemplateIndividual() {
         return "https://localhost:8443/api/v1/files/commonTemplate/Template_Individual.xlsx";
     }
-
+    
     @Override
     public String retrieveCommonTemplateOrganisation() {
         return "https://localhost:8443/api/v1/files/commonTemplate/Template_Organisation.xlsx";

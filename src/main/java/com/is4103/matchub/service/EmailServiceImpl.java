@@ -212,16 +212,12 @@ public class EmailServiceImpl implements EmailService {
         String body = "Dear " + name + ", " + "\n\nYour data had been imported into Matchub. To simplify "
                 + "your onboarding process, we have already imported your basic information.";
 
+        body += "\n\nWe have generated your login credentials for your first time login. Please do change your password upon your first login.";
         body += "\n\nYour Login Credentials:\n";
         body += "Username: " + profile.getEmail();
         body += "\nPassword: " + randomGeneratedPassword;
-        body += "\n\nVisit MatcHub today to complete your account setup: ";
 
-        if (profile instanceof IndividualEntity) {
-            body += "http://localhost:3000/setupIndividualProfile/" + profile.getUuid();
-        } else { //must be an organisation
-            body += "http://localhost:3000/setupOrganisationProfile/" + profile.getUuid();
-        }
+        body += "\n\nWe can't wait to see you inside!";
 
         body += "\n\nThank you!\n\nRegards,\nMatcHub";
 
@@ -252,7 +248,7 @@ public class EmailServiceImpl implements EmailService {
 
         String body = "Dear " + name + ", " + "\n\nYour request for your account has successfully been approved.";
 
-        body += "\n\nWe have a generated your login credentials for your first time login. Please do change your password upon your first login.";
+        body += "\n\nWe have generated your login credentials for your first time login. Please do change your password upon your first login.";
         body += "\n\nLogin Credentials:\n";
         body += "Username: " + accountToClaim.getEmail();
         body += "\nPassword: " + randomGeneratedPassword;
