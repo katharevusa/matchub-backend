@@ -2662,9 +2662,7 @@ public class InitServiceImpl implements InitService {
     }
 
     private void setNotifications(ProfileEntity profileEntity) {
-        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
-            profileEntity.getAnnouncementsSetting().put(a, Boolean.TRUE);
-        }
+        announcementService.setNotifications(profileEntity);
     }
 
     private void associateSDGTargetsWithProfile(long[] sdgTargetIds, Long sdgId, Long accountId) {

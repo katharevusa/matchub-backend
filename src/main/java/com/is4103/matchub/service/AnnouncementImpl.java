@@ -300,4 +300,16 @@ public class AnnouncementImpl implements AnnouncementService {
 
         return announcements;
     }  
+    
+    @Override
+    public void setNotifications(ProfileEntity profileEntity) {
+        profileEntity.getAnnouncementsSetting().put(AnnouncementTypeEnum.NEW_POST_COMMENT, Boolean.TRUE);
+        profileEntity.getAnnouncementsSetting().put(AnnouncementTypeEnum.NEW_POST_LIKE, Boolean.TRUE);
+        profileEntity.getAnnouncementsSetting().put(AnnouncementTypeEnum.NEW_PROFILE_FOLLOWER, Boolean.TRUE);
+        profileEntity.getAnnouncementsSetting().put(AnnouncementTypeEnum.SHARE_POST, Boolean.TRUE);
+//        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
+//            profileEntity.getAnnouncementsSetting().put(a, Boolean.TRUE);
+//        }
+        profileEntityRepository.save(profileEntity);
+    }
 }

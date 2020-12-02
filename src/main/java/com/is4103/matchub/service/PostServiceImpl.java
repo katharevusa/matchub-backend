@@ -118,7 +118,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void createPostDataInit(PostVO vo)throws LikePostException{
+    public void createPostDataInit(PostVO vo) throws LikePostException {
         ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
                 .orElseThrow(() -> new UserNotFoundException(vo.getPostCreatorId()));
 
@@ -135,8 +135,8 @@ public class PostServiceImpl implements PostService {
             commentVO.setAccountId(3L);
             commentVO.setContent("Nice post!");
 
-             newPost = addComment(commentVO, 1L);
-             likeAPost(newPost.getPostId(), 4L);
+            newPost = addComment(commentVO, 1L);
+            likeAPost(newPost.getPostId(), 4L);
         }
 
         //set associations
@@ -264,6 +264,32 @@ public class PostServiceImpl implements PostService {
         post.getListOfComments().add(newComment);
         post = postEntityRepository.saveAndFlush(post);
 
+        ProfileEntity postOwner = post.getPostCreator();
+
+        // notify user if n
+        if (postOwner.getAnnouncementsSetting().get(AnnouncementTypeEnum.NEW_POST_COMMENT)) {
+            ProfileEntity liker = profileEntityRepository.findById(newComment.getAccountId()).get();
+            String commentor = "";
+            if (liker instanceof IndividualEntity) {
+                commentor = ((IndividualEntity) liker).getFirstName() + " " + ((IndividualEntity) liker).getLastName();
+            } else if (liker instanceof OrganisationEntity) {
+                commentor = ((OrganisationEntity) liker).getOrganizationName();
+            }
+
+            AnnouncementEntity announcementEntity = new AnnouncementEntity();
+            announcementEntity.setTitle("A new comment from " + commentor + " for your post!");
+            announcementEntity.setContent(post.getContent());
+            announcementEntity.setTimestamp(LocalDateTime.now());
+            announcementEntity.setType(AnnouncementTypeEnum.NEW_POST_COMMENT);
+            announcementEntity.setPostId(postId);
+            // association
+            announcementEntity.getNotifiedUsers().add(post.getPostCreator());
+            post.getPostCreator().getAnnouncements().add(announcementEntity);
+            announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+            // create notification
+            announcementService.createNormalNotification(announcementEntity);
+        }
         return post;
 
     }
@@ -294,27 +320,33 @@ public class PostServiceImpl implements PostService {
         post = postEntityRepository.saveAndFlush(post);
 
         // announcements
-        ProfileEntity liker = profileEntityRepository.findById(likerId).get();
-        String likerName = "";
-        if (liker instanceof IndividualEntity) {
-            likerName = ((IndividualEntity) liker).getFirstName() + " " + ((IndividualEntity) liker).getLastName();
-        } else if (liker instanceof OrganisationEntity) {
-            likerName = ((OrganisationEntity) liker).getOrganizationName();
+        ProfileEntity postOwner = post.getPostCreator();
+
+        // notify user if n
+        if (postOwner.getAnnouncementsSetting().get(AnnouncementTypeEnum.NEW_POST_LIKE)) {
+
+            ProfileEntity liker = profileEntityRepository.findById(likerId).get();
+            String likerName = "";
+            if (liker instanceof IndividualEntity) {
+                likerName = ((IndividualEntity) liker).getFirstName() + " " + ((IndividualEntity) liker).getLastName();
+            } else if (liker instanceof OrganisationEntity) {
+                likerName = ((OrganisationEntity) liker).getOrganizationName();
+            }
+
+            AnnouncementEntity announcementEntity = new AnnouncementEntity();
+            announcementEntity.setTitle("A new like from " + likerName + " for your post!");
+            announcementEntity.setContent(post.getContent());
+            announcementEntity.setTimestamp(LocalDateTime.now());
+            announcementEntity.setType(AnnouncementTypeEnum.NEW_POST_LIKE);
+            announcementEntity.setPostId(postId);
+            // association
+            announcementEntity.getNotifiedUsers().add(post.getPostCreator());
+            post.getPostCreator().getAnnouncements().add(announcementEntity);
+            announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+            // create notification
+            announcementService.createNormalNotification(announcementEntity);
         }
-
-        AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle("A new like from " + likerName + " for your post!");
-        announcementEntity.setContent(post.getContent());
-        announcementEntity.setTimestamp(LocalDateTime.now());
-        announcementEntity.setType(AnnouncementTypeEnum.NEW_POST_LIKE);
-        announcementEntity.setPostId(postId);
-        // association
-        announcementEntity.getNotifiedUsers().add(post.getPostCreator());
-        post.getPostCreator().getAnnouncements().add(announcementEntity);
-        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
-
-        // create notification
-        announcementService.createNormalNotification(announcementEntity);
         return post;
 
     }
@@ -363,7 +395,6 @@ public class PostServiceImpl implements PostService {
         return posts;
     }
 
-    
     @Override
     public PostEntity repost(Long originalPostId, PostVO vo) throws RepostException, UserNotFoundException {
         ProfileEntity profile = profileEntityRepository.findById(vo.getPostCreatorId())
@@ -389,27 +420,32 @@ public class PostServiceImpl implements PostService {
         profileEntityRepository.flush();
 
         // notify previous post creator
-        String reposterName = "";
-        if (profile instanceof IndividualEntity) {
-            reposterName = ((IndividualEntity) profile).getFirstName() + " " + ((IndividualEntity) profile).getLastName();
-        } else if (profile instanceof OrganisationEntity) {
-            reposterName = ((OrganisationEntity) profile).getOrganizationName();
+        ProfileEntity postOwner = originalPost.getPostCreator();
+
+        // notify user if n
+        if (postOwner.getAnnouncementsSetting().get(AnnouncementTypeEnum.SHARE_POST)) {
+
+            String reposterName = "";
+            if (profile instanceof IndividualEntity) {
+                reposterName = ((IndividualEntity) profile).getFirstName() + " " + ((IndividualEntity) profile).getLastName();
+            } else if (profile instanceof OrganisationEntity) {
+                reposterName = ((OrganisationEntity) profile).getOrganizationName();
+            }
+
+            AnnouncementEntity announcementEntity = new AnnouncementEntity();
+            announcementEntity.setTitle(reposterName + " reposted your post : " + originalPost.getContent());
+            announcementEntity.setContent(newPost.getContent());
+            announcementEntity.setTimestamp(LocalDateTime.now());
+            announcementEntity.setType(AnnouncementTypeEnum.SHARE_POST);
+            announcementEntity.setPostId(newPost.getPostId());
+            // association
+            announcementEntity.getNotifiedUsers().add(originalPost.getPostCreator());
+            originalPost.getPostCreator().getAnnouncements().add(announcementEntity);
+            announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
+
+            // create notification
+            announcementService.createNormalNotification(announcementEntity);
         }
-
-        AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle(reposterName + " reposted your post : " + originalPost.getContent());
-        announcementEntity.setContent(newPost.getContent());
-        announcementEntity.setTimestamp(LocalDateTime.now());
-        announcementEntity.setType(AnnouncementTypeEnum.SHARE_POST);
-        announcementEntity.setPostId(newPost.getPostId());
-        // association
-        announcementEntity.getNotifiedUsers().add(originalPost.getPostCreator());
-        originalPost.getPostCreator().getAnnouncements().add(announcementEntity);
-        announcementEntity = announcementEntityRepository.saveAndFlush(announcementEntity);
-
-        // create notification
-        announcementService.createNormalNotification(announcementEntity);
-
         return newPost;
     }
 }

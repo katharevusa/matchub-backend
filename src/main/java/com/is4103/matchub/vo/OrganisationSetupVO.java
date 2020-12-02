@@ -96,9 +96,6 @@ public class OrganisationSetupVO {
 
         //upload profile pic in attachment service class
         //do not associate sdg here, associate in user service class
-        //set the announcement setting, default
-        for(AnnouncementTypeEnum a : AnnouncementTypeEnum.values()){
-            organisation.getAnnouncementsSetting().put(a, Boolean.TRUE);
-        }
+       
     }
 }

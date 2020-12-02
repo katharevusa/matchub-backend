@@ -52,4 +52,6 @@ public interface AnnouncementService {
     
     public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId);
     
+    public void setNotifications(ProfileEntity profileEntity);
+    
 }
