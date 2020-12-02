@@ -91,7 +91,7 @@ public class CompetitionController {
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/activateCompetition")
-    public CompetitionEntity activateProject(@RequestParam(value = "competitionId", required = true) Long competitionId) throws IOException, MessagingException {
+    public CompetitionEntity activateCompetition(@RequestParam(value = "competitionId", required = true) Long competitionId) throws IOException, MessagingException {
         return competitionService.activateCompetition(competitionId);
     }
 
