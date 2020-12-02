@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.controller;
 
+import com.is4103.matchub.helper.ImportDataErrorWrapper;
 import com.is4103.matchub.service.DataMappingService;
 import java.io.IOException;
 import javax.mail.MessagingException;
@@ -27,13 +28,13 @@ public class DataMappingController {
     DataMappingService dataMappingService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/importIndividuals")
-    void importIndividuals(@RequestParam(value = "file") MultipartFile file) throws IOException {
-        dataMappingService.importIndividuals(file);
+    ImportDataErrorWrapper importIndividuals(@RequestParam(value = "file") MultipartFile file) throws IOException {
+        return dataMappingService.importIndividuals(file);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/importOrganisations")
-    void importOrganisations(@RequestParam(value = "file") MultipartFile file) throws IOException {
-        dataMappingService.importOrganisations(file);
+    ImportDataErrorWrapper importOrganisations(@RequestParam(value = "file") MultipartFile file) throws IOException {
+        return dataMappingService.importOrganisations(file);
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/template_individual")
@@ -47,13 +48,13 @@ public class DataMappingController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/importIndividualsSendEmail")
-    void importIndividualsSendEmail(@RequestParam(value = "file") MultipartFile file) throws MessagingException, IOException {
-        dataMappingService.importIndividualsSendEmail(file);
+    ImportDataErrorWrapper importIndividualsSendEmail(@RequestParam(value = "file") MultipartFile file) throws MessagingException, IOException {
+        return dataMappingService.importIndividualsSendEmail(file);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/importOrganisationsSendEmail")
-    void importOrganisationsSendEmail(@RequestParam(value = "file") MultipartFile file) throws MessagingException, IOException {
-        dataMappingService.importOrganisationsSendEmail(file);
+    ImportDataErrorWrapper importOrganisationsSendEmail(@RequestParam(value = "file") MultipartFile file) throws MessagingException, IOException {
+        return dataMappingService.importOrganisationsSendEmail(file);
     }
 
 }

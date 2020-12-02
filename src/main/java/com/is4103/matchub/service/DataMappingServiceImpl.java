@@ -15,6 +15,7 @@ import com.is4103.matchub.entity.SelectedTargetEntity;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.exception.ImportDataException;
 import com.is4103.matchub.exception.UserNotFoundException;
+import com.is4103.matchub.helper.ImportDataErrorWrapper;
 import com.is4103.matchub.helper.RandomAlphanumericString;
 import com.is4103.matchub.repository.IndividualEntityRepository;
 import com.is4103.matchub.repository.OrganisationEntityRepository;
@@ -43,52 +44,52 @@ import org.springframework.web.multipart.MultipartFile;
  */
 @Service
 public class DataMappingServiceImpl implements DataMappingService {
-    
+
     @Autowired
     PasswordEncoder passwordEncoder;
-    
+
     @Autowired
     private SDGEntityRepository sdgEntityRepository;
-    
+
     @Autowired
     private ProfileEntityRepository profileEntityRepository;
-    
+
     @Autowired
     private IndividualEntityRepository individualEntityRepository;
-    
+
     @Autowired
     private OrganisationEntityRepository organisationEntityRepository;
-    
+
     @Autowired
     private SelectedTargetEntityRepository selectedTargetEntityRepository;
-    
+
     @Autowired
     private SDGTargetEntityRepository sDGTargetEntityRepository;
-    
+
     @Autowired
     private EmailService emailService;
-    
+
     @Override
-    public void importIndividuals(MultipartFile file) throws IOException {
-        
+    public ImportDataErrorWrapper importIndividuals(MultipartFile file) throws IOException {
+
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
-        
-        boolean failed = false;
-        String appendErrorRows = "";
-        
+
+        int numFailures = 0;
+        List<String> errorMessages = new ArrayList<>();
+
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             try {
                 if (index > 0) {
-                    
+
                     XSSFRow row = worksheet.getRow(index);
-                    
+
                     IndividualEntity newInd = new IndividualEntity();
 
                     //predefined
                     String[] roles = {AccountEntity.ROLE_USER};
                     newInd.getRoles().addAll(Arrays.asList(roles));
-                    
+
                     UUID uuid = UUID.randomUUID();
                     newInd.setUuid(uuid);
 
@@ -156,7 +157,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
                             //split based on commas and trim                        
                             String[] result = Arrays.stream(sdgTargetValue.split(",")).map(String::trim).toArray(String[]::new);
-                            
+
                             List<Long> list = new ArrayList<>();
                             for (String s : result) {
                                 //find the actual instance of the sdg target 
@@ -167,46 +168,53 @@ public class DataMappingServiceImpl implements DataMappingService {
                             //create selectedTargets
                             associateSDGTargetsWithProfile(list, sdgNumber, newInd.getAccountId());
                         }
-                        
+
                     }
 
                     //save the updated changes of the individual into database 
                     individualEntityRepository.saveAndFlush(newInd);
-                    
+
                 }
             } catch (Exception ex) {
-                failed = true;
+                numFailures++;
                 int error = index + 1;
-                appendErrorRows += " " + error;
+                String message = "Unable to read in data from row " + error;
+                errorMessages.add(message);
             }
-            
+
         }
-        if (failed) {
-            throw new ImportDataException("failed to import data from excel: errors were detected in rows" + appendErrorRows);
-        }
+
+        ImportDataErrorWrapper errorWrapper = new ImportDataErrorWrapper();
+
+        errorWrapper.setNumFailures(numFailures);
+        int numSuccesses = worksheet.getPhysicalNumberOfRows() - numFailures - 1;
+        errorWrapper.setNumSuccesses(numSuccesses);
+        errorWrapper.setErrorMessages(errorMessages);
+
+        return errorWrapper;
     }
-    
+
     @Override
-    public void importOrganisations(MultipartFile file) throws IOException {
-        
+    public ImportDataErrorWrapper importOrganisations(MultipartFile file) throws IOException {
+
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
-        
-        boolean failed = false;
-        String appendErrorRows = "";
-        
+
+        int numFailures = 0;
+        List<String> errorMessages = new ArrayList<>();
+
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             try {
                 if (index > 0) {
-                    
+
                     XSSFRow row = worksheet.getRow(index);
-                    
+
                     OrganisationEntity newOrg = new OrganisationEntity();
 
                     //predefined
                     String[] roles = {AccountEntity.ROLE_USER};
                     newOrg.getRoles().addAll(Arrays.asList(roles));
-                    
+
                     UUID uuid = UUID.randomUUID();
                     newOrg.setUuid(uuid);
 
@@ -264,7 +272,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
                             //split based on commas and trim                        
                             String[] result = Arrays.stream(sdgTargetValue.split(",")).map(String::trim).toArray(String[]::new);
-                            
+
                             List<Long> list = new ArrayList<>();
                             for (String s : result) {
                                 //find the actual instance of the sdg target 
@@ -275,46 +283,53 @@ public class DataMappingServiceImpl implements DataMappingService {
                             //create selectedTargets
                             associateSDGTargetsWithProfile(list, sdgNumber, newOrg.getAccountId());
                         }
-                        
+
                     }
 
                     //save the updated changes of the organisation into database 
                     organisationEntityRepository.saveAndFlush(newOrg);
-                    
+
                 }
             } catch (Exception ex) {
-                failed = true;
+                numFailures++;
                 int error = index + 1;
-                appendErrorRows += " " + error;
+                String message = "Unable to read in data from row " + error;
+                errorMessages.add(message);
             }
-            
+
         }
-        if (failed) {
-            throw new ImportDataException("failed to import data from excel: errors were detected in rows" + appendErrorRows);
-        }
+
+        ImportDataErrorWrapper errorWrapper = new ImportDataErrorWrapper();
+
+        errorWrapper.setNumFailures(numFailures);
+        int numSuccesses = worksheet.getPhysicalNumberOfRows() - numFailures - 1;
+        errorWrapper.setNumSuccesses(numSuccesses);
+        errorWrapper.setErrorMessages(errorMessages);
+
+        return errorWrapper;
     }
-    
+
     @Override
-    public void importIndividualsSendEmail(MultipartFile file) throws MessagingException, IOException {
-        
+    public ImportDataErrorWrapper importIndividualsSendEmail(MultipartFile file) throws MessagingException, IOException {
+
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
-        
-        boolean failed = false;
-        String appendErrorRows = "";
-        
+
+        int numFailures = 0;
+        List<String> errorMessages = new ArrayList<>();
+
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             try {
                 if (index > 0) {
-                    
+
                     XSSFRow row = worksheet.getRow(index);
-                    
+
                     IndividualEntity newInd = new IndividualEntity();
 
                     //predefined
                     String[] roles = {AccountEntity.ROLE_USER};
                     newInd.getRoles().addAll(Arrays.asList(roles));
-                    
+
                     UUID uuid = UUID.randomUUID();
                     newInd.setUuid(uuid);
 
@@ -383,7 +398,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
                             //split based on commas and trim                        
                             String[] result = Arrays.stream(sdgTargetValue.split(",")).map(String::trim).toArray(String[]::new);
-                            
+
                             List<Long> list = new ArrayList<>();
                             for (String s : result) {
                                 //find the actual instance of the sdg target 
@@ -394,7 +409,7 @@ public class DataMappingServiceImpl implements DataMappingService {
                             //create selectedTargets
                             associateSDGTargetsWithProfile(list, sdgNumber, newInd.getAccountId());
                         }
-                        
+
                     }
 
                     //save the updated changes of the individual into database 
@@ -407,48 +422,54 @@ public class DataMappingServiceImpl implements DataMappingService {
                         newInd.setDisabled(Boolean.FALSE);
                         newInd.setIsVerified(Boolean.TRUE);
                         newInd.setJoinDate(LocalDateTime.now());
-                        
+
                         individualEntityRepository.saveAndFlush(newInd);
 
                         //send email 
                         emailService.sendOnboardingEmail(newInd, randomGeneratedPassword);
                     }
-                    
+
                 }
             } catch (Exception ex) {
-                failed = true;
+                numFailures++;
                 int error = index + 1;
-                appendErrorRows += " " + error;
+                String message = "Unable to read in data from row " + error;
+                errorMessages.add(message);
             }
-            
+
         }
-        
-        if (failed) {
-            throw new ImportDataException("failed to import data from excel: errors were detected in rows" + appendErrorRows);
-        }
+
+        ImportDataErrorWrapper errorWrapper = new ImportDataErrorWrapper();
+
+        errorWrapper.setNumFailures(numFailures);
+        int numSuccesses = worksheet.getPhysicalNumberOfRows() - numFailures - 1;
+        errorWrapper.setNumSuccesses(numSuccesses);
+        errorWrapper.setErrorMessages(errorMessages);
+
+        return errorWrapper;
     }
-    
+
     @Override
-    public void importOrganisationsSendEmail(MultipartFile file) throws MessagingException, IOException {
-        
+    public ImportDataErrorWrapper importOrganisationsSendEmail(MultipartFile file) throws MessagingException, IOException {
+
         XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
         XSSFSheet worksheet = workbook.getSheetAt(0);
-        
-        boolean failed = false;
-        String appendErrorRows = "";
-        
+
+        int numFailures = 0;
+        List<String> errorMessages = new ArrayList<>();
+
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             try {
                 if (index > 0) {
-                    
+
                     XSSFRow row = worksheet.getRow(index);
-                    
+
                     OrganisationEntity newOrg = new OrganisationEntity();
 
                     //predefined
                     String[] roles = {AccountEntity.ROLE_USER};
                     newOrg.getRoles().addAll(Arrays.asList(roles));
-                    
+
                     UUID uuid = UUID.randomUUID();
                     newOrg.setUuid(uuid);
 
@@ -507,7 +528,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
                             //split based on commas and trim                        
                             String[] result = Arrays.stream(sdgTargetValue.split(",")).map(String::trim).toArray(String[]::new);
-                            
+
                             List<Long> list = new ArrayList<>();
                             for (String s : result) {
                                 //find the actual instance of the sdg target 
@@ -518,7 +539,7 @@ public class DataMappingServiceImpl implements DataMappingService {
                             //create selectedTargets
                             associateSDGTargetsWithProfile(list, sdgNumber, newOrg.getAccountId());
                         }
-                        
+
                     }
 
                     //save the updated changes of the organisation into database 
@@ -531,26 +552,33 @@ public class DataMappingServiceImpl implements DataMappingService {
                         newOrg.setDisabled(Boolean.FALSE);
                         newOrg.setIsVerified(Boolean.TRUE);
                         newOrg.setJoinDate(LocalDateTime.now());
-                        
+
                         organisationEntityRepository.saveAndFlush(newOrg);
 
                         //send email 
                         emailService.sendOnboardingEmail(newOrg, randomGeneratedPassword);
                     }
-                    
+
                 }
             } catch (Exception ex) {
-                failed = true;
+                numFailures++;
                 int error = index + 1;
-                appendErrorRows += " " + error;
+                String message = "Unable to read in data from row " + error;
+                errorMessages.add(message);
             }
-            
+
         }
-        if (failed) {
-            throw new ImportDataException("failed to import data from excel: errors were detected in rows" + appendErrorRows);
-        }
+
+        ImportDataErrorWrapper errorWrapper = new ImportDataErrorWrapper();
+
+        errorWrapper.setNumFailures(numFailures);
+        int numSuccesses = worksheet.getPhysicalNumberOfRows() - numFailures - 1;
+        errorWrapper.setNumSuccesses(numSuccesses);
+        errorWrapper.setErrorMessages(errorMessages);
+
+        return errorWrapper;
     }
-    
+
     private void associateSDGTargetsWithProfile(List<Long> sdgTargetIds, Long sdgId, Long accountId) {
         //find the sdg
         SDGEntity sdg = sdgEntityRepository.findBySdgId(sdgId);
@@ -561,25 +589,25 @@ public class DataMappingServiceImpl implements DataMappingService {
         //find the profile
         ProfileEntity profile = profileEntityRepository.findById(accountId)
                 .orElseThrow(() -> new UserNotFoundException(accountId));
-        
+
         SelectedTargetEntity s = new SelectedTargetEntity();
-        
+
         s.setProfile(profile);
         s.setSdg(sdg);
         s.getSdgTargets().addAll(sdgTargetlist);
-        
+
         selectedTargetEntityRepository.saveAndFlush(s);
 
         //set bidirectional association
         profile.getSelectedTargets().add(s);
         profileEntityRepository.saveAndFlush(profile);
     }
-    
+
     @Override
     public String retrieveCommonTemplateIndividual() {
         return "https://localhost:8443/api/v1/files/commonTemplate/Template_Individual.xlsx";
     }
-    
+
     @Override
     public String retrieveCommonTemplateOrganisation() {
         return "https://localhost:8443/api/v1/files/commonTemplate/Template_Organisation.xlsx";

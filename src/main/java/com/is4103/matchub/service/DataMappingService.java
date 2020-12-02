@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.service;
 
+import com.is4103.matchub.helper.ImportDataErrorWrapper;
 import java.io.IOException;
 import javax.mail.MessagingException;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,13 +16,13 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface DataMappingService {
 
-    void importIndividuals(MultipartFile file) throws IOException;
+    ImportDataErrorWrapper importIndividuals(MultipartFile file) throws IOException;
 
-    void importOrganisations(MultipartFile file) throws IOException;
+    ImportDataErrorWrapper importOrganisations(MultipartFile file) throws IOException;
 
-    void importIndividualsSendEmail(MultipartFile file) throws MessagingException, IOException;
+    ImportDataErrorWrapper importIndividualsSendEmail(MultipartFile file) throws MessagingException, IOException;
 
-    void importOrganisationsSendEmail(MultipartFile file) throws MessagingException, IOException;
+    ImportDataErrorWrapper importOrganisationsSendEmail(MultipartFile file) throws MessagingException, IOException;
 
     String retrieveCommonTemplateIndividual();
 
