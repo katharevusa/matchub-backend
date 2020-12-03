@@ -1773,7 +1773,7 @@ public class InitServiceImpl implements InitService {
             announcementVO.setContent("We are going to launch our project soon");
             announcementVO.setCreatorId(5L);
             announcementVO.setProjectId(1L);
-            announcementVO.setTitle("title");
+            announcementVO.setTitle("Announcement on the launching of project");
             AnnouncementEntity announcementEntity = announcementService.createProjectPublicAnnouncement(announcementVO);
         } catch (CreateAnnouncementException ex) {
             ex.printStackTrace();
