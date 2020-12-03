@@ -22,6 +22,8 @@ public class PaymentIntentCreateVO {
     private Long resourceId;
     private Long projectId;
     
+    private String receiptEmail = "";
+    
     
 
     // compulsory if payment is for donation
