@@ -155,7 +155,6 @@ public class VolunteerImpl implements VolunteerService {
         announcementEntity.setContent("You have been removed from project '" + project.getProjectTitle() + "'.");
         announcementEntity.setType(AnnouncementTypeEnum.REMOVE_MEMBER);
         announcementEntity.setTimestamp(LocalDateTime.now());
-        
 
         // association
         announcementEntity.getNotifiedUsers().add(notifier);
@@ -169,7 +168,7 @@ public class VolunteerImpl implements VolunteerService {
 
     //Leave Project
     @Override
-    public void leaveProject(Long projectId, Long memberId) throws LeaveProjectException {
+    public void leaveProject(Long projectId, Long memberId) {
 //        JoinRequestEntity request = joinRequestEntityRepository.findById(requestId).get();
         ProfileEntity memberToLeave = profileEntityRepository.findById(memberId).get();
         ProjectEntity project = projectEntityRepository.findById(projectId).get();
@@ -193,7 +192,7 @@ public class VolunteerImpl implements VolunteerService {
         List<ProfileEntity> projectOwners = project.getProjectOwners();
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
         announcementEntity.setTitle("Teammember Left Project");
-        announcementEntity.setContent("Teammember " + memberToLeaveName + "has left project '" + project.getProjectTitle()+"'.");
+        announcementEntity.setContent("Teammember " + memberToLeaveName + "has left project '" + project.getProjectTitle() + "'.");
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.LEAVE_PROJECT);
 

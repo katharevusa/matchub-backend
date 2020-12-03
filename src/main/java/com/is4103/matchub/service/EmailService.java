@@ -30,6 +30,8 @@ public interface EmailService {
 
     public void sendExistingUserVotingDetailsEmail(ProfileEntity profile, VoterCredentialEntity voterCredential, CompetitionEntity competition) throws MessagingException, IOException;
 
+    void sendOnboardingEmail(ProfileEntity profile, String randomGeneratedPassword) throws MessagingException, IOException;
+
     public void sendClaimRequestSuccessEmail(AccountEntity account, String randomGeneratedPassword) throws MessagingException, IOException;
 
     public void sendClaimRequestFailureEmail(ClaimRequestEntity claimRequest, AccountEntity accountToClaim) throws MessagingException, IOException;

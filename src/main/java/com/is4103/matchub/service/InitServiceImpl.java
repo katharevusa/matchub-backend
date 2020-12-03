@@ -41,6 +41,7 @@ import com.is4103.matchub.repository.SDGTargetEntityRepository;
 import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import com.is4103.matchub.vo.AnnouncementVO;
 import com.is4103.matchub.vo.CompetitionVO;
+import com.is4103.matchub.vo.KanbanBoardVO;
 import com.is4103.matchub.vo.PostVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -112,10 +113,13 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     private AnnouncementService announcementService;
-    
+
     @Autowired
     private CompetitionService competitionService;
-    
+
+    @Autowired
+    private KanbanBoardService kanbanBoardService;
+
     @Transactional
     public void init() {
         // testing:
@@ -146,8 +150,10 @@ public class InitServiceImpl implements InitService {
         initResourceRequests();
 //        firebaseService.getChannelDetails("s");
         // init kanbanboard for project 3
-        
+
         initCompetitions();
+
+        initKanbanBoard();
     }
 
     private void initUsers() {
@@ -1752,8 +1758,8 @@ public class InitServiceImpl implements InitService {
         projectEntity1.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity1);
         /* end of project badge */
-        
-        /* add team member into this project */
+
+ /* add team member into this project */
         ProfileEntity songhwa = profileEntityRepository.findById(Long.valueOf(9)).get();
         projectEntity1.getTeamMembers().add(songhwa);
         songhwa.getProjectsJoined().add(projectEntity1);
@@ -1761,7 +1767,7 @@ public class InitServiceImpl implements InitService {
         profileEntityRepository.save(songhwa);
         projectEntityRepository.save(projectEntity1);
         /* end of add team member */
-        
+
         try {
             AnnouncementVO announcementVO = new AnnouncementVO();
             announcementVO.setContent("We are going to launch our project soon");
@@ -2719,21 +2725,28 @@ public class InitServiceImpl implements InitService {
         projectEntityRepository.saveAndFlush(project);
     }
     
-    public void initCompetitions(){
-        try{
-        CompetitionVO competitionVO = new CompetitionVO();
-        competitionVO.setCompetitionDescription("Competition description");
-        competitionVO.setCompetitionTitle("competitionTitle");
-        competitionVO.setCompetitionStatus(CompetitionStatusEnum.ACTIVE);
-        competitionVO.setStartDate(LocalDateTime.parse("2017-02-07T11:45:55"));
-        competitionVO.setEndDate(LocalDateTime.parse("2018-02-07T11:45:55"));
-        competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
-        CompetitionEntity competition1 =  competitionService.createCompetition(competitionVO);
+    public void initCompetitions() {
+        try {
+            CompetitionVO competitionVO = new CompetitionVO();
+            competitionVO.setCompetitionDescription("Competition description");
+            competitionVO.setCompetitionTitle("competitionTitle");
+            competitionVO.setCompetitionStatus(CompetitionStatusEnum.ACTIVE);
+            competitionVO.setStartDate(LocalDateTime.parse("2017-02-07T11:45:55"));
+            competitionVO.setEndDate(LocalDateTime.parse("2018-02-07T11:45:55"));
+            competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
+            CompetitionEntity competition1 = competitionService.createCompetition(competitionVO);
 //        competitionService.joinCompetition(competition1.getCompetitionId(), 1L);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 2L, 5L);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 3L, 9L);
-        }catch(ProjectNotFoundException ex){
+            competitionService.joinCompetition(competition1.getCompetitionId(), 2L, 5L);
+            competitionService.joinCompetition(competition1.getCompetitionId(), 3L, 9L);
+        } catch (ProjectNotFoundException ex) {
             ex.printStackTrace();
         }
+    }
+
+    private void initKanbanBoard() {
+        KanbanBoardVO vo = new KanbanBoardVO();
+        vo.setChannelUid("123");
+        vo.setProjectId(1L);
+        kanbanBoardService.createKanbanBoard(vo);
     }
 }
