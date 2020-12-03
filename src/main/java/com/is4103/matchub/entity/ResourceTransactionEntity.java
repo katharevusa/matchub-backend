@@ -59,7 +59,7 @@ public class ResourceTransactionEntity {
     @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    @JsonIgnoreProperties(value = {"listOfResourceTransactions"})
+    @JsonIgnoreProperties(value = {"listOfResourceTransactions","joinRequests","reviews","projectBadge","fundCampaigns","listOfRequests","teamMembers","projectFollowers","projectOwners"})
     private ProjectEntity project;
 
 }

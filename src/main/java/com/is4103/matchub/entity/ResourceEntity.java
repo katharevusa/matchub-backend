@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.is4103.matchub.enumeration.ResourceTypeEnum;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,7 +23,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -115,6 +115,7 @@ public class ResourceEntity {
     
     //@PrimaryKeyJoinColumn
     @OneToOne
+    @JsonIgnoreProperties({"resource"})
     private ResourceTransactionEntity resourceTransaction;
     
     
