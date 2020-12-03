@@ -320,7 +320,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             try {
-                if (index > 0) {
+                if (index > 1) {
 
                     XSSFRow row = worksheet.getRow(index);
 
@@ -460,7 +460,7 @@ public class DataMappingServiceImpl implements DataMappingService {
 
         for (int index = 0; index < worksheet.getPhysicalNumberOfRows(); index++) {
             try {
-                if (index > 0) {
+                if (index > 1) {
 
                     XSSFRow row = worksheet.getRow(index);
 
