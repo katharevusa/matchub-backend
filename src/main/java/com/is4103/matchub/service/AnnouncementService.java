@@ -43,13 +43,15 @@ public interface AnnouncementService {
     public void createNormalNotification(AnnouncementEntity announcementEntity);
 
     public void readAllAnnouncements(Long userId);
-    
+
     public void clearAllAnnouncemnents(Long userId);
-    
-    public ProfileEntity updateAnnouncementSettinge(AnnouncementSettingVO vo)throws UserNotFoundException;
-    
-     public List<AnnouncementEntity> getFollowingProjectAnnouncements(Long userId);
-    
+
+    public ProfileEntity updateAnnouncementSettinge(AnnouncementSettingVO vo) throws UserNotFoundException;
+
+    public List<AnnouncementEntity> getFollowingProjectAnnouncements(Long userId);
+
     public List<AnnouncementEntity> getOwnedProjectAnnouncements(Long userId);
-    
+
+    public void setNotifications(ProfileEntity profileEntity);
+
 }

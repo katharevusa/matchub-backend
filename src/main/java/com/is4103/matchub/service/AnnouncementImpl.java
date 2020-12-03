@@ -24,7 +24,6 @@ import com.is4103.matchub.vo.AnnouncementSettingVO;
 import com.is4103.matchub.vo.SendNotificationsToUsersVO;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Map;
 
 /**
  *
@@ -41,164 +40,158 @@ public class AnnouncementImpl implements AnnouncementService {
 
     @Autowired
     ProjectEntityRepository projectEntityRepository;
-    
+
     @Autowired
     FirebaseService firebaseService;
-    
+
     @Autowired
     ResourceRequestEntityRepository resourceRequestEntityRepository;
 
     // create project public announcement, only by project owners, associate with project, notify project followers
     @Override
-    public AnnouncementEntity createProjectPublicAnnouncement(AnnouncementVO newAnnouncementVO) throws CreateAnnouncementException{
-        System.err.println("New announcement VO:"+ newAnnouncementVO);
+    public AnnouncementEntity createProjectPublicAnnouncement(AnnouncementVO newAnnouncementVO) throws CreateAnnouncementException {
+        System.err.println("New announcement VO:" + newAnnouncementVO);
         AnnouncementEntity newAnnouncementEntity = new AnnouncementEntity();
         newAnnouncementVO.createProjectPublicAnnouncement(newAnnouncementEntity);
         System.err.println(newAnnouncementEntity.getProjectId());
         ProjectEntity project = projectEntityRepository.findById(newAnnouncementEntity.getProjectId()).get();
         ProfileEntity creator = profileEntityRepository.findById(newAnnouncementEntity.getCreatorId()).get();
-        if(!project.getProjectOwners().contains(creator)){
+        if (!project.getProjectOwners().contains(creator)) {
             throw new CreateAnnouncementException("Only project owners can create project public announcement");
         }
-        
+
         newAnnouncementEntity.getNotifiedUsers().addAll(project.getProjectFollowers());
         newAnnouncementEntity.setProjectId(newAnnouncementEntity.getProjectId());
         newAnnouncementEntity = announcementEntityRepository.save(newAnnouncementEntity);
-        
-        for(ProfileEntity p : project.getProjectFollowers()){
+
+        for (ProfileEntity p : project.getProjectFollowers()) {
             p.getAnnouncements().add(newAnnouncementEntity);
         }
-             
+
         SendNotificationsToUsersVO sendNotificationsToUsersVO = new SendNotificationsToUsersVO();
         sendNotificationsToUsersVO.setTitle(newAnnouncementEntity.getTitle());
         sendNotificationsToUsersVO.setBody(newAnnouncementEntity.getContent());
         sendNotificationsToUsersVO.setType(newAnnouncementEntity.getType().toString());
         sendNotificationsToUsersVO.setImage("");
         List<String> uuids = new ArrayList<>();
-        
-        for(ProfileEntity p: newAnnouncementEntity.getNotifiedUsers()){
-           uuids.add(p.getUuid().toString());
-        }     
-        sendNotificationsToUsersVO.setUuids(uuids);
-        firebaseService.sendNotificationsToUsers(sendNotificationsToUsersVO);      
-        return newAnnouncementEntity;
-    }
-    
-    @Override
-    public List<AnnouncementEntity> viewProjectPublicAnnouncements(Long projectId){
-        return announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(projectId, AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT);
-          
-    }
-    
-    // delete public announcement by project owners only  
-    @Override
-    public void deleteProjectPublicAnnouncement(Long announcementId,Long userId) throws DeleteAnnouncementException{
-        AnnouncementEntity announcement = announcementEntityRepository.findById(announcementId).get();
-        ProjectEntity project = projectEntityRepository.findById(announcement.getProjectId()).get();
-        ProfileEntity creator = profileEntityRepository.findById(userId).get();    
-        if(!project.getProjectOwners().contains(creator)){
-            throw new DeleteAnnouncementException("Only project owners can delete project public announcement");
+
+        for (ProfileEntity p : newAnnouncementEntity.getNotifiedUsers()) {
+            uuids.add(p.getUuid().toString());
         }
-        announcementEntityRepository.delete(announcement);      
-    }
-    
-    
-    
-    // Create Project Internal Announcement, associate with project teammates and owners, created by project owners only
-    @Override
-    public AnnouncementEntity createProjectInternalAnnouncement(AnnouncementVO newAnnouncementVO) throws CreateAnnouncementException{
-        AnnouncementEntity newAnnouncementEntity = new AnnouncementEntity();
-        newAnnouncementVO.createProjectInternalAnnouncement(newAnnouncementEntity);   
-        ProjectEntity project = projectEntityRepository.findById(newAnnouncementEntity.getProjectId()).get();
-        ProfileEntity creator = profileEntityRepository.findById(newAnnouncementEntity.getCreatorId()).get();
-        if(!project.getProjectOwners().contains(creator)){
-            throw new CreateAnnouncementException("Only project owners can create project public announcement");
-        }
-        
-        List<ProfileEntity> projectTeammembers = project.getTeamMembers();
-        List<ProfileEntity> projectOwners = project.getProjectOwners();
-       
-        newAnnouncementEntity.getNotifiedUsers().addAll(projectTeammembers);
-        newAnnouncementEntity.getNotifiedUsers().addAll(projectOwners);
-        
-        //add announcements to project teammember
-        for(ProfileEntity p: projectTeammembers ){
-            p.getAnnouncements().add(newAnnouncementEntity);
-        }
-        
-        //add announcements to project owners
-        for(ProfileEntity p: projectOwners ){
-            p.getAnnouncements().add(newAnnouncementEntity);
-        }
-        
-        //Incomplete: notify project teammembers and project owners       
-        newAnnouncementEntity = announcementEntityRepository.saveAndFlush(newAnnouncementEntity);
-        
-        SendNotificationsToUsersVO sendNotificationsToUsersVO = new SendNotificationsToUsersVO();
-        sendNotificationsToUsersVO.setTitle(newAnnouncementEntity.getTitle());
-        sendNotificationsToUsersVO.setBody(newAnnouncementEntity.getContent());
-        sendNotificationsToUsersVO.setType(newAnnouncementEntity.getType().toString());
-        sendNotificationsToUsersVO.setImage("");
-        List<String> uuids = new ArrayList<>();
-        
-        for(ProfileEntity p: newAnnouncementEntity.getNotifiedUsers()){
-           uuids.add(p.getUuid().toString());
-        }     
         sendNotificationsToUsersVO.setUuids(uuids);
         firebaseService.sendNotificationsToUsers(sendNotificationsToUsersVO);
         return newAnnouncementEntity;
     }
-    
-    
+
     @Override
-    public List<AnnouncementEntity> viewProjectInternalAnnouncements(Long projectId){
-        return announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(projectId, AnnouncementTypeEnum.PROJECT_INTERNAL_ANNOUNCEMENT);         
+    public List<AnnouncementEntity> viewProjectPublicAnnouncements(Long projectId) {
+        return announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(projectId, AnnouncementTypeEnum.PROJECT_PUBLIC_ANNOUNCEMENT);
+
     }
-    
-    
-    // only project owners can delete project internal announcement
+
+    // delete public announcement by project owners only  
     @Override
-    public void deleteProjectInternalAnnouncement(Long announcementId, Long userId) throws DeleteAnnouncementException{  
-       if(!announcementEntityRepository.findById(announcementId).isPresent()){
-           throw new DeleteAnnouncementException("Announcement not found");
-       }
-        
+    public void deleteProjectPublicAnnouncement(Long announcementId, Long userId) throws DeleteAnnouncementException {
         AnnouncementEntity announcement = announcementEntityRepository.findById(announcementId).get();
-        
-        
         ProjectEntity project = projectEntityRepository.findById(announcement.getProjectId()).get();
-        ProfileEntity user = profileEntityRepository.findById(userId).get();    
-        
-        if(!project.getProjectOwners().contains(user)){
-            throw new DeleteAnnouncementException("Only project owners can delete project internal announcement");
+        ProfileEntity creator = profileEntityRepository.findById(userId).get();
+        if (!project.getProjectOwners().contains(creator)) {
+            throw new DeleteAnnouncementException("Only project owners can delete project public announcement");
         }
-        
+        announcementEntityRepository.delete(announcement);
+    }
+
+    // Create Project Internal Announcement, associate with project teammates and owners, created by project owners only
+    @Override
+    public AnnouncementEntity createProjectInternalAnnouncement(AnnouncementVO newAnnouncementVO) throws CreateAnnouncementException {
+        AnnouncementEntity newAnnouncementEntity = new AnnouncementEntity();
+        newAnnouncementVO.createProjectInternalAnnouncement(newAnnouncementEntity);
+        ProjectEntity project = projectEntityRepository.findById(newAnnouncementEntity.getProjectId()).get();
+        ProfileEntity creator = profileEntityRepository.findById(newAnnouncementEntity.getCreatorId()).get();
+        if (!project.getProjectOwners().contains(creator)) {
+            throw new CreateAnnouncementException("Only project owners can create project public announcement");
+        }
+
         List<ProfileEntity> projectTeammembers = project.getTeamMembers();
         List<ProfileEntity> projectOwners = project.getProjectOwners();
-        
+
+        newAnnouncementEntity.getNotifiedUsers().addAll(projectTeammembers);
+        newAnnouncementEntity.getNotifiedUsers().addAll(projectOwners);
+
+        //add announcements to project teammember
+        for (ProfileEntity p : projectTeammembers) {
+            p.getAnnouncements().add(newAnnouncementEntity);
+        }
+
+        //add announcements to project owners
+        for (ProfileEntity p : projectOwners) {
+            p.getAnnouncements().add(newAnnouncementEntity);
+        }
+
+        //Incomplete: notify project teammembers and project owners       
+        newAnnouncementEntity = announcementEntityRepository.saveAndFlush(newAnnouncementEntity);
+
+        SendNotificationsToUsersVO sendNotificationsToUsersVO = new SendNotificationsToUsersVO();
+        sendNotificationsToUsersVO.setTitle(newAnnouncementEntity.getTitle());
+        sendNotificationsToUsersVO.setBody(newAnnouncementEntity.getContent());
+        sendNotificationsToUsersVO.setType(newAnnouncementEntity.getType().toString());
+        sendNotificationsToUsersVO.setImage("");
+        List<String> uuids = new ArrayList<>();
+
+        for (ProfileEntity p : newAnnouncementEntity.getNotifiedUsers()) {
+            uuids.add(p.getUuid().toString());
+        }
+        sendNotificationsToUsersVO.setUuids(uuids);
+        firebaseService.sendNotificationsToUsers(sendNotificationsToUsersVO);
+        return newAnnouncementEntity;
+    }
+
+    @Override
+    public List<AnnouncementEntity> viewProjectInternalAnnouncements(Long projectId) {
+        return announcementEntityRepository.searchProjectAnnouncementProjectIdAndType(projectId, AnnouncementTypeEnum.PROJECT_INTERNAL_ANNOUNCEMENT);
+    }
+
+    // only project owners can delete project internal announcement
+    @Override
+    public void deleteProjectInternalAnnouncement(Long announcementId, Long userId) throws DeleteAnnouncementException {
+        if (!announcementEntityRepository.findById(announcementId).isPresent()) {
+            throw new DeleteAnnouncementException("Announcement not found");
+        }
+
+        AnnouncementEntity announcement = announcementEntityRepository.findById(announcementId).get();
+
+        ProjectEntity project = projectEntityRepository.findById(announcement.getProjectId()).get();
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
+
+        if (!project.getProjectOwners().contains(user)) {
+            throw new DeleteAnnouncementException("Only project owners can delete project internal announcement");
+        }
+
+        List<ProfileEntity> projectTeammembers = project.getTeamMembers();
+        List<ProfileEntity> projectOwners = project.getProjectOwners();
+
         //remove announcements of project teammember
-        for(ProfileEntity p: projectTeammembers ){
+        for (ProfileEntity p : projectTeammembers) {
             p.getAnnouncements().remove(announcement);
         }
-        
+
         //remove announcements of project owners
-        for(ProfileEntity p: projectOwners ){
+        for (ProfileEntity p : projectOwners) {
             p.getAnnouncements().remove(announcement);
         }
-        
-        announcement.setNotifiedUsers(new ArrayList<>());      
+
+        announcement.setNotifiedUsers(new ArrayList<>());
         announcementEntityRepository.delete(announcement);
 
     }
-    
-    
+
     @Override
-    public void deleteAnAnnouncementForUser(Long announcementId, Long userId){
-        System.err.println("deleteAnAnnouncementForUser:"+announcementId );
+    public void deleteAnAnnouncementForUser(Long announcementId, Long userId) {
+        System.err.println("deleteAnAnnouncementForUser:" + announcementId);
         AnnouncementEntity announcement = announcementEntityRepository.findById(announcementId).get();
-        ProfileEntity user = profileEntityRepository.findById(userId).get();         
+        ProfileEntity user = profileEntityRepository.findById(userId).get();
         user.getAnnouncements().remove(announcement);
-        profileEntityRepository.saveAndFlush(user);    
+        profileEntityRepository.saveAndFlush(user);
     }
 
     //retrieve Announcementx by userId
@@ -214,7 +207,6 @@ public class AnnouncementImpl implements AnnouncementService {
         return announcementEntityRepository.findById(announcementId).get();
     }
 
-
     @Override
     public void viewAnnouncement(Long announcementId, Long viewerId) {
         ProfileEntity user = profileEntityRepository.findById(viewerId).get();
@@ -225,8 +217,9 @@ public class AnnouncementImpl implements AnnouncementService {
         }
 
     }
+
     @Override
-    public void createNormalNotification(AnnouncementEntity announcementEntity){
+    public void createNormalNotification(AnnouncementEntity announcementEntity) {
         // create notification
         SendNotificationsToUsersVO sendNotificationsToUsersVO = new SendNotificationsToUsersVO();
         sendNotificationsToUsersVO.setTitle(announcementEntity.getTitle());
@@ -234,45 +227,43 @@ public class AnnouncementImpl implements AnnouncementService {
         sendNotificationsToUsersVO.setType(announcementEntity.getType().toString());
         sendNotificationsToUsersVO.setImage("");
         List<String> uuids = new ArrayList<>();
-        
-        for(ProfileEntity p: announcementEntity.getNotifiedUsers()){
-           uuids.add(p.getUuid().toString());
-        }     
+
+        for (ProfileEntity p : announcementEntity.getNotifiedUsers()) {
+            uuids.add(p.getUuid().toString());
+        }
         sendNotificationsToUsersVO.setUuids(uuids);
         firebaseService.sendNotificationsToUsers(sendNotificationsToUsersVO);
     }
-    
-    
+
     @Override
-    public void readAllAnnouncements(Long userId){
+    public void readAllAnnouncements(Long userId) {
         ProfileEntity user = profileEntityRepository.findById(userId).get();
-        for(AnnouncementEntity a : user.getAnnouncements()){
-            if(!a.getViewedUserIds().contains(userId)){
+        for (AnnouncementEntity a : user.getAnnouncements()) {
+            if (!a.getViewedUserIds().contains(userId)) {
                 a.getViewedUserIds().add(userId);
                 announcementEntityRepository.saveAndFlush(a);
             }
-            
-        }    
-        
+
+        }
+
     }
-    
+
     @Override
-    public void clearAllAnnouncemnents(Long userId){
+    public void clearAllAnnouncemnents(Long userId) {
         ProfileEntity user = profileEntityRepository.findById(userId).get();
         user.setAnnouncements(new ArrayList<>());
-        profileEntityRepository.saveAndFlush(user);   
+        profileEntityRepository.saveAndFlush(user);
     }
-    
-    
+
     @Override
-    public ProfileEntity updateAnnouncementSettinge(AnnouncementSettingVO vo)throws UserNotFoundException{
-        ProfileEntity user  = profileEntityRepository.findById(vo.getUserId()).orElseThrow(() -> new UserNotFoundException(vo.getUserId()));
-        for(AnnouncementTypeEnum k :vo.getNewSetting().keySet()){
-           user.getAnnouncementsSetting().replace(k, vo.getNewSetting().get(k));
+    public ProfileEntity updateAnnouncementSettinge(AnnouncementSettingVO vo) throws UserNotFoundException {
+        ProfileEntity user = profileEntityRepository.findById(vo.getUserId()).orElseThrow(() -> new UserNotFoundException(vo.getUserId()));
+        for (AnnouncementTypeEnum k : vo.getNewSetting().keySet()) {
+            user.getAnnouncementsSetting().replace(k, vo.getNewSetting().get(k));
         }
         return profileEntityRepository.saveAndFlush(user);
     }
-    
+
     @Override
     public List<AnnouncementEntity> getFollowingProjectAnnouncements(Long userId) {
         ProfileEntity user = profileEntityRepository.findById(userId).get();
@@ -299,5 +290,13 @@ public class AnnouncementImpl implements AnnouncementService {
         Collections.sort(announcements, (AnnouncementEntity o1, AnnouncementEntity o2) -> o1.getTimestamp().compareTo(o2.getTimestamp()));
 
         return announcements;
-    }  
+    }
+
+    @Override
+    public void setNotifications(ProfileEntity profileEntity) {
+        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
+            profileEntity.getAnnouncementsSetting().put(a, Boolean.TRUE);
+        }
+        profileEntityRepository.save(profileEntity);
+    }
 }

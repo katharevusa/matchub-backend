@@ -5,6 +5,7 @@
  */
 package com.is4103.matchub.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.is4103.matchub.enumeration.ResourceTypeEnum;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,19 +23,20 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
  * @author ngjin
  */
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -84,11 +86,11 @@ public class ResourceEntity {
 
     @Column(nullable = true)
     private String resourceProfilePic;
-    
+
     @NotNull
     @Column(nullable = false)
     private ResourceTypeEnum resourceType;
-    
+
     @Column(nullable = true)
     private BigDecimal price;
 
@@ -112,13 +114,11 @@ public class ResourceEntity {
 
     @Column(nullable = true)
     private String country;
-    
+
     //@PrimaryKeyJoinColumn
     @OneToOne
+    @JsonIgnoreProperties({"resource", "project"})
     private ResourceTransactionEntity resourceTransaction;
-    
-    
-    
 
     public ResourceEntity(String resourceName, String resourceDescription, Long resourceCategoryId, Long resourceOwnerId, Integer units) {
         this.resourceName = resourceName;

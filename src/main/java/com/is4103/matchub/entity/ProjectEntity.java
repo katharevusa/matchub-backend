@@ -153,7 +153,7 @@ public class ProjectEntity {
     private List<ProfileEntity> projectFollowers = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties({"projectsOwned", "sdgs", "meetings", "projectsJoined", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
+    @JsonIgnoreProperties({"hostedResources", "projectsOwned", "sdgs", "meetings", "projectsJoined", "joinRequests", "reviewsReceived", "badges", "fundPladges", "tasks", "managedChannel", "joinedChannel", "likedPosts"})
     private List<ProfileEntity> projectOwners = new ArrayList<>();
 
     //sdg refactoring

@@ -96,11 +96,6 @@ public class IndividualSetupVO {
         individual.getFollowing().clear();
         individual.setFollowing(longSet);
 
-        //set the announcement setting, true by default
-        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
-            individual.getAnnouncementsSetting().put(a, Boolean.TRUE);
-        }
-
         //upload profile pic in attachment service class
         //do not associate sdg here, associate in user service class
     }
