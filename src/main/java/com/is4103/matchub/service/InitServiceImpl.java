@@ -2511,6 +2511,18 @@ public class InitServiceImpl implements InitService {
         } catch (Exception e) {
             System.err.println("Error in init resource request for projectId 1: Eyeglasses");
         }
+        
+        try {
+            resourceRequestService.createResourceRequestResourceOwner(3L, 10L, 30L, 10);
+        } catch (Exception e) {
+            System.err.println("Error in init resource request for projectId 1: Eyeglasses");
+        }
+        
+        try {
+            resourceRequestService.createResourceRequestResourceOwner(3L, 7L, 11L, 10);
+        } catch (Exception e) {
+            System.err.println("Error in init resource request for projectId 1: Eyeglasses");
+        }
 
     }
 
