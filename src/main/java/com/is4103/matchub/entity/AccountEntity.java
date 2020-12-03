@@ -74,7 +74,7 @@ public class AccountEntity {
     @NotNull
     private Boolean isVerified = false;
 
-    @Column(nullable = false, columnDefinition = "TIMESTAMP")
+    @Column(nullable = true, columnDefinition = "TIMESTAMP")
     private LocalDateTime joinDate;
     
     @Column(nullable = false)

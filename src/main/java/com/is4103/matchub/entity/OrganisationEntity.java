@@ -28,7 +28,7 @@ public class OrganisationEntity extends ProfileEntity {
     @NotNull
     private String organizationName;
 
-    @Column(nullable = true, length = 1000)
+    @Column(nullable = true, length = 2000, columnDefinition="TEXT")
     @Nullable
     private String organizationDescription;
 

@@ -24,14 +24,14 @@ public class IndividualEntity extends ProfileEntity {
     @NotNull
     private String firstName;
 
-    @Column(nullable = false)
-    @NotNull
+    @Column(nullable = true)
+//    @NotNull
     private String lastName;
 
     @Column(nullable = true)
     private GenderEnum genderEnum;
 
-    @Column(nullable = true, length = 1000)
+    @Column(nullable = true, length = 2000, columnDefinition="TEXT")
     private String profileDescription;
 
 

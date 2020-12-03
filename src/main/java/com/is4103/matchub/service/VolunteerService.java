@@ -20,7 +20,7 @@ public interface VolunteerService {
 
     public List<ProfileEntity> getWholeProjectGroup(Long projectId);
 
-    public void leaveProject(Long projectId, Long memberId) throws LeaveProjectException;
+    public void leaveProject(Long projectId, Long memberId);
 
     public void removeTeamMember(Long projectId, Long memberId, Long decisionMakerId) throws RemoveTeamMemberException;
 

@@ -1,6 +1,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.ClaimRequestEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
 import com.is4103.matchub.entity.ProfileEntity;
@@ -12,6 +13,7 @@ import com.is4103.matchub.vo.OrganisationCreateVO;
 import com.is4103.matchub.vo.OrganisationSetupVO;
 import com.is4103.matchub.vo.OrganisationUpdateVO;
 import com.is4103.matchub.vo.ChangePasswordVO;
+import com.is4103.matchub.vo.ClaimRequestVO;
 import com.is4103.matchub.vo.DeleteFilesVO;
 import com.is4103.matchub.vo.UserVO;
 import java.io.IOException;
@@ -101,4 +103,17 @@ public interface UserService {
     public void setUserStripeAccountUid(String email, String stripeAccountUid);
 
     public void setUserStripeAccountChargesEnabled(String stripeAccountUid);
+
+    public ClaimRequestEntity createClaimRequest(ClaimRequestVO vo);
+
+    public ClaimRequestEntity uploadPhotos(Long claimRequestId, MultipartFile[] photos);
+
+    public ClaimRequestEntity uploadDocuments(Long claimRequestId, MultipartFile[] documents);
+
+    public List<ClaimRequestEntity> getAllClaimRequests();
+
+    public void approveClaimRequest(Long claimRequestId) throws IOException, MessagingException;
+
+    public void rejectClaimRequest(Long claimRequestId) throws IOException, MessagingException;
+
 }
