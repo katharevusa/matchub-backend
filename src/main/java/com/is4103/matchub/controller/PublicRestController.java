@@ -263,4 +263,14 @@ public class PublicRestController {
     public ClaimRequestEntity uploadDocuments(@RequestParam(value = "documents") MultipartFile[] documents, @RequestParam("claimRequestId") Long claimRequestId) {
         return userService.uploadDocuments(claimRequestId, documents);
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllCompetitions")
+    public List<CompetitionEntity> getAllCompetitions() {
+        return competitionService.retrieveAllCompetitions();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getCompetitionResults")
+    public List<ProjectEntity> getCompetitionResults(@RequestParam(value = "competitionId", required = true) Long competitionId) throws ProjectNotFoundException {
+        return competitionService.retrieveCompetitionResults(competitionId);
+    }
 }

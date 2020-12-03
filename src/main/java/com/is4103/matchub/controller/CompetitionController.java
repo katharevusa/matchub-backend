@@ -3,6 +3,7 @@ package com.is4103.matchub.controller;
 import com.is4103.matchub.entity.CompetitionEntity;
 import com.is4103.matchub.entity.ProjectEntity;
 import com.is4103.matchub.entity.SDGEntity;
+import com.is4103.matchub.entity.VoterCredentialEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.service.CompetitionService;
 import com.is4103.matchub.service.SDGService;
@@ -70,6 +71,11 @@ public class CompetitionController {
         return competitionService.retrieveAllActiveCompetitions();
     }
 
+    @RequestMapping(method = RequestMethod.GET, value = "/getAllPastCompetitions")
+    public List<CompetitionEntity> getAllPastCompetitions() {
+        return competitionService.retrieveAllPastCompetitions();
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/getCompetitionById")
     public CompetitionEntity getCompetitionByCompetitionId(@RequestParam(value = "competitionId", required = true) Long competitionId) {
         return competitionService.retrieveCompetitionById(competitionId);
@@ -86,8 +92,10 @@ public class CompetitionController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/joinCompetition")
-    public ProjectEntity joinCompetition(@RequestParam(value = "competitionId", required = true) Long competitionId, @RequestParam(value = "projectId", required = true) Long projectId) throws ProjectNotFoundException {
-        return competitionService.joinCompetition(competitionId, projectId);
+    public ProjectEntity joinCompetition(@RequestParam(value = "competitionId", required = true) Long competitionId,
+            @RequestParam(value = "projectId", required = true) Long projectId,
+            @RequestParam(value = "accountId", required = true) Long accountId) throws ProjectNotFoundException {
+        return competitionService.joinCompetition(competitionId, projectId, accountId);
     }
 
     @RequestMapping(method = RequestMethod.PUT, value = "/activateCompetition")
@@ -121,14 +129,14 @@ public class CompetitionController {
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/registerAsVoter")
-    public void registerAsVoter(@Valid @RequestBody VoterVO vo, @RequestParam(value = "competitionId", required = true) Long competitionId) throws IOException, MessagingException {
-        competitionService.registerAsVoter(vo, competitionId);
+    public VoterCredentialEntity registerAsVoter(@Valid @RequestBody VoterVO vo, @RequestParam(value = "competitionId", required = true) Long competitionId) throws IOException, MessagingException {
+        return competitionService.registerAsVoter(vo, competitionId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/createVotingDetailsForExistingUsers")
-    public void createVotingDetailsForExistingUsers(@RequestParam(value = "competitionId", required = true) Long competitionId,
+    public VoterCredentialEntity createVotingDetailsForExistingUsers(@RequestParam(value = "competitionId", required = true) Long competitionId,
             @RequestParam(value = "accountId", required = true) Long accountId) throws IOException, MessagingException {
-        competitionService.createVotingDetailsForExistingUsers(competitionId, accountId);
+        return competitionService.createVotingDetailsForExistingUsers(competitionId, accountId);
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/castVoteForCompetitionProject")
@@ -136,5 +144,10 @@ public class CompetitionController {
             @RequestParam(value = "projectId", required = true) Long projectId,
             @RequestParam(value = "voterSecret", required = true) String voterSecret) throws ProjectNotFoundException {
         competitionService.castVoteForCompetitionProject(competitionId, projectId, voterSecret);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/getCompetitionResults")
+    public List<ProjectEntity> getCompetitionResults(@RequestParam(value = "competitionId", required = true) Long competitionId) throws ProjectNotFoundException {
+        return competitionService.retrieveCompetitionResults(competitionId);
     }
 }
