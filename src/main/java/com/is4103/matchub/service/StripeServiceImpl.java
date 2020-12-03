@@ -40,10 +40,10 @@ public class StripeServiceImpl implements StripeService {
 
     @Autowired
     UserService userService;
-    
+
     @Autowired
     FundCampaignService fundCampaignService;
-    
+
     @Autowired
     ResourceRequestService resourceRequestService;
 
@@ -52,8 +52,6 @@ public class StripeServiceImpl implements StripeService {
 
     @Value("${stripe.webhook.secret}")
     private String stripeWebhookSecret;
-    
-    
 
     @PostConstruct
     public void initialize() {
@@ -103,17 +101,19 @@ public class StripeServiceImpl implements StripeService {
 
     @Override
     public PaymentIntent createPaymentIntent(PaymentIntentCreateVO paymentIntentCreateVO) {
-    
-        if(paymentIntentCreateVO.getPaymentScenario()==PaymentScenario.FundCampaignDonation){
-          return createPaymentIntentForFundCampaignDonation(paymentIntentCreateVO);
-        }else if(paymentIntentCreateVO.getPaymentScenario()==PaymentScenario.ResourcePurchase){
-          return createPaymentIntentForResourcePurchase(paymentIntentCreateVO);
+
+        if (paymentIntentCreateVO.getPaymentScenario() == PaymentScenario.FundCampaignDonation) {
+            return createPaymentIntentForFundCampaignDonation(paymentIntentCreateVO);
+        } else if (paymentIntentCreateVO.getPaymentScenario() == PaymentScenario.ResourcePurchase) {
+            return createPaymentIntentForResourcePurchase(paymentIntentCreateVO);
         }
-       return new PaymentIntent();
+        return new PaymentIntent();
     }
-    
-    public PaymentIntent createPaymentIntentForFundCampaignDonation(PaymentIntentCreateVO paymentIntentCreateVO){
-         PaymentIntentCreateParams params
+
+    public PaymentIntent createPaymentIntentForFundCampaignDonation(PaymentIntentCreateVO paymentIntentCreateVO) {
+        System.out.println(paymentIntentCreateVO.getReceiptEmail());
+
+        PaymentIntentCreateParams params
                 = PaymentIntentCreateParams.builder()
                         .setAmount(paymentIntentCreateVO.getAmountInCents())
                         .setCurrency("sgd")
@@ -121,6 +121,7 @@ public class StripeServiceImpl implements StripeService {
                         // for commission charges
                         .setApplicationFeeAmount(calculatePlatformCommissionFees(paymentIntentCreateVO.getAmountInCents()))
                         // for setting who to transfer to
+                        .setReceiptEmail(paymentIntentCreateVO.getReceiptEmail())
                         .setTransferData(
                                 PaymentIntentCreateParams.TransferData.builder()
                                         .setDestination(paymentIntentCreateVO.getPayeeStripeUid())
@@ -138,18 +139,19 @@ public class StripeServiceImpl implements StripeService {
         } catch (StripeException ex) {
             throw new StripeRuntimeException(ex.getMessage());
         }
-        
+
     }
-    
-    
-    public PaymentIntent createPaymentIntentForResourcePurchase(PaymentIntentCreateVO paymentIntentCreateVO){
-       PaymentIntentCreateParams params
+
+    public PaymentIntent createPaymentIntentForResourcePurchase(PaymentIntentCreateVO paymentIntentCreateVO) {
+        System.out.println(paymentIntentCreateVO.getReceiptEmail());
+        PaymentIntentCreateParams params
                 = PaymentIntentCreateParams.builder()
                         .setAmount(paymentIntentCreateVO.getAmountInCents())
                         .setCurrency("sgd")
                         .addPaymentMethodType("card")
                         // for commission charges
                         .setApplicationFeeAmount(calculatePlatformCommissionFees(paymentIntentCreateVO.getAmountInCents()))
+                        .setReceiptEmail(paymentIntentCreateVO.getReceiptEmail())
                         // for setting who to transfer to
                         .setTransferData(
                                 PaymentIntentCreateParams.TransferData.builder()
@@ -177,7 +179,7 @@ public class StripeServiceImpl implements StripeService {
     }
 
     @Override
-    public String handleWebhookEvent(String json, HttpServletRequest request) throws DonationOptionNotFoundException, ResourceNotFoundException, ProjectNotFoundException{
+    public String handleWebhookEvent(String json, HttpServletRequest request) throws DonationOptionNotFoundException, ResourceNotFoundException, ProjectNotFoundException {
 
         String header = request.getHeader("Stripe-Signature");
         // need to generate from stripe CLI and change in application.properties file
@@ -220,7 +222,7 @@ public class StripeServiceImpl implements StripeService {
 
                 // may not always have, depends on whether FE got post this when checking out.
                 String payerEmail = paymentIntent.getReceiptEmail();
-
+                System.out.println("payer email : " + payerEmail);
                 // associations in another method.
                 handleSuccessfulPaymentIntent(payerEmail, paymentIntent);
             } else {
@@ -234,15 +236,15 @@ public class StripeServiceImpl implements StripeService {
     }
 
     // to create entities and associate with fund pledge / transaction history / send out notifications with FCM etc.
-    private void handleSuccessfulPaymentIntent(String payerEmail, PaymentIntent paymentIntent)throws DonationOptionNotFoundException, ResourceNotFoundException, ProjectNotFoundException{
+    private void handleSuccessfulPaymentIntent(String payerEmail, PaymentIntent paymentIntent) throws DonationOptionNotFoundException, ResourceNotFoundException, ProjectNotFoundException {
 
         // if the payment if for fund campaign, create donation entity
-        if(paymentIntent.getMetadata().get("scenario").equals("FundCampaignDonation")){
-          fundCampaignService.createDonation(payerEmail, paymentIntent);
-        }else if(paymentIntent.getMetadata().get("scenario").equals("ResourcePurchase")){
-           resourceRequestService.createResourceTransaction(payerEmail, paymentIntent);
+        if (paymentIntent.getMetadata().get("scenario").equals("FundCampaignDonation")) {
+            fundCampaignService.createDonation(payerEmail, paymentIntent);
+        } else if (paymentIntent.getMetadata().get("scenario").equals("ResourcePurchase")) {
+            resourceRequestService.createResourceTransaction(payerEmail, paymentIntent);
         }
-        
+
         // to do
     }
 

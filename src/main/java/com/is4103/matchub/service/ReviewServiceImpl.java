@@ -49,7 +49,7 @@ public class ReviewServiceImpl implements ReviewService {
     private AnnouncementEntityRepository announcementEntityRepository;
 
     @Override
-    public Page<ReviewEntity> getReviewsReceivedByAccountId(Long id, Pageable pageable) {
+    public Page<ReviewEntity> getReviewsReceivedByAccountId(Long id, Pageable pageable) throws UserNotFoundException{
         ProfileEntity profile = profileEntityRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
@@ -57,7 +57,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Page<ReviewEntity> getReviewsGivenByAccountId(Long id, Pageable pageable) {
+    public Page<ReviewEntity> getReviewsGivenByAccountId(Long id, Pageable pageable) throws UserNotFoundException{
         ProfileEntity profile = profileEntityRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(id));
 
@@ -65,7 +65,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewEntity createReview(ReviewCreateVO vo) throws ProjectNotFoundException {
+    public ReviewEntity createReview(ReviewCreateVO vo) throws UserNotFoundException,UnableToCreateReviewException, ProjectNotFoundException {
         //check if project exists
         ProjectEntity project = projectEntityRepository.findById(vo.getProjectId())
                 .orElseThrow(() -> new ProjectNotFoundException("Project id: " + vo.getProjectId() + " does not exist."));
