@@ -31,11 +31,11 @@ public interface ReputationPointsService {
 
     ResourceEntity spotlightResource(Long resourceId, Long accountId) throws ResourceNotFoundException;
 
-    void issuePointsToFundDonors(ProjectEntity project);
+    void issuePointsToFundDonors(Long projectId) throws ProjectNotFoundException;
 
-    void issuePointsForCompletedTasks(ProjectEntity project) throws ProjectNotFoundException;
+    void issuePointsForCompletedTasks(Long projectId) throws ProjectNotFoundException;
 
-    void issueBaselinePointsToResourceDonors(ProjectEntity project) throws ProjectNotFoundException;
+    void issueBaselinePointsToResourceDonors(Long projectId) throws ProjectNotFoundException;
 
     void issuePointsByReviewRatings(Long projectId) throws ProjectNotFoundException;
 

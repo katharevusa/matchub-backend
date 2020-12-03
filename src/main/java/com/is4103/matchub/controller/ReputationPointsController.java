@@ -98,5 +98,20 @@ public class ReputationPointsController {
     void issuePointsByReviewRatings(@PathVariable("projectId") Long projectId) throws ProjectNotFoundException {
         reputationPointsService.issuePointsByReviewRatings(projectId);
     }
+    
+    @RequestMapping(method = RequestMethod.PUT, value = "/issuePointsToFundDonors/{projectId}")
+    void issuePointsToFundDonors(@PathVariable("projectId") Long projectId) throws ProjectNotFoundException {
+        reputationPointsService.issuePointsToFundDonors(projectId);
+    }
+    
+    @RequestMapping(method = RequestMethod.PUT, value = "/issuePointsForCompletedTasks/{projectId}")
+    void issuePointsForCompletedTasks(@PathVariable("projectId") Long projectId) throws ProjectNotFoundException {
+        reputationPointsService.issuePointsForCompletedTasks(projectId);
+    }
+    
+    @RequestMapping(method = RequestMethod.PUT, value = "/issueBaselinePointsToResourceDonors/{projectId}")
+    void issueBaselinePointsToResourceDonors(@PathVariable("projectId") Long projectId) throws ProjectNotFoundException {
+        reputationPointsService.issueBaselinePointsToResourceDonors(projectId);
+    }
 
 }

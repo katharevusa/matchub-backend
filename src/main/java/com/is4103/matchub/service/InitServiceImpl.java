@@ -260,7 +260,7 @@ public class InitServiceImpl implements InitService {
         ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
         ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
 
-        ikjun.setReputationPoints(201);
+        ikjun.setReputationPoints(250);
         ikjun.setSpotlightChances(5);
 
         sdgs = new ArrayList<>();
@@ -433,7 +433,7 @@ public class InitServiceImpl implements InitService {
         songhwa.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(10))));
         songhwa.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(5), Long.valueOf(7), Long.valueOf(8), Long.valueOf(10))));
 
-        songhwa.setReputationPoints(201);
+        songhwa.setReputationPoints(250);
         songhwa.setSpotlightChances(5);
 
         sdgs = new ArrayList<>();
@@ -2484,6 +2484,7 @@ public class InitServiceImpl implements InitService {
         try {
             projectService.createJoinRequest(3L, 4L);
             projectService.createJoinRequest(3L, 6L);
+            projectService.createJoinRequest(3L, 5L);
         } catch (Exception e) {
             System.err.println("Error in init join request");
         }
@@ -2520,6 +2521,12 @@ public class InitServiceImpl implements InitService {
         
         try {
             resourceRequestService.createResourceRequestResourceOwner(3L, 7L, 11L, 10);
+        } catch (Exception e) {
+            System.err.println("Error in init resource request for projectId 1: Eyeglasses");
+        }
+        
+        try {
+            resourceRequestService.createResourceRequestResourceOwner(3L, 5L, 20L, 10);
         } catch (Exception e) {
             System.err.println("Error in init resource request for projectId 1: Eyeglasses");
         }

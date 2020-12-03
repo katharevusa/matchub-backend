@@ -389,9 +389,13 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
     //************this method is triggered upon completedProject() method
     @Override
-    public void issuePointsToFundDonors(ProjectEntity project) {
+    public void issuePointsToFundDonors(Long projectId) throws ProjectNotFoundException {
 
         System.out.println("Issue Points to Fund Donors method****************");
+
+        //check if the project exists
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + projectId + " not found."));
 
         List<FundCampaignEntity> fundCampaigns = project.getFundCampaigns();
 
@@ -434,9 +438,14 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
     }
 
     @Override
-    public void issuePointsForCompletedTasks(ProjectEntity project) throws ProjectNotFoundException {
+    public void issuePointsForCompletedTasks(Long projectId) throws ProjectNotFoundException {
 
         System.out.println("Issue Points for Completed Tasks method****************");
+
+        //check if the project exists
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + projectId + " not found."));
+
         //get all kanban boards in project
         List<KanbanBoardEntity> kanbans = kanbanBoardService.getAllKanbanBoardByProjectId(project.getProjectId());
 
@@ -474,9 +483,14 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
     }
 
     @Override
-    public void issueBaselinePointsToResourceDonors(ProjectEntity project) throws ProjectNotFoundException {
+    public void issueBaselinePointsToResourceDonors(Long projectId) throws ProjectNotFoundException {
 
         System.out.println("Issue Baseline Points To Resource Donors method****************");
+
+        //check if the project exists
+        ProjectEntity project = projectEntityRepository.findById(projectId)
+                .orElseThrow(() -> new ProjectNotFoundException("ProjectId: " + projectId + " not found."));
+
         //get all the matched resources of project
         List<ResourceEntity> resources = resourceEntityRepository.getResourcesByProject(project.getProjectId());
 
@@ -515,7 +529,9 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
         System.out.println("Reviews size " + reviews.size());
 
         //do not include team ownerss
-        for (ProfileEntity p : project.getTeamMembers()) {
+        for (int i = 0; i < project.getTeamMembers().size(); i++) {
+
+            ProfileEntity p = project.getTeamMembers().get(i);
             //get all the reviews from this project 
             List<ReviewEntity> allReviews = reviewEntityRepository.getReviewsOfAccountByProjectId(projectId, p.getAccountId());
 

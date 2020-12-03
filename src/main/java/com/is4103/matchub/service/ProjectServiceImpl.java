@@ -386,13 +386,13 @@ public class ProjectServiceImpl implements ProjectService {
         // Incomplete: reputation points, reviews, badge should be started
         /* trigger the issueProjectBadge method */
         badgeService.issueProjectBadge(project);
-        reputationPointsService.issuePointsToFundDonors(project);
-        reputationPointsService.issuePointsForCompletedTasks(project);
-        reputationPointsService.issueBaselinePointsToResourceDonors(project);
+//        reputationPointsService.issuePointsToFundDonors(project);
+//        reputationPointsService.issuePointsForCompletedTasks(project);
+//        reputationPointsService.issueBaselinePointsToResourceDonors(project);
 
         //*************include notification to send to project owners & teamMembers to leave reviews
         AnnouncementEntity announcementEntity = new AnnouncementEntity();
-        announcementEntity.setTitle("congratulation, the project " + project.getProjectTitle() + " is officially completed!");
+        announcementEntity.setTitle("congratulations, the project " + project.getProjectTitle() + " is officially completed!");
         announcementEntity.setContent("Don't forget to give reviews and appreciation notes for your lovely teammates, reputations points allocation will also take consideration of those reviews.");
         announcementEntity.setTimestamp(LocalDateTime.now());
         announcementEntity.setType(AnnouncementTypeEnum.PROJECT_COMPLETED);
