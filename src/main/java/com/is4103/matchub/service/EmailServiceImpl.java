@@ -6,6 +6,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.ClaimRequestEntity;
 import com.is4103.matchub.entity.CompetitionEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.OrganisationEntity;
@@ -186,6 +187,108 @@ public class EmailServiceImpl implements EmailService {
         message.setFrom("matchubcommunity@gmail.com");
 
         message.setTo(profile.getEmail());
+        message.setSubject(subject);
+        message.setText(body);
+        emailSender.send(message);
+    }
+
+    @Async
+    @Override
+    public void sendOnboardingEmail(ProfileEntity profile, String randomGeneratedPassword) throws MessagingException, IOException {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        String name = "";
+
+        if (profile instanceof IndividualEntity) {
+            IndividualEntity i = (IndividualEntity) profile;
+            name = i.getFirstName() + " " + i.getLastName();
+        } else if (profile instanceof OrganisationEntity) {
+            OrganisationEntity o = (OrganisationEntity) profile;
+            name = o.getOrganizationName();
+        }
+
+        String subject = "A MatcHub account has been created on your behalf!";
+
+        String body = "Dear " + name + ", " + "\n\nYour data had been imported into Matchub. To simplify "
+                + "your onboarding process, we have already imported your basic information.";
+
+        body += "\n\nWe have generated your login credentials for your first time login. Please do change your password upon your first login.";
+        body += "\n\nYour Login Credentials:\n";
+        body += "Username: " + profile.getEmail();
+        body += "\nPassword: " + randomGeneratedPassword;
+        body += "\n\nVisit MatcHub today and login now: http://localhost:3000/login";
+
+        body += "\n\nWe can't wait to see you inside!";
+
+        body += "\n\nThank you!\n\nRegards,\nMatcHub";
+
+        message.setFrom("matchubcommunity@gmail.com");
+
+        message.setTo(profile.getEmail());
+        message.setSubject(subject);
+        message.setText(body);
+        emailSender.send(message);
+    }
+
+    @Async
+    @Override
+    public void sendClaimRequestSuccessEmail(AccountEntity accountToClaim, String randomGeneratedPassword) throws MessagingException, IOException {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        String name = "";
+
+        if (accountToClaim instanceof IndividualEntity) {
+            IndividualEntity i = (IndividualEntity) accountToClaim;
+            name = i.getFirstName() + " " + i.getLastName();
+        } else if (accountToClaim instanceof OrganisationEntity) {
+            OrganisationEntity o = (OrganisationEntity) accountToClaim;
+            name = o.getOrganizationName();
+        }
+
+        String subject = "MatcHub Profile Claim Success!";
+
+        String body = "Dear " + name + ", " + "\n\nYour request for your account has successfully been approved.";
+
+        body += "\n\nWe have generated your login credentials for your first time login. Please do change your password upon your first login.";
+        body += "\n\nLogin Credentials:\n";
+        body += "Username: " + accountToClaim.getEmail();
+        body += "\nPassword: " + randomGeneratedPassword;
+        body += "\n\nVisit MatcHub today and login now: http://localhost:3000/login";
+
+        body += "\n\nWe can't wait to see you inside!";
+
+        body += "\n\nThank you!\n\nRegards,\nMatcHub";
+
+        message.setTo(accountToClaim.getEmail());
+        message.setSubject(subject);
+        message.setText(body);
+        emailSender.send(message);
+    }
+
+    @Async
+    @Override
+    public void sendClaimRequestFailureEmail(ClaimRequestEntity claimRequest, AccountEntity accountToClaim) throws MessagingException, IOException {
+        SimpleMailMessage message = new SimpleMailMessage();
+
+        String name = "";
+
+        if (accountToClaim instanceof IndividualEntity) {
+            IndividualEntity i = (IndividualEntity) accountToClaim;
+            name = i.getFirstName() + " " + i.getLastName();
+        } else if (accountToClaim instanceof OrganisationEntity) {
+            OrganisationEntity o = (OrganisationEntity) accountToClaim;
+            name = o.getOrganizationName();
+        }
+
+        String subject = "MatcHub Profile Claim Failed";
+
+        String body = "Dear User," + "\n\nYour claim request for " + name + "'s account was unsuccessful.";
+
+        body += "\n\nInstead, do sign up for an account if you are interested to join us: http://localhost:3000/signUp";
+
+        body += "\n\nThank you!\n\nRegards,\nMatcHub";
+
+        message.setTo(claimRequest.getEmail());
         message.setSubject(subject);
         message.setText(body);
         emailSender.send(message);

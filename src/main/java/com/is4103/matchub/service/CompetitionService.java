@@ -2,6 +2,7 @@ package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.CompetitionEntity;
 import com.is4103.matchub.entity.ProjectEntity;
+import com.is4103.matchub.entity.VoterCredentialEntity;
 import com.is4103.matchub.exception.ProjectNotFoundException;
 import com.is4103.matchub.vo.CompetitionVO;
 import com.is4103.matchub.vo.VoterVO;
@@ -30,13 +31,15 @@ public interface CompetitionService {
 
     public List<CompetitionEntity> retrieveAllActiveCompetitions();
 
+    public List<CompetitionEntity> retrieveAllPastCompetitions();
+
     public CompetitionEntity retrieveCompetitionById(Long competitionId);
 
     public CompetitionEntity updateCompetition(CompetitionVO vo, Long competitionId);
 
     public void deleteCompetition(Long competitionId);
 
-    public ProjectEntity joinCompetition(Long competitionId, Long projectId) throws ProjectNotFoundException;
+    public ProjectEntity joinCompetition(Long competitionId, Long projectId, Long accountId) throws ProjectNotFoundException;
 
     public CompetitionEntity activateCompetition(Long competitionId) throws MessagingException, IOException;
 
@@ -44,10 +47,12 @@ public interface CompetitionService {
 
     public List<ProjectEntity> retrieveProjectsByCompetitionIdAndSdgIdAndSdgTargets(Long competitionId, Long sdgId, long[] sdgTargetIds);
 
-    public void registerAsVoter(VoterVO vo, Long competitionId) throws IOException, MessagingException;
+    public VoterCredentialEntity registerAsVoter(VoterVO vo, Long competitionId) throws IOException, MessagingException;
 
-    public void createVotingDetailsForExistingUsers(Long competitionId, Long accountId) throws IOException, MessagingException;
+    public VoterCredentialEntity createVotingDetailsForExistingUsers(Long competitionId, Long accountId) throws IOException, MessagingException;
 
     public void castVoteForCompetitionProject(Long competitionId, Long projectId, String voterSecret) throws ProjectNotFoundException;
+    
+    public List<ProjectEntity> retrieveCompetitionResults(Long competitionId);
 
 }

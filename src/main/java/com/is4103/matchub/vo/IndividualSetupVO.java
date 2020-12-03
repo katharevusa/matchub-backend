@@ -10,6 +10,7 @@ import com.is4103.matchub.entity.SDGEntity;
 import com.is4103.matchub.enumeration.AnnouncementTypeEnum;
 import com.is4103.matchub.enumeration.GenderEnum;
 import com.is4103.matchub.validation.ValueOfEnum;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -70,6 +71,8 @@ public class IndividualSetupVO {
 
     public void setupIndividualAccount(IndividualEntity individual) {
         individual.setProfileDescription(this.profileDescription);
+        
+        individual.setJoinDate(LocalDateTime.now());
 
         //convert array to set
         Set<String> stringSet = new HashSet<>(Arrays.asList(this.skillSet));

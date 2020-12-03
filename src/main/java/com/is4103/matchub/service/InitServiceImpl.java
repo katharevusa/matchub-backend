@@ -41,6 +41,7 @@ import com.is4103.matchub.repository.SDGTargetEntityRepository;
 import com.is4103.matchub.repository.SelectedTargetEntityRepository;
 import com.is4103.matchub.vo.AnnouncementVO;
 import com.is4103.matchub.vo.CompetitionVO;
+import com.is4103.matchub.vo.KanbanBoardVO;
 import com.is4103.matchub.vo.PostVO;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -112,10 +113,13 @@ public class InitServiceImpl implements InitService {
 
     @Autowired
     private AnnouncementService announcementService;
-    
+
     @Autowired
     private CompetitionService competitionService;
-    
+
+    @Autowired
+    private KanbanBoardService kanbanBoardService;
+
     @Transactional
     public void init() {
         // testing:
@@ -146,8 +150,10 @@ public class InitServiceImpl implements InitService {
         initResourceRequests();
 //        firebaseService.getChannelDetails("s");
         // init kanbanboard for project 3
-        
+
         initCompetitions();
+
+        initKanbanBoard();
     }
 
     private void initUsers() {
@@ -1752,8 +1758,8 @@ public class InitServiceImpl implements InitService {
         projectEntity1.setProjectBadge(projBadge);
         projectEntityRepository.save(projectEntity1);
         /* end of project badge */
-        
-        /* add team member into this project */
+
+ /* add team member into this project */
         ProfileEntity songhwa = profileEntityRepository.findById(Long.valueOf(9)).get();
         projectEntity1.getTeamMembers().add(songhwa);
         songhwa.getProjectsJoined().add(projectEntity1);
@@ -1761,7 +1767,7 @@ public class InitServiceImpl implements InitService {
         profileEntityRepository.save(songhwa);
         projectEntityRepository.save(projectEntity1);
         /* end of add team member */
-        
+
         try {
             AnnouncementVO announcementVO = new AnnouncementVO();
             announcementVO.setContent("We are going to launch our project soon");
@@ -2716,44 +2722,48 @@ public class InitServiceImpl implements InitService {
         project.getSelectedTargets().add(s);
         projectEntityRepository.saveAndFlush(project);
     }
-    
-    public void initCompetitions(){
-        try{
-        CompetitionVO competitionVO = new CompetitionVO();
-        competitionVO.setCompetitionDescription("Join STEPs to Win $1000 big prize!");
-        competitionVO.setCompetitionTitle("STEPs");
-        competitionVO.setCompetitionStatus(CompetitionStatusEnum.ACTIVE);
-        competitionVO.setStartDate(LocalDateTime.parse("2020-02-07T11:45:55"));
-        competitionVO.setEndDate(LocalDateTime.parse("2021-02-07T11:45:55"));
-        competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
-        CompetitionEntity competition1 =  competitionService.createCompetition(competitionVO);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 1L);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 2L);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 3L);
-        
-        competitionVO.setCompetitionDescription("SHINE in ONE month");
-        competitionVO.setCompetitionTitle("Best Project Competition");
-        competitionVO.setCompetitionStatus(CompetitionStatusEnum.INACTIVE);
-        competitionVO.setStartDate(LocalDateTime.parse("2021-02-07T11:45:55"));
-        competitionVO.setEndDate(LocalDateTime.parse("2022-02-07T11:45:55"));
-        competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
-        CompetitionEntity competition2 =  competitionService.createCompetition(competitionVO);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 4L);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 5L);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 6L);
-        
-        competitionVO.setCompetitionDescription("are we saving the world or saving human beings?");
-        competitionVO.setCompetitionTitle("Best Enviromental Project");
-        competitionVO.setCompetitionStatus(CompetitionStatusEnum.PAST);
-        competitionVO.setStartDate(LocalDateTime.parse("2019-02-07T11:45:55"));
-        competitionVO.setEndDate(LocalDateTime.parse("2020-02-07T11:45:55"));
-        competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
-        CompetitionEntity competition3 =  competitionService.createCompetition(competitionVO);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 7L);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 8L);
-        competitionService.joinCompetition(competition1.getCompetitionId(), 9L);
-        }catch(ProjectNotFoundException ex){
+
+    public void initCompetitions() {
+        try {
+            CompetitionVO competitionVO = new CompetitionVO();
+            competitionVO.setCompetitionDescription("Competition description");
+            competitionVO.setCompetitionTitle("competitionTitle");
+            competitionVO.setCompetitionStatus(CompetitionStatusEnum.ACTIVE);
+            competitionVO.setStartDate(LocalDateTime.parse("2017-02-07T11:45:55"));
+            competitionVO.setEndDate(LocalDateTime.parse("2018-02-07T11:45:55"));
+            competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
+            CompetitionEntity competition1 = competitionService.createCompetition(competitionVO);
+
+            competitionService.joinCompetition(competition1.getCompetitionId(), 2L, 5L);
+            competitionService.joinCompetition(competition1.getCompetitionId(), 3L, 9L);
+
+            competitionVO.setCompetitionDescription("SHINE in ONE month");
+            competitionVO.setCompetitionTitle("Best Project Competition");
+            competitionVO.setCompetitionStatus(CompetitionStatusEnum.INACTIVE);
+            competitionVO.setStartDate(LocalDateTime.parse("2021-02-07T11:45:55"));
+            competitionVO.setEndDate(LocalDateTime.parse("2022-02-07T11:45:55"));
+            competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
+            CompetitionEntity competition2 = competitionService.createCompetition(competitionVO);
+            competitionService.joinCompetition(competition2.getCompetitionId(), 6L, 7L);
+
+            competitionVO.setCompetitionDescription("Are we saving the world or saving human beings?");
+            competitionVO.setCompetitionTitle("Best Enviromental Project");
+            competitionVO.setCompetitionStatus(CompetitionStatusEnum.PAST);
+            competitionVO.setStartDate(LocalDateTime.parse("2019-02-07T11:45:55"));
+            competitionVO.setEndDate(LocalDateTime.parse("2020-02-07T11:45:55"));
+            competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
+            CompetitionEntity competition3 = competitionService.createCompetition(competitionVO);
+            competitionService.joinCompetition(competition3.getCompetitionId(), 9L, 8L);
+        } catch (ProjectNotFoundException ex) {
+
             ex.printStackTrace();
         }
+    }
+
+    private void initKanbanBoard() {
+        KanbanBoardVO vo = new KanbanBoardVO();
+        vo.setChannelUid("123");
+        vo.setProjectId(1L);
+        kanbanBoardService.createKanbanBoard(vo);
     }
 }

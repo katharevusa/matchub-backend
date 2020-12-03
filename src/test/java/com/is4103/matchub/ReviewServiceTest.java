@@ -55,17 +55,20 @@ public class ReviewServiceTest {
     public void tearDown() {
     }
 
- 
+
+
     @Autowired
     private ReviewServiceImpl reviewServiceImpl;
     ReviewEntity testReview;
 
 
+
     @Test
-    
+
     public void testCreateReview() {
         ReviewCreateVO reviewVO = new ReviewCreateVO();
-        
+
+
         reviewVO.setContent("testing review content");
         reviewVO.setProjectId(1l);
         reviewVO.setRating(BigDecimal.valueOf(3));
@@ -77,17 +80,21 @@ public class ReviewServiceTest {
         } catch (ProjectNotFoundException ex) {
             ex.printStackTrace();
         }
-        
+
     }
 
+
+
     @Test(expected = ProjectNotFoundException.class)
-    public void testCreateReviewProjectNotFound() throws ProjectNotFoundException{
+    public void testCreateReviewProjectNotFound() throws ProjectNotFoundException {
+
         ReviewCreateVO reviewVO = new ReviewCreateVO();
         reviewVO.setContent("testing review content");
         reviewVO.setProjectId(20l);
         reviewVO.setRating(BigDecimal.valueOf(3));
         reviewVO.setReviewReceiverId(5l);
         reviewVO.setReviewerId(7l);
+
       try {
             testReview = reviewServiceImpl.createReview(reviewVO);
         } catch (UnableToCreateReviewException ex ) {
@@ -95,6 +102,9 @@ public class ReviewServiceTest {
         }
     
     }
+
+
+
     @Test(expected = UserNotFoundException.class)
     public void testCreateReviewUserNotFound() {
         ReviewCreateVO reviewVO = new ReviewCreateVO();

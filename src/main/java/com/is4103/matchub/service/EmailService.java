@@ -6,6 +6,7 @@
 package com.is4103.matchub.service;
 
 import com.is4103.matchub.entity.AccountEntity;
+import com.is4103.matchub.entity.ClaimRequestEntity;
 import com.is4103.matchub.entity.CompetitionEntity;
 import com.is4103.matchub.entity.IndividualEntity;
 import com.is4103.matchub.entity.ProfileEntity;
@@ -28,5 +29,11 @@ public interface EmailService {
     public void sendVoterRegisterEmail(IndividualEntity newIndividual, String randomGeneratedPassword, VoterCredentialEntity voterCredential, CompetitionEntity competition) throws MessagingException, IOException;
 
     public void sendExistingUserVotingDetailsEmail(ProfileEntity profile, VoterCredentialEntity voterCredential, CompetitionEntity competition) throws MessagingException, IOException;
+
+    void sendOnboardingEmail(ProfileEntity profile, String randomGeneratedPassword) throws MessagingException, IOException;
+
+    public void sendClaimRequestSuccessEmail(AccountEntity account, String randomGeneratedPassword) throws MessagingException, IOException;
+
+    public void sendClaimRequestFailureEmail(ClaimRequestEntity claimRequest, AccountEntity accountToClaim) throws MessagingException, IOException;
 
 }

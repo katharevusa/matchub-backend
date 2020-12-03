@@ -26,12 +26,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import org.springframework.transaction.annotation.Transactional;
+
+
 /**
  *
  * @author kaikai
  */
 @RunWith(SpringRunner.class)
-
+@Transactional
 @SpringBootTest
 public class ResourceCategoryServiceTest {
 
@@ -135,7 +138,10 @@ public class ResourceCategoryServiceTest {
         }
 
     }
-     @Test(expected = DeleteResourceCategoryException.class)
+
+
+    @Test(expected = DeleteResourceCategoryException.class)
+
     public void testDeleteResourceCategoriesDeleteResourceCategoryException() throws DeleteResourceCategoryException {
         try {
             resourceCategoryServiceImpl.deleteResourceCategories(1l);

@@ -120,6 +120,7 @@ public class StripeServiceImpl implements StripeService {
                         .addPaymentMethodType("card")
                         // for commission charges
                         .setApplicationFeeAmount(calculatePlatformCommissionFees(paymentIntentCreateVO.getAmountInCents()))
+                        .setReceiptEmail(paymentIntentCreateVO.getReceiptEmail())
                         // for setting who to transfer to
                         .setReceiptEmail(paymentIntentCreateVO.getReceiptEmail())
                         .setTransferData(
