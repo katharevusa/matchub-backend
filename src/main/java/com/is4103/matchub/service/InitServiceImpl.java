@@ -255,6 +255,9 @@ public class InitServiceImpl implements InitService {
         ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
         ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
 
+        ikjun.setReputationPoints(201);
+        ikjun.setSpotlightChances(5);
+
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(4)));
@@ -424,6 +427,9 @@ public class InitServiceImpl implements InitService {
         songhwa.setProfilePhoto("https://localhost:8443/api/v1/files/init/songhwa.jpg");
         songhwa.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(10))));
         songhwa.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(5), Long.valueOf(7), Long.valueOf(8), Long.valueOf(10))));
+
+        songhwa.setReputationPoints(201);
+        songhwa.setSpotlightChances(5);
 
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(6)));
@@ -2724,7 +2730,7 @@ public class InitServiceImpl implements InitService {
         project.getSelectedTargets().add(s);
         projectEntityRepository.saveAndFlush(project);
     }
-    
+
     public void initCompetitions() {
         try {
             CompetitionVO competitionVO = new CompetitionVO();
