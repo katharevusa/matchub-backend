@@ -2720,16 +2720,38 @@ public class InitServiceImpl implements InitService {
     public void initCompetitions(){
         try{
         CompetitionVO competitionVO = new CompetitionVO();
-        competitionVO.setCompetitionDescription("Competition description");
-        competitionVO.setCompetitionTitle("competitionTitle");
+        competitionVO.setCompetitionDescription("Join STEPs to Win $1000 big prize!");
+        competitionVO.setCompetitionTitle("STEPs");
         competitionVO.setCompetitionStatus(CompetitionStatusEnum.ACTIVE);
-        competitionVO.setStartDate(LocalDateTime.parse("2017-02-07T11:45:55"));
-        competitionVO.setEndDate(LocalDateTime.parse("2018-02-07T11:45:55"));
+        competitionVO.setStartDate(LocalDateTime.parse("2020-02-07T11:45:55"));
+        competitionVO.setEndDate(LocalDateTime.parse("2021-02-07T11:45:55"));
         competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
         CompetitionEntity competition1 =  competitionService.createCompetition(competitionVO);
         competitionService.joinCompetition(competition1.getCompetitionId(), 1L);
         competitionService.joinCompetition(competition1.getCompetitionId(), 2L);
         competitionService.joinCompetition(competition1.getCompetitionId(), 3L);
+        
+        competitionVO.setCompetitionDescription("SHINE in ONE month");
+        competitionVO.setCompetitionTitle("Best Project Competition");
+        competitionVO.setCompetitionStatus(CompetitionStatusEnum.INACTIVE);
+        competitionVO.setStartDate(LocalDateTime.parse("2021-02-07T11:45:55"));
+        competitionVO.setEndDate(LocalDateTime.parse("2022-02-07T11:45:55"));
+        competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
+        CompetitionEntity competition2 =  competitionService.createCompetition(competitionVO);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 4L);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 5L);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 6L);
+        
+        competitionVO.setCompetitionDescription("are we saving the world or saving human beings?");
+        competitionVO.setCompetitionTitle("Best Enviromental Project");
+        competitionVO.setCompetitionStatus(CompetitionStatusEnum.PAST);
+        competitionVO.setStartDate(LocalDateTime.parse("2019-02-07T11:45:55"));
+        competitionVO.setEndDate(LocalDateTime.parse("2020-02-07T11:45:55"));
+        competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
+        CompetitionEntity competition3 =  competitionService.createCompetition(competitionVO);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 7L);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 8L);
+        competitionService.joinCompetition(competition1.getCompetitionId(), 9L);
         }catch(ProjectNotFoundException ex){
             ex.printStackTrace();
         }
