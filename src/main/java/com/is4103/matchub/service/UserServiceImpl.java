@@ -1012,7 +1012,7 @@ public class UserServiceImpl implements UserService {
 
         Page<ProfileEntity> page;
 
-        if (search.isEmpty() && country.isEmpty() && sdgIds.length == 0) {
+        if (search.isEmpty() && country.isEmpty() && sdgIds.length == 17) {
             page = profileEntityRepository.findAll(pageable);
             return page;
         } else if (country.isEmpty()) {
@@ -1062,7 +1062,7 @@ public class UserServiceImpl implements UserService {
         }
 
         //query without selected sdgTargets for profile
-        if (page.getContent().size() == 0) {
+        if (page.isEmpty()) {
             if (country.isEmpty()) {
                 page = profileEntityRepository.globalSearchAllUsers(search, sdgIds, pageable);
 
@@ -1112,7 +1112,7 @@ public class UserServiceImpl implements UserService {
         }
 
         //query without sdgs for profile
-        if (page.getContent().size() == 0) {
+        if (page.isEmpty()) {
             if (country.isEmpty()) {
                 page = profileEntityRepository.globalSearchAllUsers(search, pageable);
 
