@@ -175,6 +175,8 @@ public class InitServiceImpl implements InitService {
                         //update the followers list 
                         IndividualEntity user1 = (IndividualEntity) account;
                         user1.setProfilePhoto("https://localhost:8443/api/v1/files/init/nus.jpg");
+                        user1.setCountry("Singapore");
+                        user1.setCity("Singapore");
                         setNotifications(user1);
                         user1.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4))));
                     } else {
@@ -185,6 +187,9 @@ public class InitServiceImpl implements InitService {
                         OrganisationEntity user2 = (OrganisationEntity) account;
                         user2.setProfilePhoto("https://localhost:8443/api/v1/files/init/nus.jpg");
                         user2.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(6))));
+
+                        user2.setCountry("Singapore");
+                        user2.setCity("Singapore");
 
                         setNotifications(user2);
                     }
@@ -254,6 +259,9 @@ public class InitServiceImpl implements InitService {
         ikjun.setProfilePhoto("https://localhost:8443/api/v1/files/init/ikjun.jpg");
         ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
         ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
+
+        ikjun.setReputationPoints(201);
+        ikjun.setSpotlightChances(5);
 
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(3)));
@@ -424,6 +432,9 @@ public class InitServiceImpl implements InitService {
         songhwa.setProfilePhoto("https://localhost:8443/api/v1/files/init/songhwa.jpg");
         songhwa.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(4), Long.valueOf(5), Long.valueOf(10))));
         songhwa.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(5), Long.valueOf(7), Long.valueOf(8), Long.valueOf(10))));
+
+        songhwa.setReputationPoints(201);
+        songhwa.setSpotlightChances(5);
 
         sdgs = new ArrayList<>();
         sdgs.add(sdgEntityRepository.findBySdgId(Long.valueOf(6)));
@@ -1773,7 +1784,7 @@ public class InitServiceImpl implements InitService {
             announcementVO.setContent("We are going to launch our project soon");
             announcementVO.setCreatorId(5L);
             announcementVO.setProjectId(1L);
-            announcementVO.setTitle("title");
+            announcementVO.setTitle("Announcement on the launching of project");
             AnnouncementEntity announcementEntity = announcementService.createProjectPublicAnnouncement(announcementVO);
         } catch (CreateAnnouncementException ex) {
             ex.printStackTrace();
@@ -1785,12 +1796,6 @@ public class InitServiceImpl implements InitService {
         projectEntity2.setUpvotes(23);
 
         projectEntity2.setProjectPoolPoints(123);
-
-        //spotlight project2
-        projectEntity2.setSpotlight(true);
-        now = LocalDateTime.now();
-        endTime = now.plusDays(1);
-        projectEntity2.setSpotlightEndTime(endTime);
 
         //relatedResources
         relatedResources = new ArrayList<>();
@@ -2506,6 +2511,18 @@ public class InitServiceImpl implements InitService {
         } catch (Exception e) {
             System.err.println("Error in init resource request for projectId 1: Eyeglasses");
         }
+        
+        try {
+            resourceRequestService.createResourceRequestResourceOwner(3L, 10L, 30L, 10);
+        } catch (Exception e) {
+            System.err.println("Error in init resource request for projectId 1: Eyeglasses");
+        }
+        
+        try {
+            resourceRequestService.createResourceRequestResourceOwner(3L, 7L, 11L, 10);
+        } catch (Exception e) {
+            System.err.println("Error in init resource request for projectId 1: Eyeglasses");
+        }
 
     }
 
@@ -2725,7 +2742,7 @@ public class InitServiceImpl implements InitService {
         project.getSelectedTargets().add(s);
         projectEntityRepository.saveAndFlush(project);
     }
-    
+
     public void initCompetitions() {
         try {
             CompetitionVO competitionVO = new CompetitionVO();

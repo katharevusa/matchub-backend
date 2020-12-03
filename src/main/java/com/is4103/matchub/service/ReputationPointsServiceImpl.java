@@ -537,6 +537,10 @@ public class ReputationPointsServiceImpl implements ReputationPointsService {
 
             p.setReputationPoints(p.getReputationPoints() + addRepPoints);
             profileEntityRepository.saveAndFlush(p);
+
+            //deduct points from the projectPoolPoints
+            project.setProjectPoolPoints(project.getProjectPoolPoints() - addRepPoints);
+            project = projectEntityRepository.saveAndFlush(project);
         }
     }
 
