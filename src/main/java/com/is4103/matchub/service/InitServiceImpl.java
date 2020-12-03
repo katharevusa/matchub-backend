@@ -1797,12 +1797,6 @@ public class InitServiceImpl implements InitService {
 
         projectEntity2.setProjectPoolPoints(123);
 
-        //spotlight project2
-        projectEntity2.setSpotlight(true);
-        now = LocalDateTime.now();
-        endTime = now.plusDays(1);
-        projectEntity2.setSpotlightEndTime(endTime);
-
         //relatedResources
         relatedResources = new ArrayList<>();
         relatedResources.add("Fruits");
