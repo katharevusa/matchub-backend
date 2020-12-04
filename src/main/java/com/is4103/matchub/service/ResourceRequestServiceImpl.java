@@ -563,7 +563,7 @@ public class ResourceRequestServiceImpl implements ResourceRequestService {
         ProjectEntity project = projectEntityRepository.findById(Long.parseLong(paymentIntent.getMetadata().get("project_id"))).orElseThrow(() -> new ProjectNotFoundException());
 
         resource.setResourceTransaction(transactionEntity);
-        
+        resource.setMatchedProjectId(project.getProjectId());
         transactionEntity.setResource(resource);
 
         project.getListOfResourceTransactions().add(transactionEntity);
