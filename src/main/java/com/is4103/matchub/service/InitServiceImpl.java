@@ -2224,7 +2224,7 @@ public class InitServiceImpl implements InitService {
                 + "plastic and other harmful pollutants. The events will also help raise awareness "
                 + "of the importance of clean water in Seoul.";
         ProjectEntity completedProject = new ProjectEntity("Time To Clean Up Hangang River", projDesc, "South Korea", LocalDateTime.parse("2018-06-05T11:45:55"), LocalDateTime.parse("2020-02-26T10:25:55"));
-        completedProject.setProjStatus(ProjectStatusEnum.COMPLETED);
+        completedProject.setProjStatus(ProjectStatusEnum.ACTIVE);
         completedProject.setUpvotes(45);
 
         completedProject.setProjectPoolPoints(145);
@@ -2512,19 +2512,19 @@ public class InitServiceImpl implements InitService {
         } catch (Exception e) {
             System.err.println("Error in init resource request for projectId 1: Eyeglasses");
         }
-        
+
         try {
             resourceRequestService.createResourceRequestResourceOwner(3L, 10L, 30L, 10);
         } catch (Exception e) {
             System.err.println("Error in init resource request for projectId 1: Eyeglasses");
         }
-        
+
         try {
             resourceRequestService.createResourceRequestResourceOwner(3L, 7L, 11L, 10);
         } catch (Exception e) {
             System.err.println("Error in init resource request for projectId 1: Eyeglasses");
         }
-        
+
         try {
             resourceRequestService.createResourceRequestResourceOwner(3L, 5L, 20L, 10);
         } catch (Exception e) {
