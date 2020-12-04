@@ -256,7 +256,7 @@ public class InitServiceImpl implements InitService {
         ikjun.setPhoneNumber("011-465-9876");
         ikjun.setCountry("Korea, Republic of South Korea");
         ikjun.setCity("Seoul");
-        ikjun.setProfilePhoto("https://localhost:8443/api/v1/files/init/ikjun.jpeg");
+        ikjun.setProfilePhoto("https://localhost:8443/api/v1/files/init/ikjun.jpg");
         ikjun.setFollowing(new HashSet<>(Arrays.asList(Long.valueOf(3), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
         ikjun.setFollowers(new HashSet<>(Arrays.asList(Long.valueOf(8), Long.valueOf(9), Long.valueOf(10), Long.valueOf(11))));
 
@@ -2692,9 +2692,10 @@ public class InitServiceImpl implements InitService {
     }
 
     private void setNotifications(ProfileEntity profileEntity) {
-        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
-            profileEntity.getAnnouncementsSetting().put(a, Boolean.TRUE);
-        }
+//        for (AnnouncementTypeEnum a : AnnouncementTypeEnum.values()) {
+//            profileEntity.getAnnouncementsSetting().put(a, Boolean.TRUE);
+//        }
+        announcementService.setNotifications(profileEntity);
     }
 
     private void associateSDGTargetsWithProfile(long[] sdgTargetIds, Long sdgId, Long accountId) {
@@ -2755,13 +2756,30 @@ public class InitServiceImpl implements InitService {
             competitionVO.setCompetitionDescription("Competition description");
             competitionVO.setCompetitionTitle("competitionTitle");
             competitionVO.setCompetitionStatus(CompetitionStatusEnum.ACTIVE);
-            competitionVO.setStartDate(LocalDateTime.parse("2017-02-07T11:45:55"));
-            competitionVO.setEndDate(LocalDateTime.parse("2018-02-07T11:45:55"));
+            competitionVO.setStartDate(LocalDateTime.parse("2020-02-07T11:45:55"));
+            competitionVO.setEndDate(LocalDateTime.parse("2021-02-07T11:45:55"));
             competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
             CompetitionEntity competition1 = competitionService.createCompetition(competitionVO);
-//        competitionService.joinCompetition(competition1.getCompetitionId(), 1L);
             competitionService.joinCompetition(competition1.getCompetitionId(), 2L, 5L);
             competitionService.joinCompetition(competition1.getCompetitionId(), 3L, 9L);
+            
+            competitionVO.setCompetitionDescription("SHINE in ONE month");
+            competitionVO.setCompetitionTitle("Best Project Competition");
+            competitionVO.setCompetitionStatus(CompetitionStatusEnum.INACTIVE);
+            competitionVO.setStartDate(LocalDateTime.parse("2021-02-07T11:45:55"));
+            competitionVO.setEndDate(LocalDateTime.parse("2022-02-07T11:45:55"));
+            competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
+            CompetitionEntity competition2 = competitionService.createCompetition(competitionVO);
+            competitionService.joinCompetition(competition2.getCompetitionId(), 6L, 7L);
+
+            competitionVO.setCompetitionDescription("Are we saving the world or saving human beings?");
+            competitionVO.setCompetitionTitle("Best Enviromental Project");
+            competitionVO.setCompetitionStatus(CompetitionStatusEnum.PAST);
+            competitionVO.setStartDate(LocalDateTime.parse("2019-02-07T11:45:55"));
+            competitionVO.setEndDate(LocalDateTime.parse("2020-02-07T11:45:55"));
+            competitionVO.setPrizeMoney(BigDecimal.valueOf(1000.00));
+            CompetitionEntity competition3 = competitionService.createCompetition(competitionVO);
+            competitionService.joinCompetition(competition3.getCompetitionId(), 9L, 8L);
         } catch (ProjectNotFoundException ex) {
             ex.printStackTrace();
         }

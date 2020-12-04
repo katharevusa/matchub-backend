@@ -223,6 +223,7 @@ public class UserServiceImpl implements UserService {
         AccountEntity updatedAccount = (AccountEntity) individual;
 
         updatedAccount = accountEntityRepository.save(updatedAccount);
+        announcementService.setNotifications(individual);
 
         return UserVO.of(updatedAccount);
     }
@@ -275,6 +276,7 @@ public class UserServiceImpl implements UserService {
 
         AccountEntity updatedAccount = (AccountEntity) organisation;
         updatedAccount = accountEntityRepository.save(updatedAccount);
+        announcementService.setNotifications(organisation);
 
         return UserVO.of(updatedAccount);
     }

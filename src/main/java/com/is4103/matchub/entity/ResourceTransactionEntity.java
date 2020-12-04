@@ -8,7 +8,6 @@ package com.is4103.matchub.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,19 +16,20 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
-import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  *
  * @author longluqian
  */
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -53,13 +53,13 @@ public class ResourceTransactionEntity {
 
     @NotNull
     @OneToOne
-    @JsonIgnoreProperties({"resourceTransaction"})
+    @JsonIgnoreProperties({"resourceTransaction", "listOfRequests"})
     private ResourceEntity resource;
-    
+
     @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(nullable = false)
-    @JsonIgnoreProperties(value = {"listOfResourceTransactions"})
+    @JsonIgnoreProperties(value = {"listOfResourceTransactions", "joinRequests", "reviews", "projectBadge", "fundCampaigns", "listOfRequests", "sdgs", "teamMembers", "projectFollowers", "projectOwners", "selectedTargets", "competition"})
     private ProjectEntity project;
 
 }
