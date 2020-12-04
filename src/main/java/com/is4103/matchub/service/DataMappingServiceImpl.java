@@ -442,7 +442,7 @@ public class DataMappingServiceImpl implements DataMappingService {
         ImportDataErrorWrapper errorWrapper = new ImportDataErrorWrapper();
 
         errorWrapper.setNumFailures(numFailures);
-        int numSuccesses = worksheet.getPhysicalNumberOfRows() - numFailures - 1;
+        int numSuccesses = worksheet.getPhysicalNumberOfRows() - numFailures - 2;
         errorWrapper.setNumSuccesses(numSuccesses);
         errorWrapper.setErrorMessages(errorMessages);
 
@@ -572,7 +572,7 @@ public class DataMappingServiceImpl implements DataMappingService {
         ImportDataErrorWrapper errorWrapper = new ImportDataErrorWrapper();
 
         errorWrapper.setNumFailures(numFailures);
-        int numSuccesses = worksheet.getPhysicalNumberOfRows() - numFailures - 1;
+        int numSuccesses = worksheet.getPhysicalNumberOfRows() - numFailures - 2;
         errorWrapper.setNumSuccesses(numSuccesses);
         errorWrapper.setErrorMessages(errorMessages);
 
